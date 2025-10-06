@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "dev": "npm-run-all --parallel dev:frontend dev:backend",
+    "dev": "dev:frontend & pnpm dev:backend",
     "dev:frontend": "vite --open",
     "dev:backend": "convex dev",
     "predev": "convex dev --until-success && convex dashboard",
@@ -30,7 +30,6 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
-    "npm-run-all": "^4.1.5",
     "prettier": "^3.5.3",
     "tailwindcss": "^4.0.14",
     "typescript": "~5.7.2",

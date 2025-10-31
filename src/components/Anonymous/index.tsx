@@ -1,12 +1,14 @@
 "use client";
 import { SignInForm } from "../SignInForm"
 
-export function Anonymous() {
+export const Anonymous = () => {
   return (
     <div className="flex flex-col gap-8 max-w-lg mx-auto">
-      <p>Welcome!</p>
+      <h1 className="text-4xl font-bold text-center">
+        Welcome!
+      </h1>
       <p>
-        Swarmrise is a light governance model. Clarity without bureaucracy.
+        Swarmrise is a light governance model, providing clarity and traceability in the decision process without the burden of bureaucracy.
       </p>
       <SignInForm />
       <div className="flex flex-col">
@@ -15,26 +17,24 @@ export function Anonymous() {
           <div className="flex flex-col gap-2 w-1/2">
             <ResourceCard
               title="The principles"
-              description="Read comprehensive documentation for all Convex features."
+              description="Discover the few simple concepts that run the show."
               href="https://docs.convex.dev/home"
             />
             <ResourceCard
               title="The product"
-              description="Learn about best practices, use cases, and more from a growing
-            collection of articles, videos, and walkthroughs."
+              description="Discover the main features of the product and see it."
               href="https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
             />
           </div>
           <div className="flex flex-col gap-2 w-1/2">
             <ResourceCard
               title="Testimonies"
-              description="Browse our collection of templates to get started quickly."
+              description="Read some feedback we get so far."
               href="https://www.convex.dev/templates"
             />
             <ResourceCard
               title="Inspiration"
-              description="Join our developer community to ask questions, trade tips & tricks,
-            and show off your projects."
+              description="Browse some inspirational content, useful tricks and funny stuff."
               href="https://www.convex.dev/community"
             />
           </div>
@@ -44,7 +44,7 @@ export function Anonymous() {
   );
 }
 
-function ResourceCard({
+const ResourceCard = ({
   title,
   description,
   href,
@@ -52,7 +52,7 @@ function ResourceCard({
   title: string;
   description: string;
   href: string;
-}) {
+}) => {
   return (
     <div className="flex flex-col gap-2 bg-slate-200 dark:bg-slate-800 p-4 rounded-md h-28 overflow-auto">
       <a href={href} className="text-sm underline hover:no-underline">

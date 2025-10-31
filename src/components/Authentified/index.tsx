@@ -7,7 +7,7 @@ import {
 import { api } from "../../../convex/_generated/api";
 import { ResourceCard } from "../ResourceCard"
 
-export function Authentified() {
+export const Authentified = () => {
   const { viewer, numbers } =
     useQuery(api.myFunctions.listNumbers, {
       count: 10,

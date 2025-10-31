@@ -16,9 +16,6 @@ export default function App() {
         <UserButton />
       </header>
       <main className="p-8 flex flex-col gap-16">
-        <h1 className="text-4xl font-bold text-center">
-          Swarmrise
-        </h1>
         <Authenticated>
           <Authentified />
         </Authenticated>

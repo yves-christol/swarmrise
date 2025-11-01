@@ -1,8 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  --color-light: #ffffff;
-  --color-dark: #171717;
+  /* Custom colors - these automatically generate bg-*, text-*, etc utilities */
+  --color-light: #eeeeee;
+  --color-dark: #212121;
+  
+  /* Custom font family */
+  --font-family-swarm: 'Montserrat Alternates', sans-serif;
+}
+
+/* Explicit utilities to ensure they work properly in Tailwind v4 */
+@layer utilities {
+  .font-swarm {
+    font-family: var(--font-family-swarm);
+  }
+  
+  .bg-light {
+    background-color: var(--color-light);
+  }
+  
+  .bg-dark {
+    background-color: var(--color-dark);
+  }
+  
+  .text-light {
+    color: var(--color-light);
+  }
+  
+  .text-dark {
+    color: var(--color-dark);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -11,6 +38,9 @@
     background: var(--color-dark);
     font-family: Arial, Helvetica, sans-serif;
   }
+  h1, h2, h3, h4, h5, h6, b {
+    font-family: 'Montserrat Alternates', sans-serif;
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -18,5 +48,8 @@
     color: var(--color-dark);
     background: var(--color-light);
     font-family: Arial, Helvetica, sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6, b {
+    font-family: 'Montserrat Alternates', sans-serif;
   }
 }

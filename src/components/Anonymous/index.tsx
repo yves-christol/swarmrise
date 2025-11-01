@@ -4,8 +4,8 @@ import { SignInForm } from "../SignInForm"
 export const Anonymous = () => {
   return (
     <div className="flex flex-col gap-8 max-w-lg mx-auto">
-      <h1 className="text-4xl font-bold text-center">
-        Welcome!
+      <h1 className="font-swarm text-4xl font-bold text-center">
+        welcome!
       </h1>
       <p>
         Swarmrise is a light governance model, providing clarity and traceability in the decision process without the burden of bureaucracy.

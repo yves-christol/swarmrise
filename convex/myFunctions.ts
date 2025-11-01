@@ -49,6 +49,54 @@ export const addNumber = mutation({
   },
 });
 
+// Debug function to check authentication state
+export const debugAuth = query({
+  args: {},
+  returns: v.object({
+    hasAuth: v.boolean(),
+    userIdentity: v.any(),
+    authError: v.optional(v.string()),
+    tokenInfo: v.optional(v.any()),
+  }),
+  handler: async (ctx) => {
+    try {
+      const userIdentity = await ctx.auth.getUserIdentity();
+      
+      // Additional debugging info
+      let tokenInfo = null;
+      try {
+        const token = userIdentity?.tokenIdentifier;
+        if (token) {
+          // Decode JWT header and payload (without verification)
+          const parts = token.split('.');
+          if (parts.length === 3) {
+            const header = JSON.parse(atob(parts[0]));
+            const payload = JSON.parse(atob(parts[1]));
+            tokenInfo = { header, payload };
+          }
+        }
+      } catch (tokenError) {
+        console.log("Token debug error:", tokenError);
+      }
+      
+      return {
+        hasAuth: !!userIdentity,
+        userIdentity: userIdentity,
+        authError: undefined,
+        tokenInfo: tokenInfo,
+      };
+    } catch (error) {
+      console.log("Auth debug error:", error);
+      return {
+        hasAuth: false,
+        userIdentity: null,
+        authError: error instanceof Error ? error.message : "Unknown error",
+        tokenInfo: null,
+      };
+    }
+  },
+});
+
 // You can fetch data from and send data to third-party APIs via an action:
 export const myAction = action({
   // Validators for arguments.

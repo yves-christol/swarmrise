@@ -33,6 +33,46 @@ Then:
 
 If you want to sync Clerk user data via webhooks, check out this [example repo](https://github.com/thomasballinger/convex-clerk-users-table/).
 
+## Available Commands
+
+This project uses [Bun](https://bun.sh/) as the package manager and runtime. Here are the main commands you can use:
+
+### Install dependencies
+```sh
+bun install
+```
+
+### Start development servers
+```sh
+bun run dev           # Starts both frontend (Vite) and backend (Convex) with auto-open
+bun run dev:frontend  # Starts only the frontend (Vite)
+bun run dev:backend   # Starts only the backend (Convex)
+```
+
+### Build for production
+```sh
+bun run build         # Type-checks and builds the frontend
+```
+
+### Preview production build
+```sh
+bun run preview       # Serves the built frontend locally
+```
+
+### Lint and type-check
+```sh
+bun run lint          # Runs TypeScript and ESLint checks
+```
+
+```sh
+bun run predev        # Starts Convex dev server and dashboard
+```
+
+### Deploy Convex functions
+```sh
+bun run convex deploy # Deploys Convex functions to your production backend
+```
+
 ## Learn more
 
 To learn more about developing your project with Convex, check out:

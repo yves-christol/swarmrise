@@ -31,7 +31,7 @@ async function translateText() {
     const file = fs.createWriteStream('./src/i18n/i18n.json')
     file.write("[\n")
     i18n.forEach((line, index) => {
-      const text = line['en']
+      // const text = line['en']
       let newline = `  {`
       locales.forEach(locale => {
         if (locale === 'en') {

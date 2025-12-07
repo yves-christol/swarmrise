@@ -8,7 +8,7 @@ export const Anonymous = () => {
         welcome!
       </h1>
       <p>
-        Swarmrise is a light governance model, providing clarity and traceability in the decision process without the burden of bureaucracy.
+        Swarmrise is a light governance model, providing clarity and traceability in the organization and decision process without the burden of bureaucracy.
       </p>
       <SignInForm />
       <div className="flex flex-col">

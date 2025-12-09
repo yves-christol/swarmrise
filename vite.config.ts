@@ -5,7 +5,9 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  // tailwindcss() can return a plugin shape that's not strongly typed as a Vite Plugin
+  // in some versions; cast to `any` here to avoid the TS overload error (TS2769).
+  plugins: [react(), tailwindcss() as unknown as any],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

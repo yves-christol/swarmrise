@@ -5,7 +5,7 @@ import { v } from "convex/values";
  * Swarmrise Data Model Schema
  * 
  * Main concepts: Person (User), Orga, Role, Team, Decision
- * Secondary concepts: Invitation, Topic, Meeting
+ * Secondary concepts: Invitation, Topic, Meeting, Policy
  */
 
 // Contact info type discriminator
@@ -44,13 +44,142 @@ const invitationStatus = v.union(
   v.literal("accepted")
 );
 
-// Decision diff validator (before/after state)
-const decisionDiff = v.object({
-  before: v.any(), // Can be any value representing the state before
-  after: v.any(),  // Can be any value representing the state after
+// Policy visibility
+const policyVisibility = v.union(
+  v.literal("private"), // Only visible to the Team
+  v.literal("public")   // Applies to the whole Organization
+);
+
+// Decision diff validators - type-safe diffs for specific entity types
+// Each diff ensures before and after are of the same type
+
+// Organization diff
+const organizationDiff = v.object({
+  type: v.literal("Organization"),
+  before: v.object({
+    name: v.string(),
+    logoUrl: v.optional(v.string()),
+    colorScheme: colorScheme,
+  }),
+  after: v.object({
+    name: v.string(),
+    logoUrl: v.optional(v.string()),
+    colorScheme: colorScheme,
+  }),
 });
 
+// Team diff
+const teamDiff = v.object({
+  type: v.literal("Team"),
+  before: v.object({
+    orgaId: v.id("orgas"),
+    name: v.string(),
+    parentTeamId: v.optional(v.id("teams")),
+    mission: v.optional(v.string()),
+    isFirstTeam: v.boolean(),
+  }),
+  after: v.object({
+    orgaId: v.id("orgas"),
+    name: v.string(),
+    parentTeamId: v.optional(v.id("teams")),
+    mission: v.optional(v.string()),
+    isFirstTeam: v.boolean(),
+  }),
+});
+
+// Role diff
+const roleDiff = v.object({
+  type: v.literal("Role"),
+  before: v.object({
+    teamId: v.id("teams"),
+    title: v.string(),
+    mission: v.string(),
+    duties: v.array(v.string()),
+    memberId: v.optional(v.id("members")),
+  }),
+  after: v.object({
+    teamId: v.id("teams"),
+    title: v.string(),
+    mission: v.string(),
+    duties: v.array(v.string()),
+    memberId: v.optional(v.id("members")),
+  }),
+});
+
+// Invitation diff
+const invitationDiff = v.object({
+  type: v.literal("Invitation"),
+  before: v.object({
+    orgaId: v.id("orgas"),
+    emitterMemberId: v.id("members"),
+    email: v.string(),
+    status: invitationStatus,
+    sentDate: v.number(),
+  }),
+  after: v.object({
+    orgaId: v.id("orgas"),
+    emitterMemberId: v.id("members"),
+    email: v.string(),
+    status: invitationStatus,
+    sentDate: v.number(),
+  }),
+});
+
+// Meeting diff
+const meetingDiff = v.object({
+  type: v.literal("Meeting"),
+  before: v.object({
+    teamId: v.id("teams"),
+    title: v.string(),
+    scheduledDate: v.number(),
+  }),
+  after: v.object({
+    teamId: v.id("teams"),
+    title: v.string(),
+    scheduledDate: v.number(),
+  }),
+});
+
+// Policy diff
+const policyDiff = v.object({
+  type: v.literal("Policy"),
+  before: v.object({
+    orgaId: v.id("orgas"),
+    teamId: v.id("teams"),
+    roleId: v.id("roles"),
+    issuedDate: v.number(),
+    title: v.string(),
+    text: v.string(),
+    visibility: policyVisibility,
+    expirationDate: v.optional(v.number()),
+  }),
+  after: v.object({
+    orgaId: v.id("orgas"),
+    teamId: v.id("teams"),
+    roleId: v.id("roles"),
+    issuedDate: v.number(),
+    title: v.string(),
+    text: v.string(),
+    visibility: policyVisibility,
+    expirationDate: v.optional(v.number()),
+  }),
+});
+
+// Decision diff validator - discriminated union ensuring type safety
+const decisionDiff = v.union(
+  organizationDiff,
+  teamDiff,
+  roleDiff,
+  invitationDiff,
+  meetingDiff,
+  policyDiff
+);
+
 export default defineSchema({
+  // numbers for backward compatibility here
+  numbers: defineTable({
+    value: v.number(),
+  }),
   // Users collection - contains all Persons
   users: defineTable({
     firstname: v.string(),
@@ -162,4 +291,21 @@ export default defineSchema({
   })
     .index("by_team", ["teamId"])
     .index("by_team_and_date", ["teamId", "scheduledDate"]),
+
+  // Policies collection - Policies belonging to an Organization, from a Team, emitted by a Role
+  policies: defineTable({
+    orgaId: v.id("orgas"),
+    teamId: v.id("teams"),
+    roleId: v.id("roles"), // Role that emitted the policy
+    issuedDate: v.number(), // Timestamp
+    title: v.string(),
+    text: v.string(),
+    visibility: policyVisibility, // "private" (Team only) or "public" (Organization-wide)
+    expirationDate: v.optional(v.number()), // Optional expiration timestamp
+  })
+    .index("by_orga", ["orgaId"])
+    .index("by_team", ["teamId"])
+    .index("by_role", ["roleId"])
+    .index("by_orga_and_visibility", ["orgaId", "visibility"])
+    .index("by_team_and_date", ["teamId", "issuedDate"]),
 });

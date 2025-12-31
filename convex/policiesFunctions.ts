@@ -69,7 +69,7 @@ export const listPoliciesInOrga = query({
       return await ctx.db
         .query("policies")
         .withIndex("by_orga_and_visibility", (q) =>
-          q.eq("orgaId", args.orgaId).eq("visibility", args.visibility)
+          q.eq("orgaId", args.orgaId).eq("visibility", args.visibility as "private" | "public")
         )
         .collect();
     } else {

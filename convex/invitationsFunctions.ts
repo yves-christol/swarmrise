@@ -132,13 +132,7 @@ export const createInvitation = mutation({
       targetType: "invitations",
       diff: {
         type: "Invitation",
-        before: {
-          orgaId: args.orgaId,
-          emitterMemberId: member._id,
-          email: args.email,
-          status: "pending" as const,
-          sentDate: 0,
-        },
+        before: undefined,
         after: {
           orgaId: args.orgaId,
           emitterMemberId: member._id,
@@ -170,32 +164,17 @@ export const updateInvitationStatus = mutation({
     
     const member = await requireAuthAndMembership(ctx, invitation.orgaId);
     
-    // Store before state
-    const before = {
-      orgaId: invitation.orgaId,
-      emitterMemberId: invitation.emitterMemberId,
-      email: invitation.email,
-      status: invitation.status,
-      sentDate: invitation.sentDate,
-    };
-    
     // Update invitation
     await ctx.db.patch(args.invitationId, {
       status: args.status,
     });
     
-    // Get updated invitation for after state
-    const updatedInvitation = await ctx.db.get(args.invitationId);
-    if (!updatedInvitation) {
-      throw new Error("Failed to retrieve updated invitation");
-    }
-    
+    // Build before and after with only modified fields (status)
+    const before = {
+      status: invitation.status,
+    };
     const after = {
-      orgaId: updatedInvitation.orgaId,
-      emitterMemberId: updatedInvitation.emitterMemberId,
-      email: updatedInvitation.email,
-      status: updatedInvitation.status,
-      sentDate: updatedInvitation.sentDate,
+      status: args.status,
     };
     
     // Create decision record
@@ -264,13 +243,7 @@ export const deleteInvitation = mutation({
       diff: {
         type: "Invitation",
         before,
-        after: {
-          orgaId: invitation.orgaId,
-          emitterMemberId: invitation.emitterMemberId,
-          email: invitation.email,
-          status: "pending" as const,
-          sentDate: 0,
-        },
+        after: undefined,
       },
     });
     

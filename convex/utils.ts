@@ -95,6 +95,30 @@ export async function getOrgaFromRole(
 }
 
 /**
+ * Get the team leader member ID for a given team
+ * The leader is the member who holds the "Leader" role in the team
+ */
+export async function getTeamLeader(
+  ctx: QueryCtx | MutationCtx,
+  teamId: Id<"teams">
+): Promise<Id<"members">> {
+  const leaderRole = await ctx.db
+    .query("roles")
+    .withIndex("by_team_and_title", (q) => q.eq("teamId", teamId).eq("title", "Leader"))
+    .first();
+  
+  if (!leaderRole) {
+    throw new Error("Team leader role not found");
+  }
+  
+  if (!leaderRole.memberId) {
+    throw new Error("Team leader role is not assigned to a member");
+  }
+  
+  return leaderRole.memberId;
+}
+
+/**
  * Get role and team information for decision creation
  */
 export async function getRoleAndTeamInfo(

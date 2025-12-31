@@ -56,113 +56,98 @@ const policyVisibility = v.union(
 // Organization diff
 const organizationDiff = v.object({
   type: v.literal("Organization"),
-  before: v.object({
-    name: v.string(),
+  before: v.optional(v.object({
+    name: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
-    colorScheme: colorScheme,
-  }),
-  after: v.object({
-    name: v.string(),
+    colorScheme: v.optional(colorScheme),
+  })),
+  after: v.optional(v.object({
+    name: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
-    colorScheme: colorScheme,
-  }),
+    colorScheme: v.optional(colorScheme),
+  })),
 });
 
 // Team diff
 const teamDiff = v.object({
   type: v.literal("Team"),
-  before: v.object({
-    orgaId: v.id("orgas"),
-    name: v.string(),
+  before: v.optional(v.object({
+    orgaId: v.optional(v.id("orgas")),
+    name: v.optional(v.string()),
     parentTeamId: v.optional(v.id("teams")),
     mission: v.optional(v.string()),
-    isFirstTeam: v.boolean(),
-  }),
-  after: v.object({
-    orgaId: v.id("orgas"),
-    name: v.string(),
+    isFirstTeam: v.optional(v.boolean()),
+  })),
+  after: v.optional(v.object({
+    orgaId: v.optional(v.id("orgas")),
+    name: v.optional(v.string()),
     parentTeamId: v.optional(v.id("teams")),
     mission: v.optional(v.string()),
-    isFirstTeam: v.boolean(),
-  }),
+    isFirstTeam: v.optional(v.boolean()),
+  })),
 });
 
 // Role diff
 const roleDiff = v.object({
   type: v.literal("Role"),
-  before: v.object({
-    teamId: v.id("teams"),
-    title: v.string(),
-    mission: v.string(),
-    duties: v.array(v.string()),
+  before: v.optional(v.object({
+    teamId: v.optional(v.id("teams")),
+    title: v.optional(v.string()),
+    mission: v.optional(v.string()),
+    duties: v.optional(v.array(v.string())),
     memberId: v.optional(v.id("members")),
-  }),
-  after: v.object({
-    teamId: v.id("teams"),
-    title: v.string(),
-    mission: v.string(),
-    duties: v.array(v.string()),
+  })),
+  after: v.optional(v.object({
+    teamId: v.optional(v.id("teams")),
+    title: v.optional(v.string()),
+    mission: v.optional(v.string()),
+    duties: v.optional(v.array(v.string())),
     memberId: v.optional(v.id("members")),
-  }),
+  })),
 });
 
 // Invitation diff
 const invitationDiff = v.object({
   type: v.literal("Invitation"),
-  before: v.object({
-    orgaId: v.id("orgas"),
-    emitterMemberId: v.id("members"),
-    email: v.string(),
-    status: invitationStatus,
-    sentDate: v.number(),
-  }),
-  after: v.object({
-    orgaId: v.id("orgas"),
-    emitterMemberId: v.id("members"),
-    email: v.string(),
-    status: invitationStatus,
-    sentDate: v.number(),
-  }),
-});
-
-// Meeting diff
-const meetingDiff = v.object({
-  type: v.literal("Meeting"),
-  before: v.object({
-    teamId: v.id("teams"),
-    title: v.string(),
-    scheduledDate: v.number(),
-  }),
-  after: v.object({
-    teamId: v.id("teams"),
-    title: v.string(),
-    scheduledDate: v.number(),
-  }),
+  before: v.optional(v.object({
+    orgaId: v.optional(v.id("orgas")),
+    emitterMemberId: v.optional(v.id("members")),
+    email: v.optional(v.string()),
+    status: v.optional(invitationStatus),
+    sentDate: v.optional(v.number()),
+  })),
+  after: v.optional(v.object({
+    orgaId: v.optional(v.id("orgas")),
+    emitterMemberId: v.optional(v.id("members")),
+    email: v.optional(v.string()),
+    status: v.optional(invitationStatus),
+    sentDate: v.optional(v.number()),
+  })),
 });
 
 // Policy diff
 const policyDiff = v.object({
   type: v.literal("Policy"),
-  before: v.object({
-    orgaId: v.id("orgas"),
-    teamId: v.id("teams"),
-    roleId: v.id("roles"),
-    issuedDate: v.number(),
-    title: v.string(),
-    text: v.string(),
-    visibility: policyVisibility,
+  before: v.optional(v.object({
+    orgaId: v.optional(v.id("orgas")),
+    teamId: v.optional(v.id("teams")),
+    roleId: v.optional(v.id("roles")),
+    issuedDate: v.optional(v.number()),
+    title: v.optional(v.string()),
+    text: v.optional(v.string()),
+    visibility: v.optional(policyVisibility),
     expirationDate: v.optional(v.number()),
-  }),
-  after: v.object({
-    orgaId: v.id("orgas"),
-    teamId: v.id("teams"),
-    roleId: v.id("roles"),
-    issuedDate: v.number(),
-    title: v.string(),
-    text: v.string(),
-    visibility: policyVisibility,
+  })),
+  after: v.optional(v.object({
+    orgaId: v.optional(v.id("orgas")),
+    teamId: v.optional(v.id("teams")),
+    roleId: v.optional(v.id("roles")),
+    issuedDate: v.optional(v.number()),
+    title: v.optional(v.string()),
+    text: v.optional(v.string()),
+    visibility: v.optional(policyVisibility),
     expirationDate: v.optional(v.number()),
-  }),
+  })),
 });
 
 // Decision diff validator - discriminated union ensuring type safety
@@ -171,7 +156,6 @@ const decisionDiff = v.union(
   teamDiff,
   roleDiff,
   invitationDiff,
-  meetingDiff,
   policyDiff
 );
 
@@ -196,8 +180,10 @@ export default defineSchema({
     name: v.string(),
     logoUrl: v.optional(v.string()),
     colorScheme: colorScheme,
+    owner: v.id("members"), // Member who owns (pays for) the organization
   })
-    .index("by_name", ["name"]),
+    .index("by_name", ["name"])
+    .index("by_owner", ["owner"]),
 
   // Teams collection - each Team belongs to one Orga
   teams: defineTable({
@@ -234,7 +220,7 @@ export default defineSchema({
     title: v.string(), // e.g., "Leader", "Secretary", "Referee"
     mission: v.string(),
     duties: v.array(v.string()), // 0 to 10 duties
-    memberId: v.optional(v.id("members")), // The Member holding this Role (can be null)
+    memberId: v.id("members"), // The Member holding this Role (required)
   })
     .index("by_team", ["teamId"])
     .index("by_member", ["memberId"])
@@ -281,16 +267,6 @@ export default defineSchema({
     .index("by_team", ["teamId"])
     .index("by_role", ["roleId"])
     .index("by_team_and_date", ["teamId", "issuedDate"]),
-
-  // Meetings collection - Meetings within Teams
-  meetings: defineTable({
-    teamId: v.id("teams"),
-    title: v.string(),
-    scheduledDate: v.number(), // Timestamp
-    // Add more meeting fields as needed
-  })
-    .index("by_team", ["teamId"])
-    .index("by_team_and_date", ["teamId", "scheduledDate"]),
 
   // Policies collection - Policies belonging to an Organization, from a Team, emitted by a Role
   policies: defineTable({

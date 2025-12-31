@@ -138,13 +138,7 @@ export const createTeam = mutation({
       targetType: "teams",
       diff: {
         type: "Team",
-        before: {
-          orgaId: args.orgaId,
-          name: "",
-          parentTeamId: undefined,
-          mission: undefined,
-          isFirstTeam: false,
-        },
+        before: undefined,
         after: {
           orgaId: args.orgaId,
           name: args.name,
@@ -195,15 +189,6 @@ export const updateTeam = mutation({
       }
     }
     
-    // Store before state
-    const before = {
-      orgaId: team.orgaId,
-      name: team.name,
-      parentTeamId: team.parentTeamId,
-      mission: team.mission,
-      isFirstTeam: team.isFirstTeam,
-    };
-    
     // Update team
     const updates: {
       name?: string;
@@ -217,21 +202,40 @@ export const updateTeam = mutation({
     if (args.mission !== undefined) updates.mission = args.mission ?? undefined;
     if (args.isFirstTeam !== undefined) updates.isFirstTeam = args.isFirstTeam;
     
-    await ctx.db.patch(args.teamId, updates);
+    // Build before and after with only modified fields
+    const before: {
+      orgaId?: Id<"orgas">;
+      name?: string;
+      parentTeamId?: Id<"teams">;
+      mission?: string;
+      isFirstTeam?: boolean;
+    } = {};
+    const after: {
+      orgaId?: Id<"orgas">;
+      name?: string;
+      parentTeamId?: Id<"teams">;
+      mission?: string;
+      isFirstTeam?: boolean;
+    } = {};
     
-    // Get updated team for after state
-    const updatedTeam = await ctx.db.get(args.teamId);
-    if (!updatedTeam) {
-      throw new Error("Failed to retrieve updated team");
+    if (args.name !== undefined) {
+      before.name = team.name;
+      after.name = args.name;
+    }
+    if (args.parentTeamId !== undefined) {
+      before.parentTeamId = team.parentTeamId;
+      after.parentTeamId = args.parentTeamId ?? undefined;
+    }
+    if (args.mission !== undefined) {
+      before.mission = team.mission;
+      after.mission = args.mission ?? undefined;
+    }
+    if (args.isFirstTeam !== undefined) {
+      before.isFirstTeam = team.isFirstTeam;
+      after.isFirstTeam = args.isFirstTeam;
     }
     
-    const after = {
-      orgaId: updatedTeam.orgaId,
-      name: updatedTeam.name,
-      parentTeamId: updatedTeam.parentTeamId,
-      mission: updatedTeam.mission,
-      isFirstTeam: updatedTeam.isFirstTeam,
-    };
+    await ctx.db.patch(args.teamId, updates);
     
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
@@ -247,8 +251,8 @@ export const updateTeam = mutation({
       targetType: "teams",
       diff: {
         type: "Team",
-        before,
-        after,
+        before: Object.keys(before).length > 0 ? before : undefined,
+        after: Object.keys(after).length > 0 ? after : undefined,
       },
     });
     
@@ -309,13 +313,7 @@ export const deleteTeam = mutation({
       diff: {
         type: "Team",
         before,
-        after: {
-          orgaId: team.orgaId,
-          name: "",
-          parentTeamId: undefined,
-          mission: undefined,
-          isFirstTeam: false,
-        },
+        after: undefined,
       },
     });
     

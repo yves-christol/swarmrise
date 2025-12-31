@@ -204,16 +204,7 @@ export const createPolicy = mutation({
       targetType: "policies",
       diff: {
         type: "Policy",
-        before: {
-          orgaId: args.orgaId,
-          teamId: args.teamId,
-          roleId: args.roleId,
-          issuedDate: 0,
-          title: "",
-          text: "",
-          visibility: args.visibility,
-          expirationDate: undefined,
-        },
+        before: undefined,
         after: {
           orgaId: args.orgaId,
           teamId: args.teamId,
@@ -251,18 +242,6 @@ export const updatePolicy = mutation({
     
     const member = await requireAuthAndMembership(ctx, policy.orgaId);
     
-    // Store before state
-    const before = {
-      orgaId: policy.orgaId,
-      teamId: policy.teamId,
-      roleId: policy.roleId,
-      issuedDate: policy.issuedDate,
-      title: policy.title,
-      text: policy.text,
-      visibility: policy.visibility,
-      expirationDate: policy.expirationDate,
-    };
-    
     // Update policy
     const updates: {
       title?: string;
@@ -276,24 +255,46 @@ export const updatePolicy = mutation({
     if (args.visibility !== undefined) updates.visibility = args.visibility;
     if (args.expirationDate !== undefined) updates.expirationDate = args.expirationDate ?? undefined;
     
-    await ctx.db.patch(args.policyId, updates);
+    // Build before and after with only modified fields
+    const before: {
+      orgaId?: Id<"orgas">;
+      teamId?: Id<"teams">;
+      roleId?: Id<"roles">;
+      issuedDate?: number;
+      title?: string;
+      text?: string;
+      visibility?: "private" | "public";
+      expirationDate?: number;
+    } = {};
+    const after: {
+      orgaId?: Id<"orgas">;
+      teamId?: Id<"teams">;
+      roleId?: Id<"roles">;
+      issuedDate?: number;
+      title?: string;
+      text?: string;
+      visibility?: "private" | "public";
+      expirationDate?: number;
+    } = {};
     
-    // Get updated policy for after state
-    const updatedPolicy = await ctx.db.get(args.policyId);
-    if (!updatedPolicy) {
-      throw new Error("Failed to retrieve updated policy");
+    if (args.title !== undefined) {
+      before.title = policy.title;
+      after.title = args.title;
+    }
+    if (args.text !== undefined) {
+      before.text = policy.text;
+      after.text = args.text;
+    }
+    if (args.visibility !== undefined) {
+      before.visibility = policy.visibility;
+      after.visibility = args.visibility;
+    }
+    if (args.expirationDate !== undefined) {
+      before.expirationDate = policy.expirationDate;
+      after.expirationDate = args.expirationDate ?? undefined;
     }
     
-    const after = {
-      orgaId: updatedPolicy.orgaId,
-      teamId: updatedPolicy.teamId,
-      roleId: updatedPolicy.roleId,
-      issuedDate: updatedPolicy.issuedDate,
-      title: updatedPolicy.title,
-      text: updatedPolicy.text,
-      visibility: updatedPolicy.visibility,
-      expirationDate: updatedPolicy.expirationDate,
-    };
+    await ctx.db.patch(args.policyId, updates);
     
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
@@ -309,8 +310,8 @@ export const updatePolicy = mutation({
       targetType: "policies",
       diff: {
         type: "Policy",
-        before,
-        after,
+        before: Object.keys(before).length > 0 ? before : undefined,
+        after: Object.keys(after).length > 0 ? after : undefined,
       },
     });
     
@@ -364,16 +365,7 @@ export const deletePolicy = mutation({
       diff: {
         type: "Policy",
         before,
-        after: {
-          orgaId: policy.orgaId,
-          teamId: policy.teamId,
-          roleId: policy.roleId,
-          issuedDate: 0,
-          title: "",
-          text: "",
-          visibility: policy.visibility,
-          expirationDate: undefined,
-        },
+        after: undefined,
       },
     });
     

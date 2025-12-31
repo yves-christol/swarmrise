@@ -5,7 +5,6 @@ import {
   getAuthenticatedUser,
   getAuthenticatedUserEmail,
   requireAuthAndMembership,
-  getRoleAndTeamInfo,
 } from "./utils";
 
 /**
@@ -44,53 +43,6 @@ export const getCurrentUser = query({
     } catch {
       return null;
     }
-  },
-});
-
-/**
- * Get a user by ID (must be authenticated and member of an organization the user belongs to)
- */
-export const getUserById = query({
-  args: {
-    userId: v.id("users"),
-    orgaId: v.id("orgas"),
-  },
-  returns: v.union(
-    v.object({
-      _id: v.id("users"),
-      _creationTime: v.number(),
-      firstname: v.string(),
-      surname: v.string(),
-      email: v.string(),
-      pictureURL: v.optional(v.string()),
-      contactInfos: v.array(
-        v.object({
-          type: v.union(
-            v.literal("LinkedIn"),
-            v.literal("Facebook"),
-            v.literal("Instagram"),
-            v.literal("Whatsapp"),
-            v.literal("Mobile"),
-            v.literal("Address")
-          ),
-          value: v.string(),
-        })
-      ),
-      orgaIds: v.array(v.id("orgas")),
-    }),
-    v.null()
-  ),
-  handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
-    const user = await ctx.db.get(args.userId);
-    if (!user) {
-      return null;
-    }
-    // Check if user belongs to the organization
-    if (!user.orgaIds.includes(args.orgaId)) {
-      throw new Error("User does not belong to this organization");
-    }
-    return user;
   },
 });
 
@@ -198,14 +150,6 @@ export const updateUser = mutation({
       throw new Error("User does not belong to this organization");
     }
     
-    // Store before state
-    const before = {
-      firstname: user.firstname,
-      surname: user.surname,
-      pictureURL: user.pictureURL,
-      contactInfos: user.contactInfos,
-    };
-    
     // Update user
     const updates: {
       firstname?: string;
@@ -224,18 +168,11 @@ export const updateUser = mutation({
     
     await ctx.db.patch(args.userId, updates);
     
-    // Get updated user for after state
+    // Get updated user to sync with related members
     const updatedUser = await ctx.db.get(args.userId);
     if (!updatedUser) {
       throw new Error("Failed to retrieve updated user");
     }
-    
-    const after = {
-      firstname: updatedUser.firstname,
-      surname: updatedUser.surname,
-      pictureURL: updatedUser.pictureURL,
-      contactInfos: updatedUser.contactInfos,
-    };
     
     // Update all related members to keep them in sync
     const relatedMembers = await ctx.db
@@ -251,33 +188,6 @@ export const updateUser = mutation({
         contactInfos: updatedUser.contactInfos,
       });
     }
-    
-    // Create decision record
-    const email = await getAuthenticatedUserEmail(ctx);
-    const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, args.orgaId);
-    
-    await ctx.db.insert("decisions", {
-      orgaId: args.orgaId,
-      timestamp: Date.now(),
-      authorEmail: email,
-      roleName,
-      teamName,
-      targetId: args.userId,
-      targetType: "users",
-      diff: {
-        type: "Organization", // Note: User diff not in schema, using Organization as placeholder
-        before: {
-          name: `${before.firstname} ${before.surname}`,
-          logoUrl: before.pictureURL,
-          colorScheme: { primary: { r: 0, g: 0, b: 0 }, secondary: { r: 0, g: 0, b: 0 } },
-        },
-        after: {
-          name: `${after.firstname} ${after.surname}`,
-          logoUrl: after.pictureURL,
-          colorScheme: { primary: { r: 0, g: 0, b: 0 }, secondary: { r: 0, g: 0, b: 0 } },
-        },
-      },
-    });
     
     return args.userId;
   },
@@ -343,6 +253,14 @@ export const acceptInvitation = mutation({
       throw new Error("Failed to retrieve updated invitation");
     }
     
+    // Build before and after with only modified fields (status)
+    const before = {
+      status: invitation.status,
+    };
+    const after = {
+      status: updatedInvitation.status,
+    };
+    
     await ctx.db.insert("decisions", {
       orgaId: invitation.orgaId,
       timestamp: Date.now(),
@@ -353,20 +271,8 @@ export const acceptInvitation = mutation({
       targetType: "invitations",
       diff: {
         type: "Invitation",
-        before: {
-          orgaId: invitation.orgaId,
-          emitterMemberId: invitation.emitterMemberId,
-          email: invitation.email,
-          status: invitation.status,
-          sentDate: invitation.sentDate,
-        },
-        after: {
-          orgaId: updatedInvitation.orgaId,
-          emitterMemberId: updatedInvitation.emitterMemberId,
-          email: updatedInvitation.email,
-          status: updatedInvitation.status,
-          sentDate: updatedInvitation.sentDate,
-        },
+        before,
+        after,
       },
     });
     
@@ -400,32 +306,17 @@ export const rejectInvitation = mutation({
       throw new Error("Invitation is not pending");
     }
     
-    // Store before state
-    const before = {
-      orgaId: invitation.orgaId,
-      emitterMemberId: invitation.emitterMemberId,
-      email: invitation.email,
-      status: invitation.status,
-      sentDate: invitation.sentDate,
-    };
-    
     // Update invitation status
     await ctx.db.patch(args.invitationId, {
       status: "rejected",
     });
     
-    // Get updated invitation for after state
-    const updatedInvitation = await ctx.db.get(args.invitationId);
-    if (!updatedInvitation) {
-      throw new Error("Failed to retrieve updated invitation");
-    }
-    
+    // Build before and after with only modified fields (status)
+    const before = {
+      status: invitation.status,
+    };
     const after = {
-      orgaId: updatedInvitation.orgaId,
-      emitterMemberId: updatedInvitation.emitterMemberId,
-      email: updatedInvitation.email,
-      status: updatedInvitation.status,
-      sentDate: updatedInvitation.sentDate,
+      status: "rejected" as const,
     };
     
     // Create decision record

@@ -38,18 +38,6 @@ export const createTestOrganization = internalMutation({
     const timestamp = Date.now();
     const testOrgaName = `${TEST_ORGA_NAME_PREFIX}${timestamp}`;
     
-    // Create member document for the first user (with temporary orgaId)
-    const memberId = await ctx.db.insert("members", {
-      orgaId: "" as any, // Temporary placeholder
-      personId: user._id,
-      firstname: user.firstname,
-      surname: user.surname,
-      email: user.email,
-      pictureURL: user.pictureURL,
-      contactInfos: user.contactInfos,
-      roleIds: [], // Will be populated after roles are created
-    });
-    
     // Create the organization
     const orgaId = await ctx.db.insert("orgas", {
       name: testOrgaName,
@@ -58,12 +46,19 @@ export const createTestOrganization = internalMutation({
         primary: { r: 100, g: 150, b: 200 },
         secondary: { r: 200, g: 150, b: 100 },
       },
-      owner: memberId,
+      owner: user._id,
     });
     
-    // Update member with correct orgaId
-    await ctx.db.patch(memberId, {
-      orgaId,
+    // Create member document for the first user (with temporary orgaId)
+    const memberId = await ctx.db.insert("members", {
+      orgaId: orgaId,
+      personId: user._id,
+      firstname: user.firstname,
+      surname: user.surname,
+      email: user.email,
+      pictureURL: user.pictureURL,
+      contactInfos: user.contactInfos,
+      roleIds: [], // Will be populated after roles are created
     });
     
     // Create the first team

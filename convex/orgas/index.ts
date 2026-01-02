@@ -17,7 +17,7 @@ export const orgaType = v.object({
   name: v.string(),
   logoUrl: v.optional(v.string()),
   colorScheme: colorScheme,
-  owner: v.id("members"),
+  owner: v.id("users"),
 })
 
 export const orgaValidator = v.object({

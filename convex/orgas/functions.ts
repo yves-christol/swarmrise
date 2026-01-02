@@ -69,7 +69,7 @@ export const createOrganization = mutation({
       name: args.name,
       logoUrl: args.logoUrl,
       colorScheme: args.colorScheme,
-      owner: memberId,
+      owner: user._id,
     });
     
     // Update member with correct orgaId
@@ -272,7 +272,7 @@ export const transferOwnership = mutation({
     }
     
     // Verify that the current user is the owner
-    if (!orga.owner || orga.owner !== member._id) {
+    if (!orga.owner || orga.owner !== member.personId) {
       throw new Error("Only the owner can transfer ownership");
     }
     
@@ -293,7 +293,7 @@ export const transferOwnership = mutation({
     // Transfer ownership
     // Note: owner is not part of the Organization diff schema, so we don't track it
     await ctx.db.patch(args.orgaId, {
-      owner: args.newOwnerMemberId,
+      owner: newOwner.personId
     });
     
     // Create decision record

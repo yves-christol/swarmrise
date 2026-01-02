@@ -153,7 +153,7 @@ export const leaveOrganization = mutation({
     }
     
     // Check if the leaving member is the owner
-    if (orga.owner && orga.owner === member._id) {
+    if (orga.owner && orga.owner === user._id) {
       // Owner can only leave if they are the last member
       const allMembers = await ctx.db
         .query("members")

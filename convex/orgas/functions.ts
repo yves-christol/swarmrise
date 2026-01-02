@@ -1,12 +1,12 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { orgaValidator } from "./validators";
+import { orgaValidator } from ".";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getAuthenticatedUser,
-} from "./utils";
+} from "../utils";
 
 /**
  * Get an organization by ID
@@ -132,7 +132,6 @@ export const createOrganization = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName: "Leader", // User is creating as Leader
       teamName: firstTeamName,
@@ -239,7 +238,6 @@ export const updateOrga = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: args.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,
@@ -305,7 +303,6 @@ export const transferOwnership = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: args.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,

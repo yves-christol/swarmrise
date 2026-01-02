@@ -25,19 +25,7 @@ export const createTestOrganization = internalMutation({
     teamCount: number;
     roleCount: number;
   }> => {
-    const user: {
-      _id: Id<"users">;
-      _creationTime: number;
-      firstname: string;
-      surname: string;
-      email: string;
-      pictureURL?: string;
-      contactInfos: Array<{
-        type: "LinkedIn" | "Facebook" | "Instagram" | "Whatsapp" | "Mobile" | "Address";
-        value: string;
-      }>;
-      orgaIds: Id<"orgas">[];
-    } | null = await ctx.runQuery(internal.admin.getAdmin, {});
+    const user = await ctx.runQuery(internal.admin.getAdmin, {});
     if (!user) {
       throw new Error("Admin user not found");
     }
@@ -50,7 +38,7 @@ export const createTestOrganization = internalMutation({
     const timestamp = Date.now();
     const testOrgaName = `${TEST_ORGA_NAME_PREFIX}${timestamp}`;
     
-    // Create member document for the user first (with temporary orgaId)
+    // Create member document for the first user (with temporary orgaId)
     const memberId = await ctx.db.insert("members", {
       orgaId: "" as any, // Temporary placeholder
       personId: user._id,

@@ -1,13 +1,16 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { decisionValidator, memberValidator, roleValidator, teamValidator } from "./validators";
-import { Id } from "./_generated/dataModel";
+import { decisionValidator } from "../decisions";
+import { memberValidator } from ".";
+import { roleValidator } from "../roles";
+import { teamValidator } from "../teams";
+import { Id } from "../_generated/dataModel";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getTeamLeader,
-} from "./utils";
+} from "../utils";
 
 /**
  * Get a member by ID (must be authenticated and member of the same organization)
@@ -127,8 +130,8 @@ export const listMemberDecisions = query({
     // Get all decisions made by this member (by author email)
     return await ctx.db
       .query("decisions")
-      .withIndex("by_author", (q) => q.eq("authorEmail", member.email))
-      .filter((q) => q.eq(q.field("orgaId"), member.orgaId))
+      .withIndex("by_orga_and_author", (q) => q.eq("orgaId", member.orgaId))
+      .filter((q) => q.eq(q.field("authorEmail"), member.email))
       .collect();
   },
 });
@@ -142,7 +145,7 @@ export const leaveOrganization = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    const user = await import("./utils").then((m) => m.getAuthenticatedUser(ctx));
+    const user = await import("../utils").then((m) => m.getAuthenticatedUser(ctx));
     const member = await requireAuthAndMembership(ctx, args.orgaId);
     const orga = await ctx.db.get(args.orgaId);
     if (!orga) {
@@ -287,7 +290,6 @@ export const leaveOrganization = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: args.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,

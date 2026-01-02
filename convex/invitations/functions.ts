@@ -1,11 +1,11 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { invitationValidator, invitationStatusValidator } from "./validators";
+import { invitationValidator, invitationStatus } from ".";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
-} from "./utils";
+} from "../utils";
 
 /**
  * Get an invitation by ID
@@ -31,7 +31,7 @@ export const getInvitationById = query({
 export const listInvitationsInOrga = query({
   args: {
     orgaId: v.id("orgas"),
-    status: invitationStatusValidator,
+    status: invitationStatus,
   },
   returns: v.array(invitationValidator),
   handler: async (ctx, args) => {
@@ -103,7 +103,6 @@ export const createInvitation = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: args.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,
@@ -162,7 +161,6 @@ export const updateInvitationStatus = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: invitation.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,
@@ -213,7 +211,6 @@ export const deleteInvitation = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: invitation.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,

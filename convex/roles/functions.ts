@@ -1,7 +1,7 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
-import { roleValidator } from "./validators";
+import { Id } from "../_generated/dataModel";
+import { roleValidator } from ".";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -9,7 +9,7 @@ import {
   getOrgaFromRole,
   getOrgaFromTeam,
   getTeamLeader,
-} from "./utils";
+} from "../utils";
 
 /**
  * Get a role by ID
@@ -111,7 +111,6 @@ export const createRole = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,
@@ -239,7 +238,6 @@ export const updateRole = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,
@@ -301,7 +299,6 @@ export const deleteRole = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,

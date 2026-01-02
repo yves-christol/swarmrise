@@ -1,13 +1,13 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
-import { teamValidator } from "./validators";
+import { Id } from "../_generated/dataModel";
+import { teamValidator } from ".";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getOrgaFromTeam,
-} from "./utils";
+} from "../utils";
 
 /**
  * Get a team by ID
@@ -120,7 +120,6 @@ export const createTeam = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: args.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,
@@ -233,7 +232,6 @@ export const updateTeam = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,
@@ -294,7 +292,6 @@ export const deleteTeam = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,

@@ -1,14 +1,14 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
-import { policyValidator } from "./validators";
+import { Id } from "../_generated/dataModel";
+import { policyValidator } from ".";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getOrgaFromRole,
   getOrgaFromTeam,
-} from "./utils";
+} from "../utils";
 
 /**
  * Get a policy by ID
@@ -144,7 +144,6 @@ export const createPolicy = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: args.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,
@@ -250,7 +249,6 @@ export const updatePolicy = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: policy.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,
@@ -304,7 +302,6 @@ export const deletePolicy = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: policy.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName,
       teamName,

@@ -1,10 +1,12 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { contactValidator, invitationValidator, orgaValidator, userValidator } from "./validators";
+import { userValidator, contactInfo } from ".";
+import { orgaValidator } from "../orgas";
+import { invitationValidator } from "../invitations";
 import {
   getAuthenticatedUser,
   getAuthenticatedUserEmail,
-} from "./utils";
+} from "../utils";
 
 /**
  * Get the current authenticated user
@@ -66,7 +68,7 @@ export const updateUser = mutation({
     firstname: v.optional(v.string()),
     surname: v.optional(v.string()),
     pictureURL: v.optional(v.union(v.string(), v.null())),
-    contactInfos: v.array(contactValidator),
+    contactInfos: v.array(contactInfo),
   },
   returns: v.id("users"),
   handler: async (ctx, args) => {
@@ -170,6 +172,9 @@ export const acceptInvitation = mutation({
       contactInfos: user.contactInfos,
       roleIds: [],
     });
+    if (!memberId) {
+      throw new Error("Failed to insert new member accepting an invitation");
+    }
     
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
@@ -188,7 +193,6 @@ export const acceptInvitation = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: invitation.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName: "Member",
       teamName: "System",
@@ -249,7 +253,6 @@ export const rejectInvitation = mutation({
     
     await ctx.db.insert("decisions", {
       orgaId: invitation.orgaId,
-      timestamp: Date.now(),
       authorEmail: email,
       roleName: "Member",
       teamName: "System",

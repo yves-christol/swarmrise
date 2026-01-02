@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
+import { teamValidator } from "./validators";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -15,18 +16,7 @@ export const getTeamById = query({
   args: {
     teamId: v.id("teams"),
   },
-  returns: v.union(
-    v.object({
-      _id: v.id("teams"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      name: v.string(),
-      parentTeamId: v.optional(v.id("teams")),
-      mission: v.optional(v.string()),
-      isFirstTeam: v.boolean(),
-    }),
-    v.null()
-  ),
+  returns: v.union(teamValidator, v.null()),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
     await requireAuthAndMembership(ctx, orgaId);

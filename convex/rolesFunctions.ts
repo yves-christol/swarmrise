@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
+import { roleValidator } from "./validators";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -17,18 +18,7 @@ export const getRoleById = query({
   args: {
     roleId: v.id("roles"),
   },
-  returns: v.union(
-    v.object({
-      _id: v.id("roles"),
-      _creationTime: v.number(),
-      teamId: v.id("teams"),
-      title: v.string(),
-      mission: v.string(),
-      duties: v.array(v.string()),
-      memberId: v.id("members"),
-    }),
-    v.null()
-  ),
+  returns: v.union(roleValidator, v.null()),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromRole(ctx, args.roleId);
     await requireAuthAndMembership(ctx, orgaId);

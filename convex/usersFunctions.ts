@@ -1,10 +1,9 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
+import { contactValidator, invitationValidator, orgaValidator, userValidator } from "./validators";
 import {
   getAuthenticatedUser,
   getAuthenticatedUserEmail,
-  requireAuthAndMembership,
 } from "./utils";
 
 /**
@@ -12,31 +11,7 @@ import {
  */
 export const getCurrentUser = query({
   args: {},
-  returns: v.union(
-    v.object({
-      _id: v.id("users"),
-      _creationTime: v.number(),
-      firstname: v.string(),
-      surname: v.string(),
-      email: v.string(),
-      pictureURL: v.optional(v.string()),
-      contactInfos: v.array(
-        v.object({
-          type: v.union(
-            v.literal("LinkedIn"),
-            v.literal("Facebook"),
-            v.literal("Instagram"),
-            v.literal("Whatsapp"),
-            v.literal("Mobile"),
-            v.literal("Address")
-          ),
-          value: v.string(),
-        })
-      ),
-      orgaIds: v.array(v.id("orgas")),
-    }),
-    v.null()
-  ),
+  returns: v.union(userValidator, v.null()),
   handler: async (ctx) => {
     try {
       return await getAuthenticatedUser(ctx);
@@ -51,26 +26,7 @@ export const getCurrentUser = query({
  */
 export const listMyOrgas = query({
   args: {},
-  returns: v.array(
-    v.object({
-      _id: v.id("orgas"),
-      _creationTime: v.number(),
-      name: v.string(),
-      logoUrl: v.optional(v.string()),
-      colorScheme: v.object({
-        primary: v.object({
-          r: v.number(),
-          g: v.number(),
-          b: v.number(),
-        }),
-        secondary: v.object({
-          r: v.number(),
-          g: v.number(),
-          b: v.number(),
-        }),
-      }),
-    })
-  ),
+  returns: v.array(orgaValidator),
   handler: async (ctx) => {
     const user = await getAuthenticatedUser(ctx);
     const orgas = [];
@@ -89,17 +45,7 @@ export const listMyOrgas = query({
  */
 export const listMyInvitations = query({
   args: {},
-  returns: v.array(
-    v.object({
-      _id: v.id("invitations"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      emitterMemberId: v.id("members"),
-      email: v.string(),
-      status: v.union(v.literal("pending"), v.literal("rejected"), v.literal("accepted")),
-      sentDate: v.number(),
-    })
-  ),
+  returns: v.array(invitationValidator),
   handler: async (ctx) => {
     const user = await getAuthenticatedUser(ctx);
     return await ctx.db
@@ -117,37 +63,16 @@ export const listMyInvitations = query({
 export const updateUser = mutation({
   args: {
     userId: v.id("users"),
-    orgaId: v.id("orgas"),
     firstname: v.optional(v.string()),
     surname: v.optional(v.string()),
     pictureURL: v.optional(v.union(v.string(), v.null())),
-    contactInfos: v.optional(
-      v.array(
-        v.object({
-          type: v.union(
-            v.literal("LinkedIn"),
-            v.literal("Facebook"),
-            v.literal("Instagram"),
-            v.literal("Whatsapp"),
-            v.literal("Mobile"),
-            v.literal("Address")
-          ),
-          value: v.string(),
-        })
-      )
-    ),
+    contactInfos: v.array(contactValidator),
   },
   returns: v.id("users"),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
     const user = await ctx.db.get(args.userId);
     if (!user) {
       throw new Error("User not found");
-    }
-    
-    // Check if user belongs to the organization
-    if (!user.orgaIds.includes(args.orgaId)) {
-      throw new Error("User does not belong to this organization");
     }
     
     // Update user

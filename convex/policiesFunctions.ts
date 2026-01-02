@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
+import { policyValidator } from "./validators";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -16,21 +17,7 @@ export const getPolicyById = query({
   args: {
     policyId: v.id("policies"),
   },
-  returns: v.union(
-    v.object({
-      _id: v.id("policies"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      teamId: v.id("teams"),
-      roleId: v.id("roles"),
-      issuedDate: v.number(),
-      title: v.string(),
-      text: v.string(),
-      visibility: v.union(v.literal("private"), v.literal("public")),
-      expirationDate: v.optional(v.number()),
-    }),
-    v.null()
-  ),
+  returns: v.union(policyValidator, v.null()),
   handler: async (ctx, args) => {
     const policy = await ctx.db.get(args.policyId);
     if (!policy) {
@@ -49,20 +36,7 @@ export const listPoliciesInOrga = query({
     orgaId: v.id("orgas"),
     visibility: v.optional(v.union(v.literal("private"), v.literal("public"))),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("policies"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      teamId: v.id("teams"),
-      roleId: v.id("roles"),
-      issuedDate: v.number(),
-      title: v.string(),
-      text: v.string(),
-      visibility: v.union(v.literal("private"), v.literal("public")),
-      expirationDate: v.optional(v.number()),
-    })
-  ),
+  returns: v.array(policyValidator),
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
     if (args.visibility) {
@@ -88,20 +62,7 @@ export const listPoliciesInTeam = query({
   args: {
     teamId: v.id("teams"),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("policies"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      teamId: v.id("teams"),
-      roleId: v.id("roles"),
-      issuedDate: v.number(),
-      title: v.string(),
-      text: v.string(),
-      visibility: v.union(v.literal("private"), v.literal("public")),
-      expirationDate: v.optional(v.number()),
-    })
-  ),
+  returns: v.array(policyValidator),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
     await requireAuthAndMembership(ctx, orgaId);
@@ -119,20 +80,7 @@ export const listPoliciesByRole = query({
   args: {
     roleId: v.id("roles"),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("policies"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      teamId: v.id("teams"),
-      roleId: v.id("roles"),
-      issuedDate: v.number(),
-      title: v.string(),
-      text: v.string(),
-      visibility: v.union(v.literal("private"), v.literal("public")),
-      expirationDate: v.optional(v.number()),
-    })
-  ),
+  returns: v.array(policyValidator),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromRole(ctx, args.roleId);
     await requireAuthAndMembership(ctx, orgaId);

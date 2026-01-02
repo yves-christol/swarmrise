@@ -1,6 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
+import { invitationValidator, invitationStatusValidator } from "./validators";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -14,18 +14,7 @@ export const getInvitationById = query({
   args: {
     invitationId: v.id("invitations"),
   },
-  returns: v.union(
-    v.object({
-      _id: v.id("invitations"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      emitterMemberId: v.id("members"),
-      email: v.string(),
-      status: v.union(v.literal("pending"), v.literal("rejected"), v.literal("accepted")),
-      sentDate: v.number(),
-    }),
-    v.null()
-  ),
+  returns: v.union(invitationValidator, v.null()),
   handler: async (ctx, args) => {
     const invitation = await ctx.db.get(args.invitationId);
     if (!invitation) {
@@ -42,26 +31,16 @@ export const getInvitationById = query({
 export const listInvitationsInOrga = query({
   args: {
     orgaId: v.id("orgas"),
-    status: v.optional(v.union(v.literal("pending"), v.literal("rejected"), v.literal("accepted"))),
+    status: invitationStatusValidator,
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("invitations"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      emitterMemberId: v.id("members"),
-      email: v.string(),
-      status: v.union(v.literal("pending"), v.literal("rejected"), v.literal("accepted")),
-      sentDate: v.number(),
-    })
-  ),
+  returns: v.array(invitationValidator),
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
     if (args.status) {
       return await ctx.db
         .query("invitations")
         .withIndex("by_orga_and_status", (q) =>
-          q.eq("orgaId", args.orgaId).eq("status", args.status as "pending" | "rejected" | "accepted")
+          q.eq("orgaId", args.orgaId).eq("status", args.status)
         )
         .collect();
     } else {

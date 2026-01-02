@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { decisionValidator, memberValidator, roleValidator, teamValidator } from "./validators";
 import { Id } from "./_generated/dataModel";
 import {
   requireAuthAndMembership,
@@ -15,33 +16,8 @@ export const getMemberById = query({
   args: {
     memberId: v.id("members"),
   },
-  returns: v.union(
-    v.object({
-      _id: v.id("members"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      personId: v.id("users"),
-      firstname: v.string(),
-      surname: v.string(),
-      email: v.string(),
-      pictureURL: v.optional(v.string()),
-      contactInfos: v.array(
-        v.object({
-          type: v.union(
-            v.literal("LinkedIn"),
-            v.literal("Facebook"),
-            v.literal("Instagram"),
-            v.literal("Whatsapp"),
-            v.literal("Mobile"),
-            v.literal("Address")
-          ),
-          value: v.string(),
-        })
-      ),
-      roleIds: v.array(v.id("roles")),
-    }),
-    v.null()
-  ),
+    returns: v.union(memberValidator, v.null()),
+ 
   handler: async (ctx, args) => {
     const member = await ctx.db.get(args.memberId);
     if (!member) {
@@ -53,36 +29,13 @@ export const getMemberById = query({
 });
 
 /**
- * List all users in an organization
+ * List all members in an organization
  */
-export const listUsersInOrga = query({
+export const listMembers = query({
   args: {
     orgaId: v.id("orgas"),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("users"),
-      _creationTime: v.number(),
-      firstname: v.string(),
-      surname: v.string(),
-      email: v.string(),
-      pictureURL: v.optional(v.string()),
-      contactInfos: v.array(
-        v.object({
-          type: v.union(
-            v.literal("LinkedIn"),
-            v.literal("Facebook"),
-            v.literal("Instagram"),
-            v.literal("Whatsapp"),
-            v.literal("Mobile"),
-            v.literal("Address")
-          ),
-          value: v.string(),
-        })
-      ),
-      orgaIds: v.array(v.id("orgas")),
-    })
-  ),
+  returns: v.array(memberValidator),
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
     // Get all members of the organization, then get their users
@@ -91,20 +44,7 @@ export const listUsersInOrga = query({
       .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
       .collect();
     
-    const userIds = new Set<Id<"users">>();
-    for (const member of members) {
-      userIds.add(member.personId);
-    }
-    
-    const users = [];
-    for (const userId of userIds) {
-      const user = await ctx.db.get(userId);
-      if (user) {
-        users.push(user);
-      }
-    }
-    
-    return users;
+    return members;
   },
 });
 
@@ -115,17 +55,7 @@ export const listMemberTeams = query({
   args: {
     memberId: v.id("members"),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("teams"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      name: v.string(),
-      parentTeamId: v.optional(v.id("teams")),
-      mission: v.optional(v.string()),
-      isFirstTeam: v.boolean(),
-    })
-  ),
+  returns: v.array( teamValidator ),
   handler: async (ctx, args) => {
     const member = await ctx.db.get(args.memberId);
     if (!member) {
@@ -165,17 +95,7 @@ export const listMemberRoles = query({
   args: {
     memberId: v.id("members"),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("roles"),
-      _creationTime: v.number(),
-      teamId: v.id("teams"),
-      title: v.string(),
-      mission: v.string(),
-      duties: v.array(v.string()),
-      memberId: v.id("members"),
-    })
-  ),
+  returns: v.array( roleValidator ),
   handler: async (ctx, args) => {
     const member = await ctx.db.get(args.memberId);
     if (!member) {
@@ -196,114 +116,7 @@ export const listMemberDecisions = query({
   args: {
     memberId: v.id("members"),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("decisions"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      timestamp: v.number(),
-      authorEmail: v.string(),
-      roleName: v.string(),
-      teamName: v.string(),
-      targetId: v.string(),
-      targetType: v.string(),
-      diff: v.union(
-        v.object({
-          type: v.literal("Organization"),
-          before: v.optional(v.object({
-            name: v.optional(v.string()),
-            logoUrl: v.optional(v.string()),
-            colorScheme: v.optional(v.object({
-              primary: v.object({ r: v.number(), g: v.number(), b: v.number() }),
-              secondary: v.object({ r: v.number(), g: v.number(), b: v.number() }),
-            })),
-          })),
-          after: v.optional(v.object({
-            name: v.optional(v.string()),
-            logoUrl: v.optional(v.string()),
-            colorScheme: v.optional(v.object({
-              primary: v.object({ r: v.number(), g: v.number(), b: v.number() }),
-              secondary: v.object({ r: v.number(), g: v.number(), b: v.number() }),
-            })),
-          })),
-        }),
-        v.object({
-          type: v.literal("Team"),
-          before: v.optional(v.object({
-            orgaId: v.optional(v.id("orgas")),
-            name: v.optional(v.string()),
-            parentTeamId: v.optional(v.id("teams")),
-            mission: v.optional(v.string()),
-            isFirstTeam: v.optional(v.boolean()),
-          })),
-          after: v.optional(v.object({
-            orgaId: v.optional(v.id("orgas")),
-            name: v.optional(v.string()),
-            parentTeamId: v.optional(v.id("teams")),
-            mission: v.optional(v.string()),
-            isFirstTeam: v.optional(v.boolean()),
-          })),
-        }),
-        v.object({
-          type: v.literal("Role"),
-          before: v.optional(v.object({
-            teamId: v.optional(v.id("teams")),
-            title: v.optional(v.string()),
-            mission: v.optional(v.string()),
-            duties: v.optional(v.array(v.string())),
-            memberId: v.optional(v.id("members")),
-          })),
-          after: v.optional(v.object({
-            teamId: v.optional(v.id("teams")),
-            title: v.optional(v.string()),
-            mission: v.optional(v.string()),
-            duties: v.optional(v.array(v.string())),
-            memberId: v.optional(v.id("members")),
-          })),
-        }),
-        v.object({
-          type: v.literal("Invitation"),
-          before: v.optional(v.object({
-            orgaId: v.optional(v.id("orgas")),
-            emitterMemberId: v.optional(v.id("members")),
-            email: v.optional(v.string()),
-            status: v.optional(v.union(v.literal("pending"), v.literal("rejected"), v.literal("accepted"))),
-            sentDate: v.optional(v.number()),
-          })),
-          after: v.optional(v.object({
-            orgaId: v.optional(v.id("orgas")),
-            emitterMemberId: v.optional(v.id("members")),
-            email: v.optional(v.string()),
-            status: v.optional(v.union(v.literal("pending"), v.literal("rejected"), v.literal("accepted"))),
-            sentDate: v.optional(v.number()),
-          })),
-        }),
-        v.object({
-          type: v.literal("Policy"),
-          before: v.optional(v.object({
-            orgaId: v.optional(v.id("orgas")),
-            teamId: v.optional(v.id("teams")),
-            roleId: v.optional(v.id("roles")),
-            issuedDate: v.optional(v.number()),
-            title: v.optional(v.string()),
-            text: v.optional(v.string()),
-            visibility: v.optional(v.union(v.literal("private"), v.literal("public"))),
-            expirationDate: v.optional(v.number()),
-          })),
-          after: v.optional(v.object({
-            orgaId: v.optional(v.id("orgas")),
-            teamId: v.optional(v.id("teams")),
-            roleId: v.optional(v.id("roles")),
-            issuedDate: v.optional(v.number()),
-            title: v.optional(v.string()),
-            text: v.optional(v.string()),
-            visibility: v.optional(v.union(v.literal("private"), v.literal("public"))),
-            expirationDate: v.optional(v.number()),
-          })),
-        })
-      ),
-    })
-  ),
+  returns: v.array( decisionValidator ),
   handler: async (ctx, args) => {
     const member = await ctx.db.get(args.memberId);
     if (!member) {

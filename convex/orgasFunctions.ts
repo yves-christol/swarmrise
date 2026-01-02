@@ -1,6 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
+import { orgaValidator } from "./validators";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -15,28 +15,7 @@ export const getOrgaById = query({
   args: {
     orgaId: v.id("orgas"),
   },
-  returns: v.union(
-    v.object({
-      _id: v.id("orgas"),
-      _creationTime: v.number(),
-      name: v.string(),
-      logoUrl: v.optional(v.string()),
-      colorScheme: v.object({
-        primary: v.object({
-          r: v.number(),
-          g: v.number(),
-          b: v.number(),
-        }),
-        secondary: v.object({
-          r: v.number(),
-          g: v.number(),
-          b: v.number(),
-        }),
-      }),
-      owner: v.id("members"),
-    }),
-    v.null()
-  ),
+  returns: v.union(orgaValidator, v.null()),
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
     return await ctx.db.get(args.orgaId);

@@ -1,7 +1,7 @@
-import { mutation } from "./_generated/server";
+import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
-import { getAuthenticatedUser } from "./utils";
+import { internal } from "./_generated/api";
 
 const TEST_ORGA_NAME_PREFIX = "TEST_DATA_MODEL_";
 
@@ -11,7 +11,7 @@ const TEST_ORGA_NAME_PREFIX = "TEST_DATA_MODEL_";
  * - 20-30 teams
  * - Each member holds 1-5 roles across the teams
  */
-export const createTestOrganization = mutation({
+export const createTestOrganization = internalMutation({
   args: {},
   returns: v.object({
     orgaId: v.id("orgas"),
@@ -19,8 +19,28 @@ export const createTestOrganization = mutation({
     teamCount: v.number(),
     roleCount: v.number(),
   }),
-  handler: async (ctx) => {
-    const user = await getAuthenticatedUser(ctx);
+  handler: async (ctx): Promise<{
+    orgaId: Id<"orgas">;
+    memberCount: number;
+    teamCount: number;
+    roleCount: number;
+  }> => {
+    const user: {
+      _id: Id<"users">;
+      _creationTime: number;
+      firstname: string;
+      surname: string;
+      email: string;
+      pictureURL?: string;
+      contactInfos: Array<{
+        type: "LinkedIn" | "Facebook" | "Instagram" | "Whatsapp" | "Mobile" | "Address";
+        value: string;
+      }>;
+      orgaIds: Id<"orgas">[];
+    } | null = await ctx.runQuery(internal.admin.getAdmin, {});
+    if (!user) {
+      throw new Error("Admin user not found");
+    }
     
     // Generate random number of teams between 20 and 30
     const teamCount = 20 + Math.floor(Math.random() * 11); // 20-30 inclusive
@@ -233,7 +253,7 @@ export const createTestOrganization = mutation({
  * Delete a test organization and all related data
  * This function will find and delete the test organization created by createTestOrganization
  */
-export const deleteTestOrganization = mutation({
+export const deleteTestOrganization = internalMutation({
   args: {
     orgaId: v.optional(v.id("orgas")), // Optional: if not provided, finds by name prefix
   },

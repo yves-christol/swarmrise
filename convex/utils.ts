@@ -1,6 +1,5 @@
 import { QueryCtx, MutationCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
-import { v } from "convex/values";
 
 /**
  * Get the authenticated user's email or throw an error

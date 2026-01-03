@@ -15,7 +15,7 @@ export const aggregateMembers = new TableAggregate<
     TableName: "members";
   }
 >(components.aggregateMembers, {
-  namespace: (doc: Doc<"members">) => doc.orgaId,
+  namespace: (doc: Doc<"members">) => doc.orgaId as string,
   sortKey: () => null, // No sorting needed for simple counts
 });
 
@@ -31,7 +31,7 @@ export const aggregateTeams = new TableAggregate<
     TableName: "teams";
   }
 >(components.aggregateTeams, {
-  namespace: (doc: Doc<"teams">) => doc.orgaId,
+  namespace: (doc: Doc<"teams">) => doc.orgaId as string,
   sortKey: () => null, // No sorting needed for simple counts
 });
 
@@ -47,7 +47,7 @@ export const aggregateRoles = new TableAggregate<
     TableName: "roles";
   }
 >(components.aggregateRoles, {
-  namespace: (doc: Doc<"roles">) => doc.orgaId,
+  namespace: (doc: Doc<"roles">) => doc.orgaId as string,
   sortKey: () => null, // No sorting needed for simple counts
 });
 

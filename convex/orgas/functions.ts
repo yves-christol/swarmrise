@@ -23,6 +23,56 @@ export const getOrgaById = query({
 });
 
 /**
+ * Get organizations with their counts (members, teams, roles) for the authenticated user
+ */
+export const listMyOrgasWithCounts = query({
+  args: {},
+  returns: v.array(
+    v.object({
+      orga: orgaValidator,
+      counts: v.object({
+        members: v.number(),
+        teams: v.number(),
+        roles: v.number(),
+      }),
+    })
+  ),
+  handler: async (ctx) => {
+    const user = await getAuthenticatedUser(ctx);
+    const orgas = [];
+    for (const orgaId of user.orgaIds) {
+      const orga = await ctx.db.get(orgaId);
+      if (orga) {
+        // Get counts using direct queries (more reliable than aggregates for existing data)
+        const [membersList, teamsList, rolesList] = await Promise.all([
+          ctx.db
+            .query("members")
+            .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+            .collect(),
+          ctx.db
+            .query("teams")
+            .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+            .collect(),
+          ctx.db
+            .query("roles")
+            .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+            .collect(),
+        ]);
+        orgas.push({
+          orga,
+          counts: {
+            members: membersList.length,
+            teams: teamsList.length,
+            roles: rolesList.length,
+          },
+        });
+      }
+    }
+    return orgas;
+  },
+});
+
+/**
  * Create a new organization
  * Only authenticated users can create an organization.
  * The creating user becomes the first member and holds all three initial roles (Leader, Secretary, Referee).

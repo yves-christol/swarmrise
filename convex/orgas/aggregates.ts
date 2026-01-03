@@ -14,7 +14,7 @@ export const getMemberCount = query({
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
     return await aggregateMembers.count(ctx, {
-      namespace: args.orgaId,
+      namespace: args.orgaId as string,
     });
   },
 });
@@ -30,7 +30,7 @@ export const getTeamCount = query({
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
     return await aggregateTeams.count(ctx, {
-      namespace: args.orgaId,
+      namespace: args.orgaId as string,
     });
   },
 });
@@ -46,7 +46,7 @@ export const getRoleCount = query({
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
     return await aggregateRoles.count(ctx, {
-      namespace: args.orgaId,
+      namespace: args.orgaId as string,
     });
   },
 });
@@ -65,7 +65,7 @@ export const getOrgaCounts = query({
   }),
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
-    const namespace = args.orgaId;
+    const namespace = args.orgaId as string;
     const [members, teams, roles] = await Promise.all([
       aggregateMembers.count(ctx, { namespace }),
       aggregateTeams.count(ctx, { namespace }),

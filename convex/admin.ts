@@ -30,7 +30,7 @@ export const getAdmin = internalQuery({
   ),
   handler: async (ctx) => {
     try {
-      return await ctx.db.query("users").withIndex('by_email', (q) => q.eq('email', 'admin@swarmrise.com')).unique();
+      return await ctx.db.query("users").withIndex('by_email', (q) => q.eq('email', 'yves.christol@gmail.com')).unique();
     } catch {
       return null;
     }

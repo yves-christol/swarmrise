@@ -1,94 +1,75 @@
 "use client";
 
-import {
-  useMutation,
-  useQuery,
-} from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { ResourceCard } from "../ResourceCard"
 
 export const Authentified = () => {
-  const { viewer, numbers } =
-    useQuery(api.myFunctions.listNumbers, {
-      count: 10,
-    }) ?? {};
-  const addNumber = useMutation(api.myFunctions.addNumber);
+  const orgasWithCounts = useQuery(api.orgas.functions.listMyOrgasWithCounts);
 
-  if (viewer === undefined || numbers === undefined) {
+  if (orgasWithCounts === undefined) {
     return (
       <div className="mx-auto">
-        <p>loading... (consider a loading skeleton)</p>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (orgasWithCounts.length === 0) {
+    return (
+      <div className="flex flex-col gap-8 max-w-4xl mx-auto p-8">
+        <h1 className="text-3xl font-bold">Welcome!</h1>
+        <p>You are not a member of any organizations yet.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-8 max-w-lg mx-auto">
-      <p>Welcome {viewer ?? "Anonymous"}!</p>
-      <p>
-        Click the button below and open this page in another window - this data
-        is persisted in the Convex cloud database!
-      </p>
-      <p>
-        <button
-          className="bg-dark dark:bg-light text-light dark:text-dark text-sm px-4 py-2 rounded-md border-2"
-          onClick={() => {
-            void addNumber({ value: Math.floor(Math.random() * 10) });
-          }}
-        >
-          Add a random number
-        </button>
-      </p>
-      <p>
-        Numbers:{" "}
-        {numbers?.length === 0
-          ? "Click the button!"
-          : numbers?.join(", ") ?? "..."}
-      </p>
-      <p>
-        Edit{" "}
-        <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
-          convex/myFunctions.ts
-        </code>{" "}
-        to change your backend
-      </p>
-      <p>
-        Edit{" "}
-        <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
-          src/App.tsx
-        </code>{" "}
-        to change your frontend
-      </p>
-      <div className="flex flex-col">
-        <p className="text-lg font-bold">Useful resources:</p>
-        <div className="flex gap-2">
-          <div className="flex flex-col gap-2 w-1/2">
-            <ResourceCard
-              title="Convex docs"
-              description="Read comprehensive documentation for all Convex features."
-              href="https://docs.convex.dev/home"
-            />
-            <ResourceCard
-              title="Stack articles"
-              description="Learn about best practices, use cases, and more from a growing
-            collection of articles, videos, and walkthroughs."
-              href="https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
-            />
+    <div className="flex flex-col gap-8 max-w-4xl mx-auto p-8">
+      <h1 className="text-3xl font-bold">Welcome!</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {orgasWithCounts.map(({ orga, counts }) => (
+          <div
+            key={orga._id}
+            className="border-2 border-gray-300 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <div className="flex items-center gap-4 mb-4">
+              {orga.logoUrl && (
+                <img
+                  src={orga.logoUrl}
+                  alt={`${orga.name} logo`}
+                  className="w-12 h-12 object-contain rounded"
+                />
+              )}
+              <h2 className="text-xl font-bold">{orga.name}</h2>
+            </div>
+            <div className="grid grid-cols-3 gap-4 mt-6">
+              <div className="flex flex-col items-center">
+                <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">
+                  {counts.members}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Members
+                </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="text-4xl font-bold text-green-600 dark:text-green-400">
+                  {counts.teams}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Teams
+                </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="text-4xl font-bold text-purple-600 dark:text-purple-400">
+                  {counts.roles}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Roles
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-2 w-1/2">
-            <ResourceCard
-              title="Templates"
-              description="Browse our collection of templates to get started quickly."
-              href="https://www.convex.dev/templates"
-            />
-            <ResourceCard
-              title="Discord"
-              description="Join our developer community to ask questions, trade tips & tricks,
-            and show off your projects."
-              href="https://www.convex.dev/community"
-            />
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );

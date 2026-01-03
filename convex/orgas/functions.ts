@@ -89,6 +89,7 @@ export const createOrganization = mutation({
     
     // Create the three initial roles with placeholder missions and duties
     const leaderRoleId = await ctx.db.insert("roles", {
+      orgaId,
       teamId,
       title: "Leader",
       mission: "TODO: Define Leader mission", // Placeholder
@@ -97,6 +98,7 @@ export const createOrganization = mutation({
     });
     
     const secretaryRoleId = await ctx.db.insert("roles", {
+      orgaId,
       teamId,
       title: "Secretary",
       mission: "TODO: Define Secretary mission", // Placeholder
@@ -105,6 +107,7 @@ export const createOrganization = mutation({
     });
     
     const refereeRoleId = await ctx.db.insert("roles", {
+      orgaId,
       teamId,
       title: "Referee",
       mission: "TODO: Define Referee mission", // Placeholder

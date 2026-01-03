@@ -1,13 +1,13 @@
-import { internalMutation } from "./_generated/server";
+import { internalMutation } from "../_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
-import { internal } from "./_generated/api";
+import { Id, Doc } from "../_generated/dataModel";
+import { internal } from "../_generated/api";
 
 const TEST_ORGA_NAME_PREFIX = "TEST_DATA_MODEL_";
 
 /**
  * Create a test organization with:
- * - 100 members (users + members)
+ * - 81-121 members (1 admin + 80-120 test users from createTestUsers)
  * - 20-30 teams
  * - Each member holds 1-5 roles across the teams
  */
@@ -32,7 +32,6 @@ export const createTestOrganization = internalMutation({
     
     // Generate random number of teams between 20 and 30
     const teamCount = 20 + Math.floor(Math.random() * 11); // 20-30 inclusive
-    const memberCount = 100;
     
     // Create the test organization
     const timestamp = Date.now();
@@ -72,6 +71,7 @@ export const createTestOrganization = internalMutation({
     
     // Create the three initial roles for the first team
     const leaderRoleId = await ctx.db.insert("roles", {
+      orgaId,
       teamId: firstTeamId,
       title: "Leader",
       mission: "Test Leader mission",
@@ -80,6 +80,7 @@ export const createTestOrganization = internalMutation({
     });
     
     const secretaryRoleId = await ctx.db.insert("roles", {
+      orgaId,
       teamId: firstTeamId,
       title: "Secretary",
       mission: "Test Secretary mission",
@@ -88,6 +89,7 @@ export const createTestOrganization = internalMutation({
     });
     
     const refereeRoleId = await ctx.db.insert("roles", {
+      orgaId,
       teamId: firstTeamId,
       title: "Referee",
       mission: "Test Referee mission",
@@ -118,33 +120,20 @@ export const createTestOrganization = internalMutation({
       teamIds.push(teamId);
     }
     
-    // Create 99 more members (users + members)
+    // Create test users using createTestUsers function
+    const { userIds: testUserIds } = await ctx.runMutation(
+      internal.dataTest.users.createTestUsers,
+      {}
+    );
+    
+    // Create members for all test users
     const memberIds: Id<"members">[] = [memberId];
     const userIds: Id<"users">[] = [user._id];
     
-    for (let i = 0; i < memberCount - 1; i++) {
-      const testEmail = `test.member.${timestamp}.${i}@test.swarmrise.com`;
-      
-      // Check if user already exists
-      let testUser = await ctx.db
-        .query("users")
-        .withIndex("by_email", (q) => q.eq("email", testEmail))
-        .unique();
-      
-      // Create user if it doesn't exist
+    for (const testUserId of testUserIds) {
+      const testUser = (await ctx.db.get(testUserId)) as Doc<"users"> | null;
       if (!testUser) {
-        const userId = await ctx.db.insert("users", {
-          firstname: `Test${i}`,
-          surname: `Member${i}`,
-          email: testEmail,
-          pictureURL: undefined,
-          contactInfos: [],
-          orgaIds: [],
-        });
-        testUser = await ctx.db.get(userId);
-        if (!testUser) {
-          throw new Error(`Failed to create test user ${i}`);
-        }
+        throw new Error(`Test user ${testUserId} not found`);
       }
       
       userIds.push(testUser._id);
@@ -203,6 +192,7 @@ export const createTestOrganization = internalMutation({
         const roleTitle = roleTitles[roleTitleIndex];
         
         const roleId = await ctx.db.insert("roles", {
+          orgaId,
           teamId,
           title: roleTitle,
           mission: `Test mission for ${roleTitle}`,

@@ -44,6 +44,7 @@ export default defineSchema({
 
   // Roles collection - each Role belongs to one Team
   roles: defineTable({ ...roleType.fields})
+    .index("by_orga", ["orgaId"])
     .index("by_team", ["teamId"])
     .index("by_member", ["memberId"])
     .index("by_team_and_title", ["teamId", "title"]),

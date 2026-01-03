@@ -1,6 +1,7 @@
 import { v }  from "convex/values"
 
 export const roleType = v.object({
+  orgaId: v.id("orgas"), // Added for efficient aggregation by organization
   teamId: v.id("teams"),
   title: v.string(),
   mission: v.string(),

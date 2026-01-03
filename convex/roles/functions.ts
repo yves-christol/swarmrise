@@ -90,6 +90,7 @@ export const createRole = mutation({
     
     // Create role
     const roleId = await ctx.db.insert("roles", {
+      orgaId,
       teamId: args.teamId,
       title: args.title,
       mission: args.mission,

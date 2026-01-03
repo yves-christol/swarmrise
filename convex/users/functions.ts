@@ -1,6 +1,6 @@
 import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { userValidator, contactInfo } from ".";
+import { userValidator, contactInfos, ContactInfos } from ".";
 import { orgaValidator } from "../orgas";
 import { invitationValidator } from "../invitations";
 import {
@@ -68,7 +68,7 @@ export const updateUser = mutation({
     firstname: v.optional(v.string()),
     surname: v.optional(v.string()),
     pictureURL: v.optional(v.union(v.string(), v.null())),
-    contactInfos: v.array(contactInfo),
+    contactInfos: contactInfos,
   },
   returns: v.id("users"),
   handler: async (ctx, args) => {
@@ -82,10 +82,7 @@ export const updateUser = mutation({
       firstname?: string;
       surname?: string;
       pictureURL?: string;
-      contactInfos?: Array<{
-        type: "LinkedIn" | "Facebook" | "Instagram" | "Whatsapp" | "Mobile" | "Address";
-        value: string;
-      }>;
+      contactInfos?: ContactInfos;
     } = {};
     
     if (args.firstname !== undefined) updates.firstname = args.firstname;

@@ -131,7 +131,7 @@ export const createInvitation = mutation({
 export const updateInvitationStatus = mutation({
   args: {
     invitationId: v.id("invitations"),
-    status: v.union(v.literal("pending"), v.literal("rejected"), v.literal("accepted")),
+    status: invitationStatus,
   },
   returns: v.id("invitations"),
   handler: async (ctx, args) => {

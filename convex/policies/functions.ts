@@ -1,7 +1,7 @@
 import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
-import { policyValidator } from ".";
+import { policyValidator, PolicyVisibility } from ".";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -43,7 +43,7 @@ export const listPoliciesInOrga = query({
       return await ctx.db
         .query("policies")
         .withIndex("by_orga_and_visibility", (q) =>
-          q.eq("orgaId", args.orgaId).eq("visibility", args.visibility as "private" | "public")
+          q.eq("orgaId", args.orgaId).eq("visibility", args.visibility as PolicyVisibility)
         )
         .collect();
     } else {
@@ -193,7 +193,7 @@ export const updatePolicy = mutation({
     const updates: {
       title?: string;
       text?: string;
-      visibility?: "private" | "public";
+      visibility?: PolicyVisibility;
       expirationDate?: number;
     } = {};
     
@@ -210,7 +210,7 @@ export const updatePolicy = mutation({
       issuedDate?: number;
       title?: string;
       text?: string;
-      visibility?: "private" | "public";
+      visibility?: PolicyVisibility;
       expirationDate?: number;
     } = {};
     const after: {
@@ -220,7 +220,7 @@ export const updatePolicy = mutation({
       issuedDate?: number;
       title?: string;
       text?: string;
-      visibility?: "private" | "public";
+      visibility?: PolicyVisibility;
       expirationDate?: number;
     } = {};
     

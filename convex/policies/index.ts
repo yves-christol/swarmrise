@@ -1,6 +1,8 @@
-import { v } from "convex/values"
+import { v, Infer } from "convex/values"
 
 export const policyVisibility = v.union(v.literal("private"), v.literal("public"))
+
+export type PolicyVisibility = Infer<typeof policyVisibility>;
 
 export const policyType = v.object({
   orgaId: v.id("orgas"),

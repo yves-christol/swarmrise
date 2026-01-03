@@ -1,6 +1,6 @@
 import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { orgaValidator } from ".";
+import { orgaValidator, ColorScheme } from ".";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -240,10 +240,7 @@ export const updateOrga = mutation({
     const updates: {
       name?: string;
       logoUrl?: string;
-      colorScheme?: {
-        primary: { r: number; g: number; b: number };
-        secondary: { r: number; g: number; b: number };
-      };
+      colorScheme?: ColorScheme;
     } = {};
     
     if (args.name !== undefined) updates.name = args.name;
@@ -256,18 +253,12 @@ export const updateOrga = mutation({
     const before: {
       name?: string;
       logoUrl?: string;
-      colorScheme?: {
-        primary: { r: number; g: number; b: number };
-        secondary: { r: number; g: number; b: number };
-      };
+      colorScheme?: ColorScheme;
     } = {};
     const after: {
       name?: string;
       logoUrl?: string;
-      colorScheme?: {
-        primary: { r: number; g: number; b: number };
-        secondary: { r: number; g: number; b: number };
-      };
+      colorScheme?: ColorScheme;
     } = {};
     
     if (args.name !== undefined) {

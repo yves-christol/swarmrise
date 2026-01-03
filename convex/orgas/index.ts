@@ -1,4 +1,4 @@
-import { v } from "convex/values"
+import { v, Infer } from "convex/values"
 
 // RGB color validator (r, g, b values 0-255)
 export const rgbColor = v.object({
@@ -12,6 +12,9 @@ export const colorScheme = v.object({
   primary: rgbColor,
   secondary: rgbColor,
 });
+
+export type RgbColor = Infer<typeof rgbColor>;
+export type ColorScheme = Infer<typeof colorScheme>;
 
 export const orgaType = v.object({
   name: v.string(),

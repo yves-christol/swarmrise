@@ -1,4 +1,4 @@
-import { v } from "convex/values"
+import { v, Infer } from "convex/values"
 
 // Contact info type discriminator
 export const contactInfoType = v.union(
@@ -16,12 +16,16 @@ export const contactInfo = v.object({
   value: v.string(),
 });
 
+export const contactInfos = v.array(contactInfo)
+
+export type ContactInfos = Infer<typeof contactInfos>
+
 export const userType = v.object({
   firstname: v.string(),
   surname: v.string(),
   email: v.string(),
   pictureURL: v.optional(v.string()),
-  contactInfos: v.array(contactInfo),
+  contactInfos: contactInfos,
   orgaIds: v.array(v.id("orgas")),
 })
 

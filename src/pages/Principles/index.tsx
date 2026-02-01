@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Header } from "../../components/Header";
 import { Logo } from "../../components/Logo";
 import { PrincipleCard } from "./PrincipleCard";
@@ -27,6 +28,25 @@ export const PrinciplesPage = () => {
               index={index}
             />
           ))}
+        </section>
+
+        {/* Legal documents */}
+        <section className="border-t border-gray-300 dark:border-gray-700 pt-8">
+          <h2 className="font-swarm text-xl font-bold mb-4">legal</h2>
+          <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+            <li>
+              <Link to="/terms" className="text-[#eac840] hover:underline">
+                Terms of Service
+              </Link>
+              {" "}- the conditions for using swarmrise
+            </li>
+            <li>
+              <Link to="/privacy" className="text-[#eac840] hover:underline">
+                Privacy Policy
+              </Link>
+              {" "}- how we handle your personal data
+            </li>
+          </ul>
         </section>
 
         {/* Footer */}

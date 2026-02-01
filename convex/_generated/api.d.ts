@@ -17,7 +17,6 @@ import type * as invitations_functions from "../invitations/functions.js";
 import type * as invitations_index from "../invitations/index.js";
 import type * as members_functions from "../members/functions.js";
 import type * as members_index from "../members/index.js";
-import type * as myFunctions from "../myFunctions.js";
 import type * as orgas_aggregates from "../orgas/aggregates.js";
 import type * as orgas_functions from "../orgas/functions.js";
 import type * as orgas_index from "../orgas/index.js";
@@ -48,7 +47,6 @@ declare const fullApi: ApiFromModules<{
   "invitations/index": typeof invitations_index;
   "members/functions": typeof members_functions;
   "members/index": typeof members_index;
-  myFunctions: typeof myFunctions;
   "orgas/aggregates": typeof orgas_aggregates;
   "orgas/functions": typeof orgas_functions;
   "orgas/index": typeof orgas_index;

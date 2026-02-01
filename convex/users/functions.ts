@@ -61,6 +61,7 @@ export const listMyInvitations = query({
  * Update user information
  * Note: This updates the user globally. If you need to update member-specific data,
  * use the members functions instead.
+ * Security: Users can only update their own profile.
  */
 export const updateUser = mutation({
   args: {
@@ -72,6 +73,12 @@ export const updateUser = mutation({
   },
   returns: v.id("users"),
   handler: async (ctx, args) => {
+    // Authorization check: users can only update their own profile
+    const authenticatedUser = await getAuthenticatedUser(ctx);
+    if (authenticatedUser._id !== args.userId) {
+      throw new Error("Unauthorized: You can only update your own profile");
+    }
+
     const user = await ctx.db.get(args.userId);
     if (!user) {
       throw new Error("User not found");

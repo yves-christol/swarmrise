@@ -1,5 +1,4 @@
 import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
 import { userType } from './users'
 import { orgaType } from "./orgas";
 import { policyType } from "./policies";
@@ -18,10 +17,6 @@ import { topicType } from './topics'
 
 
 export default defineSchema({
-  // numbers for backward compatibility here
-  numbers: defineTable({
-    value: v.number(),
-  }),
   // Users collection - contains all Persons
   users: defineTable({...userType.fields}).index("by_email", ["email"]),
   // Orgas collection - contains all Organizations

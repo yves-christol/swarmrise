@@ -13,8 +13,9 @@ export const DetailsPanel = memo(function DetailsPanel({
   return (
     <aside
       className={`
-        absolute top-0 right-0 h-full w-80 bg-gray-800
-        shadow-xl border-l border-gray-700
+        absolute top-0 right-0 h-full w-80
+        bg-white dark:bg-gray-800
+        shadow-xl border-l border-gray-300 dark:border-gray-700
         transform transition-transform duration-200
         ${node ? "translate-x-0" : "translate-x-full"}
       `}
@@ -22,12 +23,12 @@ export const DetailsPanel = memo(function DetailsPanel({
       {node && (
         <div className="p-6 flex flex-col gap-4">
           <div className="flex justify-between items-start">
-            <h2 className="font-swarm text-xl font-bold text-gray-100">
+            <h2 className="font-swarm text-xl font-bold text-dark dark:text-light">
               {node.name}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-200 transition-colors p-1"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors p-1"
               aria-label="Close"
             >
               <svg
@@ -47,17 +48,17 @@ export const DetailsPanel = memo(function DetailsPanel({
           </div>
 
           <div className="flex gap-4">
-            <div className="text-center px-4 py-2 bg-gray-700 rounded-lg">
-              <div className="text-2xl font-bold text-purple-400">
+            <div className="text-center px-4 py-2 bg-slate-200 dark:bg-gray-700 rounded-lg">
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                 {node.roleCount}
               </div>
-              <div className="text-xs text-gray-400">Roles</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">Roles</div>
             </div>
           </div>
 
-          <div className="border-t border-gray-700 pt-4">
-            <h3 className="text-sm font-bold text-gray-300 mb-2">Team Info</h3>
-            <p className="text-sm text-gray-400">
+          <div className="border-t border-gray-300 dark:border-gray-700 pt-4">
+            <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Team Info</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               This team has {node.roleCount} role{node.roleCount !== 1 ? "s" : ""} assigned.
             </p>
           </div>

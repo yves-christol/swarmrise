@@ -34,16 +34,17 @@ export const TeamNode = memo(function TeamNode({
   const fontSize = getFontSize(node.radius);
   const displayName = truncateTeamName(node.name, node.radius);
 
-  // Determine stroke and fill based on state
-  let strokeColor = "rgb(156 163 175)"; // gray-400
+  // Determine stroke and fill based on state using CSS variables for theme support
+  let strokeColor = "var(--diagram-node-stroke)";
   let strokeWidth = 2;
-  const fillColor = "rgb(31 41 55)"; // gray-800 for dark mode
+  const fillColor = "var(--diagram-node-fill)";
+  const textColor = "var(--diagram-node-text)";
 
   if (isSelected) {
-    strokeColor = "#eac840"; // Bee Gold
+    strokeColor = "#eac840"; // Bee Gold - brand accent stays constant
     strokeWidth = 3;
   } else if (isHovered) {
-    strokeColor = "rgb(107 114 128)"; // gray-500
+    strokeColor = "var(--diagram-node-stroke-hover)";
   }
 
   return (
@@ -112,7 +113,7 @@ export const TeamNode = memo(function TeamNode({
         y={node.y}
         textAnchor="middle"
         dominantBaseline="central"
-        fill="rgb(229 231 235)" // gray-200
+        fill={textColor}
         fontSize={fontSize}
         fontFamily="'Montserrat Alternates', sans-serif"
         fontWeight={isSelected ? 700 : 400}
@@ -132,7 +133,7 @@ export const TeamNode = memo(function TeamNode({
             cx={node.x + node.radius * 0.7}
             cy={node.y - node.radius * 0.7}
             r={12}
-            fill="rgb(139 92 246)" // purple-500
+            fill="var(--diagram-badge-bg)"
           />
           <text
             x={node.x + node.radius * 0.7}
@@ -161,8 +162,8 @@ export const TeamNode = memo(function TeamNode({
             width={node.name.length * 8 + 16}
             height={24}
             rx={4}
-            fill="rgb(17 24 39)" // gray-900
-            stroke="rgb(75 85 99)" // gray-600
+            fill="var(--diagram-tooltip-bg)"
+            stroke="var(--diagram-tooltip-border)"
             strokeWidth={1}
           />
           <text
@@ -170,7 +171,7 @@ export const TeamNode = memo(function TeamNode({
             y={node.y + node.radius + 22}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="rgb(229 231 235)" // gray-200
+            fill="var(--diagram-tooltip-text)"
             fontSize={12}
             style={{
               pointerEvents: "none",

@@ -64,8 +64,10 @@ export const Authentified = () => {
   }
 
   // Organization selected - show org content (full screen diagram)
+  // Use negative margin to break out of parent p-8 padding for edge-to-edge diagram
+  // relative positioning creates containing block for the absolute positioned diagram
   return (
-    <div className="h-[calc(100vh-4rem)]">
+    <div className="-m-8 h-[calc(100vh-4rem)] relative">
       <OrgNetworkDiagram orgaId={selectedOrga._id} />
     </div>
   );

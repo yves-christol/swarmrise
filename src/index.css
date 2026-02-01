@@ -111,6 +111,31 @@ body {
   transition: background-color 200ms ease-out, color 200ms ease-out;
 }
 
+/* OrgNetworkDiagram theme tokens */
+:root.light {
+  --diagram-node-fill: #e2e8f0;        /* slate-200 */
+  --diagram-node-stroke: #9ca3af;      /* gray-400 */
+  --diagram-node-stroke-hover: #6b7280; /* gray-500 */
+  --diagram-node-text: #1f2937;        /* gray-800 */
+  --diagram-tooltip-bg: #ffffff;       /* white */
+  --diagram-tooltip-border: #d1d5db;   /* gray-300 */
+  --diagram-tooltip-text: #1f2937;     /* gray-800 */
+  --diagram-badge-bg: #a78bfa;         /* purple-400 */
+  --diagram-arrow: #6b7280;            /* gray-500 */
+}
+
+:root.dark {
+  --diagram-node-fill: #1f2937;        /* gray-800 */
+  --diagram-node-stroke: #9ca3af;      /* gray-400 */
+  --diagram-node-stroke-hover: #6b7280; /* gray-500 */
+  --diagram-node-text: #e5e7eb;        /* gray-200 */
+  --diagram-tooltip-bg: #111827;       /* gray-900 */
+  --diagram-tooltip-border: #4b5563;   /* gray-600 */
+  --diagram-tooltip-text: #e5e7eb;     /* gray-200 */
+  --diagram-badge-bg: #8b5cf6;         /* purple-500 */
+  --diagram-arrow: #6b7280;            /* gray-500 */
+}
+
 /* Principles page animations */
 @keyframes fadeInUp {
   from {

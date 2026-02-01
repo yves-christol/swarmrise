@@ -104,10 +104,10 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
   // Loading state
   if (teamsData === undefined) {
     return (
-      <div className="flex items-center justify-center h-full min-h-[400px]">
+      <div className="absolute inset-0 flex items-center justify-center bg-light dark:bg-dark">
         <div className="flex flex-col items-center gap-4">
           <svg
-            className="animate-spin h-8 w-8 text-gray-400"
+            className="animate-spin h-8 w-8 text-gray-500 dark:text-gray-400"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -126,7 +126,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          <span className="text-gray-400 text-sm">
+          <span className="text-gray-600 dark:text-gray-400 text-sm">
             Loading organization structure...
           </span>
         </div>
@@ -137,13 +137,13 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
   // Empty state
   if (teamsData.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full min-h-[400px] gap-6 text-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 text-center bg-light dark:bg-dark">
         <Logo size={64} begin={0} repeatCount={2} />
         <div>
-          <h3 className="font-swarm text-xl font-bold mb-2 text-gray-100">
+          <h3 className="font-swarm text-xl font-bold mb-2 text-dark dark:text-light">
             No teams yet
           </h3>
-          <p className="text-gray-400 max-w-sm">
+          <p className="text-gray-600 dark:text-gray-400 max-w-sm">
             Create your first team to start mapping your organization structure.
           </p>
         </div>
@@ -156,7 +156,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full min-h-[500px] bg-dark-paper overflow-hidden"
+      className="absolute inset-0 bg-light dark:bg-dark overflow-hidden"
     >
       {/* CSS for animations */}
       <style>{`
@@ -184,6 +184,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
         ref={svgRefCallback}
         width={dimensions.width}
         height={dimensions.height}
+        className="block w-full h-full"
         role="img"
         aria-label={`Organization structure diagram showing ${nodes.length} teams`}
         style={{
@@ -213,8 +214,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
           >
             <path
               d="M 0 0 L 10 5 L 0 10 z"
-              fill="rgb(107 114 128)"
-              className="text-gray-500"
+              fill="var(--diagram-arrow)"
             />
           </marker>
         </defs>
@@ -262,18 +262,18 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
 
       {/* Simulation indicator */}
       {isSimulating && (
-        <div className="absolute top-4 left-4 px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-400 flex items-center gap-2">
+        <div className="absolute top-4 left-4 px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2 border border-gray-300 dark:border-gray-700">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           Settling...
         </div>
       )}
 
       {/* Accessibility: text list alternative */}
-      <details className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:top-4 focus-within:left-4 focus-within:bg-gray-800 focus-within:p-4 focus-within:rounded-lg focus-within:z-10">
-        <summary className="cursor-pointer text-gray-200">
+      <details className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:top-4 focus-within:left-4 focus-within:bg-white dark:focus-within:bg-gray-800 focus-within:p-4 focus-within:rounded-lg focus-within:z-10 focus-within:border focus-within:border-gray-300 dark:focus-within:border-gray-700">
+        <summary className="cursor-pointer text-gray-700 dark:text-gray-200">
           View as text list
         </summary>
-        <ul className="mt-2 text-sm text-gray-300">
+        <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300">
           {nodes.map((node) => {
             const parentEdge = edges.find((e) => e.source === node.id);
             const parentNode = parentEdge

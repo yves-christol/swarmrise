@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { v, Infer } from "convex/values";
 import { contactInfo } from "../users";
 
 export const memberType = v.object({
@@ -17,4 +17,6 @@ export const memberValidator = v.object({
   _creationTime: v.number(),
   ...memberType.fields
 })
+
+export type Member = Infer<typeof memberValidator>
 

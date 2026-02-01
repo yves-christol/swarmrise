@@ -1,4 +1,4 @@
-import { v }  from "convex/values"
+import { v, Infer }  from "convex/values"
 
 export const teamType = v.object({
   orgaId: v.id("orgas"),
@@ -10,4 +10,6 @@ export const teamValidator = v.object({
   _creationTime: v.number(),
   ...teamType.fields
 })
+
+export type Team = Infer<typeof teamValidator>
 

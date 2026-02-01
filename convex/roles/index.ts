@@ -23,3 +23,5 @@ export const roleValidator = v.object({
   ...roleType.fields
 })
 
+export type Role = Infer<typeof roleValidator>
+

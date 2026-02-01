@@ -261,6 +261,65 @@ export const updateTeam = mutation({
 });
 
 /**
+ * List teams with role counts and leader connections for network diagram
+ */
+export const listTeamsWithRoleCounts = query({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.array(
+    v.object({
+      _id: v.id("teams"),
+      _creationTime: v.number(),
+      orgaId: v.id("orgas"),
+      name: v.string(),
+      roleCount: v.number(),
+      parentTeamId: v.union(v.id("teams"), v.null()),
+    })
+  ),
+  handler: async (ctx, args) => {
+    await requireAuthAndMembership(ctx, args.orgaId);
+
+    // Get all teams in the organization
+    const teams = await ctx.db
+      .query("teams")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+
+    // Get all roles in the organization
+    const roles = await ctx.db
+      .query("roles")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+
+    // Build role count map and find leader connections
+    const teamRoleCounts = new Map<Id<"teams">, number>();
+    const teamParentIds = new Map<Id<"teams">, Id<"teams"> | null>();
+
+    for (const role of roles) {
+      // Count roles per team
+      const currentCount = teamRoleCounts.get(role.teamId) || 0;
+      teamRoleCounts.set(role.teamId, currentCount + 1);
+
+      // Track leader connections (parentTeamId from leader roles)
+      if (role.roleType === "leader" && role.parentTeamId) {
+        teamParentIds.set(role.teamId, role.parentTeamId);
+      }
+    }
+
+    // Return teams with their role counts and parent connections
+    return teams.map(team => ({
+      _id: team._id,
+      _creationTime: team._creationTime,
+      orgaId: team.orgaId,
+      name: team.name,
+      roleCount: teamRoleCounts.get(team._id) || 0,
+      parentTeamId: teamParentIds.get(team._id) ?? null,
+    }));
+  },
+});
+
+/**
  * Delete a team
  */
 export const deleteTeam = mutation({

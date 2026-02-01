@@ -2,6 +2,7 @@
 
 import { useOrgaStore } from "../../tools/orgaStore";
 import { EmptyState } from "../EmptyState";
+import { OrgNetworkDiagram } from "../OrgNetworkDiagram";
 
 // Spinner component for loading/transition states
 const Spinner = () => (
@@ -88,11 +89,9 @@ export const Authentified = () => {
         </div>
       )}
 
-      {/* Placeholder for future content */}
-      <div className="border-2 border-dashed border-gray-700 rounded-lg p-8 text-center">
-        <p className="text-gray-400">
-          Organization dashboard content will appear here
-        </p>
+      {/* Organization network diagram */}
+      <div className="h-[600px]">
+        <OrgNetworkDiagram orgaId={selectedOrga._id} />
       </div>
     </div>
   );

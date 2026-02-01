@@ -127,14 +127,11 @@ export const createOrganization = mutation({
       orgaId,
     });
     
-    // Create the first team
+    // Create the first team (top-level team with no parentTeamId)
     const firstTeamName = args.firstTeamName || args.name;
     const teamId = await ctx.db.insert("teams", {
       orgaId,
       name: firstTeamName,
-      parentTeamId: undefined, // First team has no parent
-      mission: undefined, // Will be set when Leader role is created
-      isFirstTeam: true,
     });
     
     // Create the three initial roles with placeholder missions and duties
@@ -142,6 +139,7 @@ export const createOrganization = mutation({
       orgaId,
       teamId,
       title: "Leader",
+      roleType: "leader",
       mission: "TODO: Define Leader mission", // Placeholder
       duties: ["TODO: Define Leader duties"], // Placeholder
       memberId,
@@ -151,6 +149,7 @@ export const createOrganization = mutation({
       orgaId,
       teamId,
       title: "Secretary",
+      roleType: "secretary",
       mission: "TODO: Define Secretary mission", // Placeholder
       duties: ["TODO: Define Secretary duties"], // Placeholder
       memberId,
@@ -160,6 +159,7 @@ export const createOrganization = mutation({
       orgaId,
       teamId,
       title: "Referee",
+      roleType: "referee",
       mission: "TODO: Define Referee mission", // Placeholder
       duties: ["TODO: Define Referee duties"], // Placeholder
       memberId,
@@ -168,11 +168,6 @@ export const createOrganization = mutation({
     // Update member with role IDs
     await ctx.db.patch(memberId, {
       roleIds: [leaderRoleId, secretaryRoleId, refereeRoleId],
-    });
-    
-    // Update team mission with Leader role mission (for convenience)
-    await ctx.db.patch(teamId, {
-      mission: "TODO: Define Leader mission", // Placeholder, matches Leader role mission
     });
     
     // Add organization to user's orgaIds

@@ -42,16 +42,10 @@ const teamDiff = v.object({
   before: v.optional(v.object({
     orgaId: v.optional(v.id("orgas")),
     name: v.optional(v.string()),
-    parentTeamId: v.optional(v.id("teams")),
-    mission: v.optional(v.string()),
-    isFirstTeam: v.optional(v.boolean()),
   })),
   after: v.optional(v.object({
     orgaId: v.optional(v.id("orgas")),
     name: v.optional(v.string()),
-    parentTeamId: v.optional(v.id("teams")),
-    mission: v.optional(v.string()),
-    isFirstTeam: v.optional(v.boolean()),
   })),
 });
 
@@ -60,14 +54,18 @@ const roleDiff = v.object({
   type: v.literal("Role"),
   before: v.optional(v.object({
     teamId: v.optional(v.id("teams")),
+    parentTeamId: v.optional(v.id("teams")),
     title: v.optional(v.string()),
+    roleType: v.optional(v.union(v.literal("leader"), v.literal("secretary"), v.literal("referee"))),
     mission: v.optional(v.string()),
     duties: v.optional(v.array(v.string())),
     memberId: v.optional(v.id("members")),
   })),
   after: v.optional(v.object({
     teamId: v.optional(v.id("teams")),
+    parentTeamId: v.optional(v.id("teams")),
     title: v.optional(v.string()),
+    roleType: v.optional(v.union(v.literal("leader"), v.literal("secretary"), v.literal("referee"))),
     mission: v.optional(v.string()),
     duties: v.optional(v.array(v.string())),
     memberId: v.optional(v.id("members")),

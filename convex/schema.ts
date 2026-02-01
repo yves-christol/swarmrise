@@ -31,9 +31,7 @@ export default defineSchema({
 
   // Teams collection - each Team belongs to one Orga
   teams: defineTable({ ...teamType.fields})
-    .index("by_orga", ["orgaId"])
-    .index("by_parent_team", ["parentTeamId"])
-    .index("by_orga_and_parent", ["orgaId", "parentTeamId"]),
+    .index("by_orga", ["orgaId"]),
 
   // Members collection - Members of an Orga (replicates Person data for convenience)
   members: defineTable({ ...memberType.fields })
@@ -47,7 +45,9 @@ export default defineSchema({
     .index("by_orga", ["orgaId"])
     .index("by_team", ["teamId"])
     .index("by_member", ["memberId"])
-    .index("by_team_and_title", ["teamId", "title"]),
+    .index("by_team_and_title", ["teamId", "title"])
+    .index("by_team_and_role_type", ["teamId", "roleType"])
+    .index("by_parent_team", ["parentTeamId"]),
 
   // Invitations collection - Invitations sent by Members to join an Orga
   invitations: defineTable({ ...invitationType.fields })

@@ -37,9 +37,6 @@ export const listTeamsInOrga = query({
       _creationTime: v.number(),
       orgaId: v.id("orgas"),
       name: v.string(),
-      parentTeamId: v.optional(v.id("teams")),
-      mission: v.optional(v.string()),
-      isFirstTeam: v.boolean(),
     })
   ),
   handler: async (ctx, args) => {
@@ -53,6 +50,7 @@ export const listTeamsInOrga = query({
 
 /**
  * List child teams of a parent team
+ * Child teams are identified by having a leader role with parentTeamId pointing to the parent
  */
 export const listChildTeams = query({
   args: {
@@ -64,38 +62,79 @@ export const listChildTeams = query({
       _creationTime: v.number(),
       orgaId: v.id("orgas"),
       name: v.string(),
-      parentTeamId: v.optional(v.id("teams")),
-      mission: v.optional(v.string()),
-      isFirstTeam: v.boolean(),
     })
   ),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.parentTeamId);
     await requireAuthAndMembership(ctx, orgaId);
-    return await ctx.db
-      .query("teams")
+    
+    // Find all leader roles that have this team as parent
+    const leaderRoles = await ctx.db
+      .query("roles")
       .withIndex("by_parent_team", (q) => q.eq("parentTeamId", args.parentTeamId))
+      .filter((q) => q.eq(q.field("roleType"), "leader"))
       .collect();
+    
+    // Get unique team IDs from these leader roles
+    const childTeamIds = [...new Set(leaderRoles.map(role => role.teamId))];
+    
+    // Fetch and return the teams
+    const childTeams = await Promise.all(
+      childTeamIds.map(teamId => ctx.db.get(teamId))
+    );
+    
+    return childTeams.filter((team): team is NonNullable<typeof team> => team !== null);
   },
 });
 
 /**
  * Create a new team
+ * Requires a non-leader role that will become the leader of the new team
  */
 export const createTeam = mutation({
   args: {
     orgaId: v.id("orgas"),
     name: v.string(),
-    parentTeamId: v.optional(v.id("teams")),
-    mission: v.optional(v.string()),
-    isFirstTeam: v.boolean(),
+    roleId: v.id("roles"), // Non-leader role that will become the leader of the new team
+    parentTeamId: v.optional(v.id("teams")), // Optional parent team (for connector pattern)
   },
   returns: v.id("teams"),
   handler: async (ctx, args) => {
     const member = await requireAuthAndMembership(ctx, args.orgaId);
     
-    // Validate parent team if provided
-    if (args.parentTeamId) {
+    // Validate the role
+    const role = await ctx.db.get(args.roleId);
+    if (!role) {
+      throw new Error("Role not found");
+    }
+    if (role.orgaId !== args.orgaId) {
+      throw new Error("Role must belong to the same organization");
+    }
+    if (role.roleType === "leader") {
+      throw new Error("Cannot create a team with a leader role. Provide a non-leader role.");
+    }
+    
+    // If this is a top-level team (no parentTeamId), ensure there's only one top-level team
+    if (!args.parentTeamId) {
+      // Find all teams in the organization
+      const allTeams = await ctx.db
+        .query("teams")
+        .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+        .collect();
+      
+      // Check if any team already has a leader role with undefined parentTeamId
+      for (const team of allTeams) {
+        const leaderRole = await ctx.db
+          .query("roles")
+          .withIndex("by_team_and_role_type", (q) => q.eq("teamId", team._id).eq("roleType", "leader"))
+          .first();
+        
+        if (leaderRole && !leaderRole.parentTeamId) {
+          throw new Error("There can only be one top-level team in an organization");
+        }
+      }
+    } else {
+      // Validate parent team if provided
       const parentTeam = await ctx.db.get(args.parentTeamId);
       if (!parentTeam) {
         throw new Error("Parent team not found");
@@ -109,10 +148,28 @@ export const createTeam = mutation({
     const teamId = await ctx.db.insert("teams", {
       orgaId: args.orgaId,
       name: args.name,
-      parentTeamId: args.parentTeamId,
-      mission: args.mission,
-      isFirstTeam: args.isFirstTeam,
     });
+    
+    // Create leader role from the provided role
+    // The leader role will have the same member, mission, and duties as the original role
+    const leaderRoleId = await ctx.db.insert("roles", {
+      orgaId: args.orgaId,
+      teamId: teamId,
+      parentTeamId: args.parentTeamId, // Connector to parent team
+      title: role.title, // Keep the original title or could be "Leader"
+      roleType: "leader",
+      mission: role.mission,
+      duties: role.duties,
+      memberId: role.memberId,
+    });
+    
+    // Update member's roleIds to include the new leader role
+    const roleMember = await ctx.db.get(role.memberId);
+    if (roleMember) {
+      await ctx.db.patch(role.memberId, {
+        roleIds: [...roleMember.roleIds, leaderRoleId],
+      });
+    }
     
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
@@ -131,9 +188,6 @@ export const createTeam = mutation({
         after: {
           orgaId: args.orgaId,
           name: args.name,
-          parentTeamId: args.parentTeamId,
-          mission: args.mission,
-          isFirstTeam: args.isFirstTeam,
         },
       },
     });
@@ -149,9 +203,6 @@ export const updateTeam = mutation({
   args: {
     teamId: v.id("teams"),
     name: v.optional(v.string()),
-    parentTeamId: v.optional(v.union(v.id("teams"), v.null())),
-    mission: v.optional(v.union(v.string(), v.null())),
-    isFirstTeam: v.optional(v.boolean()),
   },
   returns: v.id("teams"),
   handler: async (ctx, args) => {
@@ -163,65 +214,26 @@ export const updateTeam = mutation({
       throw new Error("Team not found");
     }
     
-    // Validate parent team if provided
-    if (args.parentTeamId !== undefined && args.parentTeamId !== null) {
-      const parentTeam = await ctx.db.get(args.parentTeamId);
-      if (!parentTeam) {
-        throw new Error("Parent team not found");
-      }
-      if (parentTeam.orgaId !== orgaId) {
-        throw new Error("Parent team must belong to the same organization");
-      }
-      // Prevent circular references
-      if (args.parentTeamId === args.teamId) {
-        throw new Error("Team cannot be its own parent");
-      }
-    }
-    
     // Update team
     const updates: {
       name?: string;
-      parentTeamId?: Id<"teams">;
-      mission?: string;
-      isFirstTeam?: boolean;
     } = {};
     
     if (args.name !== undefined) updates.name = args.name;
-    if (args.parentTeamId !== undefined) updates.parentTeamId = args.parentTeamId ?? undefined;
-    if (args.mission !== undefined) updates.mission = args.mission ?? undefined;
-    if (args.isFirstTeam !== undefined) updates.isFirstTeam = args.isFirstTeam;
     
     // Build before and after with only modified fields
     const before: {
       orgaId?: Id<"orgas">;
       name?: string;
-      parentTeamId?: Id<"teams">;
-      mission?: string;
-      isFirstTeam?: boolean;
     } = {};
     const after: {
       orgaId?: Id<"orgas">;
       name?: string;
-      parentTeamId?: Id<"teams">;
-      mission?: string;
-      isFirstTeam?: boolean;
     } = {};
     
     if (args.name !== undefined) {
       before.name = team.name;
       after.name = args.name;
-    }
-    if (args.parentTeamId !== undefined) {
-      before.parentTeamId = team.parentTeamId;
-      after.parentTeamId = args.parentTeamId ?? undefined;
-    }
-    if (args.mission !== undefined) {
-      before.mission = team.mission;
-      after.mission = args.mission ?? undefined;
-    }
-    if (args.isFirstTeam !== undefined) {
-      before.isFirstTeam = team.isFirstTeam;
-      after.isFirstTeam = args.isFirstTeam;
     }
     
     await ctx.db.patch(args.teamId, updates);
@@ -265,12 +277,13 @@ export const deleteTeam = mutation({
       throw new Error("Team not found");
     }
     
-    // Check if team has child teams
-    const childTeams = await ctx.db
-      .query("teams")
+    // Check if team has child teams (via leader roles with parentTeamId)
+    const childLeaderRoles = await ctx.db
+      .query("roles")
       .withIndex("by_parent_team", (q) => q.eq("parentTeamId", args.teamId))
+      .filter((q) => q.eq(q.field("roleType"), "leader"))
       .first();
-    if (childTeams) {
+    if (childLeaderRoles) {
       throw new Error("Cannot delete team with child teams");
     }
     
@@ -278,9 +291,6 @@ export const deleteTeam = mutation({
     const before = {
       orgaId: team.orgaId,
       name: team.name,
-      parentTeamId: team.parentTeamId,
-      mission: team.mission,
-      isFirstTeam: team.isFirstTeam,
     };
     
     // Delete team

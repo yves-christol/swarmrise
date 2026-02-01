@@ -3,12 +3,12 @@ import { v } from "convex/values";
 import { Id, Doc } from "../_generated/dataModel";
 import { internal } from "../_generated/api";
 
-const TEST_ORGA_NAME_PREFIX = "TEST_DATA_MODEL_";
+const TEST_ORGA_NAME_PREFIX = "TEST_MODEL_";
 
 /**
  * Create a test organization with:
  * - 81-121 members (1 admin + 80-120 test users from createTestUsers)
- * - 20-30 teams
+ * - 20-30 teams (created recursively from roles)
  * - Each member holds 1-5 roles across the teams
  */
 export const createTestOrganization = internalMutation({
@@ -30,8 +30,8 @@ export const createTestOrganization = internalMutation({
       throw new Error("Admin user not found");
     }
     
-    // Generate random number of teams between 20 and 30
-    const teamCount = 20 + Math.floor(Math.random() * 11); // 20-30 inclusive
+    // Generate random target number of teams between 20 and 30
+    const targetTeamCount = 20 + Math.floor(Math.random() * 11); // 20-30 inclusive
     
     // Create the test organization
     const timestamp = Date.now();
@@ -48,7 +48,7 @@ export const createTestOrganization = internalMutation({
       owner: user._id,
     });
     
-    // Create member document for the first user (with temporary orgaId)
+    // Create member document for the first user
     const memberId = await ctx.db.insert("members", {
       orgaId: orgaId,
       personId: user._id,
@@ -60,67 +60,128 @@ export const createTestOrganization = internalMutation({
       roleIds: [], // Will be populated after roles are created
     });
     
-    // Create the first team
+    // Create the first team (top-level team with no parentTeamId on leader role)
     const firstTeamId = await ctx.db.insert("teams", {
       orgaId,
       name: `${testOrgaName} - First Team`,
-      parentTeamId: undefined,
-      mission: "Test organization first team",
-      isFirstTeam: true,
     });
     
-    // Create the three initial roles for the first team
-    const leaderRoleId = await ctx.db.insert("roles", {
-      orgaId,
-      teamId: firstTeamId,
-      title: "Leader",
-      mission: "Test Leader mission",
-      duties: ["Test Leader duty 1", "Test Leader duty 2"],
-      memberId,
-    });
-    
-    const secretaryRoleId = await ctx.db.insert("roles", {
-      orgaId,
-      teamId: firstTeamId,
-      title: "Secretary",
-      mission: "Test Secretary mission",
-      duties: ["Test Secretary duty 1"],
-      memberId,
-    });
-    
-    const refereeRoleId = await ctx.db.insert("roles", {
-      orgaId,
-      teamId: firstTeamId,
-      title: "Referee",
-      mission: "Test Referee mission",
-      duties: ["Test Referee duty 1"],
-      memberId,
-    });
-    
-    // Update member with initial role IDs
-    await ctx.db.patch(memberId, {
-      roleIds: [leaderRoleId, secretaryRoleId, refereeRoleId],
-    });
-    
-    // Add organization to user's orgaIds
-    await ctx.db.patch(user._id, {
-      orgaIds: [...user.orgaIds, orgaId],
-    });
-    
-    // Create additional teams (19-29 more teams, since we already have the first team)
-    const teamIds: Id<"teams">[] = [firstTeamId];
-    for (let i = 1; i < teamCount; i++) {
-      const teamId = await ctx.db.insert("teams", {
+    // Helper function to create a team from a role (replicates createTeam mutation logic)
+    const createTeamFromRole = async (
+      roleId: Id<"roles">,
+      teamName: string,
+      parentTeamId: Id<"teams"> | undefined
+    ): Promise<Id<"teams">> => {
+      const role = await ctx.db.get(roleId);
+      if (!role) {
+        throw new Error("Role not found");
+      }
+      if (role.roleType === "leader") {
+        throw new Error("Cannot create a team with a leader role");
+      }
+      
+      // If this is a top-level team (no parentTeamId), ensure there's only one
+      if (!parentTeamId) {
+        const allTeams = await ctx.db
+          .query("teams")
+          .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+          .collect();
+        
+        for (const team of allTeams) {
+          const leaderRole = await ctx.db
+            .query("roles")
+            .withIndex("by_team_and_role_type", (q) => q.eq("teamId", team._id).eq("roleType", "leader"))
+            .first();
+          
+          if (leaderRole && !leaderRole.parentTeamId) {
+            throw new Error("There can only be one top-level team in an organization");
+          }
+        }
+      }
+      
+      // Create the team
+      const newTeamId = await ctx.db.insert("teams", {
         orgaId,
-        name: `${testOrgaName} - Team ${i + 1}`,
-        parentTeamId: undefined, // All teams are top-level for simplicity
-        mission: `Test team ${i + 1} mission`,
-        isFirstTeam: false,
+        name: teamName,
       });
-      teamIds.push(teamId);
-    }
+      
+      // Create leader role from the provided role
+      const leaderRoleId = await ctx.db.insert("roles", {
+        orgaId,
+        teamId: newTeamId,
+        parentTeamId: parentTeamId,
+        title: role.title,
+        roleType: "leader",
+        mission: role.mission,
+        duties: role.duties,
+        memberId: role.memberId,
+      });
+      
+      // Update member's roleIds to include the new leader role
+      const roleMember = await ctx.db.get(role.memberId);
+      if (roleMember) {
+        await ctx.db.patch(role.memberId, {
+          roleIds: [...roleMember.roleIds, leaderRoleId],
+        });
+      }
+      
+      return newTeamId;
+    };
     
-    // Create test users using createTestUsers function
+    // Helper function to populate a team with roles
+    const populateTeamWithRoles = async (
+      teamId: Id<"teams">,
+      numRoles: number,
+      memberIds: Id<"members">[]
+    ): Promise<Id<"roles">[]> => {
+      const roleTitles = [
+        "Developer",
+        "Designer",
+        "Manager",
+        "Analyst",
+        "Coordinator",
+        "Specialist",
+        "Consultant",
+        "Advisor",
+        "Assistant",
+        "Supervisor",
+      ];
+      
+      const roleIds: Id<"roles">[] = [];
+      
+      for (let i = 0; i < numRoles; i++) {
+        // Randomly select a member
+        const memberIndex = Math.floor(Math.random() * memberIds.length);
+        const selectedMemberId = memberIds[memberIndex];
+        
+        // Select a random role title
+        const roleTitleIndex = Math.floor(Math.random() * roleTitles.length);
+        const roleTitle = roleTitles[roleTitleIndex];
+        
+        const roleId = await ctx.db.insert("roles", {
+          orgaId,
+          teamId,
+          title: roleTitle,
+          mission: `Test mission for ${roleTitle}`,
+          duties: [`Test duty 1 for ${roleTitle}`, `Test duty 2 for ${roleTitle}`],
+          memberId: selectedMemberId,
+        });
+        
+        roleIds.push(roleId);
+        
+        // Update member's roleIds
+        const member = await ctx.db.get(selectedMemberId);
+        if (member) {
+          await ctx.db.patch(selectedMemberId, {
+            roleIds: [...member.roleIds, roleId],
+          });
+        }
+      }
+      
+      return roleIds;
+    };
+    
+    // Create test users
     const { userIds: testUserIds } = await ctx.runMutation(
       internal.dataTest.users.createTestUsers,
       {}
@@ -138,7 +199,6 @@ export const createTestOrganization = internalMutation({
       
       userIds.push(testUser._id);
       
-      // Create member for this user
       const testMemberId = await ctx.db.insert("members", {
         orgaId,
         personId: testUser._id,
@@ -151,7 +211,6 @@ export const createTestOrganization = internalMutation({
       });
       memberIds.push(testMemberId);
       
-      // Add organization to user's orgaIds if not already present
       if (!testUser.orgaIds.includes(orgaId)) {
         await ctx.db.patch(testUser._id, {
           orgaIds: [...testUser.orgaIds, orgaId],
@@ -159,54 +218,182 @@ export const createTestOrganization = internalMutation({
       }
     }
     
-    // Assign roles to members: each member gets 1-5 roles randomly across teams
-    let totalRoleCount = 3; // We already created 3 roles (Leader, Secretary, Referee)
-    const roleTitles = [
-      "Developer",
-      "Designer",
-      "Manager",
-      "Analyst",
-      "Coordinator",
-      "Specialist",
-      "Consultant",
-      "Advisor",
-      "Assistant",
-      "Supervisor",
-    ];
+    // Add organization to user's orgaIds
+    await ctx.db.patch(user._id, {
+      orgaIds: [...user.orgaIds, orgaId],
+    });
+    
+    // Create the three initial roles for the first team (Leader, Secretary, Referee)
+    const leaderRoleId = await ctx.db.insert("roles", {
+      orgaId,
+      teamId: firstTeamId,
+      title: "Leader",
+      roleType: "leader",
+      mission: "Test Leader mission",
+      duties: ["Test Leader duty 1", "Test Leader duty 2"],
+      memberId,
+    });
+    
+    const secretaryRoleId = await ctx.db.insert("roles", {
+      orgaId,
+      teamId: firstTeamId,
+      title: "Secretary",
+      roleType: "secretary",
+      mission: "Test Secretary mission",
+      duties: ["Test Secretary duty 1"],
+      memberId,
+    });
+    
+    const refereeRoleId = await ctx.db.insert("roles", {
+      orgaId,
+      teamId: firstTeamId,
+      title: "Referee",
+      roleType: "referee",
+      mission: "Test Referee mission",
+      duties: ["Test Referee duty 1"],
+      memberId,
+    });
+    
+    // Update member with initial role IDs
+    await ctx.db.patch(memberId, {
+      roleIds: [leaderRoleId, secretaryRoleId, refereeRoleId],
+    });
+    
+    // Populate the first team with 5-12 additional roles
+    const initialRoleCount = 5 + Math.floor(Math.random() * 8); // 5-12 inclusive
+    const additionalFirstTeamRoleIds = await populateTeamWithRoles(
+      firstTeamId,
+      initialRoleCount,
+      memberIds
+    );
+    
+    // Track all teams and roles created
+    const teamIds: Id<"teams">[] = [firstTeamId];
+    let totalRoleCount = 3 + initialRoleCount; // Leader, Secretary, Referee + additional roles
+    
+    // Recursive function to create teams from roles
+    const createTeamsRecursively = async (
+      parentTeamId: Id<"teams">,
+      rolesToProcess: Id<"roles">[],
+      teamNamePrefix: string,
+      depth: number
+    ): Promise<void> => {
+      if (teamIds.length >= targetTeamCount || rolesToProcess.length === 0) {
+        return;
+      }
+      
+      // Select some roles to turn into teams (30-50% of available roles, but at least 1)
+      const numRolesToConvert = Math.min(
+        Math.max(1, Math.floor(rolesToProcess.length * (0.3 + Math.random() * 0.2))),
+        rolesToProcess.length,
+        targetTeamCount - teamIds.length
+      );
+      
+      // Randomly select roles to convert
+      const rolesToConvert = rolesToProcess
+        .sort(() => Math.random() - 0.5)
+        .slice(0, numRolesToConvert);
+      
+      for (let i = 0; i < rolesToConvert.length && teamIds.length < targetTeamCount; i++) {
+        const roleId = rolesToConvert[i];
+        const role = await ctx.db.get(roleId);
+        if (!role || role.roleType === "leader") {
+          continue; // Skip if role is a leader
+        }
+        
+        const newTeamName = `${teamNamePrefix} - Team ${teamIds.length + 1}`;
+        const newTeamId = await createTeamFromRole(roleId, newTeamName, parentTeamId);
+        teamIds.push(newTeamId);
+        
+        // Populate the new team with 5-12 roles
+        const newTeamRoleCount = 5 + Math.floor(Math.random() * 8); // 5-12 inclusive
+        const newTeamRoleIds = await populateTeamWithRoles(
+          newTeamId,
+          newTeamRoleCount,
+          memberIds
+        );
+        totalRoleCount += newTeamRoleCount;
+        
+        // Recursively create teams from the new team's roles
+        if (teamIds.length < targetTeamCount) {
+          await createTeamsRecursively(
+            newTeamId,
+            newTeamRoleIds,
+            `${teamNamePrefix} - ${teamIds.length}`,
+            depth + 1
+          );
+        }
+      }
+    };
+    
+    // Start recursive team creation from the first team's roles
+    const firstTeamRoles = [secretaryRoleId, refereeRoleId, ...additionalFirstTeamRoleIds];
+    await createTeamsRecursively(
+      firstTeamId,
+      firstTeamRoles,
+      testOrgaName,
+      0
+    );
+    
+    // Assign additional roles to members across all teams (to reach 1-5 roles per member)
+    const allTeams = await ctx.db
+      .query("teams")
+      .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+      .collect();
     
     for (const memberIdToAssign of memberIds) {
-      // Random number of roles for this member (1-5)
-      const numRoles = 1 + Math.floor(Math.random() * 5);
-      
-      // Randomly select teams for this member's roles
-      const selectedTeams = new Set<Id<"teams">>();
-      while (selectedTeams.size < numRoles && selectedTeams.size < teamIds.length) {
-        const randomTeamIndex = Math.floor(Math.random() * teamIds.length);
-        selectedTeams.add(teamIds[randomTeamIndex]);
-      }
-      
-      // Create roles for this member
-      const memberRoleIds: Id<"roles">[] = [];
-      for (const teamId of selectedTeams) {
-        const roleTitleIndex = Math.floor(Math.random() * roleTitles.length);
-        const roleTitle = roleTitles[roleTitleIndex];
-        
-        const roleId = await ctx.db.insert("roles", {
-          orgaId,
-          teamId,
-          title: roleTitle,
-          mission: `Test mission for ${roleTitle}`,
-          duties: [`Test duty 1 for ${roleTitle}`, `Test duty 2 for ${roleTitle}`],
-          memberId: memberIdToAssign,
-        });
-        
-        memberRoleIds.push(roleId);
-        totalRoleCount++;
-      }
-      
-      // Update member with role IDs
       const member = await ctx.db.get(memberIdToAssign);
-      if (member) {
+      if (!member) continue;
+      
+      // Current number of roles for this member
+      const currentRoleCount = member.roleIds.length;
+      
+      // Target: 1-5 roles per member
+      const targetRoleCount = 1 + Math.floor(Math.random() * 5);
+      
+      if (currentRoleCount < targetRoleCount) {
+        const numRolesNeeded = targetRoleCount - currentRoleCount;
+        const selectedTeams = new Set<Id<"teams">>();
+        
+        // Select random teams
+        while (selectedTeams.size < numRolesNeeded && selectedTeams.size < allTeams.length) {
+          const randomTeamIndex = Math.floor(Math.random() * allTeams.length);
+          selectedTeams.add(allTeams[randomTeamIndex]._id);
+        }
+        
+        // Create roles for this member
+        const memberRoleIds: Id<"roles">[] = [];
+        const roleTitles = [
+          "Developer",
+          "Designer",
+          "Manager",
+          "Analyst",
+          "Coordinator",
+          "Specialist",
+          "Consultant",
+          "Advisor",
+          "Assistant",
+          "Supervisor",
+        ];
+        
+        for (const teamId of selectedTeams) {
+          const roleTitleIndex = Math.floor(Math.random() * roleTitles.length);
+          const roleTitle = roleTitles[roleTitleIndex];
+          
+          const roleId = await ctx.db.insert("roles", {
+            orgaId,
+            teamId,
+            title: roleTitle,
+            mission: `Test mission for ${roleTitle}`,
+            duties: [`Test duty 1 for ${roleTitle}`, `Test duty 2 for ${roleTitle}`],
+            memberId: memberIdToAssign,
+          });
+          
+          memberRoleIds.push(roleId);
+          totalRoleCount++;
+        }
+        
+        // Update member with new role IDs
         await ctx.db.patch(memberIdToAssign, {
           roleIds: [...member.roleIds, ...memberRoleIds],
         });
@@ -387,4 +574,3 @@ export const deleteTestOrganization = internalMutation({
     };
   },
 });
-

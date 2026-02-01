@@ -95,7 +95,7 @@ export async function getOrgaFromRole(
 
 /**
  * Get the team leader member ID for a given team
- * The leader is the member who holds the "Leader" role in the team
+ * The leader is the member who holds the role with roleType "leader" in the team
  */
 export async function getTeamLeader(
   ctx: QueryCtx | MutationCtx,
@@ -103,7 +103,7 @@ export async function getTeamLeader(
 ): Promise<Id<"members">> {
   const leaderRole = await ctx.db
     .query("roles")
-    .withIndex("by_team_and_title", (q) => q.eq("teamId", teamId).eq("title", "Leader"))
+    .withIndex("by_team_and_role_type", (q) => q.eq("teamId", teamId).eq("roleType", "leader"))
     .first();
   
   if (!leaderRole) {
@@ -115,6 +115,40 @@ export async function getTeamLeader(
   }
   
   return leaderRole.memberId;
+}
+
+/**
+ * Get the leader role for a given team
+ */
+export async function getLeaderRole(
+  ctx: QueryCtx | MutationCtx,
+  teamId: Id<"teams">
+) {
+  const leaderRole = await ctx.db
+    .query("roles")
+    .withIndex("by_team_and_role_type", (q) => q.eq("teamId", teamId).eq("roleType", "leader"))
+    .first();
+  
+  if (!leaderRole) {
+    throw new Error("Team leader role not found");
+  }
+  
+  return leaderRole;
+}
+
+/**
+ * Check if a team already has a leader
+ */
+export async function hasTeamLeader(
+  ctx: QueryCtx | MutationCtx,
+  teamId: Id<"teams">
+): Promise<boolean> {
+  const leaderRole = await ctx.db
+    .query("roles")
+    .withIndex("by_team_and_role_type", (q) => q.eq("teamId", teamId).eq("roleType", "leader"))
+    .first();
+  
+  return leaderRole !== null;
 }
 
 /**
@@ -144,18 +178,24 @@ export async function getRoleAndTeamInfo(
     }
   }
   
-  // Fallback: get the first team of the organization
-  const firstTeam = await ctx.db
+  // Fallback: get the top-level team of the organization (leader role with undefined parentTeamId)
+  const allTeams = await ctx.db
     .query("teams")
     .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
-    .filter((q) => q.eq(q.field("isFirstTeam"), true))
-    .first();
+    .collect();
   
-  if (firstTeam) {
-    return {
-      roleName: "Member",
-      teamName: firstTeam.name,
-    };
+  for (const team of allTeams) {
+    const leaderRole = await ctx.db
+      .query("roles")
+      .withIndex("by_team_and_role_type", (q) => q.eq("teamId", team._id).eq("roleType", "leader"))
+      .first();
+    
+    if (leaderRole && !leaderRole.parentTeamId) {
+      return {
+        roleName: "Member",
+        teamName: team.name,
+      };
+    }
   }
   
   throw new Error("Could not determine role and team information");

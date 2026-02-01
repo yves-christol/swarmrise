@@ -156,7 +156,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full min-h-[500px] bg-gray-900 rounded-lg overflow-hidden"
+      className="relative w-full h-full min-h-[500px] bg-dark-paper overflow-hidden"
     >
       {/* CSS for animations */}
       <style>{`

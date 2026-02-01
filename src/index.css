@@ -4,7 +4,8 @@
   /* Custom colors - these automatically generate bg-*, text-*, etc utilities */
   --color-light: #eeeeee;
   --color-dark: #212121;
-  
+  --color-dark-paper: #1a1a1a;
+
   /* Custom font family */
   --font-family-swarm: 'Montserrat Alternates', sans-serif;
 }
@@ -29,6 +30,10 @@
   
   .text-dark {
     color: var(--color-dark);
+  }
+
+  .bg-dark-paper {
+    background-color: var(--color-dark-paper);
   }
 }
 

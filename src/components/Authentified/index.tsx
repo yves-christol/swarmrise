@@ -63,39 +63,10 @@ export const Authentified = () => {
     );
   }
 
-  // Organization selected - show org content
-  const selectedOrgaData = orgasWithCounts?.find(
-    (o) => o.orga._id === selectedOrga._id
-  );
-
+  // Organization selected - show org content (full screen diagram)
   return (
-    <div className="flex flex-col gap-8 max-w-4xl mx-auto p-8">
-      <h1 className="font-swarm text-3xl font-bold">{selectedOrga.name}</h1>
-
-      {selectedOrgaData && (
-        <div className="grid grid-cols-3 gap-6">
-          <MetricCard
-            value={selectedOrgaData.counts.members}
-            label={t("metrics.members")}
-            color="blue"
-          />
-          <MetricCard
-            value={selectedOrgaData.counts.teams}
-            label={t("metrics.teams")}
-            color="green"
-          />
-          <MetricCard
-            value={selectedOrgaData.counts.roles}
-            label={t("metrics.roles")}
-            color="purple"
-          />
-        </div>
-      )}
-
-      {/* Organization network diagram */}
-      <div className="h-[600px]">
-        <OrgNetworkDiagram orgaId={selectedOrga._id} />
-      </div>
+    <div className="h-[calc(100vh-4rem)]">
+      <OrgNetworkDiagram orgaId={selectedOrga._id} />
     </div>
   );
 };
@@ -156,27 +127,5 @@ const OrgaCard = ({ orga, counts }: OrgaCardProps) => {
         </div>
       </div>
     </button>
-  );
-};
-
-// Metric card component
-type MetricCardProps = {
-  value: number;
-  label: string;
-  color: "blue" | "green" | "purple";
-};
-
-const MetricCard = ({ value, label, color }: MetricCardProps) => {
-  const colorClasses = {
-    blue: "text-blue-600 dark:text-blue-400",
-    green: "text-green-600 dark:text-green-400",
-    purple: "text-purple-600 dark:text-purple-400",
-  };
-
-  return (
-    <div className="flex flex-col items-center p-6 bg-gray-800 rounded-lg">
-      <div className={`text-4xl font-bold ${colorClasses[color]}`}>{value}</div>
-      <div className="text-sm text-gray-400 mt-1">{label}</div>
-    </div>
   );
 };

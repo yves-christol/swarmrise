@@ -18,7 +18,7 @@ export const Anonymous = () => {
             <ResourceCard
               title="The principles"
               description="Discover the few simple concepts that run the show."
-              href="https://docs.convex.dev/home"
+              href="/principles"
             />
             <ResourceCard
               title="The product"

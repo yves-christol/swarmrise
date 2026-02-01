@@ -16,17 +16,17 @@ export const PrivacyPage = () => {
         <section className="flex flex-col items-center gap-6 text-center pt-8">
           <Logo size={64} begin={0} repeatCount={2} />
           <h1 className="font-swarm text-4xl font-bold">{t("privacy.title")}</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm opacity-70">
             {t("privacy.effectiveDateLabel")}: {effectiveDate} | {t("privacy.lastUpdatedLabel")}: {lastUpdated}
           </p>
         </section>
 
         {/* Introduction */}
         <section className="flex flex-col gap-4">
-          <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+          <p className="text-base leading-relaxed ">
             {t("privacy.intro.commitment")}
           </p>
-          <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+          <p className="text-base leading-relaxed ">
             {t("privacy.intro.gdprCompliance")}
           </p>
         </section>
@@ -41,7 +41,7 @@ export const PrivacyPage = () => {
           <PrivacySection number={2} title={t("privacy.sections.informationWeCollect.title")}>
             <p>{t("privacy.sections.informationWeCollect.intro")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.informationWeCollect.accountInfo.title")}
             </h3>
             <p>{t("privacy.sections.informationWeCollect.accountInfo.intro")}</p>
@@ -51,7 +51,7 @@ export const PrivacyPage = () => {
               <li>{t("privacy.sections.informationWeCollect.accountInfo.items.profilePicture")}</li>
             </ul>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.informationWeCollect.organizationData.title")}
             </h3>
             <p>{t("privacy.sections.informationWeCollect.organizationData.intro")}</p>
@@ -63,7 +63,7 @@ export const PrivacyPage = () => {
               <li>{t("privacy.sections.informationWeCollect.organizationData.items.invitationData")}</li>
             </ul>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.informationWeCollect.optionalContact.title")}
             </h3>
             <p>{t("privacy.sections.informationWeCollect.optionalContact.intro")}</p>
@@ -74,7 +74,7 @@ export const PrivacyPage = () => {
             </ul>
             <p>{t("privacy.sections.informationWeCollect.optionalContact.note")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.informationWeCollect.usageData.title")}
             </h3>
             <p>{t("privacy.sections.informationWeCollect.usageData.intro")}</p>
@@ -86,7 +86,7 @@ export const PrivacyPage = () => {
               <li>{t("privacy.sections.informationWeCollect.usageData.items.dateTime")}</li>
             </ul>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.informationWeCollect.decisionAudit.title")}
             </h3>
             <p>{t("privacy.sections.informationWeCollect.decisionAudit.intro")}</p>
@@ -100,7 +100,7 @@ export const PrivacyPage = () => {
           <PrivacySection number={3} title={t("privacy.sections.howWeUse.title")}>
             <p>{t("privacy.sections.howWeUse.intro")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.howWeUse.serviceProvision.title")}
             </h3>
             <ul className="list-disc pl-6 space-y-2">
@@ -111,7 +111,7 @@ export const PrivacyPage = () => {
               <li>{t("privacy.sections.howWeUse.serviceProvision.items.authenticate")}</li>
             </ul>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.howWeUse.legitimateInterests.title")}
             </h3>
             <ul className="list-disc pl-6 space-y-2">
@@ -121,7 +121,7 @@ export const PrivacyPage = () => {
               <li>{t("privacy.sections.howWeUse.legitimateInterests.items.respondSupport")}</li>
             </ul>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.howWeUse.consent.title")}
             </h3>
             <ul className="list-disc pl-6 space-y-2">
@@ -134,7 +134,7 @@ export const PrivacyPage = () => {
           <PrivacySection number={4} title={t("privacy.sections.thirdPartyServices.title")}>
             <p>{t("privacy.sections.thirdPartyServices.intro")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.thirdPartyServices.clerk.title")}
             </h3>
             <ul className="list-disc pl-6 space-y-2">
@@ -160,7 +160,7 @@ export const PrivacyPage = () => {
               </li>
             </ul>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.thirdPartyServices.convex.title")}
             </h3>
             <ul className="list-disc pl-6 space-y-2">
@@ -186,7 +186,7 @@ export const PrivacyPage = () => {
               </li>
             </ul>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.thirdPartyServices.googleFonts.title")}
             </h3>
             <ul className="list-disc pl-6 space-y-2">
@@ -231,42 +231,42 @@ export const PrivacyPage = () => {
           <PrivacySection number={6} title={t("privacy.sections.yourRightsGdpr.title")}>
             <p>{t("privacy.sections.yourRightsGdpr.intro")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.yourRightsGdpr.rightOfAccess.title")}
             </h3>
             <p>{t("privacy.sections.yourRightsGdpr.rightOfAccess.text")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.yourRightsGdpr.rightToRectification.title")}
             </h3>
             <p>{t("privacy.sections.yourRightsGdpr.rightToRectification.text")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.yourRightsGdpr.rightToErasure.title")}
             </h3>
             <p>{t("privacy.sections.yourRightsGdpr.rightToErasure.text")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.yourRightsGdpr.rightToRestriction.title")}
             </h3>
             <p>{t("privacy.sections.yourRightsGdpr.rightToRestriction.text")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.yourRightsGdpr.rightToPortability.title")}
             </h3>
             <p>{t("privacy.sections.yourRightsGdpr.rightToPortability.text")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.yourRightsGdpr.rightToObject.title")}
             </h3>
             <p>{t("privacy.sections.yourRightsGdpr.rightToObject.text")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.yourRightsGdpr.rightToWithdraw.title")}
             </h3>
             <p>{t("privacy.sections.yourRightsGdpr.rightToWithdraw.text")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.yourRightsGdpr.rightToComplaint.title")}
             </h3>
             <p>{t("privacy.sections.yourRightsGdpr.rightToComplaint.text")}</p>
@@ -277,7 +277,7 @@ export const PrivacyPage = () => {
           <PrivacySection number={7} title={t("privacy.sections.cookiesLocalStorage.title")}>
             <p>{t("privacy.sections.cookiesLocalStorage.intro")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.cookiesLocalStorage.localStorage.title")}
             </h3>
             <table className="w-full text-sm mt-2 border-collapse">
@@ -302,12 +302,12 @@ export const PrivacyPage = () => {
               </tbody>
             </table>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.cookiesLocalStorage.authCookies.title")}
             </h3>
             <p>{t("privacy.sections.cookiesLocalStorage.authCookies.text")}</p>
 
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mt-4">
+            <h3 className="font-semibold  mt-4">
               {t("privacy.sections.cookiesLocalStorage.noTracking.title")}
             </h3>
             <p>{t("privacy.sections.cookiesLocalStorage.noTracking.text")}</p>
@@ -385,7 +385,7 @@ export const PrivacyPage = () => {
           <h2 className="font-swarm text-xl font-bold mb-4">
             {t("privacy.relatedDocuments")}
           </h2>
-          <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+          <ul className="space-y-2 ">
             <li>
               <Link to="/terms" className="text-[#eac840] hover:underline">
                 {t("privacy.termsLink")}
@@ -403,7 +403,7 @@ export const PrivacyPage = () => {
 
         {/* Footer */}
         <section className="text-center py-8 border-t border-gray-300 dark:border-gray-700">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm opacity-70">
             {t("privacy.footer")}
           </p>
         </section>
@@ -422,12 +422,12 @@ const PrivacySection = ({ number, title, children }: PrivacySectionProps) => {
   return (
     <article className="flex flex-col gap-4 privacy-section">
       <div className="flex items-baseline gap-3">
-        <span className="text-xs text-gray-400 dark:text-gray-600 font-mono w-6">
+        <span className="text-xs opacity-50 font-mono w-6">
           {String(number).padStart(2, "0")}
         </span>
         <h2 className="font-swarm text-xl font-bold">{title}</h2>
       </div>
-      <div className="pl-9 space-y-4 text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      <div className="pl-9 space-y-4 text-base leading-relaxed ">
         {children}
       </div>
     </article>

@@ -16,17 +16,17 @@ export const TermsPage = () => {
         <section className="flex flex-col items-center gap-6 text-center pt-8">
           <Logo size={64} begin={0} repeatCount={2} />
           <h1 className="font-swarm text-4xl font-bold">{t("terms.title")}</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm opacity-70">
             {t("terms.effectiveDateLabel")}: {effectiveDate} | {t("terms.lastUpdatedLabel")}: {lastUpdated}
           </p>
         </section>
 
         {/* Introduction */}
         <section className="flex flex-col gap-4">
-          <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+          <p className="text-base leading-relaxed ">
             {t("terms.intro.welcome")}
           </p>
-          <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+          <p className="text-base leading-relaxed ">
             {t("terms.intro.readCarefully")}
           </p>
         </section>
@@ -208,7 +208,7 @@ export const TermsPage = () => {
         {/* Related documents */}
         <section className="border-t border-gray-300 dark:border-gray-700 pt-8">
           <h2 className="font-swarm text-xl font-bold mb-4">{t("terms.relatedDocuments")}</h2>
-          <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+          <ul className="space-y-2 ">
             <li>
               <Link to="/privacy" className="text-[#eac840] hover:underline">
                 {t("terms.privacyLink")}
@@ -226,7 +226,7 @@ export const TermsPage = () => {
 
         {/* Footer */}
         <section className="text-center py-8 border-t border-gray-300 dark:border-gray-700">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm opacity-70">
             {t("terms.footer")}
           </p>
         </section>
@@ -245,12 +245,12 @@ const TermsSection = ({ number, title, children }: TermsSectionProps) => {
   return (
     <article className="flex flex-col gap-4 terms-section">
       <div className="flex items-baseline gap-3">
-        <span className="text-xs text-gray-400 dark:text-gray-600 font-mono w-6">
+        <span className="text-xs opacity-50 font-mono w-6">
           {String(number).padStart(2, "0")}
         </span>
         <h2 className="font-swarm text-xl font-bold">{title}</h2>
       </div>
-      <div className="pl-9 space-y-4 text-base leading-relaxed text-gray-700 dark:text-gray-300">
+      <div className="pl-9 space-y-4 text-base leading-relaxed ">
         {children}
       </div>
     </article>

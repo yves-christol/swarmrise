@@ -23,5 +23,9 @@
   "secondaryColor": "вторинний колір",
   "themeTone": "тематичний тон",
   "imageUploadFailed": "Не вдалося завантажити зображення",
-  "imageUploadSuccess": "Нове зображення завантажено"
+  "imageUploadSuccess": "Нове зображення завантажено",
+  "selectLanguage": "Вибрати мову",
+  "availableLanguages": "Доступні мови",
+  "switchToLightMode": "Перейти до світлого режиму",
+  "switchToDarkMode": "Перейти до темного режиму"
 }

@@ -23,7 +23,7 @@ export const PrincipleCard = ({ title, content, index }: PrincipleCardProps) => 
       style={{ animationDelay: `${0.1 + index * 0.05}s` }}
     >
       <div className="flex items-baseline gap-3">
-        <span className="text-xs text-gray-400 dark:text-gray-600 font-mono w-6">
+        <span className="text-xs opacity-50 font-mono w-6">
           {String(index + 1).padStart(2, "0")}
         </span>
         <h2 className="font-swarm text-xl font-bold group-hover:text-[#eac840] transition-colors duration-200">
@@ -31,7 +31,7 @@ export const PrincipleCard = ({ title, content, index }: PrincipleCardProps) => 
         </h2>
       </div>
 
-      <p className="text-base leading-relaxed pl-9 text-gray-700 dark:text-gray-300">
+      <p className="text-base leading-relaxed pl-9">
         {renderContent(content)}
       </p>
     </article>

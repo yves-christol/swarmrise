@@ -23,5 +23,9 @@
   "secondaryColor": "couleur secondaire",
   "themeTone": "ton du thème",
   "imageUploadFailed": "Le téléchargement d'image n'a pas fonctionné",
-  "imageUploadSuccess": "Nouvelle image téléchargée"
+  "imageUploadSuccess": "Nouvelle image téléchargée",
+  "selectLanguage": "Sélectionner la langue",
+  "availableLanguages": "Langues disponibles",
+  "switchToLightMode": "Passer au mode clair",
+  "switchToDarkMode": "Passer au mode sombre"
 }

@@ -37,28 +37,35 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    color: var(--color-light);
-    background: var(--color-dark);
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  h1, h2, h3, h4, h5, h6, b {
-    font-family: 'Montserrat Alternates', sans-serif;
-    font-weight: 400;
-  }
+/* Dark mode (class-based for manual override) */
+:root.dark body {
+  color: var(--color-light);
+  background: var(--color-dark);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-@media (prefers-color-scheme: light) {
-  body {
-    color: var(--color-dark);
-    background: var(--color-light);
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  h1, h2, h3, h4, h5, h6, b {
-    font-family: 'Montserrat Alternates', sans-serif;
-    font-weight: 400;
-  }
+:root.dark h1, :root.dark h2, :root.dark h3,
+:root.dark h4, :root.dark h5, :root.dark h6, :root.dark b {
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight: 400;
+}
+
+/* Light mode (class-based for manual override) */
+:root.light body {
+  color: #111111;
+  background: var(--color-light);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+:root.light h1, :root.light h2, :root.light h3,
+:root.light h4, :root.light h5, :root.light h6, :root.light b {
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight: 400;
+}
+
+/* Smooth theme transitions */
+body {
+  transition: background-color 200ms ease-out, color 200ms ease-out;
 }
 
 /* Principles page animations */

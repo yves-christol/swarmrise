@@ -23,5 +23,9 @@
   "secondaryColor": "secondary color",
   "themeTone": "theme tone",
   "imageUploadFailed": "Image upload didn't work",
-  "imageUploadSuccess": "New image uploaded"
+  "imageUploadSuccess": "New image uploaded",
+  "selectLanguage": "Select language",
+  "availableLanguages": "Available languages",
+  "switchToLightMode": "Switch to light mode",
+  "switchToDarkMode": "Switch to dark mode"
 }

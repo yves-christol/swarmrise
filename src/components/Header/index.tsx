@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { Logo } from "../Logo";
 import { OrgaSelector } from "../OrgaSelector";
+import { LanguageSelector } from "../LanguageSelector";
+import { ThemeToggle } from "../ThemeToggle";
 
 type HeaderProps = {
   showBackButton?: boolean;
@@ -56,8 +58,14 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
         </div>
       )}
 
-      {/* Right side: User button */}
-      <div className="flex items-center">
+      {/* Right side: Utility icons + User button */}
+      <div className="flex items-center gap-4">
+        {/* Utility icons cluster */}
+        <div className="flex items-center gap-2">
+          <LanguageSelector />
+          <ThemeToggle />
+        </div>
+        {/* User identity */}
         {isSignedIn && <UserButton appearance={{ baseTheme: dark }} />}
       </div>
     </header>

@@ -17,7 +17,7 @@ export const PrinciplesPage = () => {
         <section className="flex flex-col items-center gap-6 text-center pt-8">
           <Logo size={64} begin={0} repeatCount={2} />
           <h1 className="font-swarm text-4xl font-bold">{t("principles.title")}</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl">
+          <p className="text-lg max-w-xl opacity-80">
             {t("principles.subtitle")}
           </p>
         </section>
@@ -37,7 +37,7 @@ export const PrinciplesPage = () => {
         {/* Legal documents */}
         <section className="border-t border-gray-300 dark:border-gray-700 pt-8">
           <h2 className="font-swarm text-xl font-bold mb-4">{t("principles.legal")}</h2>
-          <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+          <ul className="space-y-2">
             <li>
               <Link to="/terms" className="text-[#eac840] hover:underline">
                 {t("principles.termsLink")}
@@ -55,7 +55,7 @@ export const PrinciplesPage = () => {
 
         {/* Footer */}
         <section className="text-center py-8 border-t border-gray-300 dark:border-gray-700">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm opacity-70">
             {t("principles.footer")}
           </p>
         </section>

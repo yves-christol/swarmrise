@@ -23,5 +23,9 @@
   "secondaryColor": "次要顏色",
   "themeTone": "主題基調",
   "imageUploadFailed": "圖片上傳失敗",
-  "imageUploadSuccess": "新圖片已上傳"
+  "imageUploadSuccess": "新圖片已上傳",
+  "selectLanguage": "選擇語言",
+  "availableLanguages": "可用語言",
+  "switchToLightMode": "切換至淺色模式",
+  "switchToDarkMode": "切換至深色模式"
 }

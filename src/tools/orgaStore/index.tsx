@@ -207,28 +207,31 @@ const useOrgaScopedQuery = <T,>(
 }
 
 export const useMembers = (): { data: Member[] | undefined; isLoading: boolean } => {
-  const { selectedOrgaId, isSignedIn } = useOrgaStore()
+  const { selectedOrgaId, selectedOrga, isSignedIn } = useOrgaStore()
+  // Only query if selectedOrga exists (validated against orgasWithCounts), not just selectedOrgaId (may be stale from localStorage)
   const members = useQuery(
     api.members.functions.listMembers,
-    isSignedIn && selectedOrgaId ? { orgaId: selectedOrgaId } : "skip"
+    isSignedIn && selectedOrga ? { orgaId: selectedOrgaId! } : "skip"
   )
   return useOrgaScopedQuery(members, selectedOrgaId)
 }
 
 export const useTeams = (): { data: Team[] | undefined; isLoading: boolean } => {
-  const { selectedOrgaId, isSignedIn } = useOrgaStore()
+  const { selectedOrgaId, selectedOrga, isSignedIn } = useOrgaStore()
+  // Only query if selectedOrga exists (validated against orgasWithCounts), not just selectedOrgaId (may be stale from localStorage)
   const teams = useQuery(
     api.teams.functions.listTeamsInOrga,
-    isSignedIn && selectedOrgaId ? { orgaId: selectedOrgaId } : "skip"
+    isSignedIn && selectedOrga ? { orgaId: selectedOrgaId! } : "skip"
   )
   return useOrgaScopedQuery(teams, selectedOrgaId)
 }
 
 export const useRoles = (): { data: Role[] | undefined; isLoading: boolean } => {
-  const { selectedOrgaId, isSignedIn } = useOrgaStore()
+  const { selectedOrgaId, selectedOrga, isSignedIn } = useOrgaStore()
+  // Only query if selectedOrga exists (validated against orgasWithCounts), not just selectedOrgaId (may be stale from localStorage)
   const roles = useQuery(
     api.roles.functions.listRolesInOrga,
-    isSignedIn && selectedOrgaId ? { orgaId: selectedOrgaId } : "skip"
+    isSignedIn && selectedOrga ? { orgaId: selectedOrgaId! } : "skip"
   )
   return useOrgaScopedQuery(roles, selectedOrgaId)
 }

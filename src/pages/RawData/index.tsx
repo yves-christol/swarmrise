@@ -1,11 +1,25 @@
 import { OrgaSelector } from '../../components/OrgaSelector'
 import { useOrgaStore, useMembers, useTeams, useRoles } from '../../tools/orgaStore'
 
+// Spinner component for loading states
+const Spinner = () => (
+  <div className="flex items-center gap-2">
+    <svg className="animate-spin h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <span>Loading...</span>
+  </div>
+)
+
 export const RawDataPage = () => {
-  const { selectedOrgaId } = useOrgaStore()
-  const members = useMembers()
-  const teams = useTeams()
-  const roles = useRoles()
+  const { selectedOrgaId, isSwitchingOrga } = useOrgaStore()
+  const { data: members, isLoading: membersLoading } = useMembers()
+  const { data: teams, isLoading: teamsLoading } = useTeams()
+  const { data: roles, isLoading: rolesLoading } = useRoles()
+
+  // Show a global loading indicator when switching organizations
+  const isTransitioning = isSwitchingOrga || (selectedOrgaId && (membersLoading || teamsLoading || rolesLoading))
 
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
@@ -19,13 +33,20 @@ export const RawDataPage = () => {
         <p>Select an organization to view its data.</p>
       )}
 
-      {selectedOrgaId && (
+      {selectedOrgaId && isTransitioning && (
+        <div className="flex flex-col items-center justify-center py-12 gap-4">
+          <Spinner />
+          <p className="text-gray-400">Loading organization data...</p>
+        </div>
+      )}
+
+      {selectedOrgaId && !isTransitioning && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
           <section>
             <h2>Members ({members?.length ?? 0})</h2>
-            {members === undefined ? (
-              <p>Loading members...</p>
-            ) : members.length === 0 ? (
+            {membersLoading ? (
+              <Spinner />
+            ) : !members || members.length === 0 ? (
               <p>No members found.</p>
             ) : (
               <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -53,9 +74,9 @@ export const RawDataPage = () => {
 
           <section>
             <h2>Teams ({teams?.length ?? 0})</h2>
-            {teams === undefined ? (
-              <p>Loading teams...</p>
-            ) : teams.length === 0 ? (
+            {teamsLoading ? (
+              <Spinner />
+            ) : !teams || teams.length === 0 ? (
               <p>No teams found.</p>
             ) : (
               <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -79,9 +100,9 @@ export const RawDataPage = () => {
 
           <section>
             <h2>Roles ({roles?.length ?? 0})</h2>
-            {roles === undefined ? (
-              <p>Loading roles...</p>
-            ) : roles.length === 0 ? (
+            {rolesLoading ? (
+              <Spinner />
+            ) : !roles || roles.length === 0 ? (
               <p>No roles found.</p>
             ) : (
               <table style={{ borderCollapse: 'collapse', width: '100%' }}>

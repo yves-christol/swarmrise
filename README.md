@@ -99,4 +99,4 @@ Invoke agents via Claude Code with `@agent-name`:
 
 ## License
 
-Private repository - All rights reserved
+Apache 2.0 - See [LICENSE.txt](LICENSE.txt)

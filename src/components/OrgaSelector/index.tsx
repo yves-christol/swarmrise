@@ -168,7 +168,7 @@ export const OrgaSelector = () => {
                     </div>
                   </div>
                   {isSelected && (
-                    <CheckIcon className="w-5 h-5 text-[#eac840] flex-shrink-0" />
+                    <CheckIcon className="w-5 h-5 text-gold flex-shrink-0" />
                   )}
                 </button>
               )

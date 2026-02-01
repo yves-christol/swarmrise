@@ -104,7 +104,7 @@ export const LanguageSelector = () => {
               >
                 <span className="text-dark dark:text-light">{languageNames[lang]}</span>
                 {currentLanguage === lang && (
-                  <CheckIcon className="w-5 h-5 text-[#eac840]" />
+                  <CheckIcon className="w-5 h-5 text-gold" />
                 )}
               </button>
             ))}

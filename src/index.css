@@ -6,6 +6,10 @@
   --color-dark: #212121;
   --color-dark-paper: #1a1a1a;
 
+  /* Brand gold colors */
+  --color-bee-gold: #eac840;
+  --color-bee-gold-dark: #d4af37;
+
   /* Custom font family */
   --font-family-swarm: 'Montserrat Alternates', sans-serif;
 }
@@ -36,6 +40,15 @@
     background-color: var(--color-dark-paper);
   }
 
+  /* Gold text - accessible in both themes */
+  .text-gold {
+    color: var(--color-gold-text, #996800);
+  }
+
+  .hover\:text-gold:hover {
+    color: var(--color-gold-text, #996800);
+  }
+
 }
 
 /* Dark mode variants for custom utilities */
@@ -55,7 +68,15 @@
   color: var(--color-dark);
 }
 
+.dark .dark\:text-gold {
+  color: var(--color-gold-text);
+}
+
 /* Dark mode (class-based for manual override) */
+:root.dark {
+  --color-gold-text: #eac840;
+}
+
 :root.dark body {
   color: var(--color-light);
   background: var(--color-dark);
@@ -69,6 +90,10 @@
 }
 
 /* Light mode (class-based for manual override) */
+:root.light {
+  --color-gold-text: #996800;
+}
+
 :root.light body {
   color: #111111;
   background: var(--color-light);

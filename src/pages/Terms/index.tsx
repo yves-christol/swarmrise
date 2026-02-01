@@ -196,7 +196,7 @@ export const TermsPage = () => {
                   href="https://github.com/yves-christol/swarmrise"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#eac840] hover:underline"
+                  className="text-gold hover:underline"
                 >
                   github.com/yves-christol/swarmrise
                 </a>
@@ -210,13 +210,13 @@ export const TermsPage = () => {
           <h2 className="font-swarm text-xl font-bold mb-4">{t("terms.relatedDocuments")}</h2>
           <ul className="space-y-2 ">
             <li>
-              <Link to="/privacy" className="text-[#eac840] hover:underline">
+              <Link to="/privacy" className="text-gold hover:underline">
                 {t("terms.privacyLink")}
               </Link>
               {" "}- {t("terms.privacyDescription")}
             </li>
             <li>
-              <Link to="/principles" className="text-[#eac840] hover:underline">
+              <Link to="/principles" className="text-gold hover:underline">
                 {t("terms.principlesLink")}
               </Link>
               {" "}- {t("terms.principlesDescription")}

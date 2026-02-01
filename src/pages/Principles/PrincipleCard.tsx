@@ -10,7 +10,7 @@ const renderContent = (text: string) => {
     <span key={i}>
       {part}
       {i < parts.length - 1 && (
-        <span className="font-swarm text-[#eac840]">swarmrise</span>
+        <span className="font-swarm text-gold">swarmrise</span>
       )}
     </span>
   ));
@@ -26,7 +26,7 @@ export const PrincipleCard = ({ title, content, index }: PrincipleCardProps) => 
         <span className="text-xs opacity-50 font-mono w-6">
           {String(index + 1).padStart(2, "0")}
         </span>
-        <h2 className="font-swarm text-xl font-bold group-hover:text-[#eac840] transition-colors duration-200">
+        <h2 className="font-swarm text-xl font-bold group-hover:text-gold transition-colors duration-200">
           {title.toLowerCase()}
         </h2>
       </div>

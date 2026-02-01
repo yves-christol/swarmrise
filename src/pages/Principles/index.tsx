@@ -39,13 +39,13 @@ export const PrinciplesPage = () => {
           <h2 className="font-swarm text-xl font-bold mb-4">{t("principles.legal")}</h2>
           <ul className="space-y-2">
             <li>
-              <Link to="/terms" className="text-[#eac840] hover:underline">
+              <Link to="/terms" className="text-gold hover:underline">
                 {t("principles.termsLink")}
               </Link>
               {" "}- {t("principles.termsDescription")}
             </li>
             <li>
-              <Link to="/privacy" className="text-[#eac840] hover:underline">
+              <Link to="/privacy" className="text-gold hover:underline">
                 {t("principles.privacyLink")}
               </Link>
               {" "}- {t("principles.privacyDescription")}

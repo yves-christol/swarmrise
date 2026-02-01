@@ -153,7 +153,7 @@ export const PrivacyPage = () => {
                   href="https://clerk.com/legal/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#eac840] hover:underline"
+                  className="text-gold hover:underline"
                 >
                   clerk.com/legal/privacy
                 </a>
@@ -179,7 +179,7 @@ export const PrivacyPage = () => {
                   href="https://www.convex.dev/legal/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#eac840] hover:underline"
+                  className="text-gold hover:underline"
                 >
                   convex.dev/legal/privacy
                 </a>
@@ -202,7 +202,7 @@ export const PrivacyPage = () => {
                   href="https://policies.google.com/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#eac840] hover:underline"
+                  className="text-gold hover:underline"
                 >
                   policies.google.com/privacy
                 </a>
@@ -370,7 +370,7 @@ export const PrivacyPage = () => {
                   href="https://github.com/yves-christol/swarmrise"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#eac840] hover:underline"
+                  className="text-gold hover:underline"
                 >
                   github.com/yves-christol/swarmrise
                 </a>
@@ -387,13 +387,13 @@ export const PrivacyPage = () => {
           </h2>
           <ul className="space-y-2 ">
             <li>
-              <Link to="/terms" className="text-[#eac840] hover:underline">
+              <Link to="/terms" className="text-gold hover:underline">
                 {t("privacy.termsLink")}
               </Link>
               {" "}- {t("privacy.termsDescription")}
             </li>
             <li>
-              <Link to="/principles" className="text-[#eac840] hover:underline">
+              <Link to="/principles" className="text-gold hover:underline">
                 {t("privacy.principlesLink")}
               </Link>
               {" "}- {t("privacy.principlesDescription")}

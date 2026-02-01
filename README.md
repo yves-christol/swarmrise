@@ -1,89 +1,102 @@
-# Welcome to your Convex + React (Vite) + Clerkapp
+# Swarmrise
 
-This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
+A multi-tenant organization management platform for collaborative governance. Swarmrise enables organizations to structure teams, define roles, and track decisions with full auditability.
 
-After the initial setup (<2 minutes) you'll have a working full-stack app using:
+**GitHub:** https://github.com/yves-christol/swarmrise
 
-- Convex as your backend (database, server logic)
-- [React](https://react.dev/) as your frontend (web page interactivity)
-- [Vite](https://vitest.dev/) for optimized web hosting
-- [Tailwind](https://tailwindcss.com/) for building great looking accessible UI
-- [Clerk](https://clerk.com/) for authentication
+## Tech Stack
 
-## Get started
+- **Frontend:** React 19 + Vite + Tailwind CSS v4
+- **Backend:** Convex (real-time database & serverless functions)
+- **Authentication:** Clerk
+- **Package Manager:** Bun (required)
 
-If you just cloned this codebase and didn't use `npm create convex`, run:
+## Key Features
 
-```
-npm install
-npm run dev
-```
+- **Multi-tenant architecture** - Complete data isolation between organizations
+- **Team & role management** - Hierarchical team structures with typed roles (leader, secretary, referee)
+- **Decision audit trail** - Every modification tracked with before/after diffs
+- **Real-time updates** - Changes propagate instantly via Convex subscriptions
 
-If you're reading this README on GitHub and want to use this template, run:
+## Commands
 
-```
-npm create convex@latest -- -t react-vite-clerk
-```
-
-Then:
-
-1. Follow steps 1 to 3 in the [Clerk onboarding guide](https://docs.convex.dev/auth/clerk#get-started)
-2. Paste the Issuer URL as `CLERK_JWT_ISSUER_DOMAIN` to your dev deployment environment variable settings on the Convex dashboard (see [docs](https://docs.convex.dev/auth/clerk#configuring-dev-and-prod-instances))
-3. Paste your publishable key as `VITE_CLERK_PUBLISHABLE_KEY="<your publishable key>"` to the `.env.local` file in this directory.
-
-If you want to sync Clerk user data via webhooks, check out this [example repo](https://github.com/thomasballinger/convex-clerk-users-table/).
-
-## Available Commands
-
-This project uses [Bun](https://bun.sh/) as the package manager and runtime. Here are the main commands you can use:
-
-### Install dependencies
-```sh
+```bash
+# Install dependencies
 bun install
+
+# Development (frontend + backend concurrently)
+bun run dev
+
+# Frontend only (Vite dev server)
+bun run dev:frontend
+
+# Backend only (Convex dev server)
+bun run dev:backend
+
+# Build for production
+bun run build
+
+# Lint and type-check
+bun run lint
+
+# Deploy Convex functions
+bun run convex deploy
 ```
 
-### Start development servers
-```sh
-bun run dev           # Starts both frontend (Vite) and backend (Convex) with auto-open
-bun run dev:frontend  # Starts only the frontend (Vite)
-bun run dev:backend   # Starts only the backend (Convex)
+## Project Structure
+
+```
+convex/           # Backend: Convex functions and schema
+├── orgas/        # Organizations
+├── users/        # User accounts
+├── members/      # Organization memberships
+├── teams/        # Teams within organizations
+├── roles/        # Role definitions and assignments
+├── decisions/    # Audit trail for all modifications
+├── invitations/  # Membership invitations
+├── policies/     # Organization policies
+└── topics/       # Discussion topics
+
+src/              # Frontend: React application
+├── components/   # UI components
+└── tools/        # Utilities (i18n, stores)
 ```
 
-### Build for production
-```sh
-bun run build         # Type-checks and builds the frontend
+## Claude Code Agents
+
+This project includes specialized Claude Code agents for assisted development:
+
+| Agent | Specialty |
+|-------|-----------|
+| **karl** | Data Model Guardian - Reviews schema changes, ensures data consistency, generates migrations, maintains `DATA_MODEL_PHILOSOPHY.md` |
+| **gunter** | Security Analyst - Audits code for vulnerabilities, reviews dependencies for CVEs, assesses authentication/authorization patterns |
+| **monica-ux-brand** | UX & Brand Expert - Provides design guidance, maintains brand consistency, documents UI principles |
+
+### Using Agents
+
+Invoke agents via Claude Code with `@agent-name`:
+
+```
+@karl review the schema changes
+@gunter check for security issues
+@monica-ux-brand help design this component
 ```
 
-### Preview production build
-```sh
-bun run preview       # Serves the built frontend locally
-```
+## Documentation
 
-### Lint and type-check
-```sh
-bun run lint          # Runs TypeScript and ESLint checks
-```
+- `CLAUDE.md` - Development guidance for Claude Code
+- `DATA_MODEL_PHILOSOPHY.md` - Data architecture decisions and patterns
+- `SECURITY.md` - Security audit findings and recommendations
 
-```sh
-bun run predev        # Starts Convex dev server and dashboard
-```
+## Getting Started
 
-### Deploy Convex functions
-```sh
-bun run convex deploy # Deploys Convex functions to your production backend
-```
+1. Clone the repository
+2. Copy `.env.example` to `.env.local` and configure:
+   - `VITE_CLERK_PUBLISHABLE_KEY` - Your Clerk publishable key
+   - `VITE_CONVEX_URL` - Your Convex deployment URL
+3. Run `bun install`
+4. Run `bun run dev`
 
-## Learn more
+## License
 
-To learn more about developing your project with Convex, check out:
-
-- The [Tour of Convex](https://docs.convex.dev/get-started) for a thorough introduction to Convex principles.
-- The rest of [Convex docs](https://docs.convex.dev/) to learn about all Convex features.
-- [Stack](https://stack.convex.dev/) for in-depth articles on advanced topics.
-
-## Join the community
-
-Join thousands of developers building full-stack apps with Convex:
-
-- Join the [Convex Discord community](https://convex.dev/community) to get help in real-time.
-- Follow [Convex on GitHub](https://github.com/get-convex/), star and contribute to the open-source implementation of Convex.
+Private repository - All rights reserved

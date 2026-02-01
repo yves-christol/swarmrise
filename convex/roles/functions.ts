@@ -9,6 +9,7 @@ import {
   getOrgaFromRole,
   getOrgaFromTeam,
   getTeamLeader,
+  hasTeamLeader,
 } from "../utils";
 
 /**
@@ -27,6 +28,21 @@ export const getRoleById = query({
 });
 
 /**
+ * List all roles in an organization
+ */
+export const listRolesInOrga = query({
+  args: { orgaId: v.id("orgas") },
+  returns: v.array(roleValidator),
+  handler: async (ctx, args) => {
+    await requireAuthAndMembership(ctx, args.orgaId);
+    return await ctx.db
+      .query("roles")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+  },
+});
+
+/**
  * List all roles in a team
  */
 export const listRolesInTeam = query({
@@ -38,7 +54,9 @@ export const listRolesInTeam = query({
       _id: v.id("roles"),
       _creationTime: v.number(),
       teamId: v.id("teams"),
+      parentTeamId: v.optional(v.id("teams")),
       title: v.string(),
+      roleType: v.optional(v.union(v.literal("leader"), v.literal("secretary"), v.literal("referee"))),
       mission: v.string(),
       duties: v.array(v.string()),
       memberId: v.id("members"),
@@ -57,19 +75,46 @@ export const listRolesInTeam = query({
 /**
  * Create a new role
  * The role will be automatically assigned to the Leader of the Team by default
+ * Enforces one leader per team
  */
 export const createRole = mutation({
   args: {
     teamId: v.id("teams"),
     title: v.string(),
+    roleType: v.optional(v.union(v.literal("leader"), v.literal("secretary"), v.literal("referee"))),
     mission: v.string(),
     duties: v.array(v.string()),
+    parentTeamId: v.optional(v.id("teams")), // For leader roles: the parent team this role connects to
     memberId: v.optional(v.id("members")), // Optional: if not provided, defaults to team leader
   },
   returns: v.id("roles"),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
     const member = await requireAuthAndMembership(ctx, orgaId);
+    
+    // Enforce one leader per team
+    if (args.roleType === "leader") {
+      if (await hasTeamLeader(ctx, args.teamId)) {
+        throw new Error("Team already has a leader. There can only be one leader per team.");
+      }
+      
+      // Validate parent team if provided
+      if (args.parentTeamId) {
+        const parentTeam = await ctx.db.get(args.parentTeamId);
+        if (!parentTeam) {
+          throw new Error("Parent team not found");
+        }
+        if (parentTeam.orgaId !== orgaId) {
+          throw new Error("Parent team must belong to the same organization");
+        }
+        // Prevent circular references
+        if (args.parentTeamId === args.teamId) {
+          throw new Error("Team cannot be its own parent");
+        }
+      }
+    } else if (args.parentTeamId) {
+      throw new Error("parentTeamId can only be set for leader roles");
+    }
     
     // Determine which member should hold the role
     // Default to team leader if not specified
@@ -92,7 +137,9 @@ export const createRole = mutation({
     const roleId = await ctx.db.insert("roles", {
       orgaId,
       teamId: args.teamId,
+      parentTeamId: args.parentTeamId,
       title: args.title,
+      roleType: args.roleType,
       mission: args.mission,
       duties: args.duties,
       memberId: assignedMemberId,
@@ -122,7 +169,9 @@ export const createRole = mutation({
         before: undefined,
         after: {
           teamId: args.teamId,
+          parentTeamId: args.parentTeamId,
           title: args.title,
+          roleType: args.roleType,
           mission: args.mission,
           duties: args.duties,
           memberId: assignedMemberId,
@@ -136,13 +185,16 @@ export const createRole = mutation({
 
 /**
  * Update a role
+ * Enforces one leader per team when updating roleType to leader
  */
 export const updateRole = mutation({
   args: {
     roleId: v.id("roles"),
     title: v.optional(v.string()),
+    roleType: v.optional(v.union(v.literal("leader"), v.literal("secretary"), v.literal("referee"))),
     mission: v.optional(v.string()),
     duties: v.optional(v.array(v.string())),
+    parentTeamId: v.optional(v.union(v.id("teams"), v.null())), // For leader roles: the parent team this role connects to
     memberId: v.optional(v.id("members")), // Optional: if provided, must be a valid member ID
   },
   returns: v.id("roles"),
@@ -153,6 +205,33 @@ export const updateRole = mutation({
     const role = await ctx.db.get(args.roleId);
     if (!role) {
       throw new Error("Role not found");
+    }
+    
+    // Enforce one leader per team when setting roleType to leader
+    if (args.roleType === "leader" && role.roleType !== "leader") {
+      if (await hasTeamLeader(ctx, role.teamId)) {
+        throw new Error("Team already has a leader. There can only be one leader per team.");
+      }
+    }
+    
+    // Validate parent team if provided
+    if (args.parentTeamId !== undefined && args.parentTeamId !== null) {
+      if (args.roleType !== "leader" && role.roleType !== "leader") {
+        throw new Error("parentTeamId can only be set for leader roles");
+      }
+      const parentTeam = await ctx.db.get(args.parentTeamId);
+      if (!parentTeam) {
+        throw new Error("Parent team not found");
+      }
+      if (parentTeam.orgaId !== orgaId) {
+        throw new Error("Parent team must belong to the same organization");
+      }
+      // Prevent circular references
+      if (args.parentTeamId === role.teamId) {
+        throw new Error("Team cannot be its own parent");
+      }
+    } else if (args.parentTeamId === null && role.roleType === "leader") {
+      // Allow clearing parentTeamId for leader roles
     }
     
     // Validate member if provided
@@ -188,27 +267,35 @@ export const updateRole = mutation({
     // Update role
     const updates: {
       title?: string;
+      roleType?: "leader" | "secretary" | "referee";
       mission?: string;
       duties?: string[];
+      parentTeamId?: Id<"teams">;
       memberId?: Id<"members">;
     } = {};
     
     if (args.title !== undefined) updates.title = args.title;
+    if (args.roleType !== undefined) updates.roleType = args.roleType;
     if (args.mission !== undefined) updates.mission = args.mission;
     if (args.duties !== undefined) updates.duties = args.duties;
+    if (args.parentTeamId !== undefined) updates.parentTeamId = args.parentTeamId ?? undefined;
     if (args.memberId !== undefined) updates.memberId = args.memberId;
     
     // Build before and after with only modified fields
     const before: {
       teamId?: Id<"teams">;
+      parentTeamId?: Id<"teams">;
       title?: string;
+      roleType?: "leader" | "secretary" | "referee";
       mission?: string;
       duties?: string[];
       memberId?: Id<"members">;
     } = {};
     const after: {
       teamId?: Id<"teams">;
+      parentTeamId?: Id<"teams">;
       title?: string;
+      roleType?: "leader" | "secretary" | "referee";
       mission?: string;
       duties?: string[];
       memberId?: Id<"members">;
@@ -218,6 +305,10 @@ export const updateRole = mutation({
       before.title = role.title;
       after.title = args.title;
     }
+    if (args.roleType !== undefined) {
+      before.roleType = role.roleType;
+      after.roleType = args.roleType;
+    }
     if (args.mission !== undefined) {
       before.mission = role.mission;
       after.mission = args.mission;
@@ -225,6 +316,10 @@ export const updateRole = mutation({
     if (args.duties !== undefined) {
       before.duties = role.duties;
       after.duties = args.duties;
+    }
+    if (args.parentTeamId !== undefined) {
+      before.parentTeamId = role.parentTeamId;
+      after.parentTeamId = args.parentTeamId ?? undefined;
     }
     if (args.memberId !== undefined) {
       before.memberId = role.memberId;
@@ -275,7 +370,9 @@ export const deleteRole = mutation({
     // Store before state
     const before = {
       teamId: role.teamId,
+      parentTeamId: role.parentTeamId,
       title: role.title,
+      roleType: role.roleType,
       mission: role.mission,
       duties: role.duties,
       memberId: role.memberId,

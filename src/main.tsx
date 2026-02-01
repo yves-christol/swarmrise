@@ -9,6 +9,8 @@ import App from "./components/App/index.tsx";
 import { OrgaStoreProvider } from "./tools/orgaStore/index.tsx";
 import { RawDataPage } from "./pages/RawData/index.tsx";
 import { PrinciplesPage } from "./pages/Principles/index.tsx";
+import { TermsPage } from "./pages/Terms/index.tsx";
+import { PrivacyPage } from "./pages/Privacy/index.tsx";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 createRoot(document.getElementById("root")!).render(
@@ -21,6 +23,8 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/" element={<App />} />
               <Route path="/rawdata" element={<RawDataPage />} />
               <Route path="/principles" element={<PrinciplesPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
             </Routes>
           </BrowserRouter>
         </OrgaStoreProvider>

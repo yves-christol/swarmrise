@@ -20,6 +20,7 @@ export type GraphNode = {
   vy?: number;
   fx?: number | null;
   fy?: number | null;
+  isPinned?: boolean;
 };
 
 export type GraphEdge = {

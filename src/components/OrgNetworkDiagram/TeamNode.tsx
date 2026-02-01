@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState, useCallback, useRef } from "react";
 import type { GraphNode } from "./types";
 
 type TeamNodeProps = {
@@ -6,8 +6,13 @@ type TeamNodeProps = {
   isSelected: boolean;
   isHovered: boolean;
   index: number;
+  screenToGraph: (screenX: number, screenY: number) => { x: number; y: number };
   onSelect: (nodeId: string) => void;
   onHover: (nodeId: string | null) => void;
+  onDragStart: (nodeId: string) => void;
+  onDrag: (nodeId: string, x: number, y: number) => void;
+  onDragEnd: (nodeId: string) => void;
+  onUnpin: (nodeId: string) => void;
 };
 
 function truncateTeamName(name: string, radius: number): string {
@@ -28,42 +33,136 @@ export const TeamNode = memo(function TeamNode({
   isSelected,
   isHovered,
   index,
+  screenToGraph,
   onSelect,
   onHover,
+  onDragStart,
+  onDrag,
+  onDragEnd,
+  onUnpin,
 }: TeamNodeProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartPos = useRef<{ x: number; y: number } | null>(null);
+  const hasMoved = useRef(false);
+
   const fontSize = getFontSize(node.radius);
   const displayName = truncateTeamName(node.name, node.radius);
 
-  // Determine stroke and fill based on state using CSS variables for theme support
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      if (e.button !== 0) return; // Only left mouse button
+      e.stopPropagation();
+      e.preventDefault();
+
+      const target = e.currentTarget as SVGGElement;
+      target.setPointerCapture(e.pointerId);
+
+      dragStartPos.current = { x: e.clientX, y: e.clientY };
+      hasMoved.current = false;
+      setIsDragging(true);
+      onDragStart(node.id);
+    },
+    [node.id, onDragStart]
+  );
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!isDragging) return;
+      e.stopPropagation();
+
+      // Check if we've moved enough to consider it a drag (not just a click)
+      if (dragStartPos.current) {
+        const dx = e.clientX - dragStartPos.current.x;
+        const dy = e.clientY - dragStartPos.current.y;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+          hasMoved.current = true;
+        }
+      }
+
+      const graphPos = screenToGraph(e.clientX, e.clientY);
+      onDrag(node.id, graphPos.x, graphPos.y);
+    },
+    [isDragging, node.id, onDrag, screenToGraph]
+  );
+
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      if (!isDragging) return;
+      e.stopPropagation();
+
+      const target = e.currentTarget as SVGGElement;
+      target.releasePointerCapture(e.pointerId);
+
+      setIsDragging(false);
+      dragStartPos.current = null;
+      onDragEnd(node.id);
+
+      // If we didn't move much, treat it as a click to select
+      if (!hasMoved.current) {
+        onSelect(node.id);
+      }
+    },
+    [isDragging, node.id, onDragEnd, onSelect]
+  );
+
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (node.isPinned) {
+        onUnpin(node.id);
+      }
+    },
+    [node.id, node.isPinned, onUnpin]
+  );
+
+  // Determine stroke and fill based on state
   let strokeColor = "var(--diagram-node-stroke)";
   let strokeWidth = 2;
   const fillColor = "var(--diagram-node-fill)";
   const textColor = "var(--diagram-node-text)";
 
-  if (isSelected) {
-    strokeColor = "#eac840"; // Bee Gold - brand accent stays constant
+  if (isDragging) {
+    strokeColor = "rgba(234, 200, 64, 0.7)"; // Gold during drag
+    strokeWidth = 3;
+  } else if (isSelected) {
+    strokeColor = "#eac840"; // Bee Gold - brand accent
     strokeWidth = 3;
   } else if (isHovered) {
     strokeColor = "var(--diagram-node-stroke-hover)";
   }
 
+  // Scale and shadow for drag state
+  const scale = isDragging ? 1.05 : 1;
+  const shadowFilter = isDragging
+    ? "drop-shadow(0 12px 24px rgba(0, 0, 0, 0.25))"
+    : isHovered && !isSelected
+    ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))"
+    : "none";
+
+  // Cursor based on state
+  const cursor = isDragging ? "grabbing" : isHovered ? "grab" : "pointer";
+
   return (
     <g
       role="button"
-      aria-label={`${node.name}, ${node.roleCount} roles`}
+      aria-label={`${node.name}, ${node.roleCount} roles${node.isPinned ? ", pinned" : ""}`}
       tabIndex={0}
       style={{
-        cursor: "pointer",
+        cursor,
         outline: "none",
         animation: `nodeReveal 400ms ease-out both`,
         animationDelay: `${Math.min(index * 50, 500)}ms`,
+        transformOrigin: `${node.x}px ${node.y}px`,
+        transform: `scale(${scale})`,
+        transition: isDragging ? "none" : "transform 100ms ease-out",
       }}
-      onClick={(e) => {
-        e.stopPropagation();
-        onSelect(node.id);
-      }}
-      onMouseEnter={() => onHover(node.id)}
-      onMouseLeave={() => onHover(null)}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onDoubleClick={handleDoubleClick}
+      onMouseEnter={() => !isDragging && onHover(node.id)}
+      onMouseLeave={() => !isDragging && onHover(null)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -71,22 +170,25 @@ export const TeamNode = memo(function TeamNode({
         }
       }}
     >
-      {/* Drop shadow for hover/selected */}
-      {(isHovered || isSelected) && (
+      {/* Drop shadow for hover/selected/dragging */}
+      {(isHovered || isSelected || isDragging) && (
         <circle
           cx={node.x}
           cy={node.y}
           r={node.radius + 4}
           fill="none"
-          stroke={isSelected ? "#eac840" : "transparent"}
-          strokeWidth={isSelected ? 1 : 0}
-          opacity={isSelected ? 0.3 : 0}
+          stroke={isSelected || isDragging ? "#eac840" : "transparent"}
+          strokeWidth={isSelected || isDragging ? 1 : 0}
+          opacity={isSelected || isDragging ? 0.3 : 0}
           style={{
-            filter: isSelected
-              ? "drop-shadow(0 0 8px rgba(234, 200, 64, 0.4))"
-              : isHovered
-              ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))"
-              : "none",
+            filter:
+              isDragging
+                ? "drop-shadow(0 0 12px rgba(234, 200, 64, 0.5))"
+                : isSelected
+                ? "drop-shadow(0 0 8px rgba(234, 200, 64, 0.4))"
+                : isHovered
+                ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))"
+                : "none",
           }}
         />
       )}
@@ -100,12 +202,36 @@ export const TeamNode = memo(function TeamNode({
         stroke={strokeColor}
         strokeWidth={strokeWidth}
         style={{
-          transition: "fill 150ms ease-out, stroke 150ms ease-out, r 300ms ease-in-out",
-          filter: isHovered && !isSelected
-            ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))"
-            : "none",
+          transition: isDragging
+            ? "none"
+            : "fill 150ms ease-out, stroke 150ms ease-out, r 300ms ease-in-out",
+          filter: shadowFilter,
         }}
       />
+
+      {/* Pinned indicator */}
+      {node.isPinned && !isDragging && (
+        <g>
+          <circle
+            cx={node.x - node.radius * 0.7}
+            cy={node.y - node.radius * 0.7}
+            r={8}
+            fill="#eac840"
+            opacity={0.8}
+          />
+          <text
+            x={node.x - node.radius * 0.7}
+            y={node.y - node.radius * 0.7 + 1}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="white"
+            fontSize={10}
+            style={{ pointerEvents: "none", userSelect: "none" }}
+          >
+            ⚓
+          </text>
+        </g>
+      )}
 
       {/* Team name */}
       <text
@@ -154,7 +280,7 @@ export const TeamNode = memo(function TeamNode({
       )}
 
       {/* Full name tooltip on hover */}
-      {isHovered && displayName !== node.name && (
+      {isHovered && !isDragging && displayName !== node.name && (
         <g>
           <rect
             x={node.x - node.name.length * 4}

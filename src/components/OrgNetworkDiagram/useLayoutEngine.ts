@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useRef } from "react";
+import { useMemo, useEffect, useState, useRef, useCallback } from "react";
 import {
   forceSimulation,
   forceLink,
@@ -34,6 +34,7 @@ export function useLayoutEngine(
   const [nodes, setNodes] = useState<GraphNode[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
   const simulationRef = useRef<Simulation<SimNode, SimLink> | null>(null);
+  const simNodesRef = useRef<SimNode[]>([]);
 
   // Create nodes and edges from teams data
   const { initialNodes, edges } = useMemo(() => {
@@ -86,6 +87,7 @@ export function useLayoutEngine(
 
     // Create deep copy of nodes for simulation
     const simNodes: SimNode[] = initialNodes.map((n) => ({ ...n }));
+    simNodesRef.current = simNodes;
 
     // Create links with node references
     const simLinks: SimLink[] = edges.map((e) => ({
@@ -131,6 +133,7 @@ export function useLayoutEngine(
           radius: n.radius,
           x: n.x ?? 0,
           y: n.y ?? 0,
+          isPinned: n.fx != null && n.fy != null,
         }))
       );
     });
@@ -144,5 +147,78 @@ export function useLayoutEngine(
     };
   }, [initialNodes, edges, width, height]);
 
-  return { nodes, edges, isSimulating };
+  // Drag handlers for elastic deformation effect
+  const handleDragStart = useCallback((nodeId: string) => {
+    const simulation = simulationRef.current;
+    const simNodes = simNodesRef.current;
+    if (!simulation || !simNodes) return;
+
+    const node = simNodes.find((n) => n.id === nodeId);
+    if (!node) return;
+
+    // Reheat simulation for elastic effect
+    simulation.alphaTarget(0.3).restart();
+    setIsSimulating(true);
+
+    // Fix node position at current location
+    node.fx = node.x;
+    node.fy = node.y;
+  }, []);
+
+  const handleDrag = useCallback((nodeId: string, x: number, y: number) => {
+    const simNodes = simNodesRef.current;
+    if (!simNodes) return;
+
+    const node = simNodes.find((n) => n.id === nodeId);
+    if (!node) return;
+
+    // Update fixed position to follow cursor
+    node.fx = x;
+    node.fy = y;
+  }, []);
+
+  const handleDragEnd = useCallback((nodeId: string) => {
+    const simulation = simulationRef.current;
+    const simNodes = simNodesRef.current;
+    if (!simulation || !simNodes) return;
+
+    const node = simNodes.find((n) => n.id === nodeId);
+    if (!node) return;
+
+    // Keep node pinned where dropped
+    node.fx = node.x;
+    node.fy = node.y;
+
+    // Gentle settling for neighbors
+    simulation.alphaTarget(0);
+  }, []);
+
+  const handleUnpin = useCallback((nodeId: string) => {
+    const simulation = simulationRef.current;
+    const simNodes = simNodesRef.current;
+    if (!simulation || !simNodes) return;
+
+    const node = simNodes.find((n) => n.id === nodeId);
+    if (!node) return;
+
+    // Release the pin
+    node.fx = null;
+    node.fy = null;
+
+    // Reheat slightly to let node find natural position
+    simulation.alpha(0.3).restart();
+    setIsSimulating(true);
+  }, []);
+
+  return {
+    nodes,
+    edges,
+    isSimulating,
+    dragHandlers: {
+      onDragStart: handleDragStart,
+      onDrag: handleDrag,
+      onDragEnd: handleDragEnd,
+      onUnpin: handleUnpin,
+    },
+  };
 }

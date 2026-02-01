@@ -56,7 +56,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
   }, []);
 
   // Layout engine
-  const { nodes, edges, isSimulating } = useLayoutEngine(
+  const { nodes, edges, isSimulating, dragHandlers } = useLayoutEngine(
     teamsData,
     dimensions.width,
     dimensions.height
@@ -74,6 +74,21 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
 
   // Get selected node
   const selectedNode = selectedNodeId ? nodeMap.get(selectedNodeId) ?? null : null;
+
+  // Convert screen coordinates to graph coordinates (for drag)
+  const screenToGraph = useCallback(
+    (screenX: number, screenY: number) => {
+      if (!svgElement) return { x: screenX, y: screenY };
+      const rect = svgElement.getBoundingClientRect();
+      const svgX = screenX - rect.left;
+      const svgY = screenY - rect.top;
+      return {
+        x: (svgX - viewport.offsetX) / viewport.scale,
+        y: (svgY - viewport.offsetY) / viewport.scale,
+      };
+    },
+    [svgElement, viewport.offsetX, viewport.offsetY, viewport.scale]
+  );
 
   // Handle background click to deselect
   const handleBackgroundClick = useCallback(
@@ -243,8 +258,13 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
               isSelected={selectedNodeId === node.id}
               isHovered={hoveredNodeId === node.id}
               index={index}
+              screenToGraph={screenToGraph}
               onSelect={setSelectedNodeId}
               onHover={setHoveredNodeId}
+              onDragStart={dragHandlers.onDragStart}
+              onDrag={dragHandlers.onDrag}
+              onDragEnd={dragHandlers.onDragEnd}
+              onUnpin={dragHandlers.onUnpin}
             />
           ))}
         </g>

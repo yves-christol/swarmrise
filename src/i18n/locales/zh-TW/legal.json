@@ -1,0 +1,498 @@
+{
+  "principles": {
+    "title": "our principles",
+    "subtitle": "Simple ideas that guide how swarmrise works.",
+    "legal": "fa lv wen jian",
+    "termsLink": "fu wu tiao kuan",
+    "termsDescription": "shi yong swarmrise de tiao jian",
+    "privacyLink": "yin si zheng ce",
+    "privacyDescription": "wo men ru he chu li nin de ge ren shu ju",
+    "footer": "swarmrise shi yi ge jin xing zhong de zuo pin.",
+    "items": {
+      "noFunnyHats": {
+        "title": "bu xu yao qi guai de mao zi",
+        "content": "swarmrise shi yong jian dan de ci hui he gai nian. mei you shen mi de ci hui huo xin zao ci, mei you yi shi, mei you quan zi, mei you ge ren fa zhan de fei hua. zhe shi yi ge gong ju, bu shi yi ge zong jiao."
+      },
+      "youComeFirst": {
+        "title": "nin you xian",
+        "content": "miao hui zu zhi de da tu jing bu zu yi rang ren you xin xin he fang xiang. swarmrise yi nin zuo wei gai zu zhi cheng yuan wei zhong xin, tu chu nin de jiao se, nin de tuan dui, nin de guan xi he nin de jue ce. zai ri chang sheng huo zhong, nin zhi xiang zhi dao bie ren dui nin you shen me qi wang, yi ji nin ru he ke yi bang zhu he xing dong."
+      },
+      "alwaysTellWhy": {
+        "title": "yong yuan shuo ming yuan yin",
+        "content": "swarmrise you mu di qu dong. zu zhi bi xu you yi ge zheng ti mu biao, dan mei ge tuan dui he mei ge jiao se dou ying gai cong ming que de mu biao kai shi. ren men hen cong ming, dang ta men zhi dao wei shen me zhe yang zuo shi, ta men ke yi xiang chu zuo shen me he ru he zuo."
+      },
+      "doersAreKings": {
+        "title": "shi zhe wei wang",
+        "content": "yu ceng ji zhi du de yi ge zhong da cha yi shi ke yi bai tuo quan zhi jue ce zhe. mei ge ren dou shi ke zai zuo jue ce, suo yi zhe ge cai neng bing bu na me han jian. tong guo wei mei ge jiao se qi yong zi wo guan li de jue ce/cheng nuo/zhi xing fang an, nin tu chu le geng xi han de liang hao zhi xing neng li. neng gou zhen zheng zuo shi de ren ying gai gan dao geng you quan li he bei zhong shi."
+      },
+      "ethicalBehaviors": {
+        "title": "cu jin dao de xing wei",
+        "content": "dang nin bu zhi dao huo wu fa dui ci cai qu xing dong shi, bu liang xing wei jiu hui fan lan. dang ran, zhi li mo shi ben shen bu neng bao zheng dao de xing wei, dan ta ke yi tong guo rang cheng yuan le jie zheng zai fa sheng shen me, bing rang ta men xiang ying di zuo chu jue ce lai gu li zhe zhong xing wei. swarmrise jiang tou ming du, ke zhui su xing he xin xi ji yi zuo wei mo ren mo shi (dang zhe bu yu ge ren shu ju quan li huo min gan qing bao xiang mao dun shi), bing ti chu yi ge dui ren he jiao se kai fang de jue ce mo shi."
+      },
+      "frictionless": {
+        "title": "wu mo ca",
+        "content": "zu zhi jie gou tu he zhi wei miao shu jing chang guo shi, bu fen yuan yin shi xiu gai ta men hen ma fan. swarmrise yun xu mei ge cheng yuan qing song xiu gai zu zhi de mei ge bu fen. zhe bing bu wei xian, yin wei tong guo rang mei ge ren zhi dao shui zuo le shen me, swarmrise po shi cheng yuan zai xing dong qian xian si kao. shun bian shuo yi xia, ru guo nin bu xin ren ren men, nin shou xian jiu bu ying gai gu yong ta men."
+      },
+      "sharingIsGood": {
+        "title": "fen xiang shi hao de",
+        "content": "swarmrise ti gong yi ge gong gong copyleft mo ban ku, yong yu tuan dui, jiao se he zheng ce, yi bian mou xie ren de chuang xin ke yi bei qi ta ren zi you zhong fu shi yong. tong guo chuang jian he wei hu gong gong mo ban, nin ke yi bang zhu qi ta zu zhi bing wei zi ji huo de you yong de fan kui, yi shi er niao."
+      },
+      "lowComplexity": {
+        "title": "di fu za du",
+        "content": "ceng ji zhi du shi yi ge fei chang jian dan de gai nian. zhe jiu shi wei shen me jin guan ta bu shi zui gao xiao de xi tong, dan ta reng ran zhan zhu dao di wei. swarmrise nu li jin ke neng shao di zeng jia fu za xing, bing bao chi shi wu yi yu jie shi he cao zuo. you yi zu you xian de gai nian he gui ze, nin ke yi cong zhong fa zhan nin de zhi li yi shi ying nin de zu zhi."
+      },
+      "workInProgress": {
+        "title": "jin xing zhong de zuo pin",
+        "content": "swarmrise shi bing jiang ji xu shi yi ge jin xing zhong de zuo pin. fei chang huan ying fan kui he gong xian. zhe xie yuan ze zhi shi yi ge gu jia, rang wo men kan kan zheng ge shi qing hui zou xiang he fang."
+      }
+    }
+  },
+  "terms": {
+    "title": "fu wu tiao kuan",
+    "effectiveDate": "sheng xiao ri qi: {{date}}",
+    "lastUpdated": "zui hou geng xin: {{date}}",
+    "effectiveDateLabel": "sheng xiao ri qi",
+    "lastUpdatedLabel": "zui hou geng xin",
+    "intro": {
+      "welcome": "huan ying lai dao swarmrise. zhe xie fu wu tiao kuan (\"tiao kuan\") guan li nin dui Swarmrise ping tai de fang wen he shi yong, bao kuo wo men de wang zhan, ying yong cheng xu he fu wu (tong cheng \"fu wu\"). tong guo fang wen huo shi yong fu wu, nin tong yi shou zhe xie tiao kuan de yue shu.",
+      "readCarefully": "qing zai shi yong fu wu qian zi xi yue du zhe xie tiao kuan. ru guo nin bu tong yi zhe xie tiao kuan, nin bu neng fang wen huo shi yong fu wu."
+    },
+    "sections": {
+      "acceptanceOfTerms": {
+        "title": "jie shou tiao kuan",
+        "p1": "tong guo chuang jian zhang hu huo shi yong fu wu, nin sheng ming nin nian man 18 sui bing you fa lv neng li ding li zhe xie tiao kuan. ru guo nin dai biao zu zhi shi yong fu wu, nin sheng ming bing bao zheng nin you quan jiang gai zu zhi yue shu yu zhe xie tiao kuan.",
+        "p2": "wo men bao liu sui shi xiu gai zhe xie tiao kuan de quan li. wo men jiang tong guo zai fu wu shang fa bu geng xin de tiao kuan bing geng xin \"zui hou geng xin\" ri qi lai tong zhi nin zhong da bian geng. nin zai ci lei bian geng hou ji xu shi yong fu wu ji gou cheng nin dui xiu gai hou tiao kuan de jie shou."
+      },
+      "descriptionOfService": {
+        "title": "fu wu miao shu",
+        "intro": "Swarmrise shi yi ge zhuan wei xie zuo zhi li she ji de duo zu hu zu zhi guan li ping tai. fu wu shi zu zhi neng gou:",
+        "features": {
+          "structureTeams": "jie gou hua tuan dui bing ding yi zu zhi ceng ci",
+          "createRoles": "zai tuan dui nei chuang jian he guan li jiao se (bao kuo ling dao, mi shu he zhong cai zhi wei)",
+          "trackDecisions": "gen zong jue ce bing ti gong wan zheng de shen ji gen zong",
+          "manageMembers": "guan li zu zhi cheng yuan zi ge he yao qing",
+          "establishPolicies": "jian li he wei hu zu zhi zheng ce"
+        },
+        "reserveRight": "wo men bao liu sui shi xiu gai, zan ting huo zhong zhi fu wu de ren he fang mian de quan li, bu lun shi fou tong zhi."
+      },
+      "accountRegistration": {
+        "title": "zhang hu zhu ce he an quan",
+        "intro": "yao fang wen fu wu de mou xie gong neng, nin bi xu chuang jian yi ge zhang hu. chuang jian zhang hu shi, nin tong yi:",
+        "requirements": {
+          "provideAccurate": "ti gong zhun que, zui xin he wan zheng de xin xi",
+          "maintainInfo": "wei hu bing ji shi geng xin nin de zhang hu xin xi",
+          "keepSecure": "bao chi nin de shen fen yan zheng ping zheng an quan he bao mi",
+          "notifyUnauthorized": "li ji tong zhi wo men ren he wei jing shou quan fang wen nin zhang hu de qing kuang",
+          "acceptResponsibility": "jie shou dui nin zhang hu xia fa sheng de suo you huo dong de ze ren"
+        },
+        "clerkNote": "wo men shi yong Clerk ti gong shen fen yan zheng fu wu. tong guo shi yong fu wu, nin ye tong yi Clerk de fu wu tiao kuan he yin si zheng ce."
+      },
+      "organizationsAndMembership": {
+        "title": "zu zhi he cheng yuan zi ge",
+        "ownerIntro": "fu wu yun xu yong hu chuang jian he jia ru zu zhi. dang nin chuang jian zu zhi shi, nin cheng wei qi suo you zhe bing fu ze:",
+        "ownerResponsibilities": {
+          "manageSettings": "guan li zu zhi she zhi he cheng yuan zi ge",
+          "ensureCompliance": "que bao cheng yuan zun shou zhe xie tiao kuan",
+          "contentActivities": "nin zu zhi nei de nei rong he huo dong",
+          "handleInvitations": "zheng que chu li yao qing he fang wen kong zhi"
+        },
+        "memberIntro": "zuo wei zu zhi cheng yuan, nin tong yi:",
+        "memberResponsibilities": {
+          "respectGovernance": "zun zhong zu zhi jian li de zhi li jie gou",
+          "useAccordingly": "an zhao nin bei fen pei de jiao se shi yong fu wu",
+          "noCircumvent": "bu rao guo fang wen kong zhi huo quan xian xi tong"
+        }
+      },
+      "acceptableUse": {
+        "title": "ke jie shou de shi yong",
+        "intro": "nin tong yi jin jiang fu wu yong yu he fa mu de bing fu he zhe xie tiao kuan. nin tong yi bu:",
+        "prohibitions": {
+          "violateLaws": "wei fan ren he shi yong de fa lv, fa gui huo di san fang quan li",
+          "harassOthers": "shi yong fu wu sao rao, lan yong huo shang hai ta ren",
+          "uploadMalicious": "shang chuan huo chuan shu e yi dai ma, bing du huo you hai nei rong",
+          "unauthorizedAccess": "shi tu wei jing shou quan fang wen fu wu huo qi xi tong",
+          "interfereService": "gan rao huo po huai fu wu huo qi ji chu she shi",
+          "scrapeService": "wei jing xu ke shi yong zhua qu, pa chong huo zi dong hua fang shi fang wen fu wu",
+          "impersonate": "mao chong ta ren huo shi ti",
+          "fraudulent": "jiang fu wu yong yu ren he qi zha huo qi pian xing mu di",
+          "circumventSecurity": "rao guo ren he an quan cuo shi huo fang wen xian zhi"
+        }
+      },
+      "userContent": {
+        "title": "yong hu nei rong",
+        "ownership": "nin bao liu nin ti jiao gei fu wu de ren he nei rong (\"yong hu nei rong\") de suo you quan, bao kuo zu zhi shu ju, tuan dui jie gou, jiao se ding yi he jue ce. tong guo ti jiao yong hu nei rong, nin shou yu wo men yi xiang quan qiu xing, fei du jia, mian fei de xu ke, jin wei ti gong fu wu de mu di shi yong, cun chu he chu li nin de yong hu nei rong.",
+        "warrantyIntro": "nin sheng ming bing bao zheng:",
+        "warranties": {
+          "ownRights": "nin yong you huo ju you dui nin yong hu nei rong de bi yao quan li",
+          "noViolation": "nin de yong hu nei rong bu wei fan ren he di san fang quan li",
+          "compliesTerms": "nin de yong hu nei rong fu he zhe xie tiao kuan he shi yong fa lv"
+        }
+      },
+      "intellectualProperty": {
+        "title": "zhi shi chan quan",
+        "license": "fu wu, bao kuo qi yuan dai ma, she ji, gong neng he wen dang, an Apache License 2.0 xu ke. ci xu ke yun xu nin zai te ding tiao jian xia shi yong, xiu gai he fen fa gai ruan jian.",
+        "brandElements": "Swarmrise ming cheng, biao zhi he pin pai yuan su shi zhuan you de, wei jing wo men ming que shu mian xu ke bu de shi yong, chu fei Apache License 2.0 yun xu de gui shu mu di.",
+        "thirdParty": "fu wu zhong bao han de di san fang zu jian shou qi ge zi xu ke de yue shu, zhe xie xu ke yi ji lu zai wo men de fa lv wen dang zhong."
+      },
+      "dataProtection": {
+        "title": "shu ju bao hu he yin si",
+        "commitment": "wo men zhi li yu bao hu nin de yin si he ge ren shu ju. wo men dui ge ren shu ju de shou ji, shi yong he chu li shou wo men yin si zheng ce de yue shu, gai zheng ce tong guo yin yong na ru zhe xie tiao kuan.",
+        "keyAspectsIntro": "wo men shu ju chu li de guan jian fang mian:",
+        "keyAspects": {
+          "collectNecessary": "wo men jin shou ji ti gong fu wu suo xu de shu ju",
+          "dataIsolated": "nin de zu zhi shu ju zai duo zu hu jia gou zhong ge li",
+          "convexStorage": "wo men shi yong Convex jin xing an quan de shu ju cun chu he chu li",
+          "clerkAuth": "shen fen yan zheng shu ju you Clerk guan li",
+          "auditTrails": "wo men wei tou ming du he ze ren wei hu shen ji gen zong"
+        },
+        "gdprNote": "dui yu ou zhou jing ji qu de yong hu, wo men zun shou tong yong shu ju bao hu tiao li (GDPR) bing ti gong xing shi nin shu ju zhu ti quan li de ji zhi."
+      },
+      "serviceAvailability": {
+        "title": "fu wu ke yong xing he zhi chi",
+        "intro": "wo men nu li wei hu fu wu de ke yong xing, dan bu bao zheng bu jian duan fang wen. fu wu ke neng yin yi xia yuan yin zan shi bu ke yong:",
+        "reasons": {
+          "maintenance": "ji hua de wei hu he geng xin",
+          "outages": "ji hua wai de zhong duan huo ji shu wen ti",
+          "beyondControl": "chao chu wo men he li kong zhi fan wei de yin su"
+        },
+        "asIs": "wo men an \"yuan yang\" he \"ke yong\" de ji chu ti gong fu wu, chu fei ling you shu mian xie yi, fou ze wu ren he fu wu ji bie xie yi."
+      },
+      "limitationOfLiability": {
+        "title": "ze ren xian zhi",
+        "intro": "zai shi yong fa lv yun xu de zui da fan wei nei, SWARMRISE ji qi guan lian gong si, gao guan, yuan gong, dai li he xu ke fang bu dui ren he jian jie, fu dai, te shu, hou guo xing huo cheng fa xing sun hai fu ze, bao kuo dan bu xian yu:",
+        "damages": {
+          "lostProfits": "li run, shu ju huo shang ye ji hui de sun shi",
+          "interruptions": "fu wu zhong duan huo shu ju diu shi",
+          "unauthorizedAccess": "dui nin shu ju de wei shou quan fang wen",
+          "thirdPartyConduct": "fu wu shang di san fang de ren he xing wei huo nei rong"
+        },
+        "totalLiability": "wo men dui yu fu wu de ren he suo pei de zong ze ren bu chao guo nin zai suo pei qian shi er (12) ge yue nei xiang wo men zhi fu de jin e (ru guo you de hua)."
+      },
+      "indemnification": {
+        "title": "pei chang",
+        "intro": "nin tong yi pei chang, bian hu bing shi Swarmrise ji qi guan lian gong si, gao guan, dong shi, yuan gong he dai li mian shou ren he suo pei, ze ren, sun hai, sun shi he fei yong (bao kuo he li de lv shi fei) de sun hai, zhe xie suo pei chan sheng yu huo yi ren he fang shi yu yi xia xiang guan:",
+        "items": {
+          "accessUse": "nin dui fu wu de fang wen huo shi yong",
+          "violationTerms": "nin wei fan zhe xie tiao kuan",
+          "userContent": "nin de yong hu nei rong",
+          "violationRights": "nin wei fan ren he di san fang quan li"
+        }
+      },
+      "termination": {
+        "title": "zhong zhi",
+        "intro": "nin ke yi sui shi tong guo lian xi wo men huo shi yong zhang hu shan chu gong neng (ke yong shi) zhong zhi nin de zhang hu. wo men ke yi li ji zhong zhi huo zan ting nin dui fu wu de fang wen, wu xu shi xian tong zhi, ru guo:",
+        "reasons": {
+          "breachTerms": "nin wei fan zhe xie tiao kuan",
+          "requiredByLaw": "wo men bei fa lv yao qiu zhe yang zuo",
+          "discontinueService": "wo men jue ding ting zhi fu wu"
+        },
+        "uponTermination": "zhong zhi hou, nin shi yong fu wu de quan li jiang li ji zhong zhi. zhe xie tiao kuan zhong an qi xing zhi ying zai zhong zhi hou cun xu de tiao kuan jiang ji xu you xiao, bao kuo suo you quan, bao zheng mian ze sheng ming, pei chang he ze ren xian zhi."
+      },
+      "disputeResolution": {
+        "title": "zheng yi jie jue",
+        "informal": "wo men gu li nin shou xian lian xi wo men yi fei zheng shi fang shi jie jue ren he zheng yi. ru guo zheng yi wu fa fei zheng shi jie jue, nin tong yi ren he fa lv xing dong huo cheng xu jiang zhuan men zai you guan xia quan fa yuan ti qi.",
+        "euNote": "dui yu ou meng yong hu, ci tiao kuan bu ying xiang nin gen ju xiao fei zhe bao hu fa xiang you de quan li huo nin zai nin ju zhu guo fa yuan ti chu su song de quan li."
+      },
+      "governingLaw": {
+        "title": "guan xia fa lv",
+        "law": "zhe xie tiao kuan ying shou fu wu yun ying shang suo zai si fa guan xia qu de fa lv guan xia bing gen ju qi jie shi, bu kao lv fa lv chong tu yuan ze.",
+        "eeaNote": "dui yu ou zhou jing ji qu yong hu, zhe xie tiao kuan zhong de ren he nei rong jun bu ying xiang nin zuo wei xiao fei zhe gen ju shi yong de ou meng xiao fei zhe bao hu fa xiang you de quan li."
+      },
+      "generalProvisions": {
+        "title": "yi ban tiao kuan",
+        "entireAgreement": "wan zheng xie yi:",
+        "entireAgreementText": "zhe xie tiao kuan, lian tong wo men de yin si zheng ce he ci chu yin yong de ren he qi ta zheng ce, gou cheng nin yu Swarmrise zhi jian guan yu fu wu de wan zheng xie yi.",
+        "severability": "ke fen ge xing:",
+        "severabilityText": "ru guo zhe xie tiao kuan de ren he tiao kuan bei ren ding wei bu ke zhi xing, qi yu tiao kuan jiang ji xu wan quan you xiao.",
+        "waiver": "qi quan:",
+        "waiverText": "wo men wei neng zhi xing zhe xie tiao kuan de ren he quan li huo tiao kuan bu jiang bei shi wei fang qi zhe xie quan li.",
+        "assignment": "zhuan rang:",
+        "assignmentText": "wei jing wo men shi xian shu mian tong yi, nin bu de zhuan rang huo zhuan yi nin zai zhe xie tiao kuan xia de quan li. wo men ke yi wu xian zhi di zhuan rang wo men de quan li he yi wu."
+      },
+      "contactInformation": {
+        "title": "lian xi xin xi",
+        "intro": "ru guo nin dui zhe xie tiao kuan you ren he yi wen, qing lian xi wo men:",
+        "github": "GitHub:"
+      }
+    },
+    "relatedDocuments": "xiang guan wen dang",
+    "privacyLink": "yin si zheng ce",
+    "privacyDescription": "wo men ru he chu li nin de ge ren shu ju",
+    "principlesLink": "wo men de yuan ze",
+    "principlesDescription": "le jie zhi yin Swarmrise de jia zhi guan",
+    "footer": "swarmrise yi Apache License 2.0 xu ke"
+  },
+  "privacy": {
+    "title": "yin si zheng ce",
+    "effectiveDate": "sheng xiao ri qi: {{date}}",
+    "lastUpdated": "zui hou geng xin: {{date}}",
+    "effectiveDateLabel": "sheng xiao ri qi",
+    "lastUpdatedLabel": "zui hou geng xin",
+    "intro": {
+      "commitment": "zai swarmrise, wo men zhi li yu bao hu nin de yin si he ge ren shu ju. ci yin si zheng ce jie shi le dang nin shi yong wo men de duo zu hu zu zhi guan li ping tai (\"fu wu\") shi, wo men ru he shou ji, shi yong, pi lu he bao hu nin de xin xi.",
+      "gdprCompliance": "wo men an zhao tong yong shu ju bao hu tiao li (GDPR) he qi ta shi yong de shu ju bao hu fa lv chu li ge ren shu ju. qing zi xi yue du ci yin si zheng ce yi le jie wo men guan yu nin ge ren shu ju de zuo fa."
+    },
+    "sections": {
+      "dataController": {
+        "title": "shu ju kong zhi zhe",
+        "p1": "jiu GDPR he qi ta shi yong de shu ju bao hu fa lv er yan, Swarmrise shi tong guo fu wu shou ji de ge ren shu ju de shu ju kong zhi zhe. zhe yi wei zhe wo men jue ding chu li nin ge ren shu ju de mu di he fang shi.",
+        "p2": "ru guo nin dui wo men de shu ju zuo fa you yi wen huo xi wang xing shi nin de quan li, qing tong guo xia mian lian xi xin xi bu fen lie chu de qu dao lian xi wo men."
+      },
+      "informationWeCollect": {
+        "title": "wo men shou ji de xin xi",
+        "intro": "wo men shou ji nin zhi jie ti gong gei wo men de xin xi, yi ji nin shi yong fu wu shi zi dong shou ji de xin xi.",
+        "accountInfo": {
+          "title": "2.1 zhang hu xin xi",
+          "intro": "dang nin chuang jian zhang hu shi, wo men shou ji:",
+          "items": {
+            "name": "ming zi he xing shi",
+            "email": "dian zi you jian di zhi",
+            "profilePicture": "ge ren zi liao zhao pian (ke xuan, ru guo tong guo shen fen yan zheng ti gong)"
+          }
+        },
+        "organizationData": {
+          "title": "2.2 zu zhi shu ju",
+          "intro": "dang nin chuang jian huo jia ru zu zhi shi, wo men shou ji he chu li:",
+          "items": {
+            "orgNames": "zu zhi ming cheng he she zhi",
+            "teamStructures": "tuan dui jie gou he ceng ci",
+            "roleAssignments": "jiao se fen pei (ling dao, mi shu, zhong cai)",
+            "membershipInfo": "cheng yuan zi ge xin xi",
+            "invitationData": "yao qing shu ju (bei yao qing ren de dian zi you jian di zhi)"
+          }
+        },
+        "optionalContact": {
+          "title": "2.3 ke xuan lian xi xin xi",
+          "intro": "nin ke yi xuan ze ti gong e wai de lian xi xin xi, bao kuo:",
+          "items": {
+            "mobile": "shou ji hao ma",
+            "address": "shi ji di zhi",
+            "socialMedia": "she jiao mei ti ge ren zi liao (LinkedIn, Facebook, Instagram, WhatsApp)"
+          },
+          "note": "ci xin xi wan quan shi ke xuan de, jin zai nin ming que tong yi de qing kuang xia shou ji."
+        },
+        "usageData": {
+          "title": "2.4 shi yong shu ju",
+          "intro": "dang nin shi yong fu wu shi, wo men zi dong shou ji mou xie xin xi:",
+          "items": {
+            "browser": "liu lan qi lei xing he ban ben",
+            "device": "she bei xin xi",
+            "ipAddress": "IP di zhi",
+            "pagesVisited": "fang wen de ye mian he shi yong de gong neng",
+            "dateTime": "fang wen ri qi he shi jian"
+          }
+        },
+        "decisionAudit": {
+          "title": "2.5 jue ce shen ji gen zong",
+          "intro": "wei que bao tou ming du he ze ren, wo men wei hu zu zhi nei zhong da xing dong de shen ji gen zong, bao kuo:",
+          "items": {
+            "authorEmail": "geng gai zuo zhe de dian zi you jian",
+            "timestamps": "xing dong de shi jian chuo",
+            "beforeAfter": "xiu gai shu ju de qian hou zhuang tai"
+          }
+        }
+      },
+      "howWeUse": {
+        "title": "wo men ru he shi yong nin de xin xi",
+        "intro": "wo men jiang shou ji de xin xi yong yu yi xia mu di, mei ge mu di dou you GDPR xia de te ding fa lv yi ju:",
+        "serviceProvision": {
+          "title": "3.1 fu wu ti gong (he tong - di 6(1)(b) tiao)",
+          "items": {
+            "createAccount": "chuang jian he guan li nin de yong hu zhang hu",
+            "provideAccess": "ti gong zu zhi guan li gong neng de fang wen quan xian",
+            "processMembers": "chu li zu zhi cheng yuan zi ge he yao qing",
+            "enableTeamMgmt": "qi yong tuan dui he jiao se guan li gong neng",
+            "authenticate": "yan zheng nin de shen fen"
+          }
+        },
+        "legitimateInterests": {
+          "title": "3.2 he fa li yi (di 6(1)(f) tiao)",
+          "items": {
+            "auditTrails": "wei ze ren wei hu jue ce shen ji gen zong",
+            "improveService": "gai jin he you hua fu wu",
+            "preventFraud": "fang zhi qi zha bing que bao an quan",
+            "respondSupport": "xiang ying zhi chi qing qiu"
+          }
+        },
+        "consent": {
+          "title": "3.3 tong yi (di 6(1)(a) tiao)",
+          "items": {
+            "storeOptional": "cun chu nin xuan ze ti gong de ke xuan lian xi xin xi",
+            "displayProfile": "xian shi nin de ge ren zi liao zhao pian"
+          },
+          "withdrawNote": "nin ke yi sui shi tong guo geng xin ge ren zi liao she zhi huo lian xi wo men che xiao tong yi."
+        }
+      },
+      "thirdPartyServices": {
+        "title": "di san fang fu wu",
+        "intro": "wo men shi yong yi xia di san fang fu wu lai yun ying fu wu. mei ge fu wu dou dai biao wo men chu li nin de shu ju:",
+        "clerk": {
+          "title": "4.1 Clerk (shen fen yan zheng)",
+          "purpose": "mu di:",
+          "purposeText": "yong hu shen fen yan zheng he shen fen guan li",
+          "dataProcessed": "chu li de shu ju:",
+          "dataProcessedText": "dian zi you jian, xing ming, ge ren zi liao zhao pian, shen fen yan zheng ping zheng",
+          "location": "wei zhi:",
+          "locationText": "mei guo",
+          "privacyPolicy": "yin si zheng ce:"
+        },
+        "convex": {
+          "title": "4.2 Convex (shu ju ku he hou duan)",
+          "purpose": "mu di:",
+          "purposeText": "shi shi shu ju ku cun chu he wu fu wu qi hou duan gong neng",
+          "dataProcessed": "chu li de shu ju:",
+          "dataProcessedText": "suo you ying yong cheng xu shu ju, bao kuo yong hu ge ren zi liao, zu zhi shu ju he shen ji gen zong",
+          "location": "wei zhi:",
+          "locationText": "mei guo",
+          "privacyPolicy": "yin si zheng ce:"
+        },
+        "googleFonts": {
+          "title": "4.3 Google Fonts",
+          "purpose": "mu di:",
+          "purposeText": "zi ti jiao fu (Montserrat Alternates)",
+          "dataProcessed": "chu li de shu ju:",
+          "dataProcessedText": "IP di zhi (zui xiao)",
+          "privacyPolicy": "yin si zheng ce:"
+        }
+      },
+      "dataRetention": {
+        "title": "shu ju bao liu",
+        "intro": "wo men jin zai shi xian shou ji mu di suo xu de shi jian nei bao liu nin de ge ren shu ju:",
+        "items": {
+          "accountData": "zhang hu shu ju:",
+          "accountDataText": "zai nin zhang hu cun xu qi jian bao liu. dang nin shan chu zhang hu shi, wo men jiang zai 30 tian nei shan chu nin de ge ren shu ju, chu fei fa lv yao qiu bao liu.",
+          "orgData": "zu zhi shu ju:",
+          "orgDataText": "zai nin de zu zhi cheng yuan zi ge qi jian bao liu. dang nin li kai zu zhi shi, nin de cheng yuan ji lu jiang bei shan chu, dan shen ji ji lu ke neng yin ze ren mu di er bei bao liu.",
+          "invitationData": "yao qing shu ju:",
+          "invitationDataText": "bao liu zhi yao qing bei jie shou, ju jue huo guo qi.",
+          "auditTrails": "shen ji gen zong:",
+          "auditTrailsText": "zai zu zhi cun xu qi jian bao liu, yi yong yu ze ren he he gui mu di."
+        }
+      },
+      "yourRightsGdpr": {
+        "title": "nin zai GDPR xia de quan li",
+        "intro": "ru guo nin wei yu ou zhou jing ji qu (EEA), ying guo huo rui shi, nin dui nin de ge ren shu ju you yi xia quan li:",
+        "rightOfAccess": {
+          "title": "6.1 fang wen quan (di 15 tiao)",
+          "text": "nin you quan huo de wo men shi fou chu li nin ge ren shu ju de que ren, bing huo de gai shu ju de fu ben."
+        },
+        "rightToRectification": {
+          "title": "6.2 geng zheng quan (di 16 tiao)",
+          "text": "nin you quan geng zheng bu zhun que de ge ren shu ju bing bu chong bu wan zheng de shu ju. nin ke yi tong guo zhang hu she zhi zhi jie geng xin da bu fen xin xi."
+        },
+        "rightToErasure": {
+          "title": "6.3 shan chu quan (di 17 tiao)",
+          "text": "nin you quan zai mou xie qing kuang xia yao qiu shan chu nin de ge ren shu ju, bao kuo dang shu ju bu zai shi shou ji mu di suo bi xu shi."
+        },
+        "rightToRestriction": {
+          "title": "6.4 xian zhi quan (di 18 tiao)",
+          "text": "nin you quan zai mou xie qing kuang xia yao qiu xian zhi dui nin ge ren shu ju de chu li."
+        },
+        "rightToPortability": {
+          "title": "6.5 shu ju ke yi zhi xing quan (di 20 tiao)",
+          "text": "nin you quan yi jie gou hua, chang yong, ji qi ke du de ge shi jie shou nin de ge ren shu ju, bing jiang qi chuan shu gei ling yi ge kong zhi zhe."
+        },
+        "rightToObject": {
+          "title": "6.6 fan dui quan (di 21 tiao)",
+          "text": "nin you quan fan dui ji yu he fa li yi de ge ren shu ju chu li, bao kuo fen xi."
+        },
+        "rightToWithdraw": {
+          "title": "6.7 che xiao tong yi quan",
+          "text": "dang chu li ji yu tong yi shi, nin you quan sui shi che xiao tong yi, er bu ying xiang che xiao qian ji yu tong yi de chu li de he fa xing."
+        },
+        "rightToComplaint": {
+          "title": "6.8 tou su quan",
+          "text": "ru guo nin ren wei wo men dui nin ge ren shu ju de chu li wei fan shi yong de shu ju bao hu fa, nin you quan xiang jian du ji gou ti chu tou su."
+        },
+        "exerciseRights": "yao xing shi zhe xie quan li, qing shi yong xia mian lian xi bu fen de xin xi lian xi wo men. wo men jiang zai 30 tian nei hui fu nin de qing qiu."
+      },
+      "cookiesLocalStorage": {
+        "title": "cookie he ben di cun chu",
+        "intro": "wo men shi yong liu lan qi cun chu ji shu lai ti gong he gai jin fu wu. wo men de shi yong jin xian yu yan ge bi yao de gong neng:",
+        "localStorage": {
+          "title": "7.1 ben di cun chu",
+          "tableHeaders": {
+            "storageKey": "cun chu jian",
+            "purpose": "mu di",
+            "duration": "chi xu shi jian"
+          },
+          "items": {
+            "locale": {
+              "key": "swarmrise_locale",
+              "purpose": "yu yan pian hao",
+              "duration": "yong jiu"
+            },
+            "selectedOrga": {
+              "key": "swarmrise_selected_orga",
+              "purpose": "yi xuan zu zhi",
+              "duration": "yong jiu"
+            }
+          }
+        },
+        "authCookies": {
+          "title": "7.2 shen fen yan zheng cookie",
+          "text": "Clerk (wo men de shen fen yan zheng ti gong shang) shi yong hui hua cookie jin xing shen fen yan zheng zhuang tai guan li. zhe xie shi fu wu zheng chang yun xing yan ge bi yao de, gen ju ePrivacy zhi ling bu xu yao tong yi."
+        },
+        "noTracking": {
+          "title": "7.3 wu gen zong cookie",
+          "text": "wo men bu shi yong fen xi, guang gao huo gen zong cookie. wo men bu cong shi xing wei gen zong huo ding xiang guang gao."
+        }
+      },
+      "dataSecurity": {
+        "title": "shu ju an quan",
+        "intro": "wo men shi shi shi dang de ji shu he zu zhi cuo shi lai bao hu nin de ge ren shu ju mian shou wei shou quan fang wen, geng gai, pi lu huo xiao hui:",
+        "measures": {
+          "encryption": "chuan shu zhong jia mi:",
+          "encryptionText": "nin de liu lan qi yu wo men fu wu qi zhi jian chuan shu de suo you shu ju dou shi yong TLS/SSL jia mi.",
+          "secureAuth": "an quan shen fen yan zheng:",
+          "secureAuthText": "wo men shi yong Clerk, yi ge zhuan ye de shen fen yan zheng ti gong shang, cai yong hang ye biao zhun an quan zuo fa.",
+          "multiTenant": "duo zu hu ge li:",
+          "multiTenantText": "zu zhi shu ju zai luo ji shang shi ge li de, yi fang zhi wei shou quan de kua zu zhi fang wen.",
+          "accessControls": "fang wen kong zhi:",
+          "accessControlsText": "ji yu jiao se de fang wen kong zhi que bao yong hu zhi neng fang wen ta men bei shou quan cha kan de shu ju.",
+          "securityReviews": "ding qi an quan shen cha:",
+          "securityReviewsText": "wo men ding qi dui dai ma ku he ji chu she shi jin xing an quan ping gu."
+        },
+        "disclaimer": "sui ran wo men nu li bao hu nin de ge ren shu ju, dan tong guo hu lian wang chuan shu huo dian zi cun chu de ren he fang fa dou bu shi 100% an quan de. wo men wu fa bao zheng jue dui an quan."
+      },
+      "internationalTransfers": {
+        "title": "guo ji shu ju chuan shu",
+        "intro": "nin de ge ren shu ju ke neng bei chuan shu dao nin ju zhu guo yi wai de guo jia bing zai na li chu li, bao kuo mei guo, wo men de di san fang fu wu ti gong shang (Clerk he Convex) suo zai di.",
+        "safeguardsIntro": "dui yu cong EEA, ying guo huo rui shi xiang wei bei ren ding ti gong chong fen shu ju bao hu shui ping de guo jia chuan shu ge ren shu ju, wo men yi lai shi dang de bao zhang cuo shi, bao kuo:",
+        "safeguards": {
+          "sccs": "ou zhou wei yuan hui pi zhun de biao zhun he tong tiao kuan (SCC)",
+          "dpas": "yu wo men de fu wu ti gong shang de shu ju chu li xie yi",
+          "supplementary": "bi yao shi ying dui te ding feng xian de bu chong cuo shi"
+        },
+        "requestCopy": "nin ke yi tong guo lian xi wo men suo qu wo men yi you bao zhang cuo shi de fu ben."
+      },
+      "childrensPrivacy": {
+        "title": "er tong yin si",
+        "p1": "fu wu bu mian xiang 16 sui yi xia de er tong. wo men bu hui gu yi shou ji 16 sui yi xia er tong de ge ren shu ju. ru guo nin shi fu mu huo jian hu ren bing ren wei nin de hai zi yi xiang wo men ti gong le ge ren shu ju, qing li ji lian xi wo men.",
+        "p2": "ru guo wo men fa xian wo men zai wei jing fu mu tong yi yan zheng de qing kuang xia shou ji le 16 sui yi xia er tong de ge ren shu ju, wo men jiang cai qu cuo shi ji shi shan chu gai xin xi."
+      },
+      "changesToPolicy": {
+        "title": "ben zheng ce de bian geng",
+        "intro": "wo men ke neng hui bu shi geng xin ci yin si zheng ce yi fan ying wo men zuo fa huo shi yong fa lv de bian hua. dang wo men zuo chu zhong da bian geng shi:",
+        "items": {
+          "updateDate": "wo men jiang geng xin ben zheng ce ding bu de \"zui hou geng xin\" ri qi",
+          "notifyEmail": "wo men jiang tong guo dian zi you jian huo fu wu shang de xian zhu tong zhi tong zhi nin",
+          "renewConsent": "dui yu ying xiang nin quan li de zhong da bian geng, wo men ke neng hui yao qiu geng xin tong yi"
+        },
+        "reviewPeriodically": "wo men gu li nin ding qi cha kan ci yin si zheng ce, yi le jie wo men ru he bao hu nin de xin xi."
+      },
+      "contactInformation": {
+        "title": "lian xi xin xi",
+        "intro": "ru guo nin dui ci yin si zheng ce you yi wen, xi wang xing shi nin de shu ju bao hu quan li, huo dui wo men de shu ju zuo fa you yi lv, qing lian xi wo men:",
+        "github": "GitHub:",
+        "responseTime": "wo men jiang zai 30 tian nei hui fu suo you he fa qing qiu. zai mou xie qing kuang xia, wo men ke neng xu yao zai chu li nin de qing qiu qian yan zheng nin de shen fen."
+      }
+    },
+    "relatedDocuments": "xiang guan wen dang",
+    "termsLink": "fu wu tiao kuan",
+    "termsDescription": "wo men shi yong Swarmrise de tiao kuan he tiao jian",
+    "principlesLink": "wo men de yuan ze",
+    "principlesDescription": "le jie zhi yin Swarmrise de jia zhi guan",
+    "footer": "swarmrise yi Apache License 2.0 xu ke"
+  }
+}

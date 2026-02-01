@@ -1,0 +1,498 @@
+{
+  "principles": {
+    "title": "i nostri principi",
+    "subtitle": "Idee semplici che guidano il funzionamento di swarmrise.",
+    "legal": "legale",
+    "termsLink": "Termini di Servizio",
+    "termsDescription": "le condizioni per l'utilizzo di swarmrise",
+    "privacyLink": "Informativa sulla Privacy",
+    "privacyDescription": "come gestiamo i tuoi dati personali",
+    "footer": "swarmrise e un lavoro in corso.",
+    "items": {
+      "noFunnyHats": {
+        "title": "Niente cappelli buffi",
+        "content": "swarmrise usa parole e concetti semplici. Nessun vocabolario esoterico o neologismi, nessuna cerimonia, nessun cerchio, nessun gergo di sviluppo personale. E uno strumento, non una religione."
+      },
+      "youComeFirst": {
+        "title": "Tu vieni prima",
+        "content": "Disegnare il quadro generale dell'organizzazione non e sufficiente per dare a qualcuno fiducia e direzione. swarmrise e centrato su di te come membro di quell'organizzazione, evidenziando i tuoi ruoli, i tuoi team, le tue relazioni e le tue decisioni. Quotidianamente, vuoi solo sapere cosa gli altri si aspettano da te e come puoi aiutare e agire."
+      },
+      "alwaysTellWhy": {
+        "title": "Sempre dire perche",
+        "content": "swarmrise e guidato dallo scopo. L'organizzazione deve avere uno scopo globale, ma ogni team e ogni ruolo dovrebbe iniziare con uno scopo chiaro. Le persone sono intelligenti, possono capire cosa fare e come farlo quando sanno perche lo stanno facendo."
+      },
+      "doersAreKings": {
+        "title": "Chi fa e re",
+        "content": "Una grande differenza con la gerarchia e la possibilita di eliminare i decisori a tempo pieno. Tutti prendono decisioni tutto il tempo, quindi questo talento non e cosi raro. Abilitando uno schema decidi/impegnati/esegui autogestito per ogni ruolo, evidenzi la capacita molto piu rara della buona esecuzione. Le persone che possono effettivamente fare le cose dovrebbero sentirsi piu potenziate e apprezzate."
+      },
+      "ethicalBehaviors": {
+        "title": "Facilitatore di comportamenti etici",
+        "content": "I cattivi comportamenti fioriscono quando non ne sei consapevole o non puoi farci nulla. Naturalmente, un modello di governance non puo garantire una condotta etica da solo, ma puo incoraggiarla informando i membri su cosa sta succedendo e permettendo loro di prendere decisioni di conseguenza. swarmrise usa la trasparenza, la tracciabilita e la memoria delle informazioni come modalita predefinita (quando non contraddice i diritti sui dati personali o le informazioni sensibili), e propone un modello decisionale aperto a qualsiasi ruolo."
+      },
+      "frictionless": {
+        "title": "Senza attrito",
+        "content": "Gli organigrammi e le descrizioni dei lavori sono spesso obsoleti, in parte perche modificarli e una seccatura. swarmrise consente una facile modifica, da parte di ogni membro, di ogni pezzo dell'organizzazione. Non e rischioso perche, facendo sapere a tutti chi ha fatto cosa, swarmrise costringe i membri a pensare prima di agire. E comunque, se non ti fidi delle persone, non dovresti assumerle in primo luogo."
+      },
+      "sharingIsGood": {
+        "title": "Condividere e bene",
+        "content": "swarmrise propone una libreria di template pubblici copyleft per team, ruoli e politiche, cosi le innovazioni di alcuni possono essere riutilizzate liberamente da altri. Creando e mantenendo template pubblici, puoi aiutare altre organizzazioni e ottenere feedback utili per te, prendere due piccioni con una fava."
+      },
+      "lowComplexity": {
+        "title": "Bassa complessita",
+        "content": "La gerarchia e un concetto molto semplice. Ecco perche e dominante nonostante non sia il sistema piu efficiente. swarmrise si impegna ad aggiungere il meno complessita possibile e a mantenere le cose facili da spiegare e operare. C'e un insieme limitato di concetti e regole da cui puoi far crescere la tua governance per adattarla alla tua organizzazione."
+      },
+      "workInProgress": {
+        "title": "Lavoro in corso",
+        "content": "swarmrise e e rimarra un lavoro in corso. Feedback e contributi sono piu che benvenuti. Questi principi sono solo una spina dorsale, vediamo dove andra a finire tutto questo."
+      }
+    }
+  },
+  "terms": {
+    "title": "termini di servizio",
+    "effectiveDate": "Data di efficacia: {{date}}",
+    "lastUpdated": "Ultimo aggiornamento: {{date}}",
+    "effectiveDateLabel": "Data di efficacia",
+    "lastUpdatedLabel": "Ultimo aggiornamento",
+    "intro": {
+      "welcome": "Benvenuto su swarmrise. Questi Termini di Servizio (\"Termini\") regolano il tuo accesso e utilizzo della piattaforma Swarmrise, incluso il nostro sito web, applicazioni e servizi (collettivamente, il \"Servizio\"). Accedendo o utilizzando il Servizio, accetti di essere vincolato da questi Termini.",
+      "readCarefully": "Per favore leggi attentamente questi Termini prima di utilizzare il Servizio. Se non accetti questi Termini, non puoi accedere o utilizzare il Servizio."
+    },
+    "sections": {
+      "acceptanceOfTerms": {
+        "title": "accettazione dei termini",
+        "p1": "Creando un account o utilizzando il Servizio, dichiari di avere almeno 18 anni di eta e di avere la capacita legale di stipulare questi Termini. Se stai utilizzando il Servizio per conto di un'organizzazione, dichiari e garantisci di avere l'autorita di vincolare quell'organizzazione a questi Termini.",
+        "p2": "Ci riserviamo il diritto di modificare questi Termini in qualsiasi momento. Ti notificheremo delle modifiche materiali pubblicando i Termini aggiornati sul Servizio e aggiornando la data di \"Ultimo aggiornamento\". Il tuo uso continuato del Servizio dopo tali modifiche costituisce la tua accettazione dei Termini modificati."
+      },
+      "descriptionOfService": {
+        "title": "descrizione del servizio",
+        "intro": "Swarmrise e una piattaforma multi-tenant di gestione delle organizzazioni progettata per la governance collaborativa. Il Servizio consente alle organizzazioni di:",
+        "features": {
+          "structureTeams": "Strutturare i team e definire le gerarchie organizzative",
+          "createRoles": "Creare e gestire ruoli all'interno dei team (incluse posizioni di leader, segretario e arbitro)",
+          "trackDecisions": "Tracciare le decisioni con audit trail completi",
+          "manageMembers": "Gestire le adesioni e gli inviti organizzativi",
+          "establishPolicies": "Stabilire e mantenere le politiche organizzative"
+        },
+        "reserveRight": "Ci riserviamo il diritto di modificare, sospendere o interrompere qualsiasi aspetto del Servizio in qualsiasi momento, con o senza preavviso."
+      },
+      "accountRegistration": {
+        "title": "registrazione e sicurezza dell'account",
+        "intro": "Per accedere a determinate funzionalita del Servizio, devi creare un account. Creando un account, accetti di:",
+        "requirements": {
+          "provideAccurate": "Fornire informazioni accurate, attuali e complete",
+          "maintainInfo": "Mantenere e aggiornare prontamente le informazioni del tuo account",
+          "keepSecure": "Mantenere le tue credenziali di autenticazione sicure e confidenziali",
+          "notifyUnauthorized": "Notificarci immediatamente di qualsiasi accesso non autorizzato al tuo account",
+          "acceptResponsibility": "Accettare la responsabilita per tutte le attivita che si verificano sotto il tuo account"
+        },
+        "clerkNote": "Utilizziamo Clerk per i servizi di autenticazione. Utilizzando il Servizio, accetti anche i termini di servizio e l'informativa sulla privacy di Clerk."
+      },
+      "organizationsAndMembership": {
+        "title": "organizzazioni e adesione",
+        "ownerIntro": "Il Servizio consente agli utenti di creare e unirsi a organizzazioni. Quando crei un'organizzazione, ne diventi il proprietario e sei responsabile di:",
+        "ownerResponsibilities": {
+          "manageSettings": "Gestire le impostazioni e l'adesione dell'organizzazione",
+          "ensureCompliance": "Assicurare che i membri rispettino questi Termini",
+          "contentActivities": "Il contenuto e le attivita all'interno della tua organizzazione",
+          "handleInvitations": "Gestire correttamente gli inviti e i controlli di accesso"
+        },
+        "memberIntro": "Come membro di un'organizzazione, accetti di:",
+        "memberResponsibilities": {
+          "respectGovernance": "Rispettare la struttura di governance stabilita dall'organizzazione",
+          "useAccordingly": "Utilizzare il Servizio in conformita con i ruoli assegnati",
+          "noCircumvent": "Non aggirare i controlli di accesso o i sistemi di autorizzazione"
+        }
+      },
+      "acceptableUse": {
+        "title": "uso accettabile",
+        "intro": "Accetti di utilizzare il Servizio solo per scopi leciti e in conformita con questi Termini. Accetti di NON:",
+        "prohibitions": {
+          "violateLaws": "Violare leggi, regolamenti o diritti di terzi applicabili",
+          "harassOthers": "Utilizzare il Servizio per molestare, abusare o danneggiare altri",
+          "uploadMalicious": "Caricare o trasmettere codice dannoso, virus o contenuti nocivi",
+          "unauthorizedAccess": "Tentare di ottenere accesso non autorizzato al Servizio o ai suoi sistemi",
+          "interfereService": "Interferire con o interrompere il Servizio o la sua infrastruttura",
+          "scrapeService": "Fare scraping, crawling o utilizzare mezzi automatizzati per accedere al Servizio senza permesso",
+          "impersonate": "Impersonare un'altra persona o entita",
+          "fraudulent": "Utilizzare il Servizio per scopi fraudolenti o ingannevoli",
+          "circumventSecurity": "Aggirare qualsiasi misura di sicurezza o restrizione di accesso"
+        }
+      },
+      "userContent": {
+        "title": "contenuto dell'utente",
+        "ownership": "Mantieni la proprieta di qualsiasi contenuto che invii al Servizio (\"Contenuto dell'Utente\"), inclusi dati organizzativi, strutture di team, definizioni di ruoli e decisioni. Inviando Contenuto dell'Utente, ci concedi una licenza mondiale, non esclusiva e senza royalty per utilizzare, archiviare e elaborare il tuo Contenuto dell'Utente esclusivamente allo scopo di fornire il Servizio.",
+        "warrantyIntro": "Dichiari e garantisci che:",
+        "warranties": {
+          "ownRights": "Possiedi o hai i diritti necessari sul tuo Contenuto dell'Utente",
+          "noViolation": "Il tuo Contenuto dell'Utente non viola alcun diritto di terzi",
+          "compliesTerms": "Il tuo Contenuto dell'Utente e conforme a questi Termini e alle leggi applicabili"
+        }
+      },
+      "intellectualProperty": {
+        "title": "proprieta intellettuale",
+        "license": "Il Servizio, incluso il suo codice sorgente, design, funzionalita e documentazione, e concesso in licenza sotto Apache License 2.0. Questa licenza ti permette di utilizzare, modificare e distribuire il software a determinate condizioni.",
+        "brandElements": "Il nome Swarmrise, il logo e gli elementi del marchio sono proprietari e non possono essere utilizzati senza il nostro esplicito consenso scritto, tranne come consentito dalla Licenza Apache 2.0 per scopi di attribuzione.",
+        "thirdParty": "I componenti di terze parti inclusi nel Servizio sono soggetti alle rispettive licenze, documentate nella nostra documentazione legale."
+      },
+      "dataProtection": {
+        "title": "protezione dei dati e privacy",
+        "commitment": "Siamo impegnati a proteggere la tua privacy e i tuoi dati personali. La nostra raccolta, utilizzo e gestione dei dati personali e regolata dalla nostra Informativa sulla Privacy, che e incorporata in questi Termini per riferimento.",
+        "keyAspectsIntro": "Aspetti chiave della nostra gestione dei dati:",
+        "keyAspects": {
+          "collectNecessary": "Raccogliamo solo i dati necessari per fornire il Servizio",
+          "dataIsolated": "I tuoi dati organizzativi sono isolati in un'architettura multi-tenant",
+          "convexStorage": "Utilizziamo Convex per l'archiviazione e l'elaborazione sicura dei dati",
+          "clerkAuth": "I dati di autenticazione sono gestiti da Clerk",
+          "auditTrails": "Manteniamo audit trail per la trasparenza e la responsabilita"
+        },
+        "gdprNote": "Per gli utenti nello Spazio Economico Europeo, rispettiamo il Regolamento Generale sulla Protezione dei Dati (GDPR) e forniamo meccanismi per esercitare i tuoi diritti come interessato."
+      },
+      "serviceAvailability": {
+        "title": "disponibilita del servizio e supporto",
+        "intro": "Ci impegniamo a mantenere la disponibilita del Servizio ma non garantiamo un accesso ininterrotto. Il Servizio potrebbe essere temporaneamente non disponibile a causa di:",
+        "reasons": {
+          "maintenance": "Manutenzione programmata e aggiornamenti",
+          "outages": "Interruzioni non pianificate o problemi tecnici",
+          "beyondControl": "Fattori al di fuori del nostro ragionevole controllo"
+        },
+        "asIs": "Forniamo il Servizio \"cosi com'e\" e \"come disponibile\" senza alcun accordo sul livello di servizio, salvo diverso accordo scritto."
+      },
+      "limitationOfLiability": {
+        "title": "limitazione di responsabilita",
+        "intro": "NELLA MISURA MASSIMA CONSENTITA DALLA LEGGE APPLICABILE, SWARMRISE E I SUOI AFFILIATI, FUNZIONARI, DIPENDENTI, AGENTI E LICENZIANTI NON SARANNO RESPONSABILI PER DANNI INDIRETTI, INCIDENTALI, SPECIALI, CONSEQUENZIALI O PUNITIVI, INCLUSI MA NON LIMITATI A:",
+        "damages": {
+          "lostProfits": "Perdita di profitti, dati o opportunita commerciali",
+          "interruptions": "Interruzioni del servizio o perdita di dati",
+          "unauthorizedAccess": "Accesso non autorizzato ai tuoi dati",
+          "thirdPartyConduct": "Qualsiasi condotta o contenuto di terze parti sul Servizio"
+        },
+        "totalLiability": "La nostra responsabilita totale per qualsiasi reclamo derivante da o correlato al Servizio non superera l'importo che ci hai pagato, se presente, nei dodici (12) mesi precedenti il reclamo."
+      },
+      "indemnification": {
+        "title": "indennizzo",
+        "intro": "Accetti di indennizzare, difendere e tenere indenne Swarmrise e i suoi affiliati, funzionari, direttori, dipendenti e agenti da e contro qualsiasi reclamo, responsabilita, danno, perdita e spesa (incluse ragionevoli spese legali) derivanti da o in qualsiasi modo connessi a:",
+        "items": {
+          "accessUse": "Il tuo accesso o utilizzo del Servizio",
+          "violationTerms": "La tua violazione di questi Termini",
+          "userContent": "Il tuo Contenuto dell'Utente",
+          "violationRights": "La tua violazione di qualsiasi diritto di terzi"
+        }
+      },
+      "termination": {
+        "title": "risoluzione",
+        "intro": "Puoi terminare il tuo account in qualsiasi momento contattandoci o utilizzando la funzione di eliminazione dell'account quando disponibile. Possiamo terminare o sospendere il tuo accesso al Servizio immediatamente, senza preavviso, se:",
+        "reasons": {
+          "breachTerms": "Violi questi Termini",
+          "requiredByLaw": "Siamo tenuti a farlo per legge",
+          "discontinueService": "Decidiamo di interrompere il Servizio"
+        },
+        "uponTermination": "Alla risoluzione, il tuo diritto di utilizzare il Servizio cessera immediatamente. Le disposizioni di questi Termini che per loro natura dovrebbero sopravvivere alla risoluzione sopravviveranno, inclusa la proprieta, le esclusioni di garanzia, l'indennizzo e le limitazioni di responsabilita."
+      },
+      "disputeResolution": {
+        "title": "risoluzione delle controversie",
+        "informal": "Ti incoraggiamo a contattarci prima per risolvere qualsiasi controversia in modo informale. Se una controversia non puo essere risolta in modo informale, accetti che qualsiasi azione legale o procedimento sara portato esclusivamente davanti ai tribunali di giurisdizione competente.",
+        "euNote": "Per gli utenti nell'Unione Europea, questa disposizione non pregiudica i tuoi diritti ai sensi delle leggi sulla protezione dei consumatori o il tuo diritto di presentare reclami davanti ai tribunali del tuo paese di residenza."
+      },
+      "governingLaw": {
+        "title": "legge applicabile",
+        "law": "Questi Termini saranno regolati e interpretati in conformita con le leggi della giurisdizione in cui l'operatore del Servizio e stabilito, senza riguardo ai principi di conflitto di leggi.",
+        "eeaNote": "Per gli utenti nello Spazio Economico Europeo, nulla in questi Termini pregiudica i tuoi diritti come consumatore ai sensi delle leggi applicabili sulla protezione dei consumatori dell'UE."
+      },
+      "generalProvisions": {
+        "title": "disposizioni generali",
+        "entireAgreement": "Accordo completo:",
+        "entireAgreementText": "Questi Termini, insieme alla nostra Informativa sulla Privacy e qualsiasi altra politica qui referenziata, costituiscono l'intero accordo tra te e Swarmrise riguardo al Servizio.",
+        "severability": "Separabilita:",
+        "severabilityText": "Se una qualsiasi disposizione di questi Termini e ritenuta inapplicabile, le restanti disposizioni continueranno ad avere pieno vigore ed effetto.",
+        "waiver": "Rinuncia:",
+        "waiverText": "La nostra mancata applicazione di qualsiasi diritto o disposizione di questi Termini non sara considerata una rinuncia a tali diritti.",
+        "assignment": "Cessione:",
+        "assignmentText": "Non puoi cedere o trasferire i tuoi diritti ai sensi di questi Termini senza il nostro previo consenso scritto. Possiamo cedere i nostri diritti e obblighi senza restrizioni."
+      },
+      "contactInformation": {
+        "title": "informazioni di contatto",
+        "intro": "Se hai domande su questi Termini, contattaci:",
+        "github": "GitHub:"
+      }
+    },
+    "relatedDocuments": "documenti correlati",
+    "privacyLink": "Informativa sulla Privacy",
+    "privacyDescription": "Come gestiamo i tuoi dati personali",
+    "principlesLink": "I Nostri Principi",
+    "principlesDescription": "Scopri i valori che guidano Swarmrise",
+    "footer": "swarmrise e concesso in licenza sotto Apache License 2.0"
+  },
+  "privacy": {
+    "title": "informativa sulla privacy",
+    "effectiveDate": "Data di efficacia: {{date}}",
+    "lastUpdated": "Ultimo aggiornamento: {{date}}",
+    "effectiveDateLabel": "Data di efficacia",
+    "lastUpdatedLabel": "Ultimo aggiornamento",
+    "intro": {
+      "commitment": "In swarmrise, siamo impegnati a proteggere la tua privacy e i tuoi dati personali. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo, divulghiamo e proteggiamo le tue informazioni quando utilizzi la nostra piattaforma multi-tenant di gestione delle organizzazioni (il \"Servizio\").",
+      "gdprCompliance": "Trattiamo i dati personali in conformita con il Regolamento Generale sulla Protezione dei Dati (GDPR) e altre leggi applicabili sulla protezione dei dati. Per favore leggi attentamente questa Informativa sulla Privacy per comprendere le nostre pratiche riguardo ai tuoi dati personali."
+    },
+    "sections": {
+      "dataController": {
+        "title": "titolare del trattamento",
+        "p1": "Ai fini del GDPR e di altre leggi applicabili sulla protezione dei dati, Swarmrise agisce come titolare del trattamento per i dati personali raccolti attraverso il Servizio. Questo significa che determiniamo le finalita e i mezzi del trattamento dei tuoi dati personali.",
+        "p2": "Se hai domande sulle nostre pratiche relative ai dati o desideri esercitare i tuoi diritti, contattaci attraverso i canali elencati nella sezione Informazioni di Contatto di seguito."
+      },
+      "informationWeCollect": {
+        "title": "informazioni che raccogliamo",
+        "intro": "Raccogliamo informazioni che ci fornisci direttamente, nonche informazioni raccolte automaticamente quando utilizzi il Servizio.",
+        "accountInfo": {
+          "title": "2.1 Informazioni dell'account",
+          "intro": "Quando crei un account, raccogliamo:",
+          "items": {
+            "name": "Nome e cognome",
+            "email": "Indirizzo email",
+            "profilePicture": "Foto del profilo (opzionale, se fornita tramite autenticazione)"
+          }
+        },
+        "organizationData": {
+          "title": "2.2 Dati dell'organizzazione",
+          "intro": "Quando crei o ti unisci a organizzazioni, raccogliamo ed elaboriamo:",
+          "items": {
+            "orgNames": "Nomi e impostazioni delle organizzazioni",
+            "teamStructures": "Strutture e gerarchie dei team",
+            "roleAssignments": "Assegnazioni di ruoli (leader, segretario, arbitro)",
+            "membershipInfo": "Informazioni sull'adesione",
+            "invitationData": "Dati degli inviti (indirizzi email degli invitati)"
+          }
+        },
+        "optionalContact": {
+          "title": "2.3 Informazioni di contatto opzionali",
+          "intro": "Puoi scegliere di fornire informazioni di contatto aggiuntive, tra cui:",
+          "items": {
+            "mobile": "Numero di cellulare",
+            "address": "Indirizzo fisico",
+            "socialMedia": "Profili sui social media (LinkedIn, Facebook, Instagram, WhatsApp)"
+          },
+          "note": "Queste informazioni sono interamente opzionali e raccolte solo con il tuo esplicito consenso."
+        },
+        "usageData": {
+          "title": "2.4 Dati di utilizzo",
+          "intro": "Raccogliamo automaticamente determinate informazioni quando utilizzi il Servizio:",
+          "items": {
+            "browser": "Tipo e versione del browser",
+            "device": "Informazioni sul dispositivo",
+            "ipAddress": "Indirizzo IP",
+            "pagesVisited": "Pagine visitate e funzionalita utilizzate",
+            "dateTime": "Data e ora di accesso"
+          }
+        },
+        "decisionAudit": {
+          "title": "2.5 Audit trail delle decisioni",
+          "intro": "Per garantire trasparenza e responsabilita, manteniamo audit trail delle azioni significative all'interno delle organizzazioni, tra cui:",
+          "items": {
+            "authorEmail": "Email dell'autore per le modifiche effettuate",
+            "timestamps": "Timestamp delle azioni",
+            "beforeAfter": "Stati prima e dopo dei dati modificati"
+          }
+        }
+      },
+      "howWeUse": {
+        "title": "come utilizziamo le tue informazioni",
+        "intro": "Utilizziamo le informazioni che raccogliamo per le seguenti finalita, ciascuna con una specifica base giuridica ai sensi del GDPR:",
+        "serviceProvision": {
+          "title": "3.1 Fornitura del Servizio (Contratto - Articolo 6(1)(b))",
+          "items": {
+            "createAccount": "Creare e gestire il tuo account utente",
+            "provideAccess": "Fornire accesso alle funzionalita di gestione delle organizzazioni",
+            "processMembers": "Elaborare le adesioni e gli inviti alle organizzazioni",
+            "enableTeamMgmt": "Abilitare le funzionalita di gestione di team e ruoli",
+            "authenticate": "Autenticare la tua identita"
+          }
+        },
+        "legitimateInterests": {
+          "title": "3.2 Interessi legittimi (Articolo 6(1)(f))",
+          "items": {
+            "auditTrails": "Mantenere audit trail delle decisioni per la responsabilita",
+            "improveService": "Migliorare e ottimizzare il Servizio",
+            "preventFraud": "Prevenire le frodi e garantire la sicurezza",
+            "respondSupport": "Rispondere alle richieste di supporto"
+          }
+        },
+        "consent": {
+          "title": "3.3 Consenso (Articolo 6(1)(a))",
+          "items": {
+            "storeOptional": "Archiviare le informazioni di contatto opzionali che scegli di fornire",
+            "displayProfile": "Visualizzare la tua foto del profilo"
+          },
+          "withdrawNote": "Puoi revocare il consenso in qualsiasi momento aggiornando le impostazioni del tuo profilo o contattandoci."
+        }
+      },
+      "thirdPartyServices": {
+        "title": "servizi di terze parti",
+        "intro": "Utilizziamo i seguenti servizi di terze parti per operare il Servizio. Ciascuno di questi servizi elabora i tuoi dati per nostro conto:",
+        "clerk": {
+          "title": "4.1 Clerk (Autenticazione)",
+          "purpose": "Finalita:",
+          "purposeText": "Autenticazione degli utenti e gestione delle identita",
+          "dataProcessed": "Dati elaborati:",
+          "dataProcessedText": "Email, nome, foto del profilo, credenziali di autenticazione",
+          "location": "Ubicazione:",
+          "locationText": "Stati Uniti",
+          "privacyPolicy": "Informativa sulla privacy:"
+        },
+        "convex": {
+          "title": "4.2 Convex (Database e Backend)",
+          "purpose": "Finalita:",
+          "purposeText": "Archiviazione database in tempo reale e funzioni backend serverless",
+          "dataProcessed": "Dati elaborati:",
+          "dataProcessedText": "Tutti i dati dell'applicazione inclusi profili utente, dati delle organizzazioni e audit trail",
+          "location": "Ubicazione:",
+          "locationText": "Stati Uniti",
+          "privacyPolicy": "Informativa sulla privacy:"
+        },
+        "googleFonts": {
+          "title": "4.3 Google Fonts",
+          "purpose": "Finalita:",
+          "purposeText": "Distribuzione dei font (Montserrat Alternates)",
+          "dataProcessed": "Dati elaborati:",
+          "dataProcessedText": "Indirizzo IP (minimo)",
+          "privacyPolicy": "Informativa sulla privacy:"
+        }
+      },
+      "dataRetention": {
+        "title": "conservazione dei dati",
+        "intro": "Conserviamo i tuoi dati personali solo per il tempo necessario a soddisfare le finalita per cui sono stati raccolti:",
+        "items": {
+          "accountData": "Dati dell'account:",
+          "accountDataText": "Conservati per la durata del tuo account. Quando elimini il tuo account, elimineremo i tuoi dati personali entro 30 giorni, salvo dove la conservazione sia richiesta dalla legge.",
+          "orgData": "Dati dell'organizzazione:",
+          "orgDataText": "Conservati per la durata della tua adesione a un'organizzazione. Quando lasci un'organizzazione, il tuo record di membro viene rimosso, anche se i record di audit potrebbero essere conservati per finalita di responsabilita.",
+          "invitationData": "Dati degli inviti:",
+          "invitationDataText": "Conservati fino a quando l'invito viene accettato, rifiutato o scade.",
+          "auditTrails": "Audit trail:",
+          "auditTrailsText": "Conservati per la durata dell'organizzazione per finalita di responsabilita e conformita."
+        }
+      },
+      "yourRightsGdpr": {
+        "title": "i tuoi diritti ai sensi del gdpr",
+        "intro": "Se ti trovi nello Spazio Economico Europeo (SEE), nel Regno Unito o in Svizzera, hai i seguenti diritti riguardo ai tuoi dati personali:",
+        "rightOfAccess": {
+          "title": "6.1 Diritto di accesso (Articolo 15)",
+          "text": "Hai il diritto di ottenere conferma se trattiamo i tuoi dati personali e di ricevere una copia di tali dati."
+        },
+        "rightToRectification": {
+          "title": "6.2 Diritto di rettifica (Articolo 16)",
+          "text": "Hai il diritto di correggere dati personali inesatti e di completare dati incompleti. Puoi aggiornare la maggior parte delle tue informazioni direttamente tramite le impostazioni del tuo account."
+        },
+        "rightToErasure": {
+          "title": "6.3 Diritto alla cancellazione (Articolo 17)",
+          "text": "Hai il diritto di richiedere la cancellazione dei tuoi dati personali in determinate circostanze, incluso quando i dati non sono piu necessari per le finalita per cui sono stati raccolti."
+        },
+        "rightToRestriction": {
+          "title": "6.4 Diritto alla limitazione (Articolo 18)",
+          "text": "Hai il diritto di richiedere la limitazione del trattamento dei tuoi dati personali in determinate circostanze."
+        },
+        "rightToPortability": {
+          "title": "6.5 Diritto alla portabilita dei dati (Articolo 20)",
+          "text": "Hai il diritto di ricevere i tuoi dati personali in un formato strutturato, di uso comune e leggibile da dispositivo automatico, e di trasmetterli a un altro titolare."
+        },
+        "rightToObject": {
+          "title": "6.6 Diritto di opposizione (Articolo 21)",
+          "text": "Hai il diritto di opporti al trattamento dei tuoi dati personali basato su interessi legittimi, inclusa la profilazione."
+        },
+        "rightToWithdraw": {
+          "title": "6.7 Diritto di revocare il consenso",
+          "text": "Quando il trattamento e basato sul consenso, hai il diritto di revocare il consenso in qualsiasi momento senza pregiudicare la liceita del trattamento basato sul consenso prima della sua revoca."
+        },
+        "rightToComplaint": {
+          "title": "6.8 Diritto di presentare un reclamo",
+          "text": "Hai il diritto di presentare un reclamo a un'autorita di controllo se ritieni che il nostro trattamento dei tuoi dati personali violi le leggi applicabili sulla protezione dei dati."
+        },
+        "exerciseRights": "Per esercitare uno qualsiasi di questi diritti, contattaci utilizzando le informazioni nella sezione Contatti di seguito. Risponderemo alla tua richiesta entro 30 giorni."
+      },
+      "cookiesLocalStorage": {
+        "title": "cookie e archiviazione locale",
+        "intro": "Utilizziamo tecnologie di archiviazione del browser per fornire e migliorare il Servizio. Il nostro utilizzo e limitato a funzionalita strettamente necessarie:",
+        "localStorage": {
+          "title": "7.1 Archiviazione locale",
+          "tableHeaders": {
+            "storageKey": "Chiave di archiviazione",
+            "purpose": "Finalita",
+            "duration": "Durata"
+          },
+          "items": {
+            "locale": {
+              "key": "swarmrise_locale",
+              "purpose": "Preferenza linguistica",
+              "duration": "Persistente"
+            },
+            "selectedOrga": {
+              "key": "swarmrise_selected_orga",
+              "purpose": "Organizzazione selezionata",
+              "duration": "Persistente"
+            }
+          }
+        },
+        "authCookies": {
+          "title": "7.2 Cookie di autenticazione",
+          "text": "Clerk (il nostro provider di autenticazione) utilizza cookie di sessione per la gestione dello stato di autenticazione. Questi sono strettamente necessari per il funzionamento del Servizio e non richiedono consenso ai sensi della Direttiva ePrivacy."
+        },
+        "noTracking": {
+          "title": "7.3 Nessun cookie di tracciamento",
+          "text": "Non utilizziamo cookie di analisi, pubblicita o tracciamento. Non pratichiamo il tracciamento comportamentale ne la pubblicita mirata."
+        }
+      },
+      "dataSecurity": {
+        "title": "sicurezza dei dati",
+        "intro": "Implementiamo misure tecniche e organizzative appropriate per proteggere i tuoi dati personali dall'accesso non autorizzato, alterazione, divulgazione o distruzione:",
+        "measures": {
+          "encryption": "Crittografia in transito:",
+          "encryptionText": "Tutti i dati trasmessi tra il tuo browser e i nostri server sono crittografati utilizzando TLS/SSL.",
+          "secureAuth": "Autenticazione sicura:",
+          "secureAuthText": "Utilizziamo Clerk, un provider di autenticazione specializzato, con pratiche di sicurezza standard del settore.",
+          "multiTenant": "Isolamento multi-tenant:",
+          "multiTenantText": "I dati delle organizzazioni sono logicamente isolati per prevenire l'accesso non autorizzato tra organizzazioni.",
+          "accessControls": "Controlli di accesso:",
+          "accessControlsText": "I controlli di accesso basati sui ruoli garantiscono che gli utenti possano accedere solo ai dati che sono autorizzati a visualizzare.",
+          "securityReviews": "Revisioni di sicurezza regolari:",
+          "securityReviewsText": "Conduciamo valutazioni di sicurezza regolari del nostro codebase e della nostra infrastruttura."
+        },
+        "disclaimer": "Sebbene ci sforziamo di proteggere i tuoi dati personali, nessun metodo di trasmissione su Internet o di archiviazione elettronica e sicuro al 100%. Non possiamo garantire una sicurezza assoluta."
+      },
+      "internationalTransfers": {
+        "title": "trasferimenti internazionali di dati",
+        "intro": "I tuoi dati personali potrebbero essere trasferiti e trattati in paesi al di fuori del tuo paese di residenza, inclusi gli Stati Uniti, dove si trovano i nostri fornitori di servizi terzi (Clerk e Convex).",
+        "safeguardsIntro": "Per i trasferimenti di dati personali dal SEE, Regno Unito o Svizzera verso paesi che non sono stati ritenuti in grado di fornire un livello adeguato di protezione dei dati, ci basiamo su garanzie appropriate tra cui:",
+        "safeguards": {
+          "sccs": "Clausole contrattuali standard (SCC) approvate dalla Commissione Europea",
+          "dpas": "Accordi sul trattamento dei dati con i nostri fornitori di servizi",
+          "supplementary": "Misure supplementari ove necessario per affrontare rischi specifici"
+        },
+        "requestCopy": "Puoi richiedere una copia delle garanzie che abbiamo in atto contattandoci."
+      },
+      "childrensPrivacy": {
+        "title": "privacy dei minori",
+        "p1": "Il Servizio non e destinato ai minori di 16 anni. Non raccogliamo consapevolmente dati personali da minori di 16 anni. Se sei un genitore o tutore e ritieni che tuo figlio ci abbia fornito dati personali, contattaci immediatamente.",
+        "p2": "Se veniamo a conoscenza di aver raccolto dati personali da un minore di 16 anni senza verifica del consenso dei genitori, adotteremo misure per eliminare prontamente tali informazioni."
+      },
+      "changesToPolicy": {
+        "title": "modifiche a questa informativa",
+        "intro": "Potremmo aggiornare questa Informativa sulla Privacy di tanto in tanto per riflettere cambiamenti nelle nostre pratiche o nelle leggi applicabili. Quando apportiamo modifiche materiali:",
+        "items": {
+          "updateDate": "Aggiorneremo la data di \"Ultimo aggiornamento\" in cima a questa informativa",
+          "notifyEmail": "Ti notificheremo via email o tramite un avviso prominente sul Servizio",
+          "renewConsent": "Per cambiamenti significativi che influenzano i tuoi diritti, potremmo richiedere un consenso rinnovato"
+        },
+        "reviewPeriodically": "Ti incoraggiamo a rivedere periodicamente questa Informativa sulla Privacy per rimanere informato su come proteggiamo le tue informazioni."
+      },
+      "contactInformation": {
+        "title": "informazioni di contatto",
+        "intro": "Se hai domande su questa Informativa sulla Privacy, desideri esercitare i tuoi diritti di protezione dei dati o hai preoccupazioni sulle nostre pratiche relative ai dati, contattaci:",
+        "github": "GitHub:",
+        "responseTime": "Risponderemo a tutte le richieste legittime entro 30 giorni. In alcuni casi, potremmo dover verificare la tua identita prima di elaborare la tua richiesta."
+      }
+    },
+    "relatedDocuments": "documenti correlati",
+    "termsLink": "Termini di Servizio",
+    "termsDescription": "I nostri termini e condizioni per l'utilizzo di Swarmrise",
+    "principlesLink": "I Nostri Principi",
+    "principlesDescription": "Scopri i valori che guidano Swarmrise",
+    "footer": "swarmrise e concesso in licenza sotto Apache License 2.0"
+  }
+}

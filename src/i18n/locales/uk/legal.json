@@ -1,0 +1,498 @@
+{
+  "principles": {
+    "title": "nashi pryntsypy",
+    "subtitle": "Prosti idei, yaki keruiut robotoiu swarmrise.",
+    "legal": "pravovi dokumenty",
+    "termsLink": "Umovy nadannia posluh",
+    "termsDescription": "umovy vykorystannia swarmrise",
+    "privacyLink": "Polityka konfidentsiinosti",
+    "privacyDescription": "yak my obrobliaiemo vashi personalni dani",
+    "footer": "swarmrise - tse robota v prohresi.",
+    "items": {
+      "noFunnyHats": {
+        "title": "Bez chemnyh kapelokiv",
+        "content": "swarmrise vykorystovuie prosti slova ta kontseptsii. Zhodnoho ezotorychnoho slovnyku chy neolohizmiv, zhodnykh tseremonii, zhodnykh kil, zhodnoho zharhonu osobystoho rozvytku. Tse instrument, a ne relihiia."
+      },
+      "youComeFirst": {
+        "title": "Vy na pershomu mistsi",
+        "content": "Namalovaty zahalnu kartynu orhanizatsii nedostatno, shchob daty komus vpevnenist ta napriamok. swarmrise zorientovanyy na vas yak na chlena tsiiei orhanizatsii, vidznachaiuchy vashi roli, vashi komandy, vashi zviazky ta vashi rishennia. U povsiakdennomu zhytti vy prosto khochete znaty, choho vid vas ochikuiut inshi, i yak vy mozhete dopomohty ta diiaty."
+      },
+      "alwaysTellWhy": {
+        "title": "Zavzhdy kazhit chomu",
+        "content": "swarmrise keruietsia metoiu. Orhanizatsiia povynna maty hlobalnu metu, ale kozhna komanda i kozhna rol povynni pochynatysia z chasnoii mety. Liudy rozumni, vony mozhut zrozumity, shcho robyty i yak tse robyty, koly znaiut, chomu vony tse roblyat."
+      },
+      "doersAreKings": {
+        "title": "Diiachi - korol",
+        "content": "Odna velyka vidminnist vid iierarkhii - tse mozhlyvist pozbavytysia shtantyh pryimachiv rishen. Kozhen pryimaie rishennia postiyno, tomu tsei talant ne takyi ridkisnyy. Davalnyste skhem vyrishyty/zoboviazytysia/vykonaty z samoupravlinniam dlia kozhnoi roli, vy vydilyaiete nabahato ridkisnu zdatnist do yakisnoi realizatsii. Liudy, yaki diysti mozhut shchobs robyty, povynni vidchuvaty sebe bilsh upovnovanymy ta otsinenymi."
+      },
+      "ethicalBehaviors": {
+        "title": "Spryiannia etychniy povedintsi",
+        "content": "Pohana povedinka prokvitaie, koly vy abo ne znaite pro nei, abo ne mozhete nichogo z nei zrobyty. Zvychayno, model upravlinnia ne mozhe harantuvaty etychnu povedinku sama po sobi, ale vona mozhe ii zaokhochuvaty, informuiuchy chleniv pro te, shcho vidbuvaietsia, i dozvoliaiuchy im prymaty rishennia vidpovidno. swarmrise vykorystovuie prozrorist, vidstezhuvanist ta pamyat informatsii yak rezhym za zamovchannyam (koly tse ne superechyt pravam na personalni dani abo konfidentsiynoiu informatsiieiu), i proponuie model pryynyattia rishen, yaka ie vidkrytoiu dlia bud-yakoii roli."
+      },
+      "frictionless": {
+        "title": "Bez tertia",
+        "content": "Orhanizatsiyni skhemy ta posadovi instruktsii chasto zastarilii, chastokovo tomu, shcho ikh zminyuvaty - tse bida. swarmrise dozvoliaie lehku modyfikatsiiu, kozhnym chlenom, bud-yakoho elementu orhanizatsii. Tse ne ryzykovo, tomu shcho, dayuchi vsim znaty, khto shcho zrobyv, swarmrise zmushuie chleniv dumaty pered timy, yak diiaty. I do rechi, yakshcho vy ne doviryaite liudyam, vy ne povynni ikh naymaty v pershu cherhu."
+      },
+      "sharingIsGood": {
+        "title": "Dilitysya - tse dobre",
+        "content": "swarmrise proponuie publicnu biblioteku shabloniv copyleft dlia komand, roley ta polityk, shchob innovatsii odnyh mohlyu vilno vykorystovuvatysia inshymy. Stvoriuiuchy ta pidtrymuiuchy publichi shablony, vy mozhete dopomahaty inshym orhanizatsiiam ta otrymuvaty korysny zvorotniy zviazok dlia sebe, vbyty dvokh zaitsiv odnym postrilom."
+      },
+      "lowComplexity": {
+        "title": "Nyzka skladnist",
+        "content": "Iierarkhiia - tse duzhe prostyy kontsept. Osh tomu vona dominae, ne bud nazh naibilsh efektyvnoiu systemoiu. swarmrise namahaitsia dodavaty yakomaha menshe skladnosti ta zberihaty rechi lehkymy dlia poyasnennia ta ekspluatatsii. Ie obmezhenyy nabir kontseptsiy ta pravyl, z yakykh vy mozhete rozvyvaty svoie upravlinnia, shchob vidpovidalo vashiy orhanizatsii."
+      },
+      "workInProgress": {
+        "title": "Robota v prohresi",
+        "content": "swarmrise ie i zalyshytsia robotoiu v prohresi. Vidhuky ta vneski bilsh nizh vitaiutsia. Tsi pryntsypy - tse lyshe khrebet, pobachymo, kudy vse tse pryvede."
+      }
+    }
+  },
+  "terms": {
+    "title": "umovy nadannia posluh",
+    "effectiveDate": "Data nabuttia chynnosti: {{date}}",
+    "lastUpdated": "Ostannie onovlennia: {{date}}",
+    "effectiveDateLabel": "Data nabuttia chynnosti",
+    "lastUpdatedLabel": "Ostannie onovlennia",
+    "intro": {
+      "welcome": "Laskavo prosymo do swarmrise. Tsi Umovy nadannia posluh (\"Umovy\") rehuliuiut vash dostup ta vykorystannia platformy Swarmrise, vkliuchaiuchy nash veb-sayt, dodatky ta posluhy (razom - \"Servis\"). Otrymyiuchy dostup abo vykorystovuiuchy Servis, vy pohodzhuitesia buty zvyazanym tsymy Umovamy.",
+      "readCarefully": "Bud laska, uvazno prochytayte tsi Umovy pered vykorystanniam Servisu. Yakshcho vy ne pohodzhuitesia z tsymy Umovamy, vy ne mozhete otrymaty dostup abo vykorystovuvaty Servis."
+    },
+    "sections": {
+      "acceptanceOfTerms": {
+        "title": "pryiniattia umov",
+        "p1": "Stvoriuiuchy oblikovy zapys abo vykorystovuiuchy Servis, vy zayavliaiete, shcho vam ye shchonaymensche 18 rokiv i vy maiete pravovu zdatnist ukladaty tsi Umovy. Yakshcho vy vykorystovuiete Servis vid imeni orhanizatsii, vy zayavliaiete ta harantuiete, shcho maiete povnovazhennia zvyazuvaty tsiu orhanizatsiiu tsymy Umovamy.",
+        "p2": "My zalishaemo za soboiu pravo zminiuvaty tsi Umovy v bud-yakyy chas. My povidomymo vas pro suttievi zminy, opublikuvavshi onovleni Umovy na Servisi ta onovyvshi datu \"Ostannie onovlennia\". Vashe podalshe vykorystannia Servisu pislia takykh zmin oznachaie vashe pryiniattia zminenykh Umov."
+      },
+      "descriptionOfService": {
+        "title": "opys servisu",
+        "intro": "Swarmrise - tse bahatoorhanizatsiyna platforma upravlinnia orhanizatsiiamy, rozroblena dlia spilnoho upravlinnia. Servis dozvoliaie orhanizatsiiam:",
+        "features": {
+          "structureTeams": "Strukturuvaty komandy ta vyznachaty orhanizatsiyni iierarkhii",
+          "createRoles": "Stvoriuvaty ta kerovaty roliamy v komandakh (vkliuchaiuchy pozytsii lidera, sekretaria ta arbitra)",
+          "trackDecisions": "Vidstezhuvaty rishennia z povnymy audytorskymy slidy",
+          "manageMembers": "Kerovaty chlenstvom ta zaproshenniamy v orhanizatsii",
+          "establishPolicies": "Vstanovliuvaty ta pidtrimuvaty orhanizatsiyni polityky"
+        },
+        "reserveRight": "My zalishaemo za soboiu pravo zminyuvaty, pryzupyniaty abo prypyniaty bud-yakyy aspekt Servisu v bud-yakyy chas, z abo bez poperedzennia."
+      },
+      "accountRegistration": {
+        "title": "reiestratsiia ta bezpeka oblikovoho zapysu",
+        "intro": "Dlia dostupu do pevnykh funktsiy Servisu vy povynni stvoryty oblikovyy zapys. Stvoriuiuchy oblikovyy zapys, vy pohodzhuitesia:",
+        "requirements": {
+          "provideAccurate": "Nadavaty tochnu, aktualnu ta povnu informatsiiu",
+          "maintainInfo": "Pidtrimuvaty ta operevatyvno onovliuvaty informatsiiu pro vash oblikovyy zapys",
+          "keepSecure": "Zberihaty vashi oblicovi dani avtentyfikatsii bezpechnymy ta konfidentsiynymy",
+          "notifyUnauthorized": "Nehayno povidomliaty nas pro bud-yakyy nesanktsionovanyy dostup do vashoho oblikovoho zapysu",
+          "acceptResponsibility": "Pryymaty vidpovidalnist za vsiu diyalnist, yaka vidbuvaiesia pid vashym oblikovym zapysom"
+        },
+        "clerkNote": "My vykorystovuemo Clerk dlia posluh avtentyfikatsii. Vykorystovuiuchy Servis, vy takozh pohodzhuitesia z umovamy nadannia posluh ta politykoiu konfidentsiynosti Clerk."
+      },
+      "organizationsAndMembership": {
+        "title": "orhanizatsii ta chlenstvo",
+        "ownerIntro": "Servis dozvoliaie korystuvacham stvoriuvaty ta pryiednatysia do orhanizatsiy. Koly vy stvoriuiete orhanizatsiiu, vy staiete yiyi vlasnikom ta vidpovidaiete za:",
+        "ownerResponsibilities": {
+          "manageSettings": "Keruvannia nalashtuvanniamy orhanizatsii ta chlenstvom",
+          "ensureCompliance": "Zabezpechennia dotrymannia chlenamy tsykh Umov",
+          "contentActivities": "Vmist ta diyalnist u vashiy orhanizatsii",
+          "handleInvitations": "Nalezne obroblennia zaproshen ta kontroliv dostupu"
+        },
+        "memberIntro": "Yak chlen orhanizatsii, vy pohodzhuitesia:",
+        "memberResponsibilities": {
+          "respectGovernance": "Povahaty strukturu upravlinnia, vstanovlenu orhanizatsiieiu",
+          "useAccordingly": "Vykorystovuvaty Servis vidpovidno do vashykh pryznachenykh roley",
+          "noCircumvent": "Ne obkhodyty kontroli dostupu abo systemy dozvoliv"
+        }
+      },
+      "acceptableUse": {
+        "title": "dopustyme vykorystannia",
+        "intro": "Vy pohodzhuitesia vykorystovuvaty Servis lyshe dlia zakonnykh tsiley ta vidpovidno do tsykh Umov. Vy pohodzhuitesia NE:",
+        "prohibitions": {
+          "violateLaws": "Porushuvaty bud-yaki zastoovni zakony, normatyvni akty abo prava tretikh osib",
+          "harassOthers": "Vykorystovuvaty Servis dlia pereseliduvannia, zlovzhyvannia abo zavdannia shkody inshym",
+          "uploadMalicious": "Zavantazhuvaty abo peredavaty shkidlyvyy kod, virusy abo shkidlyvyy vmist",
+          "unauthorizedAccess": "Namahaty otrymaty nesanktsiovanyy dostup do Servisu abo yoho system",
+          "interfereService": "Vtruchaytysia abo pererivaty robotu Servisu abo yoho infrastruktury",
+          "scrapeService": "Zdiysniuvaty skreypynh, kraulynh abo vykorystovuvaty avtomatyzovani zasoby dlia dostupu do Servisu bez dozvolu",
+          "impersonate": "Vydavaty sebe za inshu osobu abo ianianiy",
+          "fraudulent": "Vykorystovuvaty Servis dlia bud-yakykh shakhrayskykh abo omaynykh tsiley",
+          "circumventSecurity": "Obkhodyty bud-yaki zakhody bezpeky abo obmezhennia dostupu"
+        }
+      },
+      "userContent": {
+        "title": "vmist korystuvacha",
+        "ownership": "Vy zalishaete za soboiu pravo vlasnosti na bud-yakyy vmist, yakyy vy nadsilaiete do Servisu (\"Vmist Korystuvacha\"), vkliuchaiuchy orhanizatsiyni dani, struktury komand, vyznachennia roley ta rishennia. Nadsilaiuchy Vmist Korystuvacha, vy nadaiete nam vsesvitniy, neekskliuzyvnyy, bezoplatnyy litsenziy na vykorystannia, zberihannia ta obrobku vashoho Vmistu Korystuvacha vykliuchno z metoiu nadannia Servisu.",
+        "warrantyIntro": "Vy zayavliaiete ta harantuiete, shcho:",
+        "warranties": {
+          "ownRights": "Vy volodiete abo maiete neobkhidni prava na vash Vmist Korystuvacha",
+          "noViolation": "Vash Vmist Korystuvacha ne porushuie bud-yaki prava tretikh osib",
+          "compliesTerms": "Vash Vmist Korystuvacha vidpovidaie tsym Umovam ta zastosovnym zakonam"
+        }
+      },
+      "intellectualProperty": {
+        "title": "intelektualna vlasnist",
+        "license": "Servis, vkliuchaiuchy yoho vykhidnyy kod, dyzayn, funktsii ta dokumentatsiiu, litsenziiuietsia za Litsenziieiu Apache 2.0. Tsia litsenziya dozvoliaie vam vykorystovuvaty, modyfikuvaty ta rozpovsiudzhuvaty prohramne zabezpechennia za pevnykh umov.",
+        "brandElements": "Nazva Swarmrise, lohotyp ta elementy brendu ie vlasnymy i ne mozhut vykorystovuvatysia bez nashoho pysmovoho dozvolu, za vyniatkom vypadkiv, dozvolenykh Litsenziieiu Apache 2.0 dlia tsiley atrybutsii.",
+        "thirdParty": "Komponenty tretikh osib, vkliucheni do Servisu, pidliahaiut svoyim vidpovidnym litsenziam, yaki zadokumentovani v nashiy yuridychniy dokumentatsii."
+      },
+      "dataProtection": {
+        "title": "zakhyst danykh ta konfidentsiynnist",
+        "commitment": "My zobovyazani zakhyshchaty vashu konfidentsiynnist ta personalni dani. Nashe zbyrannia, vykorystannia ta obrobka personalnykh danykh rehuliuietsia nashoiu Politykoiu konfidentsiynosti, yaka vkliuchaietsia do tsykh Umov shliakhom posylannia.",
+        "keyAspectsIntro": "Kliuchovi aspekty nashoho obroblennia danykh:",
+        "keyAspects": {
+          "collectNecessary": "My zbyraemo lyshe dani, neobkhidni dlia nadannia Servisu",
+          "dataIsolated": "Vashi orhanizatsiyni dani izolovani v bahatoorhanizatsiyniy arkhitekturi",
+          "convexStorage": "My vykorystovuemo Convex dlia bezpechnoho zberihannia ta obrobky danykh",
+          "clerkAuth": "Dani avtentyfikatsii keruiutsia Clerk",
+          "auditTrails": "My pidtrymuiemo audytorski slidy dlia prozorosti ta vidpovidalnosti"
+        },
+        "gdprNote": "Dlia korystuvachiv u Yevropeyskomu ekonomichnomu prostori my dotrymuiemosya Zahalnoho rehlamentu zakhystu danykh (GDPR) ta nadaemo mekanizmy dlia realizatsii vashykh prav subiekta danykh."
+      },
+      "serviceAvailability": {
+        "title": "dostupnist servisu ta pidtrymka",
+        "intro": "My namahaiemosia pidtrymuaty dostupnist Servisu, ale ne harantuiemo bezperervnoho dostupu. Servis mozhe buty tymchasovo nedostupnym cherez:",
+        "reasons": {
+          "maintenance": "Zaplanovane tekhnichne obsluhovuvannia ta onovlennia",
+          "outages": "Neplanovani perervy abo tekhnichni problemy",
+          "beyondControl": "Faktory, shcho vykhodyat za mezhi nashoho rozumnoho kontroliu"
+        },
+        "asIs": "My nadaemo Servis \"yak ye\" ta \"za dostupnosti\" bez bud-yakykh uhod pro riven obsluhovuvannia, yakshcho inshe ne domovleno pysomovo."
+      },
+      "limitationOfLiability": {
+        "title": "obmezennia vidpovidalnosti",
+        "intro": "V MAKSYMALNIY MIRI, DOZVOLENIY ZASTOSOVNYM ZAKONODAVSTVOM, SWARMRISE TA YOHO AFILYOVANI OSOBY, POSADOVI OSOBY, PRATSIVNYKY, AHENTY TA LITSENZIARY NE NESUT VIDPOVIDALNOSTI ZA BUD-YAKI POSDREDNI, VYPADKOVI, SPETSIALNI, NASLIDKOVI ABO KARANI ZBYTKY, VKLIUCHAIUCHY, ALE NE OBMEZHUYUCHYS:",
+        "damages": {
+          "lostProfits": "Vtrata prybutkiv, danykh abo biznes-mozhlyvostey",
+          "interruptions": "Pereryvy v obsluhovuvanni abo vtrata danykh",
+          "unauthorizedAccess": "Nesanktsiovanyy dostup do vashykh danykh",
+          "thirdPartyConduct": "Bud-yaka povedinka abo vmist tretikh osib na Servisi"
+        },
+        "totalLiability": "Nasha zahalna vidpovidalnist za bud-yaki pretenzii, shcho vyplyvaiut z Servisu abo povyazani z nym, ne perevyshchuvatyme sumu, yaku vy nam zaplatyly, yakshcho takaya ie, za dvanadtsiat (12) misyatsiv, shcho pereduvaly pretenzii."
+      },
+      "indemnification": {
+        "title": "vidshkoduvannia",
+        "intro": "Vy pohodzhuitesia vidshkoduvaty, zakhyshchaty ta triymaty Swarmrise ta yoho afilyovanykh osib, posadovykh osib, dyrektoriv, pratsivnykiv ta ahentiv vid ta proty bud-yakykh pretenziy, zobovyazan, zbytkiv, vtrat ta vytrat (vkliuchaiuchy rozumni yuridychni honorary), yaki vyplyvaiut z abo v bud-yakyy sposib povyazani z:",
+        "items": {
+          "accessUse": "Vashym dostupom abo vykorystanniam Servisu",
+          "violationTerms": "Vashym porushenniam tsykh Umov",
+          "userContent": "Vashym Vmistom Korystuvacha",
+          "violationRights": "Vashym porushenniam bud-yakykh prav tretikh osib"
+        }
+      },
+      "termination": {
+        "title": "prypynennia",
+        "intro": "Vy mozhete prypynyty sviy oblikovyy zapys u bud-yakyy chas, zvyazavshys z namy abo vykorystovuiuchy funktsiiu vydalennia oblikovoho zapysu, koly vona dostupna. My mozhemo prypynyty abo pryzupynyty vash dostup do Servisu nehayno, bez poperednioho povidomlennia, yakshcho:",
+        "reasons": {
+          "breachTerms": "Vy porushuiete tsi Umovy",
+          "requiredByLaw": "My zobovyazani zrobyty tse za zakonom",
+          "discontinueService": "My vyrishyemo prypynyty Servis"
+        },
+        "uponTermination": "Pislia prypynennia vashe pravo na vykorystannia Servisu nehayno prypyniaietsia. Polozhennia tsykh Umov, yaki za svoyeiu pryrodoiu povynni perezhyty prypynennia, zberihaiut sylu, vkliuchaiuchy vlasnist, vidmovy vid harantiy, vidshkoduvannia ta obmezennia vidpovidalnosti."
+      },
+      "disputeResolution": {
+        "title": "vyrishennia sporiv",
+        "informal": "My zaklykaemo vas spochatku zvyazatysia z namy dlia vyrishennia bud-yakykh sporiv neformalno. Yakshcho spir ne mozhe buty vyrishenyi neformalno, vy pohodzhuitesia, shcho bud-yakyy sudovyy pozov abo provadzhennia budu rozhladatysia vykliuchno v sudakh kompetentnoii yurysdyktsii.",
+        "euNote": "Dlia korystuvachiv v Yevropeyskomu Soiuzi tse polozhennia ne vplyvaie na vashi prava za zakonamy pro zakhyst spozhyvachiv abo vashe pravo podavaty pozovy do sudiv vashoii krainy prozhyvannia."
+      },
+      "governingLaw": {
+        "title": "zastosovne pravo",
+        "law": "Tsi Umovy rehuliuiutsia ta tlumachitsia vidpovidno do zakoniv yurysdyktsii, v yakiy vstanovleno operatora Servisu, bez urakhuvannia pryntsypiv koliziynoho prava.",
+        "eeaNote": "Dlia korystuvachiv u Yevropeyskomu ekonomichnomu prostori nichto v tsykh Umovakh ne vplyvaie na vashi prava yak spozhyvacha za zastosovnymy zakonamy YeS pro zakhyst spozhyvachiv."
+      },
+      "generalProvisions": {
+        "title": "zahalni polozhennia",
+        "entireAgreement": "Povna uhoda:",
+        "entireAgreementText": "Tsi Umovy razom z nashoiu Politykoiu konfidentsiynosti ta bud-yakymy inshymy politykami, na yaki tutposylaiutsia, stanovliat povnu uhodu mizh vamy ta Swarmrise shchodo Servisu.",
+        "severability": "Podilnist:",
+        "severabilityText": "Yakshcho bud-yake polozhennia tsykh Umov budu vyzano nechynnym, solni polozhennia prodovzhuiut diiaty v povnomu obsyazi.",
+        "waiver": "Vidmova:",
+        "waiverText": "Nasha nespromozhnist zastosuvaty bud-yake pravo abo polozhennia tsykh Umov ne budu vvazhatysia vidmovoiu vid tsykh prav.",
+        "assignment": "Peredacha:",
+        "assignmentText": "Vy ne mozhete peredavaty abo perenosyty svoi prava za tsymy Umovamy bez nashoii poperednioii pysmovoii zhody. My mozhemo peredavaty nashi prava ta zobovyazannia bez obmezhenia."
+      },
+      "contactInformation": {
+        "title": "kontaktna informatsiia",
+        "intro": "Yakshcho u vas ie zapytannia shchodo tsykh Umov, bud laska, zvyazhitsia z namy:",
+        "github": "GitHub:"
+      }
+    },
+    "relatedDocuments": "poviazani dokumenty",
+    "privacyLink": "Polityka konfidentsiynosti",
+    "privacyDescription": "Yak my obrobliaiemo vashi personalni dani",
+    "principlesLink": "Nashi Pryntsypy",
+    "principlesDescription": "Diznaytesia pro tsinnosti, yaki keruiut Swarmrise",
+    "footer": "swarmrise litsenzovano za Apache License 2.0"
+  },
+  "privacy": {
+    "title": "polityka konfidentsiynosti",
+    "effectiveDate": "Data nabuttia chynnosti: {{date}}",
+    "lastUpdated": "Ostannie onovlennia: {{date}}",
+    "effectiveDateLabel": "Data nabuttia chynnosti",
+    "lastUpdatedLabel": "Ostannie onovlennia",
+    "intro": {
+      "commitment": "U swarmrise my zobovyazani zakhyshchaty vashu konfidentsiynnist ta personalni dani. Tsia Polityka konfidentsiynosti poyasniuie, yak my zbyraemo, vykorystovuiemo, rozholoshuiemo ta zakhyshchaiemo vashu informatsiiu, koly vy vykorystovuiete nashu bahatoorhanizatsiynu platformu upravlinnia orhanizatsiiamy (\"Servis\").",
+      "gdprCompliance": "My obrobliaiemo personalni dani vidpovidno do Zahalnoho rehlamentu zakhystu danykh (GDPR) ta inshykh zastosovnykh zakoniv pro zakhyst danykh. Bud laska, uvazno prochytayte tsiu Polityku konfidentsiynosti, shchob zrozumity nashi praktyky shchodo vashykh personalnykh danykh."
+    },
+    "sections": {
+      "dataController": {
+        "title": "volodor danykh",
+        "p1": "Dlia tsiley GDPR ta inshykh zastosovnykh zakoniv pro zakhyst danykh, Swarmrise diye yak volodor danykh dlia personalnykh danykh, zibranykh cherez Servis. Tse oznachaie, shcho my vyznachaemo tsili ta zasoby obrobky vashykh personalnykh danykh.",
+        "p2": "Yakshcho u vas ie zapytannia shchodo nashykh praktyk z danymy abo vy bazhaete skorystatysia svoyimy pravamy, bud laska, zvyazhitsia z namy cherez kanaly, perelocheni v rozdili Kontaktna informatsiia nyzhche."
+      },
+      "informationWeCollect": {
+        "title": "informatsiia, yaku my zbyraemo",
+        "intro": "My zbyraemo informatsiiu, yaku vy nadaiete nam bezposeredno, a takozh informatsiiu, zibrano avtomatychno, koly vy vykorystovuiete Servis.",
+        "accountInfo": {
+          "title": "2.1 Informatsiia oblikovoho zapysu",
+          "intro": "Koly vy stvoriuiete oblikovyy zapys, my zbyraemo:",
+          "items": {
+            "name": "Imya ta prizvyshche",
+            "email": "Adresa elektronnoii poshty",
+            "profilePicture": "Foto profiliu (neobovyazkovo, yakshcho nadaiietsia cherez avtentyfikatsiiu)"
+          }
+        },
+        "organizationData": {
+          "title": "2.2 Dani orhanizatsii",
+          "intro": "Koly vy stvoriuiete abo pryiednuieteisia do orhanizatsiy, my zbyraemo ta obrobliaiemo:",
+          "items": {
+            "orgNames": "Nazvy ta nalashtuvannia orhanizatsiy",
+            "teamStructures": "Struktury ta iierarkhii komand",
+            "roleAssignments": "Pryznachennia roley (lider, sekretar, arbitr)",
+            "membershipInfo": "Informatsiia pro chlenstvo",
+            "invitationData": "Dani zaproshen (adresy elektronnoii poshty zaproshehykh)"
+          }
+        },
+        "optionalContact": {
+          "title": "2.3 Neobovyazkova kontaktna informatsiia",
+          "intro": "Vy mozhete za bazhannyam nadaty dodatkovu kontaktnu informatsiiu, vkliuchaiuchy:",
+          "items": {
+            "mobile": "Nomer mobilnoho telefonu",
+            "address": "Fizychna adresa",
+            "socialMedia": "Profili v sotsialnykh merezhakh (LinkedIn, Facebook, Instagram, WhatsApp)"
+          },
+          "note": "Tsia informatsiia ie tsilkom neobovyazkovoiu ta zbyraietsia lyshe za vashyh odnoznachnoiu zghoboiu."
+        },
+        "usageData": {
+          "title": "2.4 Dani vykorystannia",
+          "intro": "My avtomatychno zbyraemo pevnu informatsiiu, koly vy vykorystovuiete Servis:",
+          "items": {
+            "browser": "Typ ta versiia brauzera",
+            "device": "Informatsiia pro prystiriy",
+            "ipAddress": "IP-adresa",
+            "pagesVisited": "Vidvidani storinky ta vykorystani funktsii",
+            "dateTime": "Data ta chas dostupu"
+          }
+        },
+        "decisionAudit": {
+          "title": "2.5 Audytorskiy slid rishen",
+          "intro": "Dlia zabezpechennia prozorosti ta vidpovidalnosti my pidtrymuiemo audytorski slidy vazhlyvykh diy v orhanizatsiiakh, vkliuchaiuchy:",
+          "items": {
+            "authorEmail": "Elektronna poshta avtora dlia zrobenykh zmin",
+            "timestamps": "Mitky chasu diy",
+            "beforeAfter": "Stany do ta pislia zminenykh danykh"
+          }
+        }
+      },
+      "howWeUse": {
+        "title": "yak my vykorystovuiemo vashu informatsiiu",
+        "intro": "My vykorystovuiemo informatsiiu, yaku zbyraemo, dlia nastupnykh tsiley, kozhna z yakykh maie pevnu pravovu pidstavu za GDPR:",
+        "serviceProvision": {
+          "title": "3.1 Nadannia Servisu (Dohovir - Stattia 6(1)(b))",
+          "items": {
+            "createAccount": "Stvoryty ta kerovaty vashym oblikovym zapysom korystuvacha",
+            "provideAccess": "Nadaty dostup do funktsiy upravlinnia orhanizatsiiamy",
+            "processMembers": "Obrobliaty chlenstvo ta zaproshennia v orhanizatsii",
+            "enableTeamMgmt": "Vvymknuyty funktsional upravlinnia komandamy ta roliamy",
+            "authenticate": "Avtentyfikuvaty vashu osobystist"
+          }
+        },
+        "legitimateInterests": {
+          "title": "3.2 Zakhorinni interesy (Stattia 6(1)(f))",
+          "items": {
+            "auditTrails": "Pidtrymuvaty audytorski slidy rishen dlia vidpovidalnosti",
+            "improveService": "Polipshuavaty ta optymizuvaty Servis",
+            "preventFraud": "Zapobihaty shakhraystvu ta zabezpechuvaty bezpeku",
+            "respondSupport": "Vidpovidaty na zaptyky pidtrymky"
+          }
+        },
+        "consent": {
+          "title": "3.3 Zhoda (Stattia 6(1)(a))",
+          "items": {
+            "storeOptional": "Zberihaty neobovyazkovu kontaktnu informatsiiu, yaku vy vyrishydy nadaty",
+            "displayProfile": "Vidobrazhaty vashe foto profiliu"
+          },
+          "withdrawNote": "Vy mozhete vidklykaty zhodu v bud-yakyy chas, onovyvshi nalashtuvannia profiliu abo zvyazavshys z namy."
+        }
+      },
+      "thirdPartyServices": {
+        "title": "posluhy tretikh osib",
+        "intro": "My vykorystovuiemo nastupni posluhy tretikh osib dlia roboty Servisu. Kozhna z tsykh posluh obrobliaye vashi dani vid nashoho imeni:",
+        "clerk": {
+          "title": "4.1 Clerk (Avtentyfikatsiia)",
+          "purpose": "Meta:",
+          "purposeText": "Avtentyfikatsiia korystuvachiv ta upravlinnia identychnistiu",
+          "dataProcessed": "Obrobleni dani:",
+          "dataProcessedText": "Elektronna poshta, imya, foto profiliu, oblicovi dani avtentyfikatsii",
+          "location": "Mistseznahodzhennia:",
+          "locationText": "Spolucheni Shtaty",
+          "privacyPolicy": "Polityka konfidentsiynosti:"
+        },
+        "convex": {
+          "title": "4.2 Convex (Baza danykh ta Backend)",
+          "purpose": "Meta:",
+          "purposeText": "Zberihannia bazy danykh u realnomu chasi ta serverless backend funktsii",
+          "dataProcessed": "Obrobleni dani:",
+          "dataProcessedText": "Usi dani dodatku, vkliuchaiuchy profili korystuvachiv, dani orhanizatsiy ta audytorski slidy",
+          "location": "Mistseznahodzhennia:",
+          "locationText": "Spolucheni Shtaty",
+          "privacyPolicy": "Polityka konfidentsiynosti:"
+        },
+        "googleFonts": {
+          "title": "4.3 Google Fonts",
+          "purpose": "Meta:",
+          "purposeText": "Dostavka shryftiv (Montserrat Alternates)",
+          "dataProcessed": "Obrobleni dani:",
+          "dataProcessedText": "IP-adresa (minimalna)",
+          "privacyPolicy": "Polityka konfidentsiynosti:"
+        }
+      },
+      "dataRetention": {
+        "title": "zberihannia danykh",
+        "intro": "My zberihaiemo vashi personalni dani lyshe tak dovho, yak tse neobkhidno dlia vykonannia tsiley, dlia yakykh vony buly zibrani:",
+        "items": {
+          "accountData": "Dani oblikovoho zapysu:",
+          "accountDataText": "Zberihaiutsia protyahom usioho terminu ishnuvannia vashoho oblikovoho zapysu. Koly vy vydalyaiete sviy oblikovyy zapys, my vydalymo vashi personalni dani protyahom 30 dniv, za vyniatkom vypadkiv, koly zberihannia vymahaietsia zakonom.",
+          "orgData": "Dani orhanizatsii:",
+          "orgDataText": "Zberihaiutsia protyahom terminu vashoho chlenstva v orhanizatsii. Koly vy pokyaiete orhanizatsiiu, vash zapys uchasnyka vydaliaietsia, khocha audytorski zapysy mozhut zberihaytysia dlia tsiley vidpovidalnosti.",
+          "invitationData": "Dani zaproshen:",
+          "invitationDataText": "Zberihaiutsia do tykh pir, poky zaproshennia ne budu pryiniato, vidkhyleno abo ne spyviye termin dii.",
+          "auditTrails": "Audytorski slidy:",
+          "auditTrailsText": "Zberihaiutsia protyahom usioho terminu ishnuvannia orhanizatsii dlia tsiley vidpovidalnosti ta vidpovidnosti."
+        }
+      },
+      "yourRightsGdpr": {
+        "title": "vashi prava za gdpr",
+        "intro": "Yakshcho vy znahodyetesia v Yevropeyskomu ekonomichnomu prostori (YeEP), Spoluchenomu Korolivstvi abo Shveytsarii, vy maiete nastupni prava shchodo vashykh personalnykh danykh:",
+        "rightOfAccess": {
+          "title": "6.1 Pravo na dostup (Stattia 15)",
+          "text": "Vy maiete pravo otrymaty pidtverdzhennia togo, chy obrobliayemo my vashi personalni dani, ta otrymaty kopiiu tsykh danykh."
+        },
+        "rightToRectification": {
+          "title": "6.2 Pravo na vypravlennia (Stattia 16)",
+          "text": "Vy maiete pravo vypravyty netochni personalni dani ta dopovnyty nepovni dani. Vy mozhete onovyty bilshist vashoyi informatsiyi bezposeredno cherez nalashtuvannia oblikovoho zapysu."
+        },
+        "rightToErasure": {
+          "title": "6.3 Pravo na vydalennia (Stattia 17)",
+          "text": "Vy maiete pravo zapytuaty vydalennia vashykh personalnykh danykh za pevnykh obstavyn, vkliuchaiuchy vypadky, koly dani bilshe ne potyibni dlia tsiley, dlia yakykh vony buly zibrani."
+        },
+        "rightToRestriction": {
+          "title": "6.4 Pravo na obmezhenia (Stattia 18)",
+          "text": "Vy maiete pravo zapytuaty obmezhenia obrobky vashykh personalnykh danykh za pevnykh obstavyn."
+        },
+        "rightToPortability": {
+          "title": "6.5 Pravo na perenosymnist danykh (Stattia 20)",
+          "text": "Vy maiete pravo otrymaty vashi personalni dani v strukturovanomu, zahalnov vzhyvanomu, mashynochytnomu formati ta peredaty ikh inshomu volodaru."
+        },
+        "rightToObject": {
+          "title": "6.6 Pravo na zaperechnnia (Stattia 21)",
+          "text": "Vy maiete pravo zaperechuyty proty obrobky vashykh personalnykh danykh na pidstavi zakhoninykh interesiv, vkliuchaiuchy profilvannia."
+        },
+        "rightToWithdraw": {
+          "title": "6.7 Pravo vidklyakty zhodu",
+          "text": "Koly obrobka zasnovana na zghodi, vy maiete pravo vidklykaty zhodu v bud-yakyy chas bez vplyvu na zakonnist obrobky, zasnovannoii na zghodi do ii vidklykannya."
+        },
+        "rightToComplaint": {
+          "title": "6.8 Pravo podaty skarhu",
+          "text": "Vy maiete pravo podaty skarhu do nahlyadovoho orhanu, yakshcho vvazhaiete, shcho nasha obrobka vashykh personalnykh danykh porushuie zastosovni zakony pro zakhyst danykh."
+        },
+        "exerciseRights": "Shchob skorystatysia bud-yakym z tsykh prav, bud laska, zvyazhitsia z namy, vykorystovuiuchy informatsiiu v rozdili Kontakty nyzhche. My vidpovidaemo na vash zapyt protyahom 30 dniv."
+      },
+      "cookiesLocalStorage": {
+        "title": "cookie ta lokalne skhovyshche",
+        "intro": "My vykorystovuiemo tekhnolohii zberihannia brauzera dlia nadannia ta polipshennia Servisu. Nashe vykorystannia obmezhene stroho neobkhidnymy funktsiiamy:",
+        "localStorage": {
+          "title": "7.1 Lokalne skhovyshche",
+          "tableHeaders": {
+            "storageKey": "Kliuch zberihannia",
+            "purpose": "Meta",
+            "duration": "Tryalist"
+          },
+          "items": {
+            "locale": {
+              "key": "swarmrise_locale",
+              "purpose": "Movni ustalennia",
+              "duration": "Postiyna"
+            },
+            "selectedOrga": {
+              "key": "swarmrise_selected_orga",
+              "purpose": "Vybrana orhanizatsiia",
+              "duration": "Postiyna"
+            }
+          }
+        },
+        "authCookies": {
+          "title": "7.2 Cookie avtentyfikatsii",
+          "text": "Clerk (nash postachalnnyk avtentyfikatsii) vykorystovuie sesiyni cookie dlia upravlinnia stanom avtentyfikatsii. Tse stroho neobkhidno dlia funktsionuvannya Servisu ta ne vymahaie zhody za Dyrektyvoiu ePrivacy."
+        },
+        "noTracking": {
+          "title": "7.3 Zhodhnykh cookie vidstezhennia",
+          "text": "My ne vykorystovuiemo analitychni, reklamni abo vidstezhuvalni cookie. My ne zdiysniuiemo povedinkove vidstezhennia abo tsilovu reklamu."
+        }
+      },
+      "dataSecurity": {
+        "title": "bezpeka danykh",
+        "intro": "My vprovaazhuiemo vidpovidni tekhnichni ta orhanizatsiyni zakhody dlia zakhystu vashykh personalnykh danykh vid nesanktsionovanoho dostupu, zminy, rozholoshennia abo znyshchennia:",
+        "measures": {
+          "encryption": "Shyfruvannia pry peredachi:",
+          "encryptionText": "Usi dani, shcho peredaiutsia mizh vashym brauzerom ta nashymy serveramy, zashyfrovani za dopomohoiu TLS/SSL.",
+          "secureAuth": "Bezpechna avtentyfikatsiia:",
+          "secureAuthText": "My vykorystovuiemo Clerk, spetsializovanoho postachalnnyka avtentyfikatsii, z haluzelymy standartnymy praktykamy bezpeky.",
+          "multiTenant": "Bahatoorhanizatsiyne vidokremlennia:",
+          "multiTenantText": "Dani orhanizatsiy lohichno izolovani dlia zapobihannia nesanktsionovanomu mizhozhanizatsiynomu dostupu.",
+          "accessControls": "Kontroli dostupu:",
+          "accessControlsText": "Kontroli dostupu na osnovi roley zabezpechuyut, shcho korystuvachi mozhut otrymuvaty dostup lyshe do danykh, yaki vony upovnovazheni perehlihadaty.",
+          "securityReviews": "Rehuliarni ohliady bezpeky:",
+          "securityReviewsText": "My provodymo rehuliarni otsinky bezpeky nashoho kodu ta infrastruktury."
+        },
+        "disclaimer": "Khocha my namahaiemosia zakhystyty vashi personalni dani, zhoden metod peredachi cherez Internet abo elektronnogo zberihannia ne ie 100% bezpechnym. My ne mozhemo harantuvaty absoliutnu bezpeku."
+      },
+      "internationalTransfers": {
+        "title": "mizhnarodni peredachi danykh",
+        "intro": "Vashi personalni dani mozhut peredavatysia ta obrobliaytysia v krainakh za mezhamy vashoii krainy prozhyvannia, vkliuchaiuchy Spolucheni Shtaty, de roztashovani nashi postachallnyky posluh tretikh osib (Clerk ta Convex).",
+        "safeguardsIntro": "Dlia peredachi personalnykh danykh z YeEP, Spoluchenoho Korolivstva abo Shveytsarii do krain, yaki ne buly vyznani yak taki, shcho zabezpechuyut adekvatnyy riven zakhystu danykh, my pokladaiemosia na vidpovidni harantii, vkliuchaiuchy:",
+        "safeguards": {
+          "sccs": "Standartni dohovirni polozhennia (SCC), skhvaleni Yevropeyskoiu Komisiieiu",
+          "dpas": "Uhody pro obrobku danykh z nashymy postachalnnykamy posluh",
+          "supplementary": "Dodatkovi zakhody, de neobkhidno, dlia usunennya pevnykh ryzykiv"
+        },
+        "requestCopy": "Vy mozhete zapytuvatiy kopiiu harantiy, yaki my maiemo, zvyazavshys z namy."
+      },
+      "childrensPrivacy": {
+        "title": "konfidentsiynnist ditey",
+        "p1": "Servis ne pryznachenyy dlia ditey molodshykh za 16 rokiv. My svidomo ne zbyraemo personalni dani vid ditey molodshykh za 16 rokiv. Yakshcho vy ie batkom abo opikunom i vvazhaiete, shcho vasha dytyna nadala nam personalni dani, bud laska, negayno zvyazhitsia z namy.",
+        "p2": "Yakshcho my diznaemosia, shcho my zibraly personalni dani vid dytyny molodshoi za 16 rokiv bez perevirky batkivskoii zhgody, my vzhyvemo zakhodiv dlia negaynoho vydalennia tsiiei informatsiyi."
+      },
+      "changesToPolicy": {
+        "title": "zminy do tsiiei polityky",
+        "intro": "My mozhemo onovliuvaty tsiu Polityku konfidentsiynosti chas vid chasu, shchob vidobrazhaty zminy v nashykh praktykakh abo zastosovnykh zakonakh. Koly my vnosymo suttievi zminy:",
+        "items": {
+          "updateDate": "My onovymo datu \"Ostannie onovlennia\" u verkhniiy chastyni tsiiei polityky",
+          "notifyEmail": "My povidomymo vas elektronnoiu poshtoiu abo cherez pomitne povidomlennia na Servisi",
+          "renewConsent": "Dlia znachnykh zmin, shcho vplyvaiut na vashi prava, my mozhemo zapytuatiy ponovlenu zhodu"
+        },
+        "reviewPeriodically": "My zaklykaemo vas periodychno perehliadaty tsiu Polityku konfidentsiynosti, shchob buty v kursi togo, yak my zakhyshchaiemo vashu informatsiiu."
+      },
+      "contactInformation": {
+        "title": "kontaktna informatsiia",
+        "intro": "Yakshcho u vas ie zapytannia shchodo tsiiei Polityky konfidentsiynosti, vy bazhaete skorystatysia svoyimy pravamy na zakhyst danykh abo maiete zaklopotannya shchodo nashykh praktyk z danymy, bud laska, zvyazhitsia z namy:",
+        "github": "GitHub:",
+        "responseTime": "My vidpovidaemo na vsi zakonni zaptyky protyahom 30 dniv. V deyakykh vypadkakh nam mozhe znadobytysia perevirka vashoii osoby pered obrobkoiu vashoho zapytu."
+      }
+    },
+    "relatedDocuments": "poviazani dokumenty",
+    "termsLink": "Umovy nadannia posluh",
+    "termsDescription": "Nashi umovy vykorystannia Swarmrise",
+    "principlesLink": "Nashi Pryntsypy",
+    "principlesDescription": "Diznaytesia pro tsinnosti, yaki keruiut Swarmrise",
+    "footer": "swarmrise litsenzovano za Apache License 2.0"
+  }
+}

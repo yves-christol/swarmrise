@@ -10,6 +10,7 @@ import enInvitations from './locales/en/invitations.json'
 import enAuth from './locales/en/auth.json'
 import enTeams from './locales/en/teams.json'
 import enGovernance from './locales/en/governance.json'
+import enLegal from './locales/en/legal.json'
 
 // Import French translations
 import frCommon from './locales/fr/common.json'
@@ -19,6 +20,7 @@ import frInvitations from './locales/fr/invitations.json'
 import frAuth from './locales/fr/auth.json'
 import frTeams from './locales/fr/teams.json'
 import frGovernance from './locales/fr/governance.json'
+import frLegal from './locales/fr/legal.json'
 
 // Import Spanish translations
 import esCommon from './locales/es/common.json'
@@ -28,6 +30,7 @@ import esInvitations from './locales/es/invitations.json'
 import esAuth from './locales/es/auth.json'
 import esTeams from './locales/es/teams.json'
 import esGovernance from './locales/es/governance.json'
+import esLegal from './locales/es/legal.json'
 
 // Import Italian translations
 import itCommon from './locales/it/common.json'
@@ -37,6 +40,7 @@ import itInvitations from './locales/it/invitations.json'
 import itAuth from './locales/it/auth.json'
 import itTeams from './locales/it/teams.json'
 import itGovernance from './locales/it/governance.json'
+import itLegal from './locales/it/legal.json'
 
 // Import Ukrainian translations
 import ukCommon from './locales/uk/common.json'
@@ -46,6 +50,7 @@ import ukInvitations from './locales/uk/invitations.json'
 import ukAuth from './locales/uk/auth.json'
 import ukTeams from './locales/uk/teams.json'
 import ukGovernance from './locales/uk/governance.json'
+import ukLegal from './locales/uk/legal.json'
 
 // Import Traditional Chinese translations
 import zhTWCommon from './locales/zh-TW/common.json'
@@ -55,6 +60,7 @@ import zhTWInvitations from './locales/zh-TW/invitations.json'
 import zhTWAuth from './locales/zh-TW/auth.json'
 import zhTWTeams from './locales/zh-TW/teams.json'
 import zhTWGovernance from './locales/zh-TW/governance.json'
+import zhTWLegal from './locales/zh-TW/legal.json'
 
 export const supportedLanguages = ['en', 'fr', 'es', 'it', 'uk', 'zh-TW'] as const
 export type SupportedLanguage = typeof supportedLanguages[number]
@@ -76,7 +82,8 @@ const resources = {
     invitations: enInvitations,
     auth: enAuth,
     teams: enTeams,
-    governance: enGovernance
+    governance: enGovernance,
+    legal: enLegal
   },
   fr: {
     common: frCommon,
@@ -85,7 +92,8 @@ const resources = {
     invitations: frInvitations,
     auth: frAuth,
     teams: frTeams,
-    governance: frGovernance
+    governance: frGovernance,
+    legal: frLegal
   },
   es: {
     common: esCommon,
@@ -94,7 +102,8 @@ const resources = {
     invitations: esInvitations,
     auth: esAuth,
     teams: esTeams,
-    governance: esGovernance
+    governance: esGovernance,
+    legal: esLegal
   },
   it: {
     common: itCommon,
@@ -103,7 +112,8 @@ const resources = {
     invitations: itInvitations,
     auth: itAuth,
     teams: itTeams,
-    governance: itGovernance
+    governance: itGovernance,
+    legal: itLegal
   },
   uk: {
     common: ukCommon,
@@ -112,7 +122,8 @@ const resources = {
     invitations: ukInvitations,
     auth: ukAuth,
     teams: ukTeams,
-    governance: ukGovernance
+    governance: ukGovernance,
+    legal: ukLegal
   },
   'zh-TW': {
     common: zhTWCommon,
@@ -121,7 +132,8 @@ const resources = {
     invitations: zhTWInvitations,
     auth: zhTWAuth,
     teams: zhTWTeams,
-    governance: zhTWGovernance
+    governance: zhTWGovernance,
+    legal: zhTWLegal
   }
 }
 
@@ -132,7 +144,7 @@ void i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance'],
+    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal'],
     interpolation: {
       escapeValue: false // React already escapes values
     },

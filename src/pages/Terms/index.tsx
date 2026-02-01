@@ -1,8 +1,10 @@
 import { Header } from "../../components/Header";
 import { Logo } from "../../components/Logo";
 import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 
 export const TermsPage = () => {
+  const { t } = useTranslation("legal");
   const effectiveDate = "February 1, 2026";
   const lastUpdated = "February 1, 2026";
 
@@ -13,303 +15,183 @@ export const TermsPage = () => {
         {/* Hero section */}
         <section className="flex flex-col items-center gap-6 text-center pt-8">
           <Logo size={64} begin={0} repeatCount={2} />
-          <h1 className="font-swarm text-4xl font-bold">terms of service</h1>
+          <h1 className="font-swarm text-4xl font-bold">{t("terms.title")}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Effective Date: {effectiveDate} | Last Updated: {lastUpdated}
+            {t("terms.effectiveDateLabel")}: {effectiveDate} | {t("terms.lastUpdatedLabel")}: {lastUpdated}
           </p>
         </section>
 
         {/* Introduction */}
         <section className="flex flex-col gap-4">
           <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
-            Welcome to <span className="font-swarm text-[#eac840]">swarmrise</span>.
-            These Terms of Service ("Terms") govern your access to and use of the
-            Swarmrise platform, including our website, applications, and services
-            (collectively, the "Service"). By accessing or using the Service, you
-            agree to be bound by these Terms.
+            {t("terms.intro.welcome")}
           </p>
           <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
-            Please read these Terms carefully before using the Service. If you do
-            not agree to these Terms, you may not access or use the Service.
+            {t("terms.intro.readCarefully")}
           </p>
         </section>
 
         {/* Terms sections */}
         <div className="flex flex-col gap-10">
-          <TermsSection number={1} title="acceptance of terms">
-            <p>
-              By creating an account or using the Service, you represent that you
-              are at least 18 years of age and have the legal capacity to enter into
-              these Terms. If you are using the Service on behalf of an organization,
-              you represent and warrant that you have the authority to bind that
-              organization to these Terms.
-            </p>
-            <p>
-              We reserve the right to modify these Terms at any time. We will notify
-              you of material changes by posting the updated Terms on the Service
-              and updating the "Last Updated" date. Your continued use of the Service
-              after such changes constitutes your acceptance of the modified Terms.
-            </p>
+          <TermsSection number={1} title={t("terms.sections.acceptanceOfTerms.title")}>
+            <p>{t("terms.sections.acceptanceOfTerms.p1")}</p>
+            <p>{t("terms.sections.acceptanceOfTerms.p2")}</p>
           </TermsSection>
 
-          <TermsSection number={2} title="description of service">
-            <p>
-              Swarmrise is a multi-tenant organization management platform designed
-              for collaborative governance. The Service enables organizations to:
-            </p>
+          <TermsSection number={2} title={t("terms.sections.descriptionOfService.title")}>
+            <p>{t("terms.sections.descriptionOfService.intro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Structure teams and define organizational hierarchies</li>
-              <li>Create and manage roles within teams (including leader, secretary, and referee positions)</li>
-              <li>Track decisions with full audit trails</li>
-              <li>Manage organizational memberships and invitations</li>
-              <li>Establish and maintain organizational policies</li>
+              <li>{t("terms.sections.descriptionOfService.features.structureTeams")}</li>
+              <li>{t("terms.sections.descriptionOfService.features.createRoles")}</li>
+              <li>{t("terms.sections.descriptionOfService.features.trackDecisions")}</li>
+              <li>{t("terms.sections.descriptionOfService.features.manageMembers")}</li>
+              <li>{t("terms.sections.descriptionOfService.features.establishPolicies")}</li>
             </ul>
-            <p>
-              We reserve the right to modify, suspend, or discontinue any aspect of
-              the Service at any time, with or without notice.
-            </p>
+            <p>{t("terms.sections.descriptionOfService.reserveRight")}</p>
           </TermsSection>
 
-          <TermsSection number={3} title="account registration and security">
-            <p>
-              To access certain features of the Service, you must create an account.
-              When creating an account, you agree to:
-            </p>
+          <TermsSection number={3} title={t("terms.sections.accountRegistration.title")}>
+            <p>{t("terms.sections.accountRegistration.intro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Provide accurate, current, and complete information</li>
-              <li>Maintain and promptly update your account information</li>
-              <li>Keep your authentication credentials secure and confidential</li>
-              <li>Notify us immediately of any unauthorized access to your account</li>
-              <li>Accept responsibility for all activities that occur under your account</li>
+              <li>{t("terms.sections.accountRegistration.requirements.provideAccurate")}</li>
+              <li>{t("terms.sections.accountRegistration.requirements.maintainInfo")}</li>
+              <li>{t("terms.sections.accountRegistration.requirements.keepSecure")}</li>
+              <li>{t("terms.sections.accountRegistration.requirements.notifyUnauthorized")}</li>
+              <li>{t("terms.sections.accountRegistration.requirements.acceptResponsibility")}</li>
             </ul>
-            <p>
-              We use Clerk for authentication services. By using the Service, you
-              also agree to Clerk's terms of service and privacy policy.
-            </p>
+            <p>{t("terms.sections.accountRegistration.clerkNote")}</p>
           </TermsSection>
 
-          <TermsSection number={4} title="organizations and membership">
-            <p>
-              The Service allows users to create and join organizations. When you
-              create an organization, you become its owner and are responsible for:
-            </p>
+          <TermsSection number={4} title={t("terms.sections.organizationsAndMembership.title")}>
+            <p>{t("terms.sections.organizationsAndMembership.ownerIntro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Managing organization settings and membership</li>
-              <li>Ensuring members comply with these Terms</li>
-              <li>The content and activities within your organization</li>
-              <li>Properly handling invitations and access controls</li>
+              <li>{t("terms.sections.organizationsAndMembership.ownerResponsibilities.manageSettings")}</li>
+              <li>{t("terms.sections.organizationsAndMembership.ownerResponsibilities.ensureCompliance")}</li>
+              <li>{t("terms.sections.organizationsAndMembership.ownerResponsibilities.contentActivities")}</li>
+              <li>{t("terms.sections.organizationsAndMembership.ownerResponsibilities.handleInvitations")}</li>
             </ul>
-            <p>
-              As an organization member, you agree to:
-            </p>
+            <p>{t("terms.sections.organizationsAndMembership.memberIntro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Respect the governance structure established by the organization</li>
-              <li>Use the Service in accordance with your assigned roles</li>
-              <li>Not circumvent access controls or permission systems</li>
+              <li>{t("terms.sections.organizationsAndMembership.memberResponsibilities.respectGovernance")}</li>
+              <li>{t("terms.sections.organizationsAndMembership.memberResponsibilities.useAccordingly")}</li>
+              <li>{t("terms.sections.organizationsAndMembership.memberResponsibilities.noCircumvent")}</li>
             </ul>
           </TermsSection>
 
-          <TermsSection number={5} title="acceptable use">
-            <p>
-              You agree to use the Service only for lawful purposes and in accordance
-              with these Terms. You agree NOT to:
-            </p>
+          <TermsSection number={5} title={t("terms.sections.acceptableUse.title")}>
+            <p>{t("terms.sections.acceptableUse.intro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Violate any applicable laws, regulations, or third-party rights</li>
-              <li>Use the Service to harass, abuse, or harm others</li>
-              <li>Upload or transmit malicious code, viruses, or harmful content</li>
-              <li>Attempt to gain unauthorized access to the Service or its systems</li>
-              <li>Interfere with or disrupt the Service or its infrastructure</li>
-              <li>Scrape, crawl, or use automated means to access the Service without permission</li>
-              <li>Impersonate another person or entity</li>
-              <li>Use the Service for any fraudulent or deceptive purposes</li>
-              <li>Circumvent any security measures or access restrictions</li>
+              <li>{t("terms.sections.acceptableUse.prohibitions.violateLaws")}</li>
+              <li>{t("terms.sections.acceptableUse.prohibitions.harassOthers")}</li>
+              <li>{t("terms.sections.acceptableUse.prohibitions.uploadMalicious")}</li>
+              <li>{t("terms.sections.acceptableUse.prohibitions.unauthorizedAccess")}</li>
+              <li>{t("terms.sections.acceptableUse.prohibitions.interfereService")}</li>
+              <li>{t("terms.sections.acceptableUse.prohibitions.scrapeService")}</li>
+              <li>{t("terms.sections.acceptableUse.prohibitions.impersonate")}</li>
+              <li>{t("terms.sections.acceptableUse.prohibitions.fraudulent")}</li>
+              <li>{t("terms.sections.acceptableUse.prohibitions.circumventSecurity")}</li>
             </ul>
           </TermsSection>
 
-          <TermsSection number={6} title="user content">
-            <p>
-              You retain ownership of any content you submit to the Service ("User
-              Content"), including organizational data, team structures, role
-              definitions, and decisions. By submitting User Content, you grant us a
-              worldwide, non-exclusive, royalty-free license to use, store, and
-              process your User Content solely for the purpose of providing the Service.
-            </p>
-            <p>
-              You represent and warrant that:
-            </p>
+          <TermsSection number={6} title={t("terms.sections.userContent.title")}>
+            <p>{t("terms.sections.userContent.ownership")}</p>
+            <p>{t("terms.sections.userContent.warrantyIntro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>You own or have the necessary rights to your User Content</li>
-              <li>Your User Content does not violate any third-party rights</li>
-              <li>Your User Content complies with these Terms and applicable laws</li>
+              <li>{t("terms.sections.userContent.warranties.ownRights")}</li>
+              <li>{t("terms.sections.userContent.warranties.noViolation")}</li>
+              <li>{t("terms.sections.userContent.warranties.compliesTerms")}</li>
             </ul>
           </TermsSection>
 
-          <TermsSection number={7} title="intellectual property">
-            <p>
-              The Service, including its source code, design, features, and
-              documentation, is licensed under the Apache License 2.0. This license
-              allows you to use, modify, and distribute the software under certain
-              conditions.
-            </p>
-            <p>
-              The Swarmrise name, logo, and brand elements are proprietary and may
-              not be used without our express written permission, except as permitted
-              by the Apache License 2.0 for attribution purposes.
-            </p>
-            <p>
-              Third-party components included in the Service are subject to their
-              respective licenses, which are documented in our legal documentation.
-            </p>
+          <TermsSection number={7} title={t("terms.sections.intellectualProperty.title")}>
+            <p>{t("terms.sections.intellectualProperty.license")}</p>
+            <p>{t("terms.sections.intellectualProperty.brandElements")}</p>
+            <p>{t("terms.sections.intellectualProperty.thirdParty")}</p>
           </TermsSection>
 
-          <TermsSection number={8} title="data protection and privacy">
-            <p>
-              We are committed to protecting your privacy and personal data. Our
-              collection, use, and handling of personal data is governed by our
-              Privacy Policy, which is incorporated into these Terms by reference.
-            </p>
-            <p>
-              Key aspects of our data handling:
-            </p>
+          <TermsSection number={8} title={t("terms.sections.dataProtection.title")}>
+            <p>{t("terms.sections.dataProtection.commitment")}</p>
+            <p>{t("terms.sections.dataProtection.keyAspectsIntro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>We collect only data necessary to provide the Service</li>
-              <li>Your organizational data is isolated in a multi-tenant architecture</li>
-              <li>We use Convex for secure data storage and processing</li>
-              <li>Authentication data is managed by Clerk</li>
-              <li>We maintain audit trails for transparency and accountability</li>
+              <li>{t("terms.sections.dataProtection.keyAspects.collectNecessary")}</li>
+              <li>{t("terms.sections.dataProtection.keyAspects.dataIsolated")}</li>
+              <li>{t("terms.sections.dataProtection.keyAspects.convexStorage")}</li>
+              <li>{t("terms.sections.dataProtection.keyAspects.clerkAuth")}</li>
+              <li>{t("terms.sections.dataProtection.keyAspects.auditTrails")}</li>
             </ul>
-            <p>
-              For users in the European Economic Area, we comply with the General
-              Data Protection Regulation (GDPR) and provide mechanisms for exercising
-              your data subject rights.
-            </p>
+            <p>{t("terms.sections.dataProtection.gdprNote")}</p>
           </TermsSection>
 
-          <TermsSection number={9} title="service availability and support">
-            <p>
-              We strive to maintain the Service's availability but do not guarantee
-              uninterrupted access. The Service may be temporarily unavailable due to:
-            </p>
+          <TermsSection number={9} title={t("terms.sections.serviceAvailability.title")}>
+            <p>{t("terms.sections.serviceAvailability.intro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Scheduled maintenance and updates</li>
-              <li>Unplanned outages or technical issues</li>
-              <li>Factors beyond our reasonable control</li>
+              <li>{t("terms.sections.serviceAvailability.reasons.maintenance")}</li>
+              <li>{t("terms.sections.serviceAvailability.reasons.outages")}</li>
+              <li>{t("terms.sections.serviceAvailability.reasons.beyondControl")}</li>
             </ul>
-            <p>
-              We provide the Service on an "as is" and "as available" basis without
-              any service level agreements unless otherwise agreed in writing.
-            </p>
+            <p>{t("terms.sections.serviceAvailability.asIs")}</p>
           </TermsSection>
 
-          <TermsSection number={10} title="limitation of liability">
-            <p>
-              TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, SWARMRISE AND ITS
-              AFFILIATES, OFFICERS, EMPLOYEES, AGENTS, AND LICENSORS SHALL NOT BE
-              LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR
-              PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO:
-            </p>
+          <TermsSection number={10} title={t("terms.sections.limitationOfLiability.title")}>
+            <p>{t("terms.sections.limitationOfLiability.intro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Loss of profits, data, or business opportunities</li>
-              <li>Service interruptions or data loss</li>
-              <li>Unauthorized access to your data</li>
-              <li>Any conduct or content of third parties on the Service</li>
+              <li>{t("terms.sections.limitationOfLiability.damages.lostProfits")}</li>
+              <li>{t("terms.sections.limitationOfLiability.damages.interruptions")}</li>
+              <li>{t("terms.sections.limitationOfLiability.damages.unauthorizedAccess")}</li>
+              <li>{t("terms.sections.limitationOfLiability.damages.thirdPartyConduct")}</li>
             </ul>
-            <p>
-              Our total liability for any claims arising from or related to the
-              Service shall not exceed the amount you paid us, if any, in the twelve
-              (12) months preceding the claim.
-            </p>
+            <p>{t("terms.sections.limitationOfLiability.totalLiability")}</p>
           </TermsSection>
 
-          <TermsSection number={11} title="indemnification">
-            <p>
-              You agree to indemnify, defend, and hold harmless Swarmrise and its
-              affiliates, officers, directors, employees, and agents from and against
-              any claims, liabilities, damages, losses, and expenses (including
-              reasonable legal fees) arising out of or in any way connected with:
-            </p>
+          <TermsSection number={11} title={t("terms.sections.indemnification.title")}>
+            <p>{t("terms.sections.indemnification.intro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Your access to or use of the Service</li>
-              <li>Your violation of these Terms</li>
-              <li>Your User Content</li>
-              <li>Your violation of any third-party rights</li>
+              <li>{t("terms.sections.indemnification.items.accessUse")}</li>
+              <li>{t("terms.sections.indemnification.items.violationTerms")}</li>
+              <li>{t("terms.sections.indemnification.items.userContent")}</li>
+              <li>{t("terms.sections.indemnification.items.violationRights")}</li>
             </ul>
           </TermsSection>
 
-          <TermsSection number={12} title="termination">
-            <p>
-              You may terminate your account at any time by contacting us or using
-              the account deletion feature when available. We may terminate or suspend
-              your access to the Service immediately, without prior notice, if:
-            </p>
+          <TermsSection number={12} title={t("terms.sections.termination.title")}>
+            <p>{t("terms.sections.termination.intro")}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>You breach these Terms</li>
-              <li>We are required to do so by law</li>
-              <li>We decide to discontinue the Service</li>
+              <li>{t("terms.sections.termination.reasons.breachTerms")}</li>
+              <li>{t("terms.sections.termination.reasons.requiredByLaw")}</li>
+              <li>{t("terms.sections.termination.reasons.discontinueService")}</li>
             </ul>
+            <p>{t("terms.sections.termination.uponTermination")}</p>
+          </TermsSection>
+
+          <TermsSection number={13} title={t("terms.sections.disputeResolution.title")}>
+            <p>{t("terms.sections.disputeResolution.informal")}</p>
+            <p>{t("terms.sections.disputeResolution.euNote")}</p>
+          </TermsSection>
+
+          <TermsSection number={14} title={t("terms.sections.governingLaw.title")}>
+            <p>{t("terms.sections.governingLaw.law")}</p>
+            <p>{t("terms.sections.governingLaw.eeaNote")}</p>
+          </TermsSection>
+
+          <TermsSection number={15} title={t("terms.sections.generalProvisions.title")}>
             <p>
-              Upon termination, your right to use the Service will cease immediately.
-              Provisions of these Terms that by their nature should survive termination
-              shall survive, including ownership, warranty disclaimers, indemnification,
-              and limitations of liability.
+              <strong>{t("terms.sections.generalProvisions.entireAgreement")}</strong> {t("terms.sections.generalProvisions.entireAgreementText")}
+            </p>
+            <p>
+              <strong>{t("terms.sections.generalProvisions.severability")}</strong> {t("terms.sections.generalProvisions.severabilityText")}
+            </p>
+            <p>
+              <strong>{t("terms.sections.generalProvisions.waiver")}</strong> {t("terms.sections.generalProvisions.waiverText")}
+            </p>
+            <p>
+              <strong>{t("terms.sections.generalProvisions.assignment")}</strong> {t("terms.sections.generalProvisions.assignmentText")}
             </p>
           </TermsSection>
 
-          <TermsSection number={13} title="dispute resolution">
-            <p>
-              We encourage you to contact us first to resolve any disputes informally.
-              If a dispute cannot be resolved informally, you agree that any legal
-              action or proceeding shall be brought exclusively in the courts of
-              competent jurisdiction.
-            </p>
-            <p>
-              For users in the European Union, this provision does not affect your
-              rights under consumer protection laws or your right to bring claims
-              before the courts of your country of residence.
-            </p>
-          </TermsSection>
-
-          <TermsSection number={14} title="governing law">
-            <p>
-              These Terms shall be governed by and construed in accordance with the
-              laws of the jurisdiction in which the Service operator is established,
-              without regard to conflict of law principles.
-            </p>
-            <p>
-              For users in the European Economic Area, nothing in these Terms affects
-              your rights as a consumer under applicable EU consumer protection laws.
-            </p>
-          </TermsSection>
-
-          <TermsSection number={15} title="general provisions">
-            <p>
-              <strong>Entire Agreement:</strong> These Terms, together with our Privacy
-              Policy and any other policies referenced herein, constitute the entire
-              agreement between you and Swarmrise regarding the Service.
-            </p>
-            <p>
-              <strong>Severability:</strong> If any provision of these Terms is found
-              to be unenforceable, the remaining provisions will continue in full
-              force and effect.
-            </p>
-            <p>
-              <strong>Waiver:</strong> Our failure to enforce any right or provision
-              of these Terms will not be considered a waiver of those rights.
-            </p>
-            <p>
-              <strong>Assignment:</strong> You may not assign or transfer your rights
-              under these Terms without our prior written consent. We may assign our
-              rights and obligations without restriction.
-            </p>
-          </TermsSection>
-
-          <TermsSection number={16} title="contact information">
-            <p>
-              If you have any questions about these Terms, please contact us:
-            </p>
+          <TermsSection number={16} title={t("terms.sections.contactInformation.title")}>
+            <p>{t("terms.sections.contactInformation.intro")}</p>
             <ul className="list-none space-y-2">
-              <li><strong>GitHub:</strong>{" "}
+              <li><strong>{t("terms.sections.contactInformation.github")}</strong>{" "}
                 <a
                   href="https://github.com/yves-christol/swarmrise"
                   target="_blank"
@@ -325,19 +207,19 @@ export const TermsPage = () => {
 
         {/* Related documents */}
         <section className="border-t border-gray-300 dark:border-gray-700 pt-8">
-          <h2 className="font-swarm text-xl font-bold mb-4">related documents</h2>
+          <h2 className="font-swarm text-xl font-bold mb-4">{t("terms.relatedDocuments")}</h2>
           <ul className="space-y-2 text-gray-700 dark:text-gray-300">
             <li>
               <Link to="/privacy" className="text-[#eac840] hover:underline">
-                Privacy Policy
+                {t("terms.privacyLink")}
               </Link>
-              {" "}- How we handle your personal data
+              {" "}- {t("terms.privacyDescription")}
             </li>
             <li>
               <Link to="/principles" className="text-[#eac840] hover:underline">
-                Our Principles
+                {t("terms.principlesLink")}
               </Link>
-              {" "}- Learn about the values that guide Swarmrise
+              {" "}- {t("terms.principlesDescription")}
             </li>
           </ul>
         </section>
@@ -345,8 +227,7 @@ export const TermsPage = () => {
         {/* Footer */}
         <section className="text-center py-8 border-t border-gray-300 dark:border-gray-700">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            <span className="font-swarm text-[#eac840]">swarmrise</span> is licensed
-            under Apache License 2.0
+            {t("terms.footer")}
           </p>
         </section>
       </main>

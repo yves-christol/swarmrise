@@ -1,6 +1,7 @@
 "use client";
 import { dark } from "@clerk/themes";
 import { UserButton, useAuth } from "@clerk/clerk-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { Logo } from "../Logo";
 import { OrgaSelector } from "../OrgaSelector";
@@ -10,6 +11,7 @@ type HeaderProps = {
 };
 
 export const Header = ({ showBackButton = false }: HeaderProps) => {
+  const { t } = useTranslation();
   const { isSignedIn } = useAuth();
 
   return (
@@ -19,7 +21,7 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
         <Link
           to="/"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity text-light"
-          aria-label="Go back to home"
+          aria-label={t("back")}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -34,13 +36,13 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
           >
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
-          <span className="text-sm">back</span>
+          <span className="text-sm">{t("back")}</span>
         </Link>
       ) : (
         <Link
           to="/principles"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          aria-label="View swarmrise principles"
+          aria-label={t("governance:principles", "swarmrise principles")}
         >
           <Logo size={24} begin={2} repeatCount={1} />
           <b className="font-swarm text-light">swarmrise</b>

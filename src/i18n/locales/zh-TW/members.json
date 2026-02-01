@@ -1,0 +1,11 @@
+{
+  "member": "成員",
+  "members": "成員",
+  "me": "我",
+  "user": "用戶",
+  "inviteNewMember": "邀請新成員",
+  "enterEmailToInvite": "輸入您要邀請的人的電子郵件",
+  "removeMember": "刪除成員",
+  "confirmRemove": "您確定要從組織中刪除該成員嗎？這將被標記為您的公開決定，因此請確保您根據您的治理有權這樣做。",
+  "gotItRemove": "明白了，刪除該成員"
+}

@@ -1,21 +1,26 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useOrgaStore } from "../../tools/orgaStore";
 import { EmptyState } from "../EmptyState";
 import { OrgNetworkDiagram } from "../OrgNetworkDiagram";
 
 // Spinner component for loading/transition states
-const Spinner = () => (
-  <div className="flex items-center justify-center gap-3">
-    <svg className="animate-spin h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
-    <span className="text-gray-400">Loading...</span>
-  </div>
-);
+const Spinner = ({ text }: { text?: string }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="flex items-center justify-center gap-3">
+      <svg className="animate-spin h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span className="text-gray-400">{text ?? t("loading")}</span>
+    </div>
+  );
+};
 
 export const Authentified = () => {
+  const { t } = useTranslation("orgs");
   const { orgasWithCounts, isLoading, hasOrgas, selectedOrga, isSwitchingOrga } = useOrgaStore();
 
   // Loading state (initial load)
@@ -31,8 +36,7 @@ export const Authentified = () => {
   if (isSwitchingOrga) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-4">
-        <Spinner />
-        <p className="text-gray-400">Switching organization...</p>
+        <Spinner text={t("switchingOrganization")} />
       </div>
     );
   }
@@ -46,10 +50,9 @@ export const Authentified = () => {
   if (!selectedOrga) {
     return (
       <div className="flex flex-col gap-8 max-w-4xl mx-auto p-8">
-        <h1 className="font-swarm text-3xl font-bold">Select an organization</h1>
+        <h1 className="font-swarm text-3xl font-bold">{t("selectOrganization")}</h1>
         <p className="text-gray-400">
-          Use the dropdown in the header to choose which organization you want
-          to work with.
+          {t("selectOrgPrompt")}
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {orgasWithCounts?.map(({ orga, counts }) => (
@@ -73,17 +76,17 @@ export const Authentified = () => {
         <div className="grid grid-cols-3 gap-6">
           <MetricCard
             value={selectedOrgaData.counts.members}
-            label="Members"
+            label={t("metrics.members")}
             color="blue"
           />
           <MetricCard
             value={selectedOrgaData.counts.teams}
-            label="Teams"
+            label={t("metrics.teams")}
             color="green"
           />
           <MetricCard
             value={selectedOrgaData.counts.roles}
-            label="Roles"
+            label={t("metrics.roles")}
             color="purple"
           />
         </div>
@@ -112,6 +115,7 @@ type OrgaCardProps = {
 };
 
 const OrgaCard = ({ orga, counts }: OrgaCardProps) => {
+  const { t } = useTranslation("orgs");
   const { selectOrga } = useOrgaStore();
 
   return (
@@ -136,19 +140,19 @@ const OrgaCard = ({ orga, counts }: OrgaCardProps) => {
           <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
             {counts.members}
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">Members</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">{t("metrics.members")}</div>
         </div>
         <div className="flex flex-col items-center">
           <div className="text-2xl font-bold text-green-600 dark:text-green-400">
             {counts.teams}
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">Teams</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">{t("metrics.teams")}</div>
         </div>
         <div className="flex flex-col items-center">
           <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
             {counts.roles}
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">Roles</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">{t("metrics.roles")}</div>
         </div>
       </div>
     </button>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useOrgaStore } from '../../tools/orgaStore'
 import { Id } from '../../../convex/_generated/dataModel'
 
@@ -37,6 +38,7 @@ const SpinnerIcon = ({ className }: { className?: string }) => (
 )
 
 export const OrgaSelector = () => {
+  const { t } = useTranslation('orgs')
   const { selectedOrgaId, selectedOrga, selectOrga, orgasWithCounts, isLoading, hasOrgas, isSwitchingOrga } = useOrgaStore()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -85,7 +87,7 @@ export const OrgaSelector = () => {
     return (
       <div className="flex items-center gap-2 text-gray-400">
         <OrgPlaceholderIcon className="w-5 h-5" />
-        <span className="text-sm">No organization</span>
+        <span className="text-sm">{t('noOrganization')}</span>
       </div>
     )
   }
@@ -118,7 +120,7 @@ export const OrgaSelector = () => {
           <OrgPlaceholderIcon className="w-5 h-5 text-gray-400" />
         )}
         <span className="font-swarm text-light max-w-[160px] truncate">
-          {isSwitchingOrga ? 'Switching...' : (selectedOrga?.name ?? 'Select organization')}
+          {isSwitchingOrga ? t('switching') : (selectedOrga?.name ?? t('selectOrganization'))}
         </span>
         {!isSwitchingOrga && (
           <ChevronDownIcon className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -162,7 +164,7 @@ export const OrgaSelector = () => {
                   <div className="flex-1 min-w-0">
                     <div className="text-light truncate">{orga.name}</div>
                     <div className="text-xs text-gray-400">
-                      {counts.members} members, {counts.teams} teams
+                      {t('metrics.memberCount', { count: counts.members })}, {t('metrics.teamCount', { count: counts.teams })}
                     </div>
                   </div>
                   {isSelected && (
@@ -189,7 +191,7 @@ export const OrgaSelector = () => {
             <div className="w-8 h-8 rounded border border-dashed border-gray-600 flex items-center justify-center">
               <PlusIcon className="w-5 h-5" />
             </div>
-            <span>Create new organization</span>
+            <span>{t('createNewOrganization')}</span>
           </button>
         </div>
       )}

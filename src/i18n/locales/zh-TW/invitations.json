@@ -1,0 +1,10 @@
+{
+  "invitation": "邀請",
+  "invitations": "邀請",
+  "pendingInvitations": "待處理的邀請",
+  "accept": "接受",
+  "decline": "拒絕",
+  "invitedBy": "由 {{name}} 邀請",
+  "noPendingSent": "沒有待發送的邀請",
+  "noPendingReceived": "您沒有待處理的加入組織的邀請"
+}

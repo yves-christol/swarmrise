@@ -1,0 +1,11 @@
+{
+  "member": "member",
+  "members": "members",
+  "me": "me",
+  "user": "user",
+  "inviteNewMember": "invite a new member",
+  "enterEmailToInvite": "enter the email of the person you want to invite",
+  "removeMember": "Remove a member",
+  "confirmRemove": "Are you sure you want to remove that member from your organization ? It will be marked as a public decision from you, so make sure you have the right to do so according to your governance.",
+  "gotItRemove": "got it, remove that member"
+}

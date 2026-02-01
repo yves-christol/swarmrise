@@ -1,0 +1,26 @@
+{
+  "organization": "організація",
+  "organizations": "організації",
+  "orga": "орга",
+  "noOrganization": "Немає організації",
+  "selectOrganization": "Вибрати організацію",
+  "switching": "Перемикання...",
+  "switchingOrganization": "Перемикання організації...",
+  "createOrganization": "створити організацію",
+  "createNewOrganization": "Створити нову організацію",
+  "createFirstOrganization": "Створіть свою першу організацію",
+  "leaveOrganization": "Покинути організацію",
+  "joinOrganization": "Приєднатися до організації",
+  "noBelongYet": "Ви ще не є членом жодної організації.",
+  "selectOrgPrompt": "Використовуйте випадаюче меню в заголовку, щоб вибрати організацію, з якою хочете працювати.",
+  "welcome": "ласкаво просимо!",
+  "metrics": {
+    "members": "Членів",
+    "teams": "Команд",
+    "roles": "Ролей",
+    "memberCount": "{{count}} членів",
+    "teamCount": "{{count}} команд"
+  },
+  "confirmLeave": "Ви впевнені, що хочете піти? Це остаточне рішення.",
+  "letMeGo": "Відпусти"
+}

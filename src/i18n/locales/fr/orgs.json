@@ -1,0 +1,26 @@
+{
+  "organization": "organisation",
+  "organizations": "organisations",
+  "orga": "orga",
+  "noOrganization": "Aucune organisation",
+  "selectOrganization": "Sélectionner une organisation",
+  "switching": "Changement...",
+  "switchingOrganization": "Changement d'organisation...",
+  "createOrganization": "créer une organisation",
+  "createNewOrganization": "Créer une nouvelle organisation",
+  "createFirstOrganization": "Créez votre première organisation",
+  "leaveOrganization": "Quitter l'organisation",
+  "joinOrganization": "Rejoindre l'organisation",
+  "noBelongYet": "Vous n'êtes membre d'aucune organisation pour le moment.",
+  "selectOrgPrompt": "Utilisez le menu déroulant dans l'en-tête pour choisir l'organisation avec laquelle vous souhaitez travailler.",
+  "welcome": "bienvenue !",
+  "metrics": {
+    "members": "Membres",
+    "teams": "Équipes",
+    "roles": "Rôles",
+    "memberCount": "{{count}} membres",
+    "teamCount": "{{count}} équipes"
+  },
+  "confirmLeave": "Êtes-vous sûr de vouloir quitter ? C'est une décision définitive.",
+  "letMeGo": "Laissez-moi partir"
+}

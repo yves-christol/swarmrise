@@ -1,0 +1,26 @@
+{
+  "organization": "organization",
+  "organizations": "organizations",
+  "orga": "orga",
+  "noOrganization": "No organization",
+  "selectOrganization": "Select organization",
+  "switching": "Switching...",
+  "switchingOrganization": "Switching organization...",
+  "createOrganization": "create an organization",
+  "createNewOrganization": "Create new organization",
+  "createFirstOrganization": "Create your first organization",
+  "leaveOrganization": "Leave organization",
+  "joinOrganization": "Join organization",
+  "noBelongYet": "You are not a member of any organizations yet.",
+  "selectOrgPrompt": "Use the dropdown in the header to choose which organization you want to work with.",
+  "welcome": "welcome!",
+  "metrics": {
+    "members": "Members",
+    "teams": "Teams",
+    "roles": "Roles",
+    "memberCount": "{{count}} members",
+    "teamCount": "{{count}} teams"
+  },
+  "confirmLeave": "Are you sure you want to leave ? It's a definitive decision.",
+  "letMeGo": "Let me go"
+}

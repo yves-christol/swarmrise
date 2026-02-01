@@ -1,0 +1,11 @@
+{
+  "member": "membro",
+  "members": "membri",
+  "me": "me",
+  "user": "utente",
+  "inviteNewMember": "invitare un nuovo membro",
+  "enterEmailToInvite": "inserisci l'email della persona che vuoi invitare",
+  "removeMember": "Rimuovere un membro",
+  "confirmRemove": "Sei sicuro di voler rimuovere quel membro dalla tua organizzazione? Sarà contrassegnata come una tua decisione pubblica, quindi assicurati di avere il diritto di farlo secondo la tua governance.",
+  "gotItRemove": "capito, rimuovi quel membro"
+}

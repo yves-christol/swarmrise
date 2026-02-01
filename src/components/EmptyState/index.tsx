@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery, useMutation } from "convex/react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Logo } from "../Logo";
 import { Id } from "../../../convex/_generated/dataModel";
@@ -41,6 +42,7 @@ type InvitationWithOrga = {
 };
 
 const InvitationCard = ({ data }: { data: InvitationWithOrga }) => {
+  const { t } = useTranslation("invitations");
   const [isProcessing, setIsProcessing] = useState(false);
   const acceptInvitation = useMutation(api.users.functions.acceptInvitation);
   const rejectInvitation = useMutation(api.users.functions.rejectInvitation);
@@ -69,7 +71,7 @@ const InvitationCard = ({ data }: { data: InvitationWithOrga }) => {
         <div className="min-w-0 flex-1">
           <h3 className="font-bold text-light truncate">{data.orga.name}</h3>
           <p className="text-sm text-gray-400 truncate">
-            Invited by {data.emitterName}
+            {t("invitedBy", { name: data.emitterName })}
           </p>
         </div>
         {data.orga.logoUrl ? (
@@ -93,7 +95,7 @@ const InvitationCard = ({ data }: { data: InvitationWithOrga }) => {
             text-dark font-medium rounded transition-colors"
         >
           <CheckIcon className="w-4 h-4" />
-          Accept
+          {t("accept")}
         </button>
         <button
           onClick={handleReject}
@@ -103,7 +105,7 @@ const InvitationCard = ({ data }: { data: InvitationWithOrga }) => {
             text-gray-400 hover:text-gray-300 rounded transition-colors"
         >
           <XIcon className="w-4 h-4" />
-          Decline
+          {t("decline")}
         </button>
       </div>
     </div>
@@ -111,6 +113,9 @@ const InvitationCard = ({ data }: { data: InvitationWithOrga }) => {
 };
 
 export const EmptyState = () => {
+  const { t } = useTranslation("orgs");
+  const { t: tCommon } = useTranslation("common");
+  const { t: tInvitations } = useTranslation("invitations");
   const pendingInvitations = useQuery(
     api.users.functions.listMyPendingInvitationsWithOrga
   );
@@ -123,9 +128,9 @@ export const EmptyState = () => {
       <Logo size={64} begin={0} repeatCount={2} />
 
       <div className="text-center">
-        <h1 className="font-swarm text-3xl mb-2">welcome!</h1>
+        <h1 className="font-swarm text-3xl mb-2">{t("welcome")}</h1>
         <p className="text-gray-400">
-          You are not a member of any organizations yet.
+          {t("noBelongYet")}
         </p>
       </div>
 
@@ -140,7 +145,7 @@ export const EmptyState = () => {
       {hasInvitations && (
         <div className="w-full">
           <h2 className="text-sm font-bold uppercase tracking-wide text-gray-500 mb-4">
-            Pending Invitations
+            {tInvitations("pendingInvitations")}
           </h2>
           <div className="flex flex-col gap-3">
             {pendingInvitations.map((data) => (
@@ -153,7 +158,7 @@ export const EmptyState = () => {
       {hasInvitations && (
         <div className="flex items-center gap-4 w-full">
           <div className="flex-1 border-t border-gray-700" />
-          <span className="text-gray-500 text-sm">or</span>
+          <span className="text-gray-500 text-sm">{tCommon("or")}</span>
           <div className="flex-1 border-t border-gray-700" />
         </div>
       )}
@@ -168,8 +173,8 @@ export const EmptyState = () => {
           text-dark font-bold rounded-lg transition-colors"
       >
         {hasInvitations
-          ? "Create new organization"
-          : "Create your first organization"}
+          ? t("createNewOrganization")
+          : t("createFirstOrganization")}
       </button>
     </div>
   );

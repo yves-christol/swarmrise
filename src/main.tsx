@@ -1,4 +1,5 @@
 import "./index.css";
+import "./i18n"; // Initialize i18n
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ClerkProvider, useAuth } from "@clerk/clerk-react";

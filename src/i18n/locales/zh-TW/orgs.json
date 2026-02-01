@@ -1,0 +1,26 @@
+{
+  "organization": "組織",
+  "organizations": "組織",
+  "orga": "組織",
+  "noOrganization": "沒有組織",
+  "selectOrganization": "選擇組織",
+  "switching": "切換中...",
+  "switchingOrganization": "切換組織中...",
+  "createOrganization": "創建組織",
+  "createNewOrganization": "創建新組織",
+  "createFirstOrganization": "創建您的第一個組織",
+  "leaveOrganization": "離開組織",
+  "joinOrganization": "加入組織",
+  "noBelongYet": "您還不是任何組織的成員。",
+  "selectOrgPrompt": "使用標題中的下拉菜單選擇您要使用的組織。",
+  "welcome": "歡迎！",
+  "metrics": {
+    "members": "成員",
+    "teams": "團隊",
+    "roles": "角色",
+    "memberCount": "{{count}} 位成員",
+    "teamCount": "{{count}} 個團隊"
+  },
+  "confirmLeave": "您確定要離開嗎？這是一個確定的決定。",
+  "letMeGo": "讓我離開"
+}

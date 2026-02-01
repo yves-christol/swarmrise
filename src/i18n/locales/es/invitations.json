@@ -1,0 +1,10 @@
+{
+  "invitation": "invitación",
+  "invitations": "invitaciones",
+  "pendingInvitations": "Invitaciones pendientes",
+  "accept": "Aceptar",
+  "decline": "Rechazar",
+  "invitedBy": "Invitado por {{name}}",
+  "noPendingSent": "No hay ninguna invitación enviada pendiente",
+  "noPendingReceived": "No tienes ninguna invitación pendiente para unirte a una organización"
+}

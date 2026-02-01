@@ -1,0 +1,10 @@
+{
+  "invitation": "invito",
+  "invitations": "inviti",
+  "pendingInvitations": "Inviti in sospeso",
+  "accept": "Accetta",
+  "decline": "Rifiuta",
+  "invitedBy": "Invitato da {{name}}",
+  "noPendingSent": "Non c'è nessun invito inviato in sospeso",
+  "noPendingReceived": "Non hai inviti in sospeso per entrare a far parte di un'organizzazione"
+}

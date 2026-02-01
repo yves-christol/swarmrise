@@ -77,7 +77,7 @@ export const LanguageSelector = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
-        className="p-2 rounded-md hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-dark"
+        className="p-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={t("common:selectLanguage", "Select language")}
@@ -87,7 +87,7 @@ export const LanguageSelector = () => {
 
       {isOpen && (
         <div
-          className="absolute top-full right-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50"
+          className="absolute top-full right-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50"
           role="listbox"
           aria-label={t("common:availableLanguages", "Available languages")}
         >
@@ -99,10 +99,10 @@ export const LanguageSelector = () => {
                 aria-selected={currentLanguage === lang}
                 onClick={() => handleLanguageChange(lang)}
                 className={`w-full flex items-center justify-between px-4 py-2.5 transition-colors text-left ${
-                  currentLanguage === lang ? "bg-gray-700" : "hover:bg-gray-700"
+                  currentLanguage === lang ? "bg-gray-100 dark:bg-gray-700" : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
               >
-                <span className="text-light">{languageNames[lang]}</span>
+                <span className="text-dark dark:text-light">{languageNames[lang]}</span>
                 {currentLanguage === lang && (
                   <CheckIcon className="w-5 h-5 text-[#eac840]" />
                 )}

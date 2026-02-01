@@ -15,19 +15,19 @@
   .font-swarm {
     font-family: var(--font-family-swarm);
   }
-  
+
   .bg-light {
     background-color: var(--color-light);
   }
-  
+
   .bg-dark {
     background-color: var(--color-dark);
   }
-  
+
   .text-light {
     color: var(--color-light);
   }
-  
+
   .text-dark {
     color: var(--color-dark);
   }
@@ -35,6 +35,24 @@
   .bg-dark-paper {
     background-color: var(--color-dark-paper);
   }
+
+}
+
+/* Dark mode variants for custom utilities */
+.dark .dark\:bg-dark {
+  background-color: var(--color-dark);
+}
+
+.dark .dark\:bg-light {
+  background-color: var(--color-light);
+}
+
+.dark .dark\:text-light {
+  color: var(--color-light);
+}
+
+.dark .dark\:text-dark {
+  color: var(--color-dark);
 }
 
 /* Dark mode (class-based for manual override) */

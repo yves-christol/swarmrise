@@ -7,6 +7,7 @@ import { Logo } from "../Logo";
 import { OrgaSelector } from "../OrgaSelector";
 import { LanguageSelector } from "../LanguageSelector";
 import { ThemeToggle } from "../ThemeToggle";
+import { useTheme } from "../../contexts/ThemeContext";
 
 type HeaderProps = {
   showBackButton?: boolean;
@@ -15,14 +16,15 @@ type HeaderProps = {
 export const Header = ({ showBackButton = false }: HeaderProps) => {
   const { t } = useTranslation();
   const { isSignedIn } = useAuth();
+  const { resolvedTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-10 bg-dark p-4 border-b-2 border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center">
+    <header className="sticky top-0 z-10 bg-light dark:bg-dark p-4 border-b-2 border-slate-300 dark:border-slate-800 flex flex-row justify-between items-center">
       {/* Left side: Back button or Logo/brand */}
       {showBackButton ? (
         <Link
           to="/"
-          className="flex items-center gap-2 hover:opacity-80 transition-opacity text-light"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity text-dark dark:text-light"
           aria-label={t("back")}
         >
           <svg
@@ -47,7 +49,7 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
           aria-label={t("governance:principles", "swarmrise principles")}
         >
           <Logo size={24} begin={2} repeatCount={1} />
-          <b className="font-swarm text-light">swarmrise</b>
+          <b className="font-swarm text-dark dark:text-light">swarmrise</b>
         </Link>
       )}
 
@@ -66,7 +68,7 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
           <ThemeToggle />
         </div>
         {/* User identity */}
-        {isSignedIn && <UserButton appearance={{ baseTheme: dark }} />}
+        {isSignedIn && <UserButton appearance={{ baseTheme: resolvedTheme === "dark" ? dark : undefined }} />}
       </div>
     </header>
   );

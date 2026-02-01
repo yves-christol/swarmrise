@@ -58,6 +58,58 @@ export const listMyInvitations = query({
 });
 
 /**
+ * List pending invitations with organization details for the authenticated user
+ */
+export const listMyPendingInvitationsWithOrga = query({
+  args: {},
+  returns: v.array(
+    v.object({
+      invitation: invitationValidator,
+      orga: v.object({
+        _id: v.id("orgas"),
+        name: v.string(),
+        logoUrl: v.optional(v.string()),
+      }),
+      emitterName: v.string(),
+    })
+  ),
+  handler: async (ctx) => {
+    const user = await getAuthenticatedUser(ctx);
+
+    // Get all pending invitations for this user
+    const invitations = await ctx.db
+      .query("invitations")
+      .withIndex("by_email", (q) => q.eq("email", user.email))
+      .filter((q) => q.eq(q.field("status"), "pending"))
+      .collect();
+
+    // Enrich with org data
+    const result = [];
+    for (const invitation of invitations) {
+      const orga = await ctx.db.get(invitation.orgaId);
+      if (!orga) continue;
+
+      const emitter = await ctx.db.get(invitation.emitterMemberId);
+      const emitterName = emitter
+        ? `${emitter.firstname} ${emitter.surname}`.trim() || emitter.email
+        : "Unknown";
+
+      result.push({
+        invitation,
+        orga: {
+          _id: orga._id,
+          name: orga.name,
+          logoUrl: orga.logoUrl,
+        },
+        emitterName,
+      });
+    }
+
+    return result;
+  },
+});
+
+/**
  * Update user information
  * Note: This updates the user globally. If you need to update member-specific data,
  * use the members functions instead.

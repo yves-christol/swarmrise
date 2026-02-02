@@ -156,6 +156,15 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     previousOrgaIdRef.current = selectedOrgaId
   }, [selectedOrgaId])
 
+  // Clear switching state when the new org data is available
+  // This is the primary mechanism - we don't rely on child components calling _notifySwitchComplete
+  useEffect(() => {
+    if (isSwitchingOrga && selectedOrga !== null) {
+      // The new org is loaded and available, switching is complete
+      setIsSwitchingOrga(false)
+    }
+  }, [isSwitchingOrga, selectedOrga])
+
   // Internal function to notify that switching is complete
   const _notifySwitchComplete = useCallback(() => {
     setIsSwitchingOrga(false)

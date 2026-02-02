@@ -78,7 +78,7 @@ export const RoleNode = memo(function RoleNode({
         />
       )}
 
-      {/* Main circle - dashed stroke for linked roles (cannot be edited directly) */}
+      {/* Main circle */}
       <circle
         cx={x}
         cy={y}
@@ -86,7 +86,6 @@ export const RoleNode = memo(function RoleNode({
         fill="var(--diagram-node-fill)"
         stroke={strokeColor}
         strokeWidth={strokeWidth}
-        strokeDasharray={role.linkedRoleId ? "6 3" : undefined}
         style={{
           transition: "stroke 150ms ease-out, stroke-width 150ms ease-out",
           filter: isHovered ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2))" : "none",

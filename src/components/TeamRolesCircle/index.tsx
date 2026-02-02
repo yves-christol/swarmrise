@@ -199,7 +199,6 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
           fill="none"
           stroke="var(--diagram-node-stroke)"
           strokeWidth={2}
-          strokeDasharray="4 4"
           opacity={0.3}
         />
 
@@ -633,7 +632,6 @@ function ParentTeamNode({
             y2={edgeY}
             stroke="#eac840"
             strokeWidth={2}
-            strokeDasharray="6 3"
             opacity={isHovered ? 0.9 : 0.6}
             style={{ transition: "opacity 150ms ease-out" }}
           />
@@ -753,7 +751,6 @@ function DaughterTeamNode({
             y2={edgeY}
             stroke="#a78bfa"
             strokeWidth={2}
-            strokeDasharray="6 3"
             opacity={isHovered ? 0.9 : 0.6}
             style={{ transition: "opacity 150ms ease-out" }}
           />

@@ -10,6 +10,7 @@ export const roleType = v.object({
   orgaId: v.id("orgas"), // Added for efficient aggregation by organization
   teamId: v.id("teams"),
   parentTeamId: v.optional(v.id("teams")), // For leader roles: the parent team this role connects to
+  linkedRoleId: v.optional(v.id("roles")), // For leader roles: the corresponding role in parent team (double role pattern)
   title: v.string(),
   roleType: v.optional(specialRole), // Strong typing for specific roles
   mission: v.string(),

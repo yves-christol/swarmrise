@@ -42,7 +42,8 @@ export default defineSchema({
     .index("by_member", ["memberId"])
     .index("by_team_and_title", ["teamId", "title"])
     .index("by_team_and_role_type", ["teamId", "roleType"])
-    .index("by_parent_team", ["parentTeamId"]),
+    .index("by_parent_team", ["parentTeamId"])
+    .index("by_linked_role", ["linkedRoleId"]),
 
   // Invitations collection - Invitations sent by Members to join an Orga
   invitations: defineTable({ ...invitationType.fields })

@@ -142,6 +142,10 @@ export const createTeam = mutation({
       if (parentTeam.orgaId !== args.orgaId) {
         throw new Error("Parent team must belong to the same organization");
       }
+      // Validate that the original role belongs to the parent team (double role pattern)
+      if (role.teamId !== args.parentTeamId) {
+        throw new Error("Role must belong to the parent team to create a child team");
+      }
     }
     
     // Create team
@@ -152,10 +156,12 @@ export const createTeam = mutation({
     
     // Create leader role from the provided role
     // The leader role will have the same member, mission, and duties as the original role
+    // The linkedRoleId connects the leader to the original role in the parent team (double role pattern)
     const leaderRoleId = await ctx.db.insert("roles", {
       orgaId: args.orgaId,
       teamId: teamId,
       parentTeamId: args.parentTeamId, // Connector to parent team
+      linkedRoleId: args.parentTeamId ? args.roleId : undefined, // Link to original role in parent team
       title: role.title, // Keep the original title or could be "Leader"
       roleType: "leader",
       mission: role.mission,

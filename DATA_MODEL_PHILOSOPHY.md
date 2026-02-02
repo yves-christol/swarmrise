@@ -187,6 +187,7 @@ A position within a Team, assigned to a Member.
 | `orgaId` | `Id<"orgas">` | Denormalized for efficient org-wide role queries |
 | `teamId` | `Id<"teams">` | The team this role belongs to |
 | `parentTeamId` | `Id<"teams">?` | For leader roles: connects to parent team hierarchy |
+| `linkedRoleId` | `Id<"roles">?` | For leader roles: the source role in parent team (double role pattern) |
 | `title` | `string` | Role title (e.g., "Product Manager") |
 | `roleType` | `SpecialRole?` | Optional: "leader", "secretary", or "referee" |
 | `mission` | `string` | Role's purpose statement |
@@ -194,7 +195,7 @@ A position within a Team, assigned to a Member.
 | `memberId` | `Id<"members">` | The member holding this role |
 
 **Special Role Types:**
-- `leader`: The accountable person for a team. Exactly one per team. Can have `parentTeamId` to establish hierarchy.
+- `leader`: The accountable person for a team. Exactly one per team. Can have `parentTeamId` to establish hierarchy and `linkedRoleId` for the double role pattern.
 - `secretary`: Handles team administration and record-keeping
 - `referee`: Resolves conflicts and ensures process adherence
 
@@ -296,7 +297,36 @@ export const roleValidator = v.object({
 **Consistency Requirement:**
 When assigning/unassigning roles, both sides must be updated atomically.
 
-### 3. Organization ID Denormalization on Roles
+### 3. Linked Roles Pattern (Double Role)
+
+When a child team is created from a role in a parent team, the role holder serves a "double role":
+- The **original role** remains in the parent team (representing the child team)
+- A **leader role** is created in the child team with `linkedRoleId` pointing to the original
+
+```
+Parent Team                    Child Team
+┌─────────────────┐           ┌─────────────────┐
+│ Role: "Finance" │──────────▶│ Leader Role     │
+│ (source)        │ linkedRoleId │ (linked)     │
+│                 │           │                 │
+│ ✓ Can edit      │           │ ✗ Cannot edit   │
+│ ✓ Changes sync  │           │   directly      │
+└─────────────────┘           └─────────────────┘
+```
+
+**Behavior:**
+- **Source role is authoritative**: Updates to the source role atomically propagate to linked leader roles
+- **No direct edits to linked roles**: Attempting to update a role with `linkedRoleId` throws an error
+- **Deletion protection**: Source roles with linked leaders cannot be deleted (delete the child team first)
+- **Propagated fields**: `title`, `mission`, `duties`, `memberId`
+
+**Why This Pattern:**
+- Maintains the double role semantic (person represents child team in parent team)
+- Keeps queries simple (each role is self-contained, no joins needed)
+- Ensures data consistency through atomic propagation
+- Leverages existing `by_linked_role` index for efficient sync
+
+### 4. Organization ID Denormalization on Roles
 
 Roles include `orgaId` even though it could be derived from `teamId`:
 
@@ -336,6 +366,7 @@ Indexes follow the pattern: `by_field1_and_field2`
 | roles | by_member | [memberId] | Member's roles |
 | roles | by_team_and_role_type | [teamId, roleType] | Find team leader/secretary/referee |
 | roles | by_parent_team | [parentTeamId] | Child teams lookup |
+| roles | by_linked_role | [linkedRoleId] | Find linked leader roles for propagation |
 | invitations | by_orga | [orgaId] | Org's invitations |
 | invitations | by_email | [email] | Invitations to email |
 | invitations | by_orga_and_status | [orgaId, status] | Pending invitations in org |
@@ -500,6 +531,22 @@ const childTeamIds = childLeaderRoles.map(role => role.teamId);
 - More flexible than hard-coded team.parentId
 - Allows teams to potentially reorganize without changing team documents
 
+### Why Linked Roles Duplicate Data with Atomic Sync
+**Decision:** The leader role in a child team duplicates `title`, `mission`, `duties`, and `memberId` from the source role in the parent team, with automatic propagation when the source changes.
+
+**Rationale:**
+- Queries remain simple - each role is self-contained with no joins needed
+- The `by_linked_role` index enables efficient sync lookup
+- Source role is authoritative; linked roles cannot be edited directly
+- Atomic propagation ensures consistency within the same transaction
+- Alternative approaches (virtual roles, multi-team roles) were rejected due to query complexity or indexing limitations
+
+**Considered Alternatives:**
+1. *Single role belonging to multiple teams* - Cannot efficiently index for "roles in team X"
+2. *Virtual/computed roles* - Identity problems, increased query complexity
+3. *Minimal leader with derived fields* - Required making fields optional, breaking schema
+4. *Bidirectional sync* - Risk of confusion about which role was edited
+
 ### Why Typed Diffs in Decisions
 **Decision:** Discriminated union for diff types rather than generic JSON.
 
@@ -516,6 +563,7 @@ const childTeamIds = childLeaderRoles.map(role => role.teamId);
 | Date | Description | Impact |
 |------|-------------|--------|
 | Initial | Base schema established | N/A |
+| 2026-02-02 | Added `linkedRoleId` field to roles for double role pattern | Safe - new optional field, existing data unaffected |
 
 *This section should be updated when migrations are performed.*
 

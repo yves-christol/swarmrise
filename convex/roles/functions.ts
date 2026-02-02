@@ -56,6 +56,7 @@ export const listRolesInTeam = query({
       orgaId: v.id("orgas"),
       teamId: v.id("teams"),
       parentTeamId: v.optional(v.id("teams")),
+      linkedRoleId: v.optional(v.id("roles")),
       title: v.string(),
       roleType: v.optional(v.union(v.literal("leader"), v.literal("secretary"), v.literal("referee"))),
       mission: v.string(),
@@ -207,7 +208,13 @@ export const updateRole = mutation({
     if (!role) {
       throw new Error("Role not found");
     }
-    
+
+    // Forbid direct updates to linked leader roles (double role pattern)
+    // All changes must go through the source role in the parent team
+    if (role.linkedRoleId) {
+      throw new Error("Cannot update a linked leader role directly. Update the source role in the parent team instead.");
+    }
+
     // Enforce one leader per team when setting roleType to leader
     if (args.roleType === "leader" && role.roleType !== "leader") {
       if (await hasTeamLeader(ctx, role.teamId)) {
@@ -328,7 +335,47 @@ export const updateRole = mutation({
     }
     
     await ctx.db.patch(args.roleId, updates);
-    
+
+    // Propagate changes to linked leader roles (double role pattern)
+    // Source role is authoritative - changes flow to linked roles
+    const linkedRoles = await ctx.db
+      .query("roles")
+      .withIndex("by_linked_role", (q) => q.eq("linkedRoleId", args.roleId))
+      .collect();
+
+    if (linkedRoles.length > 0) {
+      const updatedRole = await ctx.db.get(args.roleId);
+      if (updatedRole) {
+        for (const linked of linkedRoles) {
+          // Handle member assignment changes for linked roles
+          if (args.memberId !== undefined && args.memberId !== linked.memberId) {
+            // Remove linked role from old member
+            const oldLinkedMember = await ctx.db.get(linked.memberId);
+            if (oldLinkedMember) {
+              await ctx.db.patch(linked.memberId, {
+                roleIds: oldLinkedMember.roleIds.filter((id) => id !== linked._id),
+              });
+            }
+            // Add linked role to new member
+            const newLinkedMember = await ctx.db.get(args.memberId);
+            if (newLinkedMember) {
+              await ctx.db.patch(args.memberId, {
+                roleIds: [...newLinkedMember.roleIds, linked._id],
+              });
+            }
+          }
+
+          // Sync all propagated fields
+          await ctx.db.patch(linked._id, {
+            title: updatedRole.title,
+            mission: updatedRole.mission,
+            duties: updatedRole.duties,
+            memberId: updatedRole.memberId,
+          });
+        }
+      }
+    }
+
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
     const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, orgaId);
@@ -367,7 +414,17 @@ export const deleteRole = mutation({
     if (!role) {
       throw new Error("Role not found");
     }
-    
+
+    // Prevent deletion of source roles that have linked leader roles
+    // The child team must be deleted first
+    const linkedRoles = await ctx.db
+      .query("roles")
+      .withIndex("by_linked_role", (q) => q.eq("linkedRoleId", args.roleId))
+      .first();
+    if (linkedRoles) {
+      throw new Error("Cannot delete a role that is linked to a child team leader. Delete the child team first.");
+    }
+
     // Store before state
     const before = {
       teamId: role.teamId,

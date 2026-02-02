@@ -1,4 +1,4 @@
-import { query, mutation } from "../_generated/server";
+import { query, mutation, internalMutation } from "../_generated/server";
 import { v } from "convex/values";
 import { invitationValidator, invitationStatus } from ".";
 import {
@@ -190,9 +190,9 @@ export const deleteInvitation = mutation({
     if (!invitation) {
       throw new Error("Invitation not found");
     }
-    
+
     const member = await requireAuthAndMembership(ctx, invitation.orgaId);
-    
+
     // Store before state
     const before = {
       orgaId: invitation.orgaId,
@@ -201,14 +201,14 @@ export const deleteInvitation = mutation({
       status: invitation.status,
       sentDate: invitation.sentDate,
     };
-    
+
     // Delete invitation
     await ctx.db.delete(args.invitationId);
-    
+
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
     const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, invitation.orgaId);
-    
+
     await ctx.db.insert("decisions", {
       orgaId: invitation.orgaId,
       authorEmail: email,
@@ -222,8 +222,33 @@ export const deleteInvitation = mutation({
         after: undefined,
       },
     });
-    
+
     return null;
+  },
+});
+
+/**
+ * Internal mutation to delete old pending invitations (30+ days old)
+ * Called by the cron job - does not record Decisions since this is automated cleanup
+ */
+export const deleteOldPendingInvitations = internalMutation({
+  args: {},
+  returns: v.number(),
+  handler: async (ctx) => {
+    const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+
+    const oldInvitations = await ctx.db
+      .query("invitations")
+      .withIndex("by_status_and_sentDate", (q) =>
+        q.eq("status", "pending").lt("sentDate", thirtyDaysAgo)
+      )
+      .collect();
+
+    for (const invitation of oldInvitations) {
+      await ctx.db.delete(invitation._id);
+    }
+
+    return oldInvitations.length;
   },
 });
 

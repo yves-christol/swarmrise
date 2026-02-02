@@ -49,7 +49,8 @@ export default defineSchema({
     .index("by_orga", ["orgaId"])
     .index("by_email", ["email"])
     .index("by_status", ["status"])
-    .index("by_orga_and_status", ["orgaId", "status"]),
+    .index("by_orga_and_status", ["orgaId", "status"])
+    .index("by_status_and_sentDate", ["status", "sentDate"]),
 
   // Decisions collection - Traceability for all modifications
   decisions: defineTable({ ...decisionType.fields })

@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Logo } from "../Logo";
+import { MemberLink } from "./MemberLink";
 import type { RoleFocusViewProps } from "./types";
 
 function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
@@ -182,16 +183,27 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
         .role-content-mission {
           animation: contentFadeIn 300ms ease-out 250ms both;
         }
-        .role-content-member {
-          animation: contentFadeIn 300ms ease-out 300ms both;
+        @keyframes memberLinkReveal {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
           .role-content-title,
           .role-content-badge,
           .role-content-divider,
-          .role-content-mission,
-          .role-content-member {
+          .role-content-mission {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+          }
+          g[role="button"] {
             animation: none !important;
             opacity: 1 !important;
             transform: none !important;
@@ -311,29 +323,22 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
                 {role.mission || "No mission defined"}
               </p>
             </div>
-
-            {/* Member Info */}
-            {member && (
-              <div className="role-content-member flex items-center gap-2 mt-2 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                {/* Avatar or initials */}
-                {member.pictureURL ? (
-                  <img
-                    src={member.pictureURL}
-                    alt={`${member.firstname} ${member.surname}`}
-                    className="w-6 h-6 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300">
-                    {member.firstname[0]}{member.surname[0]}
-                  </div>
-                )}
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  {member.firstname} {member.surname}
-                </span>
-              </div>
-            )}
           </div>
         </foreignObject>
+
+        {/* Member link - positioned outside the main circle */}
+        {member && (
+          <MemberLink
+            member={member}
+            centerX={centerX}
+            centerY={centerY}
+            maxRadius={maxRadius}
+            onMemberClick={(memberId) => {
+              // Future: navigate to member focus view
+              console.log("Member clicked:", memberId);
+            }}
+          />
+        )}
       </svg>
 
       {/* Accessibility: screen reader announcement */}

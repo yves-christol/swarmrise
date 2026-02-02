@@ -27,7 +27,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
   const [hoveredEdge, setHoveredEdge] = useState<GraphEdge | null>(null);
 
   // Focus navigation
-  const { focusOnTeam } = useFocus();
+  const { focusOnTeam, returnFromTeamId, clearReturnFromTeamId } = useFocus();
 
   // Callback ref to capture SVG element
   const svgRefCallback = useCallback((node: SVGSVGElement | null) => {
@@ -92,6 +92,26 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
 
   // Get selected node
   const selectedNode = selectedNodeId ? nodeMap.get(selectedNodeId) ?? null : null;
+
+  // Center on the team we returned from (after zooming out from TeamRolesCircle)
+  const centeringDoneRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!returnFromTeamId || nodes.length === 0) return;
+    if (centeringDoneRef.current === returnFromTeamId) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const teamNode = nodes.find(n => n.id === returnFromTeamId);
+    if (teamNode) {
+      // Use actual container dimensions directly
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      controls.centerOnPoint(teamNode.x, teamNode.y, width, height);
+      centeringDoneRef.current = returnFromTeamId;
+      clearReturnFromTeamId();
+    }
+  }, [returnFromTeamId, nodes, controls, clearReturnFromTeamId]);
 
   // Convert screen coordinates to graph coordinates (for drag)
   const screenToGraph = useCallback(

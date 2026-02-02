@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import type { ViewportState } from "./types";
 
 const MIN_SCALE = 0.25;
@@ -106,19 +106,34 @@ export function useViewport(svgElement: SVGSVGElement | null) {
     setViewport({ scale: 1, offsetX: 0, offsetY: 0 });
   }, []);
 
+  // Center the viewport on a specific point in graph coordinates
+  const centerOnPoint = useCallback((graphX: number, graphY: number, containerWidth: number, containerHeight: number) => {
+    setViewport((prev) => ({
+      ...prev,
+      offsetX: containerWidth / 2 - graphX * prev.scale,
+      offsetY: containerHeight / 2 - graphY * prev.scale,
+    }));
+  }, []);
+
+  // Memoize handlers and controls to prevent unnecessary re-renders
+  const handlers = useMemo(() => ({
+    onMouseDown: handleMouseDown,
+    onMouseMove: handleMouseMove,
+    onMouseUp: handleMouseUp,
+    onMouseLeave: handleMouseLeave,
+  }), [handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave]);
+
+  const controls = useMemo(() => ({
+    zoomIn,
+    zoomOut,
+    resetView,
+    centerOnPoint,
+  }), [zoomIn, zoomOut, resetView, centerOnPoint]);
+
   return {
     viewport,
     isPanning,
-    handlers: {
-      onMouseDown: handleMouseDown,
-      onMouseMove: handleMouseMove,
-      onMouseUp: handleMouseUp,
-      onMouseLeave: handleMouseLeave,
-    },
-    controls: {
-      zoomIn,
-      zoomOut,
-      resetView,
-    },
+    handlers,
+    controls,
   };
 }

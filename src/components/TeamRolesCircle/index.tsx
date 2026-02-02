@@ -181,13 +181,6 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
       {/* Zoom out button */}
       <ZoomOutButton onClick={onZoomOut} />
 
-      {/* Team name header */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
-        <h2 className="font-swarm text-xl font-bold text-dark dark:text-light px-4 py-2 bg-white/80 dark:bg-gray-800/80 rounded-lg backdrop-blur-sm border border-gray-300 dark:border-gray-700">
-          {team.name}
-        </h2>
-      </div>
-
       {/* SVG Diagram */}
       <svg
         width={dimensions.width}
@@ -220,6 +213,14 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
           strokeWidth={1}
           strokeDasharray="2 4"
           opacity={0.15}
+        />
+
+        {/* Team name - centered inside the circle */}
+        <TeamNameText
+          name={team.name}
+          centerX={centerX}
+          centerY={centerY}
+          fontSize={Math.min(22, maxRadius * 0.11)}
         />
 
         {/* Role nodes */}
@@ -311,6 +312,89 @@ function ZoomOutButton({ onClick }: { onClick: () => void }) {
       </svg>
       <span className="text-sm font-medium">Overview</span>
     </button>
+  );
+}
+
+// Team name text component with two-line wrapping
+function TeamNameText({
+  name,
+  centerX,
+  centerY,
+  fontSize,
+}: {
+  name: string;
+  centerX: number;
+  centerY: number;
+  fontSize: number;
+}) {
+  const maxCharsPerLine = 16;
+  const lineHeight = fontSize * 1.2;
+
+  // Split name into lines (max 2 lines, truncate if needed)
+  const getLines = (text: string): string[] => {
+    // If short enough, single line
+    if (text.length <= maxCharsPerLine) {
+      return [text];
+    }
+
+    // Try to split at a space near the middle
+    const words = text.split(" ");
+    if (words.length === 1) {
+      // Single long word - truncate to fit two lines
+      if (text.length <= maxCharsPerLine * 2) {
+        const mid = Math.ceil(text.length / 2);
+        return [text.slice(0, mid), text.slice(mid)];
+      }
+      // Too long even for two lines
+      return [text.slice(0, maxCharsPerLine), text.slice(maxCharsPerLine, maxCharsPerLine * 2 - 1) + "…"];
+    }
+
+    // Find best split point for two lines
+    let line1 = "";
+    let line2 = "";
+    for (const word of words) {
+      const testLine = line1 ? `${line1} ${word}` : word;
+      if (testLine.length <= maxCharsPerLine) {
+        line1 = testLine;
+      } else {
+        line2 = line2 ? `${line2} ${word}` : word;
+      }
+    }
+
+    // Truncate line2 if needed
+    if (line2.length > maxCharsPerLine) {
+      line2 = line2.slice(0, maxCharsPerLine - 1) + "…";
+    }
+
+    return line2 ? [line1, line2] : [line1];
+  };
+
+  const lines = getLines(name);
+  const isTwoLines = lines.length === 2;
+  const yOffset = isTwoLines ? -lineHeight / 2 : 0;
+
+  return (
+    <text
+      x={centerX}
+      y={centerY + yOffset}
+      textAnchor="middle"
+      dominantBaseline="central"
+      fill="var(--diagram-node-text)"
+      fontSize={fontSize}
+      fontWeight={600}
+      fontFamily="'Montserrat Alternates', sans-serif"
+      style={{ pointerEvents: "none", userSelect: "none" }}
+    >
+      {lines.map((line, i) => (
+        <tspan
+          key={i}
+          x={centerX}
+          dy={i === 0 ? 0 : lineHeight}
+        >
+          {line}
+        </tspan>
+      ))}
+    </text>
   );
 }
 

@@ -24,8 +24,8 @@ type OrgaWithCounts = {
 export type FocusTarget =
   | { type: "orga" }
   | { type: "team"; teamId: Id<"teams"> }
+  | { type: "role"; roleId: Id<"roles">; teamId: Id<"teams"> }
   // Future extensions:
-  // | { type: "role"; roleId: Id<"roles"> }
   // | { type: "member"; memberId: Id<"members"> }
 
 // Transition origin for zoom animations
@@ -59,6 +59,8 @@ type OrgaStoreContextType = {
   // Focus navigation state
   focus: FocusTarget
   focusOnTeam: (teamId: Id<"teams">, origin?: TransitionOrigin) => void
+  focusOnRole: (roleId: Id<"roles">, teamId: Id<"teams">, origin?: TransitionOrigin) => void
+  focusOnTeamFromRole: () => void
   focusOnOrga: () => void
   isFocusTransitioning: boolean
   transitionOrigin: TransitionOrigin
@@ -67,6 +69,9 @@ type OrgaStoreContextType = {
   // Team to center on when returning from team view
   returnFromTeamId: Id<"teams"> | null
   clearReturnFromTeamId: () => void
+  // Role to highlight when returning from role view
+  returnFromRoleId: Id<"roles"> | null
+  clearReturnFromRoleId: () => void
 }
 
 const OrgaStoreContext = createContext<OrgaStoreContextType | undefined>(undefined)
@@ -95,6 +100,8 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
   const [transitionDirection, setTransitionDirection] = useState<"in" | "out" | null>(null)
   // Track which team we're returning from so the org view can center on it
   const [returnFromTeamId, setReturnFromTeamId] = useState<Id<"teams"> | null>(null)
+  // Track which role we're returning from so the team view can highlight it
+  const [returnFromRoleId, setReturnFromRoleId] = useState<Id<"roles"> | null>(null)
 
   // Only fetch organizations when the user is signed in
   const orgasWithCounts = useQuery(
@@ -180,9 +187,31 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     setFocus({ type: "team", teamId })
   }, [])
 
+  const focusOnRole = useCallback((roleId: Id<"roles">, teamId: Id<"teams">, origin?: TransitionOrigin) => {
+    if (origin) {
+      setTransitionOrigin(origin)
+      setTransitionDirection("in")
+      setIsFocusTransitioning(true)
+    }
+    setFocus({ type: "role", roleId, teamId })
+  }, [])
+
+  // Focus back to team from role view
+  const focusOnTeamFromRole = useCallback(() => {
+    if (focus.type === "role") {
+      setReturnFromRoleId(focus.roleId)
+      setTransitionDirection("out")
+      setIsFocusTransitioning(true)
+      setFocus({ type: "team", teamId: focus.teamId })
+    }
+  }, [focus])
+
   const focusOnOrga = useCallback(() => {
     // Capture the team we're returning from so the org view can center on it
     if (focus.type === "team") {
+      setReturnFromTeamId(focus.teamId)
+    } else if (focus.type === "role") {
+      // If zooming from role directly to orga, capture the team
       setReturnFromTeamId(focus.teamId)
     }
     setTransitionDirection("out")
@@ -192,6 +221,10 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
 
   const clearReturnFromTeamId = useCallback(() => {
     setReturnFromTeamId(null)
+  }, [])
+
+  const clearReturnFromRoleId = useCallback(() => {
+    setReturnFromRoleId(null)
   }, [])
 
   const onTransitionEnd = useCallback(() => {
@@ -223,6 +256,8 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       _notifySwitchComplete,
       focus,
       focusOnTeam,
+      focusOnRole,
+      focusOnTeamFromRole,
       focusOnOrga,
       isFocusTransitioning,
       transitionOrigin,
@@ -230,6 +265,8 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       onTransitionEnd,
       returnFromTeamId,
       clearReturnFromTeamId,
+      returnFromRoleId,
+      clearReturnFromRoleId,
     }}>
       {children}
     </OrgaStoreContext.Provider>
@@ -257,8 +294,8 @@ export const useOrgaList = () => {
 }
 
 export const useFocus = () => {
-  const { focus, focusOnTeam, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId } = useOrgaStore()
-  return { focus, focusOnTeam, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId }
+  const { focus, focusOnTeam, focusOnRole, focusOnTeamFromRole, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId } = useOrgaStore()
+  return { focus, focusOnTeam, focusOnRole, focusOnTeamFromRole, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId }
 }
 
 /**

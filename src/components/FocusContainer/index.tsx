@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useFocus } from "../../tools/orgaStore";
 import { OrgNetworkDiagram } from "../OrgNetworkDiagram";
 import { TeamRolesCircle } from "../TeamRolesCircle";
+import { RoleFocusView } from "../RoleFocusView";
 import { Id } from "../../../convex/_generated/dataModel";
 
 type FocusContainerProps = {
@@ -13,25 +14,25 @@ type FocusContainerProps = {
 const TRANSITION_DURATION = 400; // ms
 
 export function FocusContainer({ orgaId }: FocusContainerProps) {
-  const { focus, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd } = useFocus();
+  const { focus, focusOnOrga, focusOnTeamFromRole, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd } = useFocus();
 
   // Track which view to show during transition
-  const [showTeamView, setShowTeamView] = useState(focus.type === "team");
+  const [currentView, setCurrentView] = useState<"orga" | "team" | "role">(focus.type);
   const [animationPhase, setAnimationPhase] = useState<"idle" | "zoom-out-old" | "zoom-in-new">("idle");
 
   // Handle view transitions
   useEffect(() => {
     if (!isFocusTransitioning) {
       setAnimationPhase("idle");
-      setShowTeamView(focus.type === "team");
+      setCurrentView(focus.type);
       return;
     }
 
     if (transitionDirection === "in") {
-      // Zooming into team: first zoom out old view, then show new view
+      // Zooming in: first zoom out old view, then show new view
       setAnimationPhase("zoom-out-old");
       const timer1 = setTimeout(() => {
-        setShowTeamView(true);
+        setCurrentView(focus.type);
         setAnimationPhase("zoom-in-new");
       }, TRANSITION_DURATION / 2);
 
@@ -44,10 +45,10 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         clearTimeout(timer2);
       };
     } else if (transitionDirection === "out") {
-      // Zooming out to orga: first zoom out old view, then show new view
+      // Zooming out: first zoom out old view, then show new view
       setAnimationPhase("zoom-out-old");
       const timer1 = setTimeout(() => {
-        setShowTeamView(false);
+        setCurrentView(focus.type);
         setAnimationPhase("zoom-in-new");
       }, TRANSITION_DURATION / 2);
 
@@ -133,7 +134,12 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         className="focus-view absolute inset-0"
         style={getAnimationStyles()}
       >
-        {showTeamView && focus.type === "team" ? (
+        {currentView === "role" && focus.type === "role" ? (
+          <RoleFocusView
+            roleId={focus.roleId}
+            onZoomOut={focusOnTeamFromRole}
+          />
+        ) : currentView === "team" && focus.type === "team" ? (
           <TeamRolesCircle
             teamId={focus.teamId}
             onZoomOut={focusOnOrga}

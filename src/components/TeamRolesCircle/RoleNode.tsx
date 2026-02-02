@@ -4,6 +4,7 @@ import type { RolePosition } from "./types";
 type RoleNodeProps = {
   position: RolePosition;
   index: number;
+  onClick?: () => void;
 };
 
 function truncateTitle(title: string, maxLength: number = 12): string {
@@ -38,6 +39,7 @@ function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): st
 export const RoleNode = memo(function RoleNode({
   position,
   index,
+  onClick,
 }: RoleNodeProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { role, x, y, radius, memberName } = position;
@@ -46,10 +48,21 @@ export const RoleNode = memo(function RoleNode({
   // All roles use same stroke width - flat organization, no visual hierarchy
   const strokeWidth = 2;
 
+  const handleClick = () => {
+    onClick?.();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
+
   return (
     <g
       role="button"
-      aria-label={`${role.title}${role.roleType ? `, ${role.roleType}` : ""}${memberName ? `, assigned to ${memberName}` : ""}${role.linkedRoleId ? ", synced from parent team" : ""}`}
+      aria-label={`${role.title}${role.roleType ? `, ${role.roleType}` : ""}${memberName ? `, assigned to ${memberName}` : ""}${role.linkedRoleId ? ", synced from parent team" : ""}. Click to view details.`}
       tabIndex={0}
       style={{
         cursor: "pointer",
@@ -57,6 +70,8 @@ export const RoleNode = memo(function RoleNode({
         animation: `nodeReveal 400ms ease-out both`,
         animationDelay: `${Math.min(index * 80, 600)}ms`,
       }}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}

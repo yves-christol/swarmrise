@@ -18,8 +18,8 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
-  // Focus navigation for clicking into child teams
-  const { focusOnTeam } = useFocus();
+  // Focus navigation for clicking into child teams and roles
+  const { focusOnTeam, focusOnRole } = useFocus();
 
   // Fetch team data
   const team = useQuery(api.teams.functions.getTeamById, { teamId });
@@ -228,6 +228,7 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
             key={pos.role._id}
             position={pos}
             index={index}
+            onClick={() => focusOnRole(pos.role._id, teamId, { x: pos.x, y: pos.y, radius: pos.radius })}
           />
         ))}
 

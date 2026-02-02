@@ -1,0 +1,195 @@
+import { memo, useState } from "react";
+import type { RolePosition } from "./types";
+
+type RoleNodeProps = {
+  position: RolePosition;
+  index: number;
+};
+
+function truncateTitle(title: string, maxLength: number = 12): string {
+  if (title.length <= maxLength) return title;
+  return title.slice(0, maxLength - 1) + "…";
+}
+
+function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
+  switch (roleType) {
+    case "leader":
+      return "#eac840"; // Bee Gold
+    case "secretary":
+      return "#a2dbed"; // Wing Blue
+    case "referee":
+      return "#a78bfa"; // Purple-400
+    default:
+      return "var(--diagram-node-stroke)";
+  }
+}
+
+function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): string {
+  switch (roleType) {
+    case "leader":
+      return "#d4af37"; // Dark Gold
+    case "secretary":
+      return "#7dd3fc"; // Light Blue
+    case "referee":
+      return "#c4b5fd"; // Light Purple
+  }
+}
+
+export const RoleNode = memo(function RoleNode({
+  position,
+  index,
+}: RoleNodeProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const { role, x, y, radius, memberName } = position;
+
+  const strokeColor = getRoleStroke(role.roleType);
+  const strokeWidth = role.roleType === "leader" ? 3 : 2;
+
+  return (
+    <g
+      role="button"
+      aria-label={`${role.title}${role.roleType ? `, ${role.roleType}` : ""}${memberName ? `, assigned to ${memberName}` : ""}`}
+      tabIndex={0}
+      style={{
+        cursor: "pointer",
+        outline: "none",
+        animation: `nodeReveal 400ms ease-out both`,
+        animationDelay: `${Math.min(index * 80, 600)}ms`,
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
+    >
+      {/* Hover glow effect */}
+      {isHovered && (
+        <circle
+          cx={x}
+          cy={y}
+          r={radius + 4}
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth={1}
+          opacity={0.4}
+          style={{
+            filter: `drop-shadow(0 0 8px ${strokeColor})`,
+          }}
+        />
+      )}
+
+      {/* Main circle */}
+      <circle
+        cx={x}
+        cy={y}
+        r={radius}
+        fill="var(--diagram-node-fill)"
+        stroke={strokeColor}
+        strokeWidth={strokeWidth}
+        style={{
+          transition: "stroke 150ms ease-out, stroke-width 150ms ease-out",
+          filter: isHovered ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2))" : "none",
+        }}
+      />
+
+      {/* Role type badge (for special roles) */}
+      {role.roleType && (
+        <g>
+          <circle
+            cx={x + radius * 0.7}
+            cy={y - radius * 0.7}
+            r={10}
+            fill={getRoleTypeBadgeColor(role.roleType)}
+          />
+          <text
+            x={x + radius * 0.7}
+            y={y - radius * 0.7}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="white"
+            fontSize={10}
+            fontWeight={600}
+            style={{ pointerEvents: "none", userSelect: "none" }}
+          >
+            {role.roleType === "leader" ? "L" : role.roleType === "secretary" ? "S" : "R"}
+          </text>
+        </g>
+      )}
+
+      {/* Role title */}
+      <text
+        x={x}
+        y={memberName ? y - 6 : y}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="var(--diagram-node-text)"
+        fontSize={role.roleType === "leader" ? 14 : 12}
+        fontFamily="'Montserrat Alternates', sans-serif"
+        fontWeight={role.roleType === "leader" ? 700 : 500}
+        style={{
+          pointerEvents: "none",
+          userSelect: "none",
+        }}
+      >
+        {truncateTitle(role.title, Math.floor(radius / 4))}
+      </text>
+
+      {/* Member name (smaller, below title) */}
+      {memberName && (
+        <text
+          x={x}
+          y={y + 10}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="var(--diagram-muted-text)"
+          fontSize={10}
+          style={{
+            pointerEvents: "none",
+            userSelect: "none",
+          }}
+        >
+          {truncateTitle(memberName, Math.floor(radius / 3.5))}
+        </text>
+      )}
+
+      {/* Full details tooltip on hover */}
+      {isHovered && (
+        <g style={{ pointerEvents: "none" }}>
+          <rect
+            x={x - 80}
+            y={y + radius + 12}
+            width={160}
+            height={memberName ? 44 : 28}
+            rx={6}
+            fill="var(--diagram-tooltip-bg)"
+            stroke="var(--diagram-tooltip-border)"
+            strokeWidth={1}
+          />
+          <text
+            x={x}
+            y={y + radius + 28}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="var(--diagram-tooltip-text)"
+            fontSize={12}
+            fontWeight={500}
+          >
+            {role.title}
+          </text>
+          {memberName && (
+            <text
+              x={x}
+              y={y + radius + 44}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill="var(--diagram-tooltip-text)"
+              fontSize={11}
+              opacity={0.8}
+            >
+              {memberName}
+            </text>
+          )}
+        </g>
+      )}
+    </g>
+  );
+});

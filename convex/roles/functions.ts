@@ -53,6 +53,7 @@ export const listRolesInTeam = query({
     v.object({
       _id: v.id("roles"),
       _creationTime: v.number(),
+      orgaId: v.id("orgas"),
       teamId: v.id("teams"),
       parentTeamId: v.optional(v.id("teams")),
       title: v.string(),

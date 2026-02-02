@@ -1,4 +1,5 @@
 import { memo, useState, useCallback, useRef } from "react";
+import { Id } from "../../../convex/_generated/dataModel";
 import type { GraphNode } from "./types";
 
 type TeamNodeProps = {
@@ -13,6 +14,7 @@ type TeamNodeProps = {
   onDrag: (nodeId: string, x: number, y: number) => void;
   onDragEnd: (nodeId: string) => void;
   onUnpin: (nodeId: string) => void;
+  onZoomIn: (teamId: Id<"teams">, x: number, y: number, radius: number) => void;
 };
 
 function truncateTeamName(name: string, radius: number): string {
@@ -34,13 +36,15 @@ export const TeamNode = memo(function TeamNode({
   isHovered,
   index,
   screenToGraph,
-  onSelect,
+  onSelect: _onSelect,
   onHover,
   onDragStart,
   onDrag,
   onDragEnd,
   onUnpin,
+  onZoomIn,
 }: TeamNodeProps) {
+  void _onSelect; // Reserved for future use (e.g., multi-select)
   const [isDragging, setIsDragging] = useState(false);
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
   const hasMoved = useRef(false);
@@ -97,12 +101,12 @@ export const TeamNode = memo(function TeamNode({
       dragStartPos.current = null;
       onDragEnd(node.id);
 
-      // If we didn't move much, treat it as a click to select
+      // If we didn't move much, treat it as a click to zoom into the team
       if (!hasMoved.current) {
-        onSelect(node.id);
+        onZoomIn(node.id as Id<"teams">, node.x, node.y, node.radius);
       }
     },
-    [isDragging, node.id, onDragEnd, onSelect]
+    [isDragging, node.id, node.x, node.y, node.radius, onDragEnd, onZoomIn]
   );
 
   const handleDoubleClick = useCallback(
@@ -166,7 +170,7 @@ export const TeamNode = memo(function TeamNode({
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onSelect(node.id);
+          onZoomIn(node.id as Id<"teams">, node.x, node.y, node.radius);
         }
       }}
     >

@@ -3,7 +3,7 @@
 import { useTranslation } from "react-i18next";
 import { useOrgaStore } from "../../tools/orgaStore";
 import { EmptyState } from "../EmptyState";
-import { OrgNetworkDiagram } from "../OrgNetworkDiagram";
+import { FocusContainer } from "../FocusContainer";
 
 // Spinner component for loading/transition states
 const Spinner = ({ text }: { text?: string }) => {
@@ -68,7 +68,7 @@ export const Authentified = () => {
   // relative positioning creates containing block for the absolute positioned diagram
   return (
     <div className="-m-8 h-[calc(100vh-4rem)] relative">
-      <OrgNetworkDiagram orgaId={selectedOrga._id} />
+      <FocusContainer orgaId={selectedOrga._id} />
     </div>
   );
 };

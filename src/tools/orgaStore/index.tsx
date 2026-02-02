@@ -20,6 +20,21 @@ type OrgaWithCounts = {
   }
 }
 
+// Focus navigation types
+export type FocusTarget =
+  | { type: "orga" }
+  | { type: "team"; teamId: Id<"teams"> }
+  // Future extensions:
+  // | { type: "role"; roleId: Id<"roles"> }
+  // | { type: "member"; memberId: Id<"members"> }
+
+// Transition origin for zoom animations
+export type TransitionOrigin = {
+  x: number;
+  y: number;
+  radius: number;
+} | null;
+
 const STORAGE_KEY = 'swarmrise_selected_orga'
 
 type OrgaStoreContextType = {
@@ -40,6 +55,15 @@ type OrgaStoreContextType = {
   isSwitchingOrga: boolean
   // Internal: called by org-scoped hooks when they have finished loading
   _notifySwitchComplete: () => void
+
+  // Focus navigation state
+  focus: FocusTarget
+  focusOnTeam: (teamId: Id<"teams">, origin?: TransitionOrigin) => void
+  focusOnOrga: () => void
+  isFocusTransitioning: boolean
+  transitionOrigin: TransitionOrigin
+  transitionDirection: "in" | "out" | null
+  onTransitionEnd: () => void
 }
 
 const OrgaStoreContext = createContext<OrgaStoreContextType | undefined>(undefined)
@@ -60,6 +84,12 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
   const [isSwitchingOrga, setIsSwitchingOrga] = useState(false)
   // Track the previous orgaId to detect changes
   const previousOrgaIdRef = useRef<Id<"orgas"> | null>(null)
+
+  // Focus navigation state
+  const [focus, setFocus] = useState<FocusTarget>({ type: "orga" })
+  const [isFocusTransitioning, setIsFocusTransitioning] = useState(false)
+  const [transitionOrigin, setTransitionOrigin] = useState<TransitionOrigin>(null)
+  const [transitionDirection, setTransitionDirection] = useState<"in" | "out" | null>(null)
 
   // Only fetch organizations when the user is signed in
   const orgasWithCounts = useQuery(
@@ -126,6 +156,38 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     setIsSwitchingOrga(false)
   }, [])
 
+  // Focus navigation functions
+  const focusOnTeam = useCallback((teamId: Id<"teams">, origin?: TransitionOrigin) => {
+    if (origin) {
+      setTransitionOrigin(origin)
+      setTransitionDirection("in")
+      setIsFocusTransitioning(true)
+    }
+    setFocus({ type: "team", teamId })
+  }, [])
+
+  const focusOnOrga = useCallback(() => {
+    setTransitionDirection("out")
+    setIsFocusTransitioning(true)
+    setFocus({ type: "orga" })
+  }, [])
+
+  const onTransitionEnd = useCallback(() => {
+    setIsFocusTransitioning(false)
+    setTransitionDirection(null)
+    // Keep origin for potential zoom-out animation
+    if (transitionDirection === "out") {
+      setTransitionOrigin(null)
+    }
+  }, [transitionDirection])
+
+  // Reset focus when switching organizations
+  useEffect(() => {
+    if (isSwitchingOrga) {
+      setFocus({ type: "orga" })
+    }
+  }, [isSwitchingOrga])
+
   return (
     <OrgaStoreContext.Provider value={{
       isSignedIn: isSignedIn === true,
@@ -137,6 +199,13 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       hasOrgas,
       isSwitchingOrga,
       _notifySwitchComplete,
+      focus,
+      focusOnTeam,
+      focusOnOrga,
+      isFocusTransitioning,
+      transitionOrigin,
+      transitionDirection,
+      onTransitionEnd,
     }}>
       {children}
     </OrgaStoreContext.Provider>
@@ -161,6 +230,11 @@ export const useSelectedOrga = () => {
 export const useOrgaList = () => {
   const { orgasWithCounts, isLoading, hasOrgas } = useOrgaStore()
   return { orgasWithCounts, isLoading, hasOrgas }
+}
+
+export const useFocus = () => {
+  const { focus, focusOnTeam, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd } = useOrgaStore()
+  return { focus, focusOnTeam, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd }
 }
 
 /**

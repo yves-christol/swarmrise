@@ -4,6 +4,7 @@ import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
+import { useFocus } from "../../tools/orgaStore";
 import { useLayoutEngine } from "./useLayoutEngine";
 import { useViewport } from "./useViewport";
 import { TeamNode } from "./TeamNode";
@@ -24,6 +25,9 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [hoveredEdge, setHoveredEdge] = useState<GraphEdge | null>(null);
+
+  // Focus navigation
+  const { focusOnTeam } = useFocus();
 
   // Callback ref to capture SVG element
   const svgRefCallback = useCallback((node: SVGSVGElement | null) => {
@@ -64,6 +68,20 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
 
   // Viewport (pan/zoom)
   const { viewport, isPanning, handlers, controls } = useViewport(svgElement);
+
+  // Handle team zoom (click on team node to focus)
+  // Receives node position for zoom animation origin
+  const handleTeamZoom = useCallback(
+    (teamId: Id<"teams">, nodeX: number, nodeY: number, nodeRadius: number) => {
+      // Convert node coordinates to screen coordinates
+      const screenX = nodeX * viewport.scale + viewport.offsetX;
+      const screenY = nodeY * viewport.scale + viewport.offsetY;
+      const screenRadius = nodeRadius * viewport.scale;
+
+      focusOnTeam(teamId, { x: screenX, y: screenY, radius: screenRadius });
+    },
+    [focusOnTeam, viewport.scale, viewport.offsetX, viewport.offsetY]
+  );
 
   // Create node map for edge lookups
   const nodeMap = useMemo(() => {
@@ -265,6 +283,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
               onDrag={dragHandlers.onDrag}
               onDragEnd={dragHandlers.onDragEnd}
               onUnpin={dragHandlers.onUnpin}
+              onZoomIn={handleTeamZoom}
             />
           ))}
         </g>

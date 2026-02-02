@@ -160,6 +160,28 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
     >
       {/* CSS for animations */}
       <style>{`
+        @keyframes circleReveal {
+          from {
+            stroke-dashoffset: 2000;
+            opacity: 0;
+          }
+          to {
+            stroke-dashoffset: 0;
+            opacity: 0.3;
+          }
+        }
+
+        @keyframes innerCircleReveal {
+          from {
+            stroke-dashoffset: 1500;
+            opacity: 0;
+          }
+          to {
+            stroke-dashoffset: 0;
+            opacity: 0.15;
+          }
+        }
+
         @keyframes contentFadeIn {
           from {
             opacity: 0;
@@ -171,18 +193,29 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
           }
         }
 
+        .role-outer-circle {
+          stroke-dasharray: 2000;
+          animation: circleReveal 600ms ease-out forwards;
+        }
+
+        .role-inner-circle {
+          animation: innerCircleReveal 500ms ease-out 100ms forwards;
+          opacity: 0;
+        }
+
         .role-content-title {
-          animation: contentFadeIn 300ms ease-out 100ms both;
-        }
-        .role-content-badge {
-          animation: contentFadeIn 300ms ease-out 150ms both;
-        }
-        .role-content-divider {
           animation: contentFadeIn 300ms ease-out 200ms both;
         }
-        .role-content-mission {
+        .role-content-badge {
           animation: contentFadeIn 300ms ease-out 250ms both;
         }
+        .role-content-divider {
+          animation: contentFadeIn 300ms ease-out 300ms both;
+        }
+        .role-content-mission {
+          animation: contentFadeIn 300ms ease-out 350ms both;
+        }
+
         @keyframes memberLinkReveal {
           from {
             opacity: 0;
@@ -195,6 +228,14 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
         }
 
         @media (prefers-reduced-motion: reduce) {
+          .role-outer-circle,
+          .role-inner-circle {
+            animation: none !important;
+            stroke-dasharray: none !important;
+            stroke-dashoffset: 0 !important;
+          }
+          .role-outer-circle { opacity: 0.3 !important; }
+          .role-inner-circle { opacity: 0.15 !important; }
           .role-content-title,
           .role-content-badge,
           .role-content-divider,
@@ -226,17 +267,18 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
 
         {/* Outer boundary circle */}
         <circle
+          className="role-outer-circle"
           cx={centerX}
           cy={centerY}
           r={maxRadius}
           fill="none"
           stroke={strokeColor}
           strokeWidth={2}
-          opacity={0.3}
         />
 
         {/* Inner decorative ring */}
         <circle
+          className="role-inner-circle"
           cx={centerX}
           cy={centerY}
           r={maxRadius * 0.75}
@@ -244,7 +286,6 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
           stroke={strokeColor}
           strokeWidth={1}
           strokeDasharray="2 4"
-          opacity={0.15}
         />
 
         {/* Role content (foreignObject for HTML rendering) */}

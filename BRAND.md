@@ -33,6 +33,18 @@ Swarmrise provides a light governance model that brings clarity and traceability
 ### Visual Metaphor
 The bee represents collective intelligence, purposeful organization, and productive collaboration. The swarm metaphor extends to how organizations can self-organize efficiently when given the right structures.
 
+### Organizational Philosophy
+Swarmrise promotes flat, non-hierarchical organizations where:
+
+- **Roles are equal in visual weight** - Leader, secretary, referee, and all other roles are peers, not superiors. No role should appear visually larger, bolder, or more prominent than another.
+- **Authority is distributed** - Power flows through the collective, not down from the top. The structure is a network, not a pyramid.
+- **Clarity without hierarchy** - Different roles have different functions (indicated by color or icon), but not different importance (indicated by size).
+
+This philosophy must be reflected in all UI decisions. When visualizing organizational structures:
+- All role circles MUST be the same size
+- Typography weight and size MUST be consistent across all roles
+- Visual differentiation uses color or iconography, never scale or prominence
+
 ---
 
 ## Logo

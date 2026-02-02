@@ -338,6 +338,9 @@ function calculateRolePlacement(
     referee: -Math.PI / 2 + (4 * Math.PI) / 3, // Bottom-left (5π/6 = 150°)
   };
 
+  // All roles use the same radius - flat organization, no visual hierarchy
+  const ROLE_RADIUS = 36;
+
   if (leader) {
     const angle = specialRoleAngles.leader;
     const member = memberMap.get(leader.memberId);
@@ -345,7 +348,7 @@ function calculateRolePlacement(
       role: leader,
       x: centerX + Math.cos(angle) * triangleRadius,
       y: centerY + Math.sin(angle) * triangleRadius,
-      radius: 42,
+      radius: ROLE_RADIUS,
       memberName: member ? `${member.firstname} ${member.surname}` : undefined,
     });
   }
@@ -357,7 +360,7 @@ function calculateRolePlacement(
       role: secretary,
       x: centerX + Math.cos(angle) * triangleRadius,
       y: centerY + Math.sin(angle) * triangleRadius,
-      radius: 38,
+      radius: ROLE_RADIUS,
       memberName: member ? `${member.firstname} ${member.surname}` : undefined,
     });
   }
@@ -369,12 +372,12 @@ function calculateRolePlacement(
       role: referee,
       x: centerX + Math.cos(angle) * triangleRadius,
       y: centerY + Math.sin(angle) * triangleRadius,
-      radius: 38,
+      radius: ROLE_RADIUS,
       memberName: member ? `${member.firstname} ${member.surname}` : undefined,
     });
   }
 
-  // Regular roles distributed on outer ring
+  // Regular roles distributed on outer ring - same size as special roles
   regularRoles.forEach((role, i) => {
     // Start from top and go clockwise
     const angle = (2 * Math.PI * i) / Math.max(regularRoles.length, 1) - Math.PI / 2;
@@ -383,7 +386,7 @@ function calculateRolePlacement(
       role,
       x: centerX + Math.cos(angle) * outerRing,
       y: centerY + Math.sin(angle) * outerRing,
-      radius: 32,
+      radius: ROLE_RADIUS,
       memberName: member ? `${member.firstname} ${member.surname}` : undefined,
     });
   });

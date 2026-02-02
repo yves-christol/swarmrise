@@ -43,7 +43,8 @@ export const RoleNode = memo(function RoleNode({
   const { role, x, y, radius, memberName } = position;
 
   const strokeColor = getRoleStroke(role.roleType);
-  const strokeWidth = role.roleType === "leader" ? 3 : 2;
+  // All roles use same stroke width - flat organization, no visual hierarchy
+  const strokeWidth = 2;
 
   return (
     <g
@@ -129,16 +130,16 @@ export const RoleNode = memo(function RoleNode({
         </g>
       )}
 
-      {/* Role title */}
+      {/* Role title - same typography for all roles (flat organization) */}
       <text
         x={x}
         y={memberName ? y - 6 : y}
         textAnchor="middle"
         dominantBaseline="central"
         fill="var(--diagram-node-text)"
-        fontSize={role.roleType === "leader" ? 14 : 12}
+        fontSize={12}
         fontFamily="'Montserrat Alternates', sans-serif"
-        fontWeight={role.roleType === "leader" ? 700 : 500}
+        fontWeight={500}
         style={{
           pointerEvents: "none",
           userSelect: "none",

@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { internal } from "../_generated/api";
 
-const TEST_ORGA_NAME_PREFIX = "TEST_MODEL_";
+const TEST_ORGA_NAME_PREFIX = "INFOMAX DEMO";
 
 // Realistic organizational structure as a tree
 // Each node has: name, childTeams, and roleTemplates for that team
@@ -167,7 +167,7 @@ const OPERATIONS_ROLES: RoleTemplate[] = [
 
 // Build the organizational tree structure
 const ORGANIZATION_TREE: TeamTemplate = {
-  name: "Executive Office",
+  name: "Core Team",
   roles: EXECUTIVE_ROLES,
   children: [
     {
@@ -447,7 +447,7 @@ export const createTestOrganization = internalMutation({
         orgaId,
         teamId,
         parentTeamId,
-        title: parentTeamId === undefined ? "Chief Executive Officer" : `${template.name} Director`,
+        title: parentTeamId === undefined ? "Chief Executive Officer" : "Leader",
         roleType: "leader",
         mission: parentTeamId === undefined
           ? "Lead the organization and set strategic direction"
@@ -465,7 +465,7 @@ export const createTestOrganization = internalMutation({
       const secretaryRoleId = await ctx.db.insert("roles", {
         orgaId,
         teamId,
-        title: `${template.name} Secretary`,
+        title: "Secretary",
         roleType: "secretary",
         mission: `Coordinate administrative functions for ${template.name}`,
         duties: ["Meeting coordination", "Documentation", "Communication management"],
@@ -479,7 +479,7 @@ export const createTestOrganization = internalMutation({
       const refereeRoleId = await ctx.db.insert("roles", {
         orgaId,
         teamId,
-        title: `${template.name} Facilitator`,
+        title: "Referee",
         roleType: "referee",
         mission: `Ensure fair processes and resolve conflicts within ${template.name}`,
         duties: ["Process facilitation", "Conflict resolution", "Decision support"],

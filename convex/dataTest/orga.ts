@@ -430,10 +430,11 @@ export const createTestOrganization = internalMutation({
     };
 
     // Recursive function to create teams from the template tree
+    // Returns both the team ID and the source role ID (the role in parent team representing this team)
     const createTeamFromTemplate = async (
       template: TeamTemplate,
       parentTeamId: Id<"teams"> | undefined
-    ): Promise<Id<"teams">> => {
+    ): Promise<{ teamId: Id<"teams">; sourceRoleId: Id<"roles"> | undefined }> => {
       // Create the team
       const teamId = await ctx.db.insert("teams", {
         orgaId,
@@ -441,20 +442,45 @@ export const createTestOrganization = internalMutation({
       });
       teamIds.push(teamId);
 
-      // Create Leader role (first team gets the admin, others get random members)
+      // Determine leader info
       const leaderMemberId = parentTeamId === undefined ? adminMemberId : getRandomMember();
+      const leaderTitle = parentTeamId === undefined ? "Chief Executive Officer" : template.name;
+      const leaderMission = parentTeamId === undefined
+        ? "Lead the organization and set strategic direction"
+        : `Lead the ${template.name} team and drive departmental excellence`;
+      const leaderDuties = parentTeamId === undefined
+        ? ["Set company vision", "Lead executive team", "Stakeholder management"]
+        : [`Manage ${template.name} operations`, "Team leadership", "Strategic planning"];
+
+      // For non-root teams, first create the SOURCE role in the PARENT team
+      // This represents the child team in the parent team (double role pattern)
+      let sourceRoleId: Id<"roles"> | undefined = undefined;
+      if (parentTeamId !== undefined) {
+        sourceRoleId = await ctx.db.insert("roles", {
+          orgaId,
+          teamId: parentTeamId, // Source role belongs to the PARENT team
+          title: leaderTitle,
+          mission: leaderMission,
+          duties: leaderDuties,
+          memberId: leaderMemberId,
+          // No roleType - this is a regular role representing the child team
+        });
+        totalRoleCount++;
+        await assignRoleToMember(leaderMemberId, sourceRoleId);
+      }
+
+      // Create Leader role in the child team
+      // For root team: no parentTeamId, no linkedRoleId
+      // For non-root teams: set parentTeamId and linkedRoleId to establish the double role pattern
       const leaderRoleId = await ctx.db.insert("roles", {
         orgaId,
         teamId,
         parentTeamId,
-        title: parentTeamId === undefined ? "Chief Executive Officer" : "Leader",
+        linkedRoleId: sourceRoleId, // Link to the source role in parent team
+        title: leaderTitle,
         roleType: "leader",
-        mission: parentTeamId === undefined
-          ? "Lead the organization and set strategic direction"
-          : `Lead the ${template.name} team and drive departmental excellence`,
-        duties: parentTeamId === undefined
-          ? ["Set company vision", "Lead executive team", "Stakeholder management"]
-          : [`Manage ${template.name} operations`, "Team leadership", "Strategic planning"],
+        mission: leaderMission,
+        duties: leaderDuties,
         memberId: leaderMemberId,
       });
       totalRoleCount++;
@@ -509,7 +535,7 @@ export const createTestOrganization = internalMutation({
         await createTeamFromTemplate(childTemplate, teamId);
       }
 
-      return teamId;
+      return { teamId, sourceRoleId };
     };
 
     // Create the entire organization tree structure

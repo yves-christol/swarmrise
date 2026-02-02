@@ -49,7 +49,7 @@ export const RoleNode = memo(function RoleNode({
   return (
     <g
       role="button"
-      aria-label={`${role.title}${role.roleType ? `, ${role.roleType}` : ""}${memberName ? `, assigned to ${memberName}` : ""}`}
+      aria-label={`${role.title}${role.roleType ? `, ${role.roleType}` : ""}${memberName ? `, assigned to ${memberName}` : ""}${role.linkedRoleId ? ", synced from parent team" : ""}`}
       tabIndex={0}
       style={{
         cursor: "pointer",
@@ -78,7 +78,7 @@ export const RoleNode = memo(function RoleNode({
         />
       )}
 
-      {/* Main circle */}
+      {/* Main circle - dashed stroke for linked roles (cannot be edited directly) */}
       <circle
         cx={x}
         cy={y}
@@ -86,6 +86,7 @@ export const RoleNode = memo(function RoleNode({
         fill="var(--diagram-node-fill)"
         stroke={strokeColor}
         strokeWidth={strokeWidth}
+        strokeDasharray={role.linkedRoleId ? "6 3" : undefined}
         style={{
           transition: "stroke 150ms ease-out, stroke-width 150ms ease-out",
           filter: isHovered ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2))" : "none",
@@ -130,6 +131,28 @@ export const RoleNode = memo(function RoleNode({
         </g>
       )}
 
+      {/* Linked role badge (for roles synced from parent team - double role pattern) */}
+      {role.linkedRoleId && (
+        <g>
+          <circle
+            cx={x - radius * 0.7}
+            cy={y - radius * 0.7}
+            r={9}
+            fill="#64748b"
+          />
+          {/* Chain link icon */}
+          <g transform={`translate(${x - radius * 0.7}, ${y - radius * 0.7}) scale(0.35)`}>
+            <path
+              d="M-8,-2 C-8,-6 -5,-8 -2,-8 L2,-8 C6,-8 8,-5 8,-2 L8,2 C8,5 6,8 2,8 L-2,8 C-5,8 -8,5 -8,2 L-8,-2 M-4,0 L4,0"
+              fill="none"
+              stroke="white"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+          </g>
+        </g>
+      )}
+
       {/* Role title - same typography for all roles (flat organization) */}
       <text
         x={x}
@@ -169,40 +192,66 @@ export const RoleNode = memo(function RoleNode({
       {/* Full details tooltip on hover */}
       {isHovered && (
         <g style={{ pointerEvents: "none" }}>
-          <rect
-            x={x - 80}
-            y={y + radius + 12}
-            width={160}
-            height={memberName ? 44 : 28}
-            rx={6}
-            fill="var(--diagram-tooltip-bg)"
-            stroke="var(--diagram-tooltip-border)"
-            strokeWidth={1}
-          />
-          <text
-            x={x}
-            y={y + radius + 28}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill="var(--diagram-tooltip-text)"
-            fontSize={12}
-            fontWeight={500}
-          >
-            {role.title}
-          </text>
-          {memberName && (
-            <text
-              x={x}
-              y={y + radius + 44}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="var(--diagram-tooltip-text)"
-              fontSize={11}
-              opacity={0.8}
-            >
-              {memberName}
-            </text>
-          )}
+          {/* Calculate tooltip height based on content */}
+          {(() => {
+            const hasLinkedRole = !!role.linkedRoleId;
+            const baseHeight = 28;
+            const memberHeight = memberName ? 16 : 0;
+            const linkedHeight = hasLinkedRole ? 16 : 0;
+            const tooltipHeight = baseHeight + memberHeight + linkedHeight;
+
+            return (
+              <>
+                <rect
+                  x={x - 90}
+                  y={y + radius + 12}
+                  width={180}
+                  height={tooltipHeight}
+                  rx={6}
+                  fill="var(--diagram-tooltip-bg)"
+                  stroke="var(--diagram-tooltip-border)"
+                  strokeWidth={1}
+                />
+                <text
+                  x={x}
+                  y={y + radius + 28}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fill="var(--diagram-tooltip-text)"
+                  fontSize={12}
+                  fontWeight={500}
+                >
+                  {role.title}
+                </text>
+                {memberName && (
+                  <text
+                    x={x}
+                    y={y + radius + 44}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fill="var(--diagram-tooltip-text)"
+                    fontSize={11}
+                    opacity={0.8}
+                  >
+                    {memberName}
+                  </text>
+                )}
+                {hasLinkedRole && (
+                  <text
+                    x={x}
+                    y={y + radius + (memberName ? 58 : 44)}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fill="#94a3b8"
+                    fontSize={10}
+                    fontStyle="italic"
+                  >
+                    ⛓ Synced from parent team
+                  </text>
+                )}
+              </>
+            );
+          })()}
         </g>
       )}
     </g>

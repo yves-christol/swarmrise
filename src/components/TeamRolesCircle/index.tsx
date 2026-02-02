@@ -258,6 +258,7 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
             <li key={pos.role._id} className="py-1">
               {pos.role.title}
               {pos.role.roleType && ` (${pos.role.roleType})`}
+              {pos.role.linkedRoleId && " [Synced from parent team]"}
               {pos.memberName && ` - ${pos.memberName}`}
             </li>
           ))}
@@ -317,6 +318,7 @@ type RoleData = {
   orgaId: Id<"orgas">;
   teamId: Id<"teams">;
   parentTeamId?: Id<"teams">;
+  linkedRoleId?: Id<"roles">; // For leader roles: points to source role in parent team (double role pattern)
   title: string;
   roleType?: "leader" | "secretary" | "referee";
   mission: string;

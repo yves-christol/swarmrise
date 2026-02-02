@@ -6,6 +6,7 @@ export type RoleData = {
   orgaId: Id<"orgas">;
   teamId: Id<"teams">;
   parentTeamId?: Id<"teams">;
+  linkedRoleId?: Id<"roles">; // For leader roles: points to source role in parent team (double role pattern)
   title: string;
   roleType?: "leader" | "secretary" | "referee";
   mission: string;

@@ -42,12 +42,19 @@ function getRoleTypeLabel(roleType: "leader" | "secretary" | "referee"): string 
   }
 }
 
-export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
+export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole }: RoleFocusViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [showDuties, setShowDuties] = useState(false);
 
   // Fetch role data
   const role = useQuery(api.roles.functions.getRoleById, { roleId });
+
+  // Fetch linked role's team for navigation (if this is a linked role)
+  const linkedRole = useQuery(
+    api.roles.functions.getRoleById,
+    role?.linkedRoleId ? { roleId: role.linkedRoleId } : "skip"
+  );
 
   // Fetch team for back button label
   const team = useQuery(
@@ -80,16 +87,37 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
     return () => resizeObserver.disconnect();
   }, []);
 
-  // Handle Escape key
+  // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onZoomOut();
+      // Don't handle if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.key) {
+        case "Escape":
+          onZoomOut();
+          break;
+        case "d":
+        case "D":
+          // Toggle duties section
+          if (role?.duties && role.duties.length > 0) {
+            setShowDuties((prev) => !prev);
+          }
+          break;
+        case "l":
+        case "L":
+          // Navigate to linked role (source role in parent team)
+          if (linkedRole && onNavigateToRole) {
+            onNavigateToRole(linkedRole._id, linkedRole.teamId);
+          }
+          break;
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onZoomOut]);
+  }, [onZoomOut, role?.duties, linkedRole, onNavigateToRole]);
 
   // Calculate layout
   const centerX = dimensions.width / 2;
@@ -215,6 +243,41 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
         .role-content-mission {
           animation: contentFadeIn 300ms ease-out 350ms both;
         }
+        .role-content-duties {
+          animation: contentFadeIn 300ms ease-out 400ms both;
+        }
+
+        @keyframes expandDuties {
+          from {
+            max-height: 0;
+            opacity: 0;
+          }
+          to {
+            max-height: 200px;
+            opacity: 1;
+          }
+        }
+
+        @keyframes collapseDuties {
+          from {
+            max-height: 200px;
+            opacity: 1;
+          }
+          to {
+            max-height: 0;
+            opacity: 0;
+          }
+        }
+
+        .duties-expanded {
+          animation: expandDuties 300ms ease-out forwards;
+          overflow: hidden;
+        }
+
+        .duties-collapsed {
+          animation: collapseDuties 200ms ease-out forwards;
+          overflow: hidden;
+        }
 
         @keyframes memberLinkReveal {
           from {
@@ -239,10 +302,17 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
           .role-content-title,
           .role-content-badge,
           .role-content-divider,
-          .role-content-mission {
+          .role-content-mission,
+          .role-content-duties {
             animation: none !important;
             opacity: 1 !important;
             transform: none !important;
+          }
+          .duties-expanded,
+          .duties-collapsed {
+            animation: none !important;
+            max-height: none !important;
+            opacity: 1 !important;
           }
           g[role="button"] {
             animation: none !important;
@@ -254,6 +324,26 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
 
       {/* Back button */}
       <BackToTeamButton teamName={team?.name || "Team"} onClick={onZoomOut} />
+
+      {/* Keyboard hints (shown in corner) */}
+      <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-gray-400 dark:text-gray-500">
+        <span className="flex items-center gap-1">
+          <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">Esc</kbd>
+          <span>Back</span>
+        </span>
+        {role.duties && role.duties.length > 0 && (
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">D</kbd>
+            <span>Duties</span>
+          </span>
+        )}
+        {role.linkedRoleId && linkedRole && (
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">L</kbd>
+            <span>Source</span>
+          </span>
+        )}
+      </div>
 
       {/* SVG Diagram */}
       <svg
@@ -340,8 +430,26 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
               </div>
             )}
 
-            {/* Linked Role Badge (for double role pattern) */}
-            {role.linkedRoleId && (
+            {/* Linked Role Badge (for double role pattern) - clickable to navigate */}
+            {role.linkedRoleId && linkedRole && (
+              <button
+                className="role-content-badge flex items-center gap-1.5 px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors cursor-pointer border-none"
+                onClick={() => onNavigateToRole?.(linkedRole._id, linkedRole.teamId)}
+                title="Go to source role in parent team (L)"
+              >
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500 dark:text-gray-400">
+                  <path d="M4,6 C4,3 6,1 9,1 L11,1 C14,1 16,3 16,6 L16,10 C16,13 14,15 11,15 L9,15 C6,15 4,13 4,10 M6,8 L10,8" />
+                </svg>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  Synced from parent
+                </span>
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-500">
+                  <path d="M6 4l4 4-4 4" />
+                </svg>
+              </button>
+            )}
+            {/* Non-clickable badge when linked role data not loaded yet */}
+            {role.linkedRoleId && !linkedRole && (
               <div className="role-content-badge flex items-center gap-1.5 px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500 dark:text-gray-400">
                   <path d="M4,6 C4,3 6,1 9,1 L11,1 C14,1 16,3 16,6 L16,10 C16,13 14,15 11,15 L9,15 C6,15 4,13 4,10 M6,8 L10,8" />
@@ -364,6 +472,44 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
                 {role.mission || "No mission defined"}
               </p>
             </div>
+
+            {/* Duties Section (expandable) */}
+            {role.duties && role.duties.length > 0 && (
+              <div className="role-content-duties flex flex-col items-center gap-1 max-w-xs">
+                <button
+                  onClick={() => setShowDuties((prev) => !prev)}
+                  className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer bg-transparent border-none"
+                  title={showDuties ? "Hide duties (D)" : "Show duties (D)"}
+                >
+                  <svg
+                    width="10"
+                    height="10"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className={`transition-transform duration-200 ${showDuties ? "rotate-90" : ""}`}
+                  >
+                    <path d="M6 4l4 4-4 4" />
+                  </svg>
+                  <span className="font-swarm font-semibold uppercase tracking-wide">
+                    Duties ({role.duties.length})
+                  </span>
+                </button>
+                <div className={showDuties ? "duties-expanded" : "duties-collapsed"}>
+                  {showDuties && (
+                    <ul className="text-xs text-center text-gray-600 dark:text-gray-400 space-y-1 mt-1">
+                      {role.duties.map((duty, i) => (
+                        <li key={i} className="flex items-start gap-1">
+                          <span className="text-gray-400">-</span>
+                          <span>{duty}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </foreignObject>
 
@@ -384,7 +530,10 @@ export function RoleFocusView({ roleId, onZoomOut }: RoleFocusViewProps) {
 
       {/* Accessibility: screen reader announcement */}
       <div role="status" aria-live="polite" className="sr-only">
-        Now viewing role: {role.title}. Press Escape to return to team view.
+        Now viewing role: {role.title}.
+        Press Escape to return to team view.
+        {role.duties && role.duties.length > 0 && " Press D to toggle duties."}
+        {role.linkedRoleId && " Press L to navigate to source role."}
       </div>
 
       {/* Accessibility: text alternative */}

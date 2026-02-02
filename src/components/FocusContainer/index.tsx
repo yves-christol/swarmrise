@@ -24,7 +24,7 @@ type TransitionType =
 const TRANSITION_DURATION = 400; // ms
 
 export function FocusContainer({ orgaId }: FocusContainerProps) {
-  const { focus, focusOnOrga, focusOnTeamFromRole, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd } = useFocus();
+  const { focus, focusOnOrga, focusOnRole, focusOnTeamFromRole, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd } = useFocus();
 
   // Track which view to show during transition
   const [currentView, setCurrentView] = useState<ViewType>(focus.type);
@@ -205,6 +205,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           <RoleFocusView
             roleId={focus.roleId}
             onZoomOut={focusOnTeamFromRole}
+            onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
           />
         ) : currentView === "team" && focus.type === "team" ? (
           <TeamRolesCircle

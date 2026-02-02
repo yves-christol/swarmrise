@@ -319,42 +319,60 @@ function calculateRolePlacement(
 
   // Sort roles by type for ring placement
   const leader = roles.find((r) => r.roleType === "leader");
-  const specialRoles = roles.filter(
-    (r) => r.roleType === "secretary" || r.roleType === "referee"
-  );
+  const secretary = roles.find((r) => r.roleType === "secretary");
+  const referee = roles.find((r) => r.roleType === "referee");
   const regularRoles = roles.filter((r) => !r.roleType);
 
-  // Ring radii (leader is at center, not on a ring)
-  const middleRing = maxRadius * 0.6; // Special roles
+  // Ring radii
+  const triangleRadius = maxRadius * 0.35; // Distance from center to each special role vertex
   const outerRing = maxRadius * 0.85; // Regular roles
 
   const positions: RolePosition[] = [];
 
-  // Leader at center
+  // Special roles (leader, secretary, referee) form an equilateral triangle
+  // with its centroid at the center of the circle
+  // Leader at top, secretary bottom-right, referee bottom-left
+  const specialRoleAngles = {
+    leader: -Math.PI / 2, // Top (pointing up)
+    secretary: -Math.PI / 2 + (2 * Math.PI) / 3, // Bottom-right (π/6 = 30°)
+    referee: -Math.PI / 2 + (4 * Math.PI) / 3, // Bottom-left (5π/6 = 150°)
+  };
+
   if (leader) {
+    const angle = specialRoleAngles.leader;
     const member = memberMap.get(leader.memberId);
     positions.push({
       role: leader,
-      x: centerX,
-      y: centerY,
-      radius: 45,
+      x: centerX + Math.cos(angle) * triangleRadius,
+      y: centerY + Math.sin(angle) * triangleRadius,
+      radius: 42,
       memberName: member ? `${member.firstname} ${member.surname}` : undefined,
     });
   }
 
-  // Special roles distributed on middle ring
-  specialRoles.forEach((role, i) => {
-    // Position special roles on opposite sides
-    const angle = Math.PI / 2 + (i === 0 ? -Math.PI / 4 : Math.PI / 4);
-    const member = memberMap.get(role.memberId);
+  if (secretary) {
+    const angle = specialRoleAngles.secretary;
+    const member = memberMap.get(secretary.memberId);
     positions.push({
-      role,
-      x: centerX + Math.cos(angle) * middleRing,
-      y: centerY + Math.sin(angle) * middleRing,
+      role: secretary,
+      x: centerX + Math.cos(angle) * triangleRadius,
+      y: centerY + Math.sin(angle) * triangleRadius,
       radius: 38,
       memberName: member ? `${member.firstname} ${member.surname}` : undefined,
     });
-  });
+  }
+
+  if (referee) {
+    const angle = specialRoleAngles.referee;
+    const member = memberMap.get(referee.memberId);
+    positions.push({
+      role: referee,
+      x: centerX + Math.cos(angle) * triangleRadius,
+      y: centerY + Math.sin(angle) * triangleRadius,
+      radius: 38,
+      memberName: member ? `${member.firstname} ${member.surname}` : undefined,
+    });
+  }
 
   // Regular roles distributed on outer ring
   regularRoles.forEach((role, i) => {

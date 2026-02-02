@@ -399,6 +399,89 @@ export const updateRole = mutation({
 });
 
 /**
+ * Get linked leader roles that point to roles in a given team
+ * Used to display daughter team links in the team focus view
+ * Returns linked roles along with their team information
+ */
+export const getLinkedLeaderRolesForTeam = query({
+  args: {
+    teamId: v.id("teams"),
+  },
+  returns: v.array(
+    v.object({
+      linkedRole: v.object({
+        _id: v.id("roles"),
+        teamId: v.id("teams"),
+        linkedRoleId: v.id("roles"),
+        title: v.string(),
+        roleType: v.optional(v.union(v.literal("leader"), v.literal("secretary"), v.literal("referee"))),
+      }),
+      sourceRoleId: v.id("roles"),
+      daughterTeam: v.object({
+        _id: v.id("teams"),
+        name: v.string(),
+      }),
+    })
+  ),
+  handler: async (ctx, args) => {
+    const orgaId = await getOrgaFromTeam(ctx, args.teamId);
+    await requireAuthAndMembership(ctx, orgaId);
+
+    // Get all roles in the current team
+    const teamRoles = await ctx.db
+      .query("roles")
+      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
+      .collect();
+
+    const result: {
+      linkedRole: {
+        _id: Id<"roles">;
+        teamId: Id<"teams">;
+        linkedRoleId: Id<"roles">;
+        title: string;
+        roleType?: "leader" | "secretary" | "referee";
+      };
+      sourceRoleId: Id<"roles">;
+      daughterTeam: {
+        _id: Id<"teams">;
+        name: string;
+      };
+    }[] = [];
+
+    // For each role in the current team, find linked roles pointing to it
+    for (const role of teamRoles) {
+      const linkedRoles = await ctx.db
+        .query("roles")
+        .withIndex("by_linked_role", (q) => q.eq("linkedRoleId", role._id))
+        .collect();
+
+      for (const linkedRole of linkedRoles) {
+        // Get the team this linked role belongs to (daughter team)
+        const daughterTeam = await ctx.db.get(linkedRole.teamId);
+        if (daughterTeam && linkedRole.linkedRoleId) {
+          result.push({
+            linkedRole: {
+              _id: linkedRole._id,
+              teamId: linkedRole.teamId,
+              linkedRoleId: linkedRole.linkedRoleId,
+              title: linkedRole.title,
+              roleType: linkedRole.roleType,
+            },
+            sourceRoleId: role._id,
+            daughterTeam: {
+              _id: daughterTeam._id,
+              name: daughterTeam.name,
+            },
+          });
+        }
+      }
+    }
+
+    return result;
+  },
+});
+
+/**
  * Delete a role
  */
 export const deleteRole = mutation({

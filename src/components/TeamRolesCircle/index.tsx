@@ -27,9 +27,6 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
   // Fetch roles for this team
   const roles = useQuery(api.roles.functions.listRolesInTeam, { teamId });
 
-  // Fetch child teams (subteams)
-  const childTeams = useQuery(api.teams.functions.listChildTeams, { parentTeamId: teamId });
-
   // Find the leader role to get parent team connection
   const leaderRole = roles?.find((r) => r.roleType === "leader");
   const parentTeamId = leaderRole?.parentTeamId;
@@ -38,6 +35,12 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
   const parentTeam = useQuery(
     api.teams.functions.getTeamById,
     parentTeamId ? { teamId: parentTeamId } : "skip"
+  );
+
+  // Fetch linked leader roles pointing to roles in this team (daughter teams)
+  const linkedLeaderRoles = useQuery(
+    api.roles.functions.getLinkedLeaderRolesForTeam,
+    { teamId }
   );
 
   // Fetch members to display names
@@ -79,12 +82,6 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
     return calculateRolePlacement(roles, dimensions, memberMap);
   }, [roles, dimensions, memberMap]);
 
-  // Calculate child team positions (outside the main circle)
-  const childTeamPositions = useMemo(() => {
-    if (!childTeams || childTeams.length === 0) return [];
-    return calculateChildTeamPlacement(childTeams, dimensions);
-  }, [childTeams, dimensions]);
-
   // Calculate parent team position (outside the circle, connected to leader)
   const parentTeamPosition = useMemo(() => {
     if (!parentTeam || !rolePositions.length) return null;
@@ -92,6 +89,12 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
     if (!leaderPosition) return null;
     return calculateParentTeamPlacement(parentTeam, leaderPosition, dimensions);
   }, [parentTeam, rolePositions, dimensions]);
+
+  // Calculate daughter team positions (based on linked leader roles)
+  const daughterTeamPositions = useMemo(() => {
+    if (!linkedLeaderRoles || !rolePositions.length) return [];
+    return calculateDaughterTeamPlacements(linkedLeaderRoles, rolePositions, dimensions);
+  }, [linkedLeaderRoles, rolePositions, dimensions]);
 
   // Calculate center and radius
   const centerX = dimensions.width / 2;
@@ -228,16 +231,6 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
           />
         ))}
 
-        {/* Child teams (subteams) - positioned outside the main circle */}
-        {childTeamPositions.map((pos, index) => (
-          <ChildTeamNode
-            key={pos.team._id}
-            position={pos}
-            index={index}
-            onZoomIn={() => focusOnTeam(pos.team._id)}
-          />
-        ))}
-
         {/* Parent team - positioned outside the main circle, connected to leader */}
         {parentTeamPosition && (
           <ParentTeamNode
@@ -246,6 +239,16 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
             onNavigate={() => focusOnTeam(parentTeamPosition.team._id)}
           />
         )}
+
+        {/* Daughter teams - linked to source roles in this team */}
+        {daughterTeamPositions.map((pos, index) => (
+          <DaughterTeamNode
+            key={pos.daughterTeam._id}
+            position={pos}
+            index={index}
+            onNavigate={() => focusOnTeam(pos.daughterTeam._id)}
+          />
+        ))}
       </svg>
 
       {/* Accessibility: text list alternative */}
@@ -370,52 +373,6 @@ function calculateRolePlacement(
   return positions;
 }
 
-// Child team type for positioning
-type ChildTeamData = {
-  _id: Id<"teams">;
-  _creationTime: number;
-  orgaId: Id<"orgas">;
-  name: string;
-};
-
-type ChildTeamPosition = {
-  team: ChildTeamData;
-  x: number;
-  y: number;
-  radius: number;
-};
-
-// Calculate child team positions (outside the main circle)
-function calculateChildTeamPlacement(
-  childTeams: ChildTeamData[],
-  containerSize: { width: number; height: number }
-): ChildTeamPosition[] {
-  const centerX = containerSize.width / 2;
-  const centerY = containerSize.height / 2;
-  const maxRadius = Math.min(containerSize.width, containerSize.height) / 2 - 40;
-
-  // Position child teams outside the main circle
-  const outerDistance = maxRadius + 60; // Outside the main boundary
-  const childRadius = 35;
-
-  return childTeams.map((team, i) => {
-    // Distribute around the bottom half of the circle (more natural for hierarchy)
-    const startAngle = Math.PI * 0.25; // Start at bottom-right
-    const endAngle = Math.PI * 0.75; // End at bottom-left
-    const angleRange = endAngle - startAngle;
-    const angle = childTeams.length === 1
-      ? Math.PI / 2 // Single child at bottom
-      : startAngle + (angleRange * i) / (childTeams.length - 1);
-
-    return {
-      team,
-      x: centerX + Math.cos(angle) * outerDistance,
-      y: centerY + Math.sin(angle) * outerDistance,
-      radius: childRadius,
-    };
-  });
-}
-
 // Parent team type for positioning
 type ParentTeamData = {
   _id: Id<"teams">;
@@ -430,6 +387,21 @@ type ParentTeamPosition = {
   y: number;
   radius: number;
   leaderPosition: { x: number; y: number };
+};
+
+// Daughter team type for positioning
+type DaughterTeamData = {
+  _id: Id<"teams">;
+  name: string;
+};
+
+type DaughterTeamPosition = {
+  daughterTeam: DaughterTeamData;
+  sourceRoleId: Id<"roles">;
+  x: number;
+  y: number;
+  radius: number;
+  sourceRolePosition: { x: number; y: number };
 };
 
 // Calculate parent team position (outside the main circle, along the leader's direction)
@@ -459,6 +431,68 @@ function calculateParentTeamPlacement(
     radius: parentRadius,
     leaderPosition: { x: leaderPosition.x, y: leaderPosition.y },
   };
+}
+
+// Type for linked leader role data from the API
+type LinkedLeaderRoleData = {
+  linkedRole: {
+    _id: Id<"roles">;
+    teamId: Id<"teams">;
+    linkedRoleId: Id<"roles">;
+    title: string;
+    roleType?: "leader" | "secretary" | "referee";
+  };
+  sourceRoleId: Id<"roles">;
+  daughterTeam: {
+    _id: Id<"teams">;
+    name: string;
+  };
+};
+
+// Calculate daughter team positions (outside the circle, along the source role's direction)
+function calculateDaughterTeamPlacements(
+  linkedLeaderRoles: LinkedLeaderRoleData[],
+  rolePositions: RolePosition[],
+  containerSize: { width: number; height: number }
+): DaughterTeamPosition[] {
+  const centerX = containerSize.width / 2;
+  const centerY = containerSize.height / 2;
+  const maxRadius = Math.min(containerSize.width, containerSize.height) / 2 - 40;
+
+  // Place outside the main circle boundary
+  const daughterDistance = maxRadius + 55;
+  const daughterRadius = 28; // Same as parent team node
+
+  return linkedLeaderRoles.map((linked) => {
+    // Find the source role position
+    const sourceRolePosition = rolePositions.find((p) => p.role._id === linked.sourceRoleId);
+    if (!sourceRolePosition) {
+      // Fallback position at bottom if source role not found
+      return {
+        daughterTeam: linked.daughterTeam,
+        sourceRoleId: linked.sourceRoleId,
+        x: centerX,
+        y: centerY + daughterDistance,
+        radius: daughterRadius,
+        sourceRolePosition: { x: centerX, y: centerY },
+      };
+    }
+
+    // Position along the vector from center through source role
+    const sourceAngle = Math.atan2(
+      sourceRolePosition.y - centerY,
+      sourceRolePosition.x - centerX
+    );
+
+    return {
+      daughterTeam: linked.daughterTeam,
+      sourceRoleId: linked.sourceRoleId,
+      x: centerX + Math.cos(sourceAngle) * daughterDistance,
+      y: centerY + Math.sin(sourceAngle) * daughterDistance,
+      radius: daughterRadius,
+      sourceRolePosition: { x: sourceRolePosition.x, y: sourceRolePosition.y },
+    };
+  });
 }
 
 // Parent team node component
@@ -581,35 +615,35 @@ function ParentTeamNode({
   );
 }
 
-// Child team node component
-function ChildTeamNode({
+// Daughter team node component (linked to source role in this team)
+function DaughterTeamNode({
   position,
   index,
-  onZoomIn,
+  onNavigate,
 }: {
-  position: ChildTeamPosition;
+  position: DaughterTeamPosition;
   index: number;
-  onZoomIn: () => void;
+  onNavigate: () => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
-  const { team, x, y, radius } = position;
+  const { daughterTeam, x, y, radius, sourceRolePosition } = position;
 
   return (
     <g
       role="button"
-      aria-label={`Subteam: ${team.name}. Click to view.`}
+      aria-label={`Daughter team: ${daughterTeam.name}. Click to navigate.`}
       tabIndex={0}
       style={{
         cursor: "pointer",
         outline: "none",
         animation: `nodeReveal 400ms ease-out both`,
-        animationDelay: `${600 + index * 80}ms`,
+        animationDelay: `${500 + index * 80}ms`,
       }}
-      onClick={onZoomIn}
+      onClick={onNavigate}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onZoomIn();
+          onNavigate();
         }
       }}
       onMouseEnter={() => setIsHovered(true)}
@@ -617,17 +651,30 @@ function ChildTeamNode({
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
-      {/* Connection line to parent circle */}
-      <line
-        x1={position.x}
-        y1={position.y - radius}
-        x2={position.x}
-        y2={position.y - radius - 20}
-        stroke="var(--diagram-node-stroke)"
-        strokeWidth={2}
-        strokeDasharray="4 2"
-        opacity={0.5}
-      />
+      {/* Connection line to source role (from edge of role circle, not center) */}
+      {(() => {
+        // Calculate the point on the source role circle's edge closest to daughter team
+        const dx = x - sourceRolePosition.x;
+        const dy = y - sourceRolePosition.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const roleRadius = 36; // Same as ROLE_RADIUS
+        // Point on role circle edge in direction of daughter team
+        const edgeX = sourceRolePosition.x + (dx / dist) * roleRadius;
+        const edgeY = sourceRolePosition.y + (dy / dist) * roleRadius;
+        return (
+          <line
+            x1={x}
+            y1={y}
+            x2={edgeX}
+            y2={edgeY}
+            stroke="#a78bfa"
+            strokeWidth={2}
+            strokeDasharray="6 3"
+            opacity={isHovered ? 0.9 : 0.6}
+            style={{ transition: "opacity 150ms ease-out" }}
+          />
+        );
+      })()}
 
       {/* Hover glow */}
       {isHovered && (
@@ -636,11 +683,11 @@ function ChildTeamNode({
           cy={y}
           r={radius + 4}
           fill="none"
-          stroke="#eac840"
+          stroke="#a78bfa"
           strokeWidth={1}
           opacity={0.5}
           style={{
-            filter: "drop-shadow(0 0 8px rgba(234, 200, 64, 0.5))",
+            filter: "drop-shadow(0 0 8px rgba(167, 139, 250, 0.5))",
           }}
         />
       )}
@@ -651,7 +698,7 @@ function ChildTeamNode({
         cy={y}
         r={radius}
         fill="var(--diagram-node-fill)"
-        stroke={isHovered ? "#eac840" : "var(--diagram-node-stroke)"}
+        stroke={isHovered ? "#a78bfa" : "var(--diagram-node-stroke)"}
         strokeWidth={2}
         style={{
           transition: "stroke 150ms ease-out",
@@ -659,21 +706,14 @@ function ChildTeamNode({
         }}
       />
 
-      {/* Subteam indicator badge */}
-      <circle
-        cx={x + radius * 0.6}
-        cy={y - radius * 0.6}
-        r={8}
-        fill="#a78bfa"
-      />
+      {/* Down arrow indicator */}
       <text
-        x={x + radius * 0.6}
-        y={y - radius * 0.6}
+        x={x}
+        y={y - 4}
         textAnchor="middle"
         dominantBaseline="central"
-        fill="white"
-        fontSize={9}
-        fontWeight={600}
+        fill="var(--diagram-node-text)"
+        fontSize={12}
         style={{ pointerEvents: "none", userSelect: "none" }}
       >
         ↓
@@ -682,19 +722,14 @@ function ChildTeamNode({
       {/* Team name */}
       <text
         x={x}
-        y={y}
+        y={y + 8}
         textAnchor="middle"
         dominantBaseline="central"
-        fill="var(--diagram-node-text)"
-        fontSize={11}
-        fontFamily="'Montserrat Alternates', sans-serif"
-        fontWeight={500}
-        style={{
-          pointerEvents: "none",
-          userSelect: "none",
-        }}
+        fill="var(--diagram-muted-text)"
+        fontSize={9}
+        style={{ pointerEvents: "none", userSelect: "none" }}
       >
-        {team.name.length > 10 ? team.name.slice(0, 9) + "…" : team.name}
+        {daughterTeam.name.length > 8 ? daughterTeam.name.slice(0, 7) + "…" : daughterTeam.name}
       </text>
     </g>
   );

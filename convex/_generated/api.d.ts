@@ -14,6 +14,7 @@ import type * as crons from "../crons.js";
 import type * as dataTest_orga from "../dataTest/orga.js";
 import type * as dataTest_users from "../dataTest/users.js";
 import type * as decisions_index from "../decisions/index.js";
+import type * as http from "../http.js";
 import type * as invitations_functions from "../invitations/functions.js";
 import type * as invitations_index from "../invitations/index.js";
 import type * as members_functions from "../members/functions.js";
@@ -31,6 +32,9 @@ import type * as topics_index from "../topics/index.js";
 import type * as users_functions from "../users/functions.js";
 import type * as users_index from "../users/index.js";
 import type * as utils from "../utils.js";
+import type * as webhooks_clerk from "../webhooks/clerk.js";
+import type * as webhooks_clerkInternal from "../webhooks/clerkInternal.js";
+import type * as webhooks_clerkVerify from "../webhooks/clerkVerify.js";
 
 import type {
   ApiFromModules,
@@ -45,6 +49,7 @@ declare const fullApi: ApiFromModules<{
   "dataTest/orga": typeof dataTest_orga;
   "dataTest/users": typeof dataTest_users;
   "decisions/index": typeof decisions_index;
+  http: typeof http;
   "invitations/functions": typeof invitations_functions;
   "invitations/index": typeof invitations_index;
   "members/functions": typeof members_functions;
@@ -62,6 +67,9 @@ declare const fullApi: ApiFromModules<{
   "users/functions": typeof users_functions;
   "users/index": typeof users_index;
   utils: typeof utils;
+  "webhooks/clerk": typeof webhooks_clerk;
+  "webhooks/clerkInternal": typeof webhooks_clerkInternal;
+  "webhooks/clerkVerify": typeof webhooks_clerkVerify;
 }>;
 
 /**

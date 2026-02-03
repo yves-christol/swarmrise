@@ -5,13 +5,14 @@ import { useFocus } from "../../tools/orgaStore";
 import { OrgNetworkDiagram } from "../OrgNetworkDiagram";
 import { TeamRolesCircle } from "../TeamRolesCircle";
 import { RoleFocusView } from "../RoleFocusView";
+import { MemberFocusView } from "../MemberFocusView";
 import { Id } from "../../../convex/_generated/dataModel";
 
 type FocusContainerProps = {
   orgaId: Id<"orgas">;
 };
 
-type ViewType = "orga" | "team" | "role";
+type ViewType = "orga" | "team" | "role" | "member";
 type TransitionType =
   | "orga-to-team"
   | "team-to-orga"
@@ -19,12 +20,16 @@ type TransitionType =
   | "role-to-team"
   | "orga-to-role"
   | "role-to-orga"
+  | "role-to-member"
+  | "member-to-role"
+  | "member-to-team"
+  | "team-to-member"
   | null;
 
 const TRANSITION_DURATION = 400; // ms
 
 export function FocusContainer({ orgaId }: FocusContainerProps) {
-  const { focus, focusOnOrga, focusOnRole, focusOnTeamFromRole, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd } = useFocus();
+  const { focus, focusOnOrga, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd } = useFocus();
 
   // Track which view to show during transition
   const [currentView, setCurrentView] = useState<ViewType>(focus.type);
@@ -98,6 +103,18 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
       case "role-to-orga":
         // Direct jump from role to org (rare)
         return { scale: 0.5, origin: "center center" };
+      case "role-to-member":
+        // Zooming into member from role view
+        return { scale: 1.6, origin: transformOrigin };
+      case "member-to-role":
+        // Zooming out from member to role
+        return { scale: 0.6, origin: "center center" };
+      case "member-to-team":
+        // Zooming out from member to team
+        return { scale: 0.7, origin: "center center" };
+      case "team-to-member":
+        // Zooming into member from team view (rare)
+        return { scale: 1.5, origin: transformOrigin };
       default:
         // Fallback based on direction
         return transitionDirection === "in"
@@ -117,6 +134,14 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         return "fadeScaleInFromSmall";
       case "team-to-orga":
         return "fadeScaleInFromLarge";
+      case "role-to-member":
+        return "fadeScaleInFromSmall";
+      case "member-to-role":
+        return "fadeScaleInFromLarge";
+      case "member-to-team":
+        return "fadeScaleInFromLarge";
+      case "team-to-member":
+        return "fadeScaleInFromSmall";
       default:
         return "fadeScaleIn";
     }
@@ -201,11 +226,19 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         className="focus-view absolute inset-0"
         style={getAnimationStyles()}
       >
-        {currentView === "role" && focus.type === "role" ? (
+        {currentView === "member" && focus.type === "member" ? (
+          <MemberFocusView
+            memberId={focus.memberId}
+            onZoomOut={focusOnRoleFromMember}
+            onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+            onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
+          />
+        ) : currentView === "role" && focus.type === "role" ? (
           <RoleFocusView
             roleId={focus.roleId}
             onZoomOut={focusOnTeamFromRole}
             onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+            onNavigateToMember={(memberId, origin) => focusOnMember(memberId, origin)}
           />
         ) : currentView === "team" && focus.type === "team" ? (
           <TeamRolesCircle

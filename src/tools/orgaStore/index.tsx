@@ -25,8 +25,7 @@ export type FocusTarget =
   | { type: "orga" }
   | { type: "team"; teamId: Id<"teams"> }
   | { type: "role"; roleId: Id<"roles">; teamId: Id<"teams"> }
-  // Future extensions:
-  // | { type: "member"; memberId: Id<"members"> }
+  | { type: "member"; memberId: Id<"members"> }
 
 // Transition origin for zoom animations
 export type TransitionOrigin = {
@@ -60,7 +59,10 @@ type OrgaStoreContextType = {
   focus: FocusTarget
   focusOnTeam: (teamId: Id<"teams">, origin?: TransitionOrigin) => void
   focusOnRole: (roleId: Id<"roles">, teamId: Id<"teams">, origin?: TransitionOrigin) => void
+  focusOnMember: (memberId: Id<"members">, origin?: TransitionOrigin) => void
   focusOnTeamFromRole: () => void
+  focusOnRoleFromMember: () => void
+  focusOnTeamFromMember: (teamId: Id<"teams">) => void
   focusOnOrga: () => void
   isFocusTransitioning: boolean
   transitionOrigin: TransitionOrigin
@@ -72,6 +74,11 @@ type OrgaStoreContextType = {
   // Role to highlight when returning from role view
   returnFromRoleId: Id<"roles"> | null
   clearReturnFromRoleId: () => void
+  // Member to highlight when returning from member view
+  returnFromMemberId: Id<"members"> | null
+  clearReturnFromMemberId: () => void
+  // Store previous focus for back navigation from member view
+  previousFocusFromMember: { type: "role"; roleId: Id<"roles">; teamId: Id<"teams"> } | null
 }
 
 const OrgaStoreContext = createContext<OrgaStoreContextType | undefined>(undefined)
@@ -102,6 +109,10 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
   const [returnFromTeamId, setReturnFromTeamId] = useState<Id<"teams"> | null>(null)
   // Track which role we're returning from so the team view can highlight it
   const [returnFromRoleId, setReturnFromRoleId] = useState<Id<"roles"> | null>(null)
+  // Track which member we're returning from so the role view can highlight it
+  const [returnFromMemberId, setReturnFromMemberId] = useState<Id<"members"> | null>(null)
+  // Track previous focus to navigate back from member view
+  const [previousFocusFromMember, setPreviousFocusFromMember] = useState<{ type: "role"; roleId: Id<"roles">; teamId: Id<"teams"> } | null>(null)
 
   // Only fetch organizations when the user is signed in
   const orgasWithCounts = useQuery(
@@ -196,6 +207,19 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     setFocus({ type: "role", roleId, teamId })
   }, [])
 
+  const focusOnMember = useCallback((memberId: Id<"members">, origin?: TransitionOrigin) => {
+    // Store current focus for back navigation (only from role view)
+    if (focus.type === "role") {
+      setPreviousFocusFromMember({ type: "role", roleId: focus.roleId, teamId: focus.teamId })
+    }
+    if (origin) {
+      setTransitionOrigin(origin)
+      setTransitionDirection("in")
+      setIsFocusTransitioning(true)
+    }
+    setFocus({ type: "member", memberId })
+  }, [focus])
+
   // Focus back to team from role view
   const focusOnTeamFromRole = useCallback(() => {
     if (focus.type === "role") {
@@ -203,6 +227,28 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       setTransitionDirection("out")
       setIsFocusTransitioning(true)
       setFocus({ type: "team", teamId: focus.teamId })
+    }
+  }, [focus])
+
+  // Focus back to role from member view
+  const focusOnRoleFromMember = useCallback(() => {
+    if (focus.type === "member" && previousFocusFromMember) {
+      setReturnFromMemberId(focus.memberId)
+      setTransitionDirection("out")
+      setIsFocusTransitioning(true)
+      setFocus(previousFocusFromMember)
+      setPreviousFocusFromMember(null)
+    }
+  }, [focus, previousFocusFromMember])
+
+  // Focus on team from member view (clicking a team node)
+  const focusOnTeamFromMember = useCallback((teamId: Id<"teams">) => {
+    if (focus.type === "member") {
+      setReturnFromMemberId(focus.memberId)
+      setTransitionDirection("out")
+      setIsFocusTransitioning(true)
+      setFocus({ type: "team", teamId })
+      setPreviousFocusFromMember(null)
     }
   }, [focus])
 
@@ -225,6 +271,10 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
 
   const clearReturnFromRoleId = useCallback(() => {
     setReturnFromRoleId(null)
+  }, [])
+
+  const clearReturnFromMemberId = useCallback(() => {
+    setReturnFromMemberId(null)
   }, [])
 
   const onTransitionEnd = useCallback(() => {
@@ -257,7 +307,10 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       focus,
       focusOnTeam,
       focusOnRole,
+      focusOnMember,
       focusOnTeamFromRole,
+      focusOnRoleFromMember,
+      focusOnTeamFromMember,
       focusOnOrga,
       isFocusTransitioning,
       transitionOrigin,
@@ -267,6 +320,9 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       clearReturnFromTeamId,
       returnFromRoleId,
       clearReturnFromRoleId,
+      returnFromMemberId,
+      clearReturnFromMemberId,
+      previousFocusFromMember,
     }}>
       {children}
     </OrgaStoreContext.Provider>
@@ -294,8 +350,8 @@ export const useOrgaList = () => {
 }
 
 export const useFocus = () => {
-  const { focus, focusOnTeam, focusOnRole, focusOnTeamFromRole, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId } = useOrgaStore()
-  return { focus, focusOnTeam, focusOnRole, focusOnTeamFromRole, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId }
+  const { focus, focusOnTeam, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId, returnFromMemberId, clearReturnFromMemberId, previousFocusFromMember } = useOrgaStore()
+  return { focus, focusOnTeam, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId, returnFromMemberId, clearReturnFromMemberId, previousFocusFromMember }
 }
 
 /**

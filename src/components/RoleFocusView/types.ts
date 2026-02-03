@@ -4,6 +4,7 @@ export type RoleFocusViewProps = {
   roleId: Id<"roles">;
   onZoomOut: () => void;
   onNavigateToRole?: (roleId: Id<"roles">, teamId: Id<"teams">) => void;
+  onNavigateToMember?: (memberId: Id<"members">, origin?: { x: number; y: number; radius: number }) => void;
 };
 
 export type RoleData = {

@@ -42,7 +42,7 @@ function getRoleTypeLabel(roleType: "leader" | "secretary" | "referee"): string 
   }
 }
 
-export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole }: RoleFocusViewProps) {
+export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateToMember }: RoleFocusViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [showDuties, setShowDuties] = useState(false);
@@ -521,8 +521,10 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole }: RoleFocus
             centerY={centerY}
             maxRadius={maxRadius}
             onMemberClick={(memberId) => {
-              // Future: navigate to member focus view
-              console.log("Member clicked:", memberId);
+              // Calculate position for transition origin
+              const linkY = centerY + maxRadius + 50;
+              const linkRadius = 28;
+              onNavigateToMember?.(memberId, { x: centerX, y: linkY, radius: linkRadius });
             }}
           />
         )}

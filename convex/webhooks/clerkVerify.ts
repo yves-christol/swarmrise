@@ -62,9 +62,6 @@ export const verifyWebhook = internalAction({
         };
       };
 
-      // Debug: log raw Clerk payload
-      console.log("Raw Clerk payload image_url:", event.data.image_url);
-
       // Extract primary email
       const primaryEmail = event.data.email_addresses.find(
         (email) => email.id === event.data.primary_email_address_id
@@ -73,8 +70,6 @@ export const verifyWebhook = internalAction({
       if (!primaryEmail) {
         return { success: false as const, error: "No primary email found" };
       }
-
-      console.log("Returning imageUrl:", event.data.image_url);
 
       return {
         success: true as const,

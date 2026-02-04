@@ -37,22 +37,12 @@ export const clerkWebhook = httpAction(async (ctx, request) => {
   // Handle user.created and user.updated events
   if (event.type === "user.created" || event.type === "user.updated") {
     try {
-      // Debug: log the received data
-      console.log("Webhook received data:", JSON.stringify(event.data, null, 2));
-
       await ctx.runMutation(internal.webhooks.clerkInternal.createOrUpdateUser, {
         email: event.data.email,
         firstname: event.data.firstName ?? "",
         surname: event.data.lastName ?? "",
         pictureURL: event.data.imageUrl ?? undefined,
       });
-
-      console.log(
-        `Successfully processed ${event.type} for user:`,
-        event.data.email,
-        "imageUrl:",
-        event.data.imageUrl
-      );
     } catch (err) {
       console.error("Failed to create/update user:", err);
       return new Response("Failed to process user data", { status: 500 });

@@ -1,4 +1,4 @@
-import { query, mutation } from "../_generated/server";
+import { query, mutation, internalMutation } from "../_generated/server";
 import { v } from "convex/values";
 import { userValidator, contactInfos, ContactInfos } from ".";
 import { orgaValidator } from "../orgas";
@@ -325,3 +325,76 @@ export const rejectInvitation = mutation({
   },
 });
 
+
+/**
+ * Sync current user's profile data (including pictureURL) to all their member records.
+ * Useful for backfilling existing members or manual re-sync after profile update.
+ */
+export const syncProfileToMembers = mutation({
+  args: {},
+  returns: v.number(),
+  handler: async (ctx) => {
+    const user = await getAuthenticatedUser(ctx);
+
+    // Find all members linked to this user
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_person", (q) => q.eq("personId", user._id))
+      .collect();
+
+    // Update each member with current user profile data
+    let syncedCount = 0;
+    for (const member of members) {
+      await ctx.db.patch(member._id, {
+        firstname: user.firstname,
+        surname: user.surname,
+        pictureURL: user.pictureURL,
+        contactInfos: user.contactInfos,
+      });
+      syncedCount++;
+    }
+
+    return syncedCount;
+  },
+});
+
+/**
+ * Internal: Sync a user's profile data to all their member records by email.
+ * Can be run from the Convex dashboard for testing/backfill.
+ */
+export const syncUserProfileByEmail = internalMutation({
+  args: {
+    email: v.string(),
+  },
+  returns: v.number(),
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .unique();
+
+    if (!user) {
+      throw new Error(`User not found with email: ${args.email}`);
+    }
+
+    // Find all members linked to this user
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_person", (q) => q.eq("personId", user._id))
+      .collect();
+
+    // Update each member with current user profile data
+    let syncedCount = 0;
+    for (const member of members) {
+      await ctx.db.patch(member._id, {
+        firstname: user.firstname,
+        surname: user.surname,
+        pictureURL: user.pictureURL,
+        contactInfos: user.contactInfos,
+      });
+      syncedCount++;
+    }
+
+    return syncedCount;
+  },
+});

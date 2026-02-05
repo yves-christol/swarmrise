@@ -11,6 +11,18 @@
   "createFirstOrganization": "Créez votre première organisation",
   "createOrganizationTitle": "Créer une organisation",
   "organizationNameLabel": "Nom de l'organisation",
+  "colorSchemeLabel": "Palette de couleurs",
+  "primaryColorLabel": "Primaire",
+  "secondaryColorLabel": "Secondaire",
+  "customColors": "Personnalisé",
+  "preview": "Aperçu",
+  "presets": {
+    "gold-blue": "Or et Bleu",
+    "green-gray": "Vert et Gris",
+    "blue-gold": "Bleu et Or",
+    "purple-cyan": "Violet et Cyan",
+    "red-gray": "Rouge et Gris"
+  },
   "createButton": "Créer",
   "cancelButton": "Annuler",
   "creatingButton": "Création...",

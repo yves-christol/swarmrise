@@ -7,6 +7,7 @@ import { TeamRolesCircle } from "../TeamRolesCircle";
 import { RoleFocusView } from "../RoleFocusView";
 import { MemberFocusView } from "../MemberFocusView";
 import { OrgaManageView } from "../OrgaManageView";
+import { RoleManageView } from "../RoleManageView";
 import { ViewToggle } from "../ViewToggle";
 import { Id } from "../../../convex/_generated/dataModel";
 
@@ -332,8 +333,8 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         }
       `}</style>
 
-      {/* View toggle - only show when not transitioning between entity types */}
-      {animationPhase === "idle" && !isFocusTransitioning && currentView === "orga" && (
+      {/* View toggle - show for orga and role views when not transitioning */}
+      {animationPhase === "idle" && !isFocusTransitioning && (currentView === "orga" || currentView === "role") && (
         <ViewToggle
           mode={viewMode}
           onChange={setViewMode}
@@ -354,12 +355,22 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
             onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
           />
         ) : currentView === "role" && focus.type === "role" ? (
-          <RoleFocusView
-            roleId={focus.roleId}
-            onZoomOut={focusOnTeamFromRole}
-            onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
-            onNavigateToMember={(memberId, origin) => focusOnMember(memberId, origin)}
-          />
+          /* Role view with swap animation between visual and manage */
+          <div className={`absolute inset-0 ${getSwapClass()}`}>
+            {displayedMode === "visual" ? (
+              <RoleFocusView
+                roleId={focus.roleId}
+                onZoomOut={focusOnTeamFromRole}
+                onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+                onNavigateToMember={(memberId, origin) => focusOnMember(memberId, origin)}
+              />
+            ) : (
+              <RoleManageView
+                roleId={focus.roleId}
+                onZoomOut={focusOnTeamFromRole}
+              />
+            )}
+          </div>
         ) : currentView === "team" && focus.type === "team" ? (
           <TeamRolesCircle
             teamId={focus.teamId}
@@ -379,7 +390,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
 
       {/* Screen reader announcement for view mode */}
       <div role="status" aria-live="polite" className="sr-only">
-        {swapPhase === "idle" && currentView === "orga" && (
+        {swapPhase === "idle" && (currentView === "orga" || currentView === "role") && (
           displayedMode === "visual"
             ? "Now viewing visual diagram. Press V to switch to management view."
             : "Now viewing management options. Press V to switch to visual diagram."

@@ -69,6 +69,22 @@ const CheckIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const ChevronDownIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+    <path
+      fillRule="evenodd"
+      d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
+const OrgPlaceholderIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
+  </svg>
+);
+
 type CreateOrganizationModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -91,6 +107,12 @@ export const CreateOrganizationModal = ({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
+  // Phase 3: Advanced options
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [firstTeamName, setFirstTeamName] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [logoError, setLogoError] = useState(false);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -108,7 +130,6 @@ export const CreateOrganizationModal = ({
   // Handle open/close animation
   useEffect(() => {
     if (isOpen) {
-      // Trigger animation after mount
       requestAnimationFrame(() => setIsVisible(true));
     } else {
       setIsVisible(false);
@@ -136,7 +157,11 @@ export const CreateOrganizationModal = ({
         setError(null);
         setValidationError(null);
         setIsSubmitting(false);
-      }, 150); // Wait for close animation
+        setShowAdvanced(false);
+        setFirstTeamName("");
+        setLogoUrl("");
+        setLogoError(false);
+      }, 150);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -216,10 +241,14 @@ export const CreateOrganizationModal = ({
     setError(null);
 
     const colorScheme = getColorScheme();
+    const trimmedLogoUrl = logoUrl.trim();
+    const trimmedFirstTeamName = firstTeamName.trim();
 
     createOrganization({
       name: name.trim(),
       colorScheme,
+      ...(trimmedLogoUrl && { logoUrl: trimmedLogoUrl }),
+      ...(trimmedFirstTeamName && { firstTeamName: trimmedFirstTeamName }),
     })
       .then((orgaId) => {
         selectOrga(orgaId);
@@ -240,7 +269,6 @@ export const CreateOrganizationModal = ({
 
   const handlePresetSelect = (presetId: string) => {
     setSelectedPresetId(presetId);
-    // When selecting a preset, update custom colors to match (for when user switches to custom)
     const preset = COLOR_PRESETS.find((p) => p.id === presetId);
     if (preset) {
       setCustomPrimary(preset.primary);
@@ -256,6 +284,11 @@ export const CreateOrganizationModal = ({
       setCustomSecondary(rgb);
     }
     setSelectedPresetId("custom");
+  };
+
+  const handleLogoUrlChange = (url: string) => {
+    setLogoUrl(url);
+    setLogoError(false);
   };
 
   if (!isOpen) return null;
@@ -275,7 +308,7 @@ export const CreateOrganizationModal = ({
         aria-modal="true"
         aria-labelledby="modal-title"
         className={`w-full max-w-md mx-4 p-6 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-xl
-          transition-all duration-150 ease-out
+          transition-all duration-150 ease-out max-h-[90vh] overflow-y-auto
           ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
       >
         <h2
@@ -391,7 +424,7 @@ export const CreateOrganizationModal = ({
               </button>
             </div>
 
-            {/* Custom color pickers (shown when custom is selected) */}
+            {/* Custom color pickers */}
             {selectedPresetId === "custom" && (
               <div className="flex gap-4 pt-2">
                 <div className="flex-1 flex flex-col gap-1">
@@ -438,6 +471,85 @@ export const CreateOrganizationModal = ({
               </div>
             </div>
           </div>
+
+          {/* Advanced options toggle */}
+          <button
+            type="button"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            disabled={isSubmitting}
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors disabled:opacity-50"
+          >
+            <ChevronDownIcon
+              className={`w-4 h-4 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
+            />
+            {t("advancedOptions")}
+          </button>
+
+          {/* Advanced options section */}
+          {showAdvanced && (
+            <div className="flex flex-col gap-4 p-4 rounded-md bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600">
+              {/* Logo URL */}
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="logo-url"
+                  className="text-sm font-medium text-dark dark:text-light"
+                >
+                  {t("logoUrlLabel")}
+                </label>
+                <div className="flex gap-3">
+                  {/* Logo preview */}
+                  <div className="w-12 h-12 rounded-md bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {logoUrl && !logoError ? (
+                      <img
+                        src={logoUrl}
+                        alt=""
+                        className="w-full h-full object-contain"
+                        onError={() => setLogoError(true)}
+                      />
+                    ) : (
+                      <OrgPlaceholderIcon className="w-6 h-6 text-gray-400" />
+                    )}
+                  </div>
+                  <input
+                    id="logo-url"
+                    type="url"
+                    value={logoUrl}
+                    onChange={(e) => handleLogoUrlChange(e.target.value)}
+                    disabled={isSubmitting}
+                    placeholder={t("logoUrlPlaceholder")}
+                    className="flex-1 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
+                      bg-white dark:bg-gray-900 text-dark dark:text-light text-sm
+                      focus:outline-none focus:ring-2 focus:ring-[#eac840] transition-colors
+                      disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+                <p className="text-xs text-gray-400">{t("logoUrlHint")}</p>
+              </div>
+
+              {/* First team name */}
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="first-team-name"
+                  className="text-sm font-medium text-dark dark:text-light"
+                >
+                  {t("firstTeamNameLabel")}
+                </label>
+                <input
+                  id="first-team-name"
+                  type="text"
+                  value={firstTeamName}
+                  onChange={(e) => setFirstTeamName(e.target.value)}
+                  disabled={isSubmitting}
+                  placeholder={name || t("firstTeamNamePlaceholder")}
+                  className="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
+                    bg-white dark:bg-gray-900 text-dark dark:text-light text-sm
+                    focus:outline-none focus:ring-2 focus:ring-[#eac840] transition-colors
+                    disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+                <p className="text-xs text-gray-400">{t("firstTeamNameHint")}</p>
+              </div>
+            </div>
+          )}
 
           {/* Backend error */}
           {error && (

@@ -78,8 +78,8 @@ export const OrgaSelector = () => {
   if (isLoading) {
     return (
       <div className="flex items-center gap-2 animate-pulse">
-        <div className="w-6 h-6 rounded bg-gray-600" />
-        <div className="w-24 h-4 rounded bg-gray-600" />
+        <div className="w-6 h-6 rounded bg-gray-300 dark:bg-gray-600" />
+        <div className="w-24 h-4 rounded bg-gray-300 dark:bg-gray-600" />
       </div>
     )
   }

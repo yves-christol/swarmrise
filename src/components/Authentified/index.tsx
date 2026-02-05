@@ -50,8 +50,8 @@ export const Authentified = () => {
   if (!selectedOrga) {
     return (
       <div className="flex flex-col gap-8 max-w-4xl mx-auto p-8">
-        <h1 className="font-swarm text-3xl font-bold">{t("selectOrganization")}</h1>
-        <p className="text-gray-400">
+        <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">{t("selectOrganization")}</h1>
+        <p className="text-gray-600 dark:text-gray-400">
           {t("selectOrgPrompt")}
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -106,7 +106,7 @@ const OrgaCard = ({ orga, counts }: OrgaCardProps) => {
             className="w-12 h-12 object-contain rounded"
           />
         )}
-        <h2 className="text-xl font-bold">{orga.name}</h2>
+        <h2 className="text-xl font-bold text-dark dark:text-light">{orga.name}</h2>
       </div>
       <div className="grid grid-cols-3 gap-4 mt-6">
         <div className="flex flex-col items-center">

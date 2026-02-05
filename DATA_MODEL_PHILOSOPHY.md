@@ -15,7 +15,8 @@ This document captures the design principles, architectural decisions, and ratio
 9. [Audit Trail with Decisions](#audit-trail-with-decisions)
 10. [Team Hierarchy Model](#team-hierarchy-model)
 11. [Design Decisions Rationale](#design-decisions-rationale)
-12. [Migration History](#migration-history)
+12. [Notification System](#notification-system)
+13. [Migration History](#migration-history)
 
 ---
 
@@ -107,6 +108,26 @@ All queries must use `withIndex()` rather than `filter()`. Indexes are designed 
 | targetType         |
 | diff               | --> Discriminated union with before/after states
 +--------------------+
+
+
++------------------------+                    +-------------------------------+
+|     Notification       |                    |   NotificationPreferences     |
++------------------------+                    +-------------------------------+
+| _id                    |                    | _id                           |
+| userId ----------------+---> User._id <-----+ userId                        |
+| orgaId?                |                    | orgaId?                       |
+| memberId?              |                    | invitation (channel prefs)    |
+| payload (union) -------|-> category-specific| message (channel prefs)       |
+| priority               |                    | policy_global (channel prefs) |
+| isRead                 |                    | policy_team (channel prefs)   |
+| readAt?                |                    | decision (channel prefs)      |
+| isArchived             |                    | role_assignment (channel prefs)|
+| archivedAt?            |                    | mention (channel prefs)       |
+| expiresAt?             |                    | system (channel prefs)        |
+| groupKey?              |                    | quietHoursStart?              |
++------------------------+                    | quietHoursEnd?                |
+                                              | digestFrequency               |
+                                              +-------------------------------+
 ```
 
 ---
@@ -378,6 +399,15 @@ Indexes follow the pattern: `by_field1_and_field2`
 | policies | by_orga | [orgaId] | Org's policies |
 | policies | by_team | [teamId] | Team's policies |
 | policies | by_orga_and_visibility | [orgaId, visibility] | Public policies in org |
+| notifications | by_user | [userId] | All notifications for user |
+| notifications | by_user_and_read | [userId, isRead] | Unread notifications |
+| notifications | by_user_and_orga | [userId, orgaId] | Notifications by org |
+| notifications | by_user_and_archived | [userId, isArchived] | Active vs archived |
+| notifications | by_orga | [orgaId] | Admin org-wide queries |
+| notifications | by_expires | [expiresAt] | Cleanup expired |
+| notifications | by_group_key | [groupKey] | Related notifications |
+| notificationPreferences | by_user | [userId] | User's preferences |
+| notificationPreferences | by_user_and_orga | [userId, orgaId] | Specific preferences |
 
 ### Index Design Rules
 

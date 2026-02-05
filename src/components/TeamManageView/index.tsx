@@ -1,0 +1,500 @@
+"use client";
+
+import { useState, useMemo, useEffect } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { Id } from "../../../convex/_generated/dataModel";
+
+type TeamManageViewProps = {
+  teamId: Id<"teams">;
+  onZoomOut: () => void;
+};
+
+function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): string {
+  switch (roleType) {
+    case "leader":
+      return "#d4af37";
+    case "secretary":
+      return "#7dd3fc";
+    case "referee":
+      return "#c4b5fd";
+  }
+}
+
+function getRoleTypeLabel(roleType: "leader" | "secretary" | "referee"): string {
+  switch (roleType) {
+    case "leader":
+      return "Leader";
+    case "secretary":
+      return "Secretary";
+    case "referee":
+      return "Referee";
+  }
+}
+
+function ZoomOutButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="
+        absolute top-4 left-4 z-10
+        flex items-center gap-2
+        px-3 py-2
+        bg-white dark:bg-gray-800
+        border border-gray-300 dark:border-gray-700
+        rounded-lg
+        shadow-md hover:shadow-lg
+        transition-shadow
+        text-gray-700 dark:text-gray-200
+        hover:text-dark dark:hover:text-light
+        focus:outline-none focus:ring-2 focus:ring-[#eac840]
+      "
+      aria-label="Return to organization overview"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      >
+        <circle cx="6" cy="10" r="4" />
+        <circle cx="14" cy="6" r="3" />
+        <circle cx="14" cy="14" r="3" />
+        <line x1="9" y1="8" x2="11" y2="7" />
+        <line x1="9" y1="12" x2="11" y2="13" />
+      </svg>
+      <span className="text-sm font-medium">Overview</span>
+    </button>
+  );
+}
+
+function StatCard({
+  value,
+  label,
+  color,
+}: {
+  value: number;
+  label: string;
+  color: "gold" | "purple" | "blue";
+}) {
+  const colorClasses = {
+    gold: "text-[#d4af37] dark:text-[#eac840]",
+    purple: "text-purple-600 dark:text-purple-400",
+    blue: "text-blue-600 dark:text-blue-400",
+  };
+
+  return (
+    <div
+      className="
+        flex flex-col items-center
+        p-4
+        bg-white dark:bg-gray-800
+        border border-gray-200 dark:border-gray-700
+        rounded-lg
+      "
+    >
+      <span className={`text-3xl font-bold ${colorClasses[color]}`}>{value}</span>
+      <span className="text-sm text-gray-600 dark:text-gray-400 mt-1">{label}</span>
+    </div>
+  );
+}
+
+export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
+  // Fetch team data
+  const team = useQuery(api.teams.functions.getTeamById, { teamId });
+
+  // Fetch roles for this team
+  const roles = useQuery(api.roles.functions.listRolesInTeam, { teamId });
+
+  // Fetch members
+  const members = useQuery(
+    api.members.functions.listMembers,
+    team ? { orgaId: team.orgaId } : "skip"
+  );
+
+  // Find the leader role to get parent team connection
+  const leaderRole = roles?.find((r) => r.roleType === "leader");
+  const parentTeamId = leaderRole?.parentTeamId;
+
+  // Fetch parent team if this team has one
+  const parentTeam = useQuery(
+    api.teams.functions.getTeamById,
+    parentTeamId ? { teamId: parentTeamId } : "skip"
+  );
+
+  // Fetch linked leader roles pointing to roles in this team (child teams)
+  const linkedLeaderRoles = useQuery(
+    api.roles.functions.getLinkedLeaderRolesForTeam,
+    { teamId }
+  );
+
+  // Update team mutation
+  const updateTeam = useMutation(api.teams.functions.updateTeam);
+
+  // Local state for editing
+  const [teamName, setTeamName] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  // Initialize local state when team loads
+  useEffect(() => {
+    if (team) {
+      setTeamName(team.name);
+    }
+  }, [team]);
+
+  // Create member lookup map
+  const memberMap = useMemo(() => {
+    const map = new Map<string, { firstname: string; surname: string; pictureURL?: string; email: string }>();
+    members?.forEach((m) => map.set(m._id, {
+      firstname: m.firstname,
+      surname: m.surname,
+      pictureURL: m.pictureURL,
+      email: m.email,
+    }));
+    return map;
+  }, [members]);
+
+  // Calculate unique members in this team
+  const uniqueMembers = useMemo(() => {
+    if (!roles) return [];
+    const memberIds = new Set(roles.map((r) => r.memberId));
+    return Array.from(memberIds)
+      .map((id) => memberMap.get(id))
+      .filter((m): m is NonNullable<typeof m> => m !== undefined);
+  }, [roles, memberMap]);
+
+  // Sort roles: leader first, then secretary, then referee, then others
+  const sortedRoles = useMemo(() => {
+    if (!roles) return [];
+    const order = { leader: 0, secretary: 1, referee: 2 };
+    return [...roles].sort((a, b) => {
+      const aOrder = a.roleType ? order[a.roleType] : 3;
+      const bOrder = b.roleType ? order[b.roleType] : 3;
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      return a.title.localeCompare(b.title);
+    });
+  }, [roles]);
+
+  const handleSaveName = async () => {
+    if (!team || teamName.trim() === "" || teamName === team.name) {
+      setIsEditingName(false);
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage(null);
+    try {
+      await updateTeam({ teamId, name: teamName.trim() });
+      setIsEditingName(false);
+      setSaveMessage({ type: "success", text: "Team name updated" });
+    } catch (error) {
+      setSaveMessage({ type: "error", text: error instanceof Error ? error.message : "Failed to update" });
+      setTeamName(team.name);
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(null), 3000);
+    }
+  };
+
+  // Loading state
+  if (team === undefined) {
+    return (
+      <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
+        <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+      </div>
+    );
+  }
+
+  // Not found
+  if (team === null) {
+    return (
+      <div className="absolute inset-0 bg-light dark:bg-dark">
+        <ZoomOutButton onClick={onZoomOut} />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <p className="text-gray-500 dark:text-gray-400">Team not found</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="absolute inset-0 bg-light dark:bg-dark overflow-auto">
+      {/* Back button */}
+      <ZoomOutButton onClick={onZoomOut} />
+
+      {/* Content */}
+      <div className="pt-20 px-8 pb-8 max-w-2xl mx-auto">
+        {/* Header */}
+        <header className="mb-8">
+          {isEditingName ? (
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                value={teamName}
+                onChange={(e) => setTeamName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void handleSaveName();
+                  } else if (e.key === "Escape") {
+                    setTeamName(team.name);
+                    setIsEditingName(false);
+                  }
+                }}
+                autoFocus
+                className="
+                  font-swarm text-3xl font-bold
+                  text-dark dark:text-light
+                  bg-transparent
+                  border-b-2 border-[#eac840]
+                  focus:outline-none
+                  w-full
+                "
+              />
+              <button
+                onClick={() => void handleSaveName()}
+                disabled={isSaving}
+                className="
+                  px-3 py-1.5 text-sm
+                  bg-[#eac840] hover:bg-[#d4af37]
+                  text-dark
+                  rounded-lg
+                  transition-colors
+                  disabled:opacity-50
+                "
+              >
+                {isSaving ? "..." : "Save"}
+              </button>
+              <button
+                onClick={() => {
+                  setTeamName(team.name);
+                  setIsEditingName(false);
+                }}
+                className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">
+                {team.name}
+              </h1>
+              <button
+                onClick={() => setIsEditingName(true)}
+                className="text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
+              >
+                Edit
+              </button>
+            </div>
+          )}
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Team settings and structure
+          </p>
+        </header>
+
+        {/* Save message */}
+        {saveMessage && (
+          <div
+            className={`mb-6 p-3 rounded-lg text-sm ${
+              saveMessage.type === "success"
+                ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800"
+                : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
+            }`}
+          >
+            {saveMessage.text}
+          </div>
+        )}
+
+        {/* Analytics section */}
+        <section className="mb-8">
+          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+            Overview
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            <StatCard value={roles?.length || 0} label="Roles" color="purple" />
+            <StatCard value={uniqueMembers.length} label="Members" color="blue" />
+          </div>
+        </section>
+
+        {/* Team Hierarchy */}
+        {(parentTeam || (linkedLeaderRoles && linkedLeaderRoles.length > 0)) && (
+          <section className="mb-8">
+            <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+              Team Hierarchy
+            </h2>
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4">
+              {/* Parent team */}
+              {parentTeam && (
+                <div>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Parent Team
+                  </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-400">
+                      <path d="M8 12V4M8 4L4 8M8 4L12 8" />
+                    </svg>
+                    <span className="font-medium text-dark dark:text-light">{parentTeam.name}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Child teams */}
+              {linkedLeaderRoles && linkedLeaderRoles.length > 0 && (
+                <div>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Child Teams ({linkedLeaderRoles.length})
+                  </span>
+                  <ul className="mt-1 space-y-1">
+                    {linkedLeaderRoles.map((link) => (
+                      <li key={link.linkedRole._id} className="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-400">
+                          <path d="M8 4V12M8 12L4 8M8 12L12 8" />
+                        </svg>
+                        <span className="text-dark dark:text-light">{link.daughterTeam.name}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Roles Section */}
+        <section className="mb-8">
+          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+            Roles
+          </h2>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            {!roles || roles.length === 0 ? (
+              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                No roles in this team
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {sortedRoles.map((role) => {
+                  const member = memberMap.get(role.memberId);
+                  return (
+                    <div key={role._id} className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          {/* Role type badge */}
+                          {role.roleType && (
+                            <span
+                              className="w-2 h-2 rounded-full"
+                              style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
+                              title={getRoleTypeLabel(role.roleType)}
+                            />
+                          )}
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-dark dark:text-light">
+                                {role.title}
+                              </span>
+                              {role.roleType && (
+                                <span
+                                  className="text-xs px-1.5 py-0.5 rounded"
+                                  style={{
+                                    backgroundColor: getRoleTypeBadgeColor(role.roleType) + "20",
+                                    color: getRoleTypeBadgeColor(role.roleType),
+                                  }}
+                                >
+                                  {getRoleTypeLabel(role.roleType)}
+                                </span>
+                              )}
+                              {role.linkedRoleId && (
+                                <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+                                  Synced
+                                </span>
+                              )}
+                            </div>
+                            {role.mission && (
+                              <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-md mt-0.5">
+                                {role.mission}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Assigned member */}
+                        {member && (
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                              {member.pictureURL ? (
+                                <img
+                                  src={member.pictureURL}
+                                  alt={`${member.firstname} ${member.surname}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-xs font-medium">
+                                  {member.firstname.charAt(0)}
+                                  {member.surname.charAt(0)}
+                                </div>
+                              )}
+                            </div>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                              {member.firstname} {member.surname}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Team Members Section */}
+        <section className="mb-8">
+          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+            Team Members
+          </h2>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            {uniqueMembers.length === 0 ? (
+              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                No members in this team
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {uniqueMembers.map((member, index) => (
+                  <div key={index} className="flex items-center gap-3 px-4 py-3">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                      {member.pictureURL ? (
+                        <img
+                          src={member.pictureURL}
+                          alt={`${member.firstname} ${member.surname}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium">
+                          {member.firstname.charAt(0)}
+                          {member.surname.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium text-dark dark:text-light">
+                        {member.firstname} {member.surname}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {member.email}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}

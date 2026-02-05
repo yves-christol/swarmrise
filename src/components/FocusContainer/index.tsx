@@ -8,6 +8,7 @@ import { RoleFocusView } from "../RoleFocusView";
 import { MemberFocusView } from "../MemberFocusView";
 import { OrgaManageView } from "../OrgaManageView";
 import { RoleManageView } from "../RoleManageView";
+import { TeamManageView } from "../TeamManageView";
 import { ViewToggle } from "../ViewToggle";
 import { Id } from "../../../convex/_generated/dataModel";
 
@@ -333,8 +334,8 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         }
       `}</style>
 
-      {/* View toggle - show for orga and role views when not transitioning */}
-      {animationPhase === "idle" && !isFocusTransitioning && (currentView === "orga" || currentView === "role") && (
+      {/* View toggle - show for orga, team, and role views when not transitioning */}
+      {animationPhase === "idle" && !isFocusTransitioning && (currentView === "orga" || currentView === "team" || currentView === "role") && (
         <ViewToggle
           mode={viewMode}
           onChange={setViewMode}
@@ -372,10 +373,20 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
             )}
           </div>
         ) : currentView === "team" && focus.type === "team" ? (
-          <TeamRolesCircle
-            teamId={focus.teamId}
-            onZoomOut={focusOnOrga}
-          />
+          /* Team view with swap animation between visual and manage */
+          <div className={`absolute inset-0 ${getSwapClass()}`}>
+            {displayedMode === "visual" ? (
+              <TeamRolesCircle
+                teamId={focus.teamId}
+                onZoomOut={focusOnOrga}
+              />
+            ) : (
+              <TeamManageView
+                teamId={focus.teamId}
+                onZoomOut={focusOnOrga}
+              />
+            )}
+          </div>
         ) : (
           /* Orga view with swap animation between visual and manage */
           <div className={`absolute inset-0 ${getSwapClass()}`}>
@@ -390,7 +401,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
 
       {/* Screen reader announcement for view mode */}
       <div role="status" aria-live="polite" className="sr-only">
-        {swapPhase === "idle" && (currentView === "orga" || currentView === "role") && (
+        {swapPhase === "idle" && (currentView === "orga" || currentView === "team" || currentView === "role") && (
           displayedMode === "visual"
             ? "Now viewing visual diagram. Press V to switch to management view."
             : "Now viewing management options. Press V to switch to visual diagram."

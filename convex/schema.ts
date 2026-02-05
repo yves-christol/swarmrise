@@ -3,16 +3,18 @@ import { userType } from './users'
 import { orgaType } from "./orgas";
 import { policyType } from "./policies";
 import { teamType } from "./teams";
-import { roleType } from "./roles"; 
+import { roleType } from "./roles";
 import { memberType } from "./members";
 import { invitationType } from "./invitations"
 import { decisionType } from "./decisions"
 import { topicType } from './topics'
+import { notificationType } from "./notifications"
+import { notificationPreferencesType } from "./notificationPreferences"
 /**
  * Swarmrise Data Model Schema
- * 
+ *
  * Main concepts: User, Orga, Member, Role, Team, Decision
- * Secondary concepts: Invitation, Topic, Policy
+ * Secondary concepts: Invitation, Topic, Policy, Notification
  */
 
 
@@ -72,4 +74,19 @@ export default defineSchema({
     .index("by_role", ["roleId"])
     .index("by_orga_and_visibility", ["orgaId", "visibility"])
     .index("by_team_and_date", ["teamId", "issuedDate"]),
+
+  // Notifications collection - User notifications across all categories
+  notifications: defineTable({ ...notificationType.fields })
+    .index("by_user", ["userId"])
+    .index("by_user_and_read", ["userId", "isRead"])
+    .index("by_user_and_orga", ["userId", "orgaId"])
+    .index("by_user_and_archived", ["userId", "isArchived"])
+    .index("by_orga", ["orgaId"])
+    .index("by_expires", ["expiresAt"])
+    .index("by_group_key", ["groupKey"]),
+
+  // Notification preferences collection - User preferences for notification delivery
+  notificationPreferences: defineTable({ ...notificationPreferencesType.fields })
+    .index("by_user", ["userId"])
+    .index("by_user_and_orga", ["userId", "orgaId"]),
 });

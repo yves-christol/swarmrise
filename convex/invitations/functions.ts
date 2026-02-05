@@ -1,4 +1,5 @@
 import { query, mutation, internalMutation } from "../_generated/server";
+import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { invitationValidator, invitationStatus } from ".";
 import {
@@ -6,6 +7,7 @@ import {
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
 } from "../utils";
+import { buildInvitationNotification } from "../notifications/helpers";
 
 /**
  * Get an invitation by ID
@@ -120,7 +122,32 @@ export const createInvitation = mutation({
         },
       },
     });
-    
+
+    // Create notification for the invitee if they have a user account
+    const inviteeUser = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .unique();
+
+    if (inviteeUser) {
+      // Get organization name for the notification
+      const orga = await ctx.db.get(args.orgaId);
+      if (orga) {
+        const inviterName = `${member.firstname} ${member.surname}`;
+        await ctx.scheduler.runAfter(
+          0,
+          internal.notifications.functions.create,
+          buildInvitationNotification({
+            userId: inviteeUser._id,
+            orgaId: args.orgaId,
+            invitationId: invitationId,
+            orgaName: orga.name,
+            inviterName: inviterName,
+          })
+        );
+      }
+    }
+
     return invitationId;
   },
 });
@@ -222,6 +249,13 @@ export const deleteInvitation = mutation({
         after: undefined,
       },
     });
+
+    // Delete any notifications associated with this invitation
+    await ctx.scheduler.runAfter(
+      0,
+      internal.notifications.functions.deleteByGroupKey,
+      { groupKey: `invitation-${args.invitationId}` }
+    );
 
     return null;
   },

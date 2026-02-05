@@ -1,4 +1,5 @@
 import { query, mutation } from "../_generated/server";
+import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { policyValidator, PolicyVisibility } from ".";
@@ -9,6 +10,12 @@ import {
   getOrgaFromRole,
   getOrgaFromTeam,
 } from "../utils";
+import {
+  buildPolicyGlobalNotification,
+  buildPolicyTeamNotification,
+  getOrgaMemberUsers,
+  getTeamMemberUsers,
+} from "../notifications/helpers";
 
 /**
  * Get a policy by ID
@@ -164,7 +171,61 @@ export const createPolicy = mutation({
         },
       },
     });
-    
+
+    // Get organization name for notifications
+    const orga = await ctx.db.get(args.orgaId);
+    const orgaName = orga?.name ?? "Unknown Organization";
+
+    // Create notifications based on policy visibility
+    if (args.visibility === "public") {
+      // Public policy: notify all organization members except the creator
+      const orgaMembers = await getOrgaMemberUsers(ctx, args.orgaId);
+      const notifications = orgaMembers
+        .filter((m) => m.userId !== member.personId) // Don't notify the creator
+        .map((m) =>
+          buildPolicyGlobalNotification({
+            userId: m.userId,
+            orgaId: args.orgaId,
+            memberId: m.memberId,
+            policyId: policyId,
+            policyTitle: args.title,
+            orgaName: orgaName,
+          })
+        );
+
+      if (notifications.length > 0) {
+        await ctx.scheduler.runAfter(
+          0,
+          internal.notifications.functions.createBatch,
+          { notifications }
+        );
+      }
+    } else {
+      // Private policy: notify only team members with roles in that team
+      const teamMembers = await getTeamMemberUsers(ctx, args.teamId);
+      const notifications = teamMembers
+        .filter((m) => m.userId !== member.personId) // Don't notify the creator
+        .map((m) =>
+          buildPolicyTeamNotification({
+            userId: m.userId,
+            orgaId: args.orgaId,
+            memberId: m.memberId,
+            policyId: policyId,
+            policyTitle: args.title,
+            teamId: args.teamId,
+            teamName: team.name,
+          })
+        );
+
+      if (notifications.length > 0) {
+        await ctx.scheduler.runAfter(
+          0,
+          internal.notifications.functions.createBatch,
+          { notifications }
+        );
+      }
+    }
+
     return policyId;
   },
 });

@@ -558,12 +558,132 @@ const childTeamIds = childLeaderRoles.map(role => role.teamId);
 
 ---
 
+## Notification System
+
+### Overview
+
+The notification system provides a unified framework for delivering alerts to users across all notification types. It uses an event-based model where notifications are stored as discrete records rather than computed on-the-fly.
+
+### Design Decisions
+
+#### User-Level vs Member-Level Notifications
+
+**Decision:** Store notifications at the User level with optional org/member context.
+
+**Rationale:**
+- Invitations must work before membership exists (the invitee may not be a member yet)
+- A single query can fetch all notifications for a user across all their organizations
+- The frontend can filter/group by organization as needed
+- Avoids orphan notifications when members are removed from organizations
+
+#### Event-Based Storage vs Computed
+
+**Decision:** Store notifications as discrete records rather than computing them on-the-fly.
+
+**Rationale:**
+- Rich metadata support (read state, archival, expiration, grouping)
+- Efficient queries via proper indexes
+- Supports notification-specific actions (mark as read, archive)
+- Extensible to new notification types via discriminated union
+- Works for pre-membership scenarios (invitations)
+
+#### Polymorphic Payload
+
+**Decision:** Use a discriminated union for notification payloads based on category.
+
+**Rationale:**
+- Type safety at runtime (Convex validates the payload structure)
+- Self-documenting: each category has a defined payload shape
+- Frontend can render category-specific UI based on payload type
+- Adding new categories only requires extending the union
+
+### Notification Entity
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `userId` | `Id<"users">` | The notification recipient |
+| `orgaId` | `Id<"orgas">?` | Optional organization context |
+| `memberId` | `Id<"members">?` | Optional member context |
+| `payload` | `NotificationPayload` | Discriminated union with category-specific data |
+| `priority` | `NotificationPriority` | "low", "normal", "high", "urgent" |
+| `isRead` | `boolean` | Whether the notification has been read |
+| `readAt` | `number?` | Timestamp when marked as read |
+| `isArchived` | `boolean` | Whether the notification has been archived |
+| `archivedAt` | `number?` | Timestamp when archived |
+| `expiresAt` | `number?` | Auto-cleanup timestamp |
+| `groupKey` | `string?` | For grouping related notifications |
+
+### Notification Categories
+
+| Category | Description | Payload Fields |
+|----------|-------------|----------------|
+| `invitation` | Pending invitation to join org | invitationId, orgaName, inviterName |
+| `message` | Unread message in team (future) | messageId, teamId, teamName, senderName, preview |
+| `policy_global` | New org-wide policy | policyId, policyTitle, orgaId, orgaName |
+| `policy_team` | New team policy | policyId, policyTitle, teamId, teamName |
+| `decision` | New decision affecting user | decisionId, targetType, summary |
+| `role_assignment` | Assigned to a new role | roleId, roleTitle, teamName, orgaId, orgaName |
+| `mention` | Mentioned in topic/discussion (future) | sourceType, sourceId, mentionerName, preview |
+| `system` | System announcements | title, message |
+
+### Notification Preferences Entity
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `userId` | `Id<"users">` | The user these preferences belong to |
+| `orgaId` | `Id<"orgas">?` | null = global defaults, specific = org override |
+| `[category]` | `ChannelPreferences` | Per-category channel settings (inApp, email, push) |
+| `quietHoursStart` | `number?` | Hour (0-23) when quiet hours begin |
+| `quietHoursEnd` | `number?` | Hour (0-23) when quiet hours end |
+| `digestFrequency` | `DigestFrequency` | "realtime", "daily", "weekly" |
+
+### Index Strategy
+
+**Notifications:**
+- `by_user` - Fetch all notifications for a user
+- `by_user_and_read` - Fetch unread notifications efficiently
+- `by_user_and_orga` - Filter notifications by organization
+- `by_user_and_archived` - Separate active from archived
+- `by_orga` - Admin queries for org-wide notifications
+- `by_expires` - Cleanup expired notifications
+- `by_group_key` - Delete/update related notifications as a group
+
+**Notification Preferences:**
+- `by_user` - Get all preferences for a user
+- `by_user_and_orga` - Get specific preferences (global or org-specific)
+
+### Integration Pattern
+
+When creating notifications in other modules:
+
+```typescript
+import { internal } from "../_generated/api";
+import { buildInvitationNotification, shouldNotify } from "../notifications/helpers";
+
+// In a mutation handler:
+const prefs = await shouldNotify(ctx, targetUserId, orgaId, "invitation");
+if (prefs.inApp) {
+  await ctx.scheduler.runAfter(0, internal.notifications.functions.create,
+    buildInvitationNotification({
+      userId: targetUserId,
+      orgaId: orgaId,
+      invitationId: invitation._id,
+      orgaName: orga.name,
+      inviterName: `${member.firstname} ${member.surname}`,
+    })
+  );
+}
+```
+
+---
+
 ## Migration History
 
 | Date | Description | Impact |
 |------|-------------|--------|
 | Initial | Base schema established | N/A |
 | 2026-02-02 | Added `linkedRoleId` field to roles for double role pattern | Safe - new optional field, existing data unaffected |
+| 2026-02-05 | Added notifications and notificationPreferences tables | Safe - new tables, no existing data affected |
 
 *This section should be updated when migrations are performed.*
 
@@ -594,6 +714,21 @@ policyVisibility = "private" | "public"
 ### Target Types (for Decisions)
 ```typescript
 targetType = "orgas" | "teams" | "roles" | "members" | "policies" | "invitations"
+```
+
+### Notification Categories
+```typescript
+notificationCategory = "invitation" | "message" | "policy_global" | "policy_team" | "decision" | "role_assignment" | "mention" | "system"
+```
+
+### Notification Priority
+```typescript
+notificationPriority = "low" | "normal" | "high" | "urgent"
+```
+
+### Digest Frequency
+```typescript
+digestFrequency = "realtime" | "daily" | "weekly"
 ```
 
 ---

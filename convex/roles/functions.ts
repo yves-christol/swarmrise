@@ -1,4 +1,5 @@
 import { query, mutation } from "../_generated/server";
+import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { roleValidator } from ".";
@@ -11,6 +12,7 @@ import {
   getTeamLeader,
   hasTeamLeader,
 } from "../utils";
+import { buildRoleAssignmentNotification } from "../notifications/helpers";
 
 /**
  * Get a role by ID
@@ -180,7 +182,29 @@ export const createRole = mutation({
         },
       },
     });
-    
+
+    // Notify the assigned member if it's not the person creating the role
+    const assignedMemberDoc = await ctx.db.get(assignedMemberId);
+    if (assignedMemberDoc && assignedMemberDoc.personId !== member.personId) {
+      const team = await ctx.db.get(args.teamId);
+      const orga = await ctx.db.get(orgaId);
+      if (team && orga) {
+        await ctx.scheduler.runAfter(
+          0,
+          internal.notifications.functions.create,
+          buildRoleAssignmentNotification({
+            userId: assignedMemberDoc.personId,
+            orgaId: orgaId,
+            memberId: assignedMemberId,
+            roleId: roleId,
+            roleTitle: args.title,
+            teamName: team.name,
+            orgaName: orga.name,
+          })
+        );
+      }
+    }
+
     return roleId;
   },
 });
@@ -393,7 +417,32 @@ export const updateRole = mutation({
         after: Object.keys(after).length > 0 ? after : undefined,
       },
     });
-    
+
+    // Notify the new member if the role was reassigned to a different person
+    if (args.memberId !== undefined && args.memberId !== role.memberId) {
+      const newMember = await ctx.db.get(args.memberId);
+      // Don't notify if the person reassigning the role is assigning it to themselves
+      if (newMember && newMember.personId !== member.personId) {
+        const team = await ctx.db.get(role.teamId);
+        const orga = await ctx.db.get(orgaId);
+        if (team && orga) {
+          await ctx.scheduler.runAfter(
+            0,
+            internal.notifications.functions.create,
+            buildRoleAssignmentNotification({
+              userId: newMember.personId,
+              orgaId: orgaId,
+              memberId: args.memberId,
+              roleId: args.roleId,
+              roleTitle: args.title ?? role.title,
+              teamName: team.name,
+              orgaName: orga.name,
+            })
+          );
+        }
+      }
+    }
+
     return args.roleId;
   },
 });

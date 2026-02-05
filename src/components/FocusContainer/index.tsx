@@ -20,6 +20,8 @@ type TransitionType =
   | "role-to-team"
   | "orga-to-role"
   | "role-to-orga"
+  | "orga-to-member"
+  | "member-to-orga"
   | "role-to-member"
   | "member-to-role"
   | "member-to-team"
@@ -29,7 +31,7 @@ type TransitionType =
 const TRANSITION_DURATION = 400; // ms
 
 export function FocusContainer({ orgaId }: FocusContainerProps) {
-  const { focus, focusOnOrga, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd } = useFocus();
+  const { focus, focusOnOrga, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, previousFocusFromMember } = useFocus();
 
   // Track which view to show during transition
   const [currentView, setCurrentView] = useState<ViewType>(focus.type);
@@ -112,6 +114,12 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
       case "member-to-team":
         // Zooming out from member to team
         return { scale: 0.7, origin: "center center" };
+      case "member-to-orga":
+        // Zooming out from member to org (when started on member via "You come first")
+        return { scale: 0.5, origin: "center center" };
+      case "orga-to-member":
+        // Zooming into member from org view (direct)
+        return { scale: 2, origin: transformOrigin };
       case "team-to-member":
         // Zooming into member from team view (rare)
         return { scale: 1.5, origin: transformOrigin };
@@ -140,6 +148,10 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         return "fadeScaleInFromLarge";
       case "member-to-team":
         return "fadeScaleInFromLarge";
+      case "member-to-orga":
+        return "fadeScaleInFromLarge";
+      case "orga-to-member":
+        return "fadeScaleInFromSmall";
       case "team-to-member":
         return "fadeScaleInFromSmall";
       default:
@@ -229,7 +241,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         {currentView === "member" && focus.type === "member" ? (
           <MemberFocusView
             memberId={focus.memberId}
-            onZoomOut={focusOnRoleFromMember}
+            onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
             onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
             onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
           />

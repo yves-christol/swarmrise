@@ -10,7 +10,28 @@ import {
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getTeamLeader,
+  getMemberInOrga,
 } from "../utils";
+
+/**
+ * Get the current user's member document in an organization.
+ * This is the "You come first" query - centered on the current user.
+ */
+export const getMyMember = query({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.union(memberValidator, v.null()),
+  handler: async (ctx, args) => {
+    try {
+      const member = await getMemberInOrga(ctx, args.orgaId);
+      return member;
+    } catch {
+      // User is not authenticated or not a member of this organization
+      return null;
+    }
+  },
+});
 
 /**
  * Get a member by ID (must be authenticated and member of the same organization)

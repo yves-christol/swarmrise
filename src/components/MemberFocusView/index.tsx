@@ -569,7 +569,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
         hover:text-dark dark:hover:text-light
         focus:outline-none focus:ring-2 focus:ring-[#a2dbed]
       "
-      aria-label="Return to role view"
+      aria-label="Return to previous view"
     >
       {/* Role circle icon */}
       <svg

@@ -50,6 +50,9 @@ type OrgaStoreContextType = {
   isLoading: boolean
   hasOrgas: boolean
 
+  // Current user's member in the selected organization ("You come first")
+  myMember: Member | null | undefined
+
   // Transition state - true when switching between organizations
   isSwitchingOrga: boolean
   // Internal: called by org-scoped hooks when they have finished loading
@@ -63,6 +66,7 @@ type OrgaStoreContextType = {
   focusOnTeamFromRole: () => void
   focusOnRoleFromMember: () => void
   focusOnTeamFromMember: (teamId: Id<"teams">) => void
+  focusOnOrgaFromMember: () => void
   focusOnOrga: () => void
   isFocusTransitioning: boolean
   transitionOrigin: TransitionOrigin
@@ -127,6 +131,15 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
 
   // Derive selected organization from ID
   const selectedOrga = orgasWithCounts?.find(o => o.orga._id === selectedOrgaId)?.orga ?? null
+
+  // Fetch current user's member in the selected organization ("You come first")
+  const myMember = useQuery(
+    api.members.functions.getMyMember,
+    isSignedIn && selectedOrga ? { orgaId: selectedOrgaId! } : "skip"
+  )
+
+  // Track if we've already set the initial focus for the current org
+  const hasSetInitialFocusRef = useRef(false)
 
   // Auto-select logic
   useEffect(() => {
@@ -252,6 +265,17 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [focus])
 
+  // Focus back to org from member view (when started on member view via "You come first")
+  const focusOnOrgaFromMember = useCallback(() => {
+    if (focus.type === "member") {
+      setReturnFromMemberId(focus.memberId)
+      setTransitionDirection("out")
+      setIsFocusTransitioning(true)
+      setFocus({ type: "orga" })
+      setPreviousFocusFromMember(null)
+    }
+  }, [focus])
+
   const focusOnOrga = useCallback(() => {
     // Capture the team we're returning from so the org view can center on it
     if (focus.type === "team") {
@@ -289,9 +313,31 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
   // Reset focus when switching organizations
   useEffect(() => {
     if (isSwitchingOrga) {
+      // Reset the initial focus flag when starting to switch
+      hasSetInitialFocusRef.current = false
       setFocus({ type: "orga" })
     }
   }, [isSwitchingOrga])
+
+  // "You come first": Set default focus to current user's member view when org is loaded
+  useEffect(() => {
+    // Only set initial focus once per org selection
+    if (hasSetInitialFocusRef.current) return
+    // Wait until we have the myMember data
+    if (myMember === undefined) return
+    // Only if there's no transition happening
+    if (isSwitchingOrga || isFocusTransitioning) return
+    // Only if current focus is still the default orga view
+    if (focus.type !== "orga") return
+
+    hasSetInitialFocusRef.current = true
+
+    // If we have myMember, focus on them
+    if (myMember !== null) {
+      setFocus({ type: "member", memberId: myMember._id })
+    }
+    // If myMember is null (shouldn't happen normally), stay on orga view
+  }, [myMember, isSwitchingOrga, isFocusTransitioning, focus.type])
 
   return (
     <OrgaStoreContext.Provider value={{
@@ -302,6 +348,7 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       orgasWithCounts,
       isLoading,
       hasOrgas,
+      myMember,
       isSwitchingOrga,
       _notifySwitchComplete,
       focus,
@@ -311,6 +358,7 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       focusOnTeamFromRole,
       focusOnRoleFromMember,
       focusOnTeamFromMember,
+      focusOnOrgaFromMember,
       focusOnOrga,
       isFocusTransitioning,
       transitionOrigin,
@@ -340,8 +388,8 @@ export const useOrgaStore = () => {
 // Convenience hooks for common data needs
 
 export const useSelectedOrga = () => {
-  const { selectedOrga, selectedOrgaId, isLoading, isSwitchingOrga } = useOrgaStore()
-  return { selectedOrga, selectedOrgaId, isLoading, isSwitchingOrga }
+  const { selectedOrga, selectedOrgaId, isLoading, isSwitchingOrga, myMember } = useOrgaStore()
+  return { selectedOrga, selectedOrgaId, isLoading, isSwitchingOrga, myMember }
 }
 
 export const useOrgaList = () => {
@@ -350,8 +398,8 @@ export const useOrgaList = () => {
 }
 
 export const useFocus = () => {
-  const { focus, focusOnTeam, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId, returnFromMemberId, clearReturnFromMemberId, previousFocusFromMember } = useOrgaStore()
-  return { focus, focusOnTeam, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId, returnFromMemberId, clearReturnFromMemberId, previousFocusFromMember }
+  const { focus, focusOnTeam, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId, returnFromMemberId, clearReturnFromMemberId, previousFocusFromMember } = useOrgaStore()
+  return { focus, focusOnTeam, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId, returnFromMemberId, clearReturnFromMemberId, previousFocusFromMember }
 }
 
 /**

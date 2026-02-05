@@ -2,11 +2,75 @@
 import {
   internalMutation,
   internalQuery,
+  internalAction,
   action,
+  ActionCtx,
 } from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { internal } from "../_generated/api";
+
+// Shared handler logic for populating avatars
+async function populateAvatarsHandler(
+  ctx: ActionCtx,
+  orgaId: Id<"orgas">
+): Promise<{ updatedCount: number; failedCount: number }> {
+  // Get all members
+  const members = await ctx.runQuery(internal.dataTest.users.getMembersForAvatars, {
+    orgaId,
+  });
+
+  let updatedCount = 0;
+  let failedCount = 0;
+
+  // Process members in batches to avoid overwhelming the external service
+  const BATCH_SIZE = 10;
+  for (let i = 0; i < members.length; i += BATCH_SIZE) {
+    const batch = members.slice(i, i + BATCH_SIZE);
+
+    await Promise.all(
+      batch.map(async (member: { memberId: Id<"members">; personId: Id<"users">; email: string }) => {
+        try {
+          // Generate unique avatar URL from email
+          const seed = encodeURIComponent(member.email);
+          const avatarUrl = `https://i.pravatar.cc/150?u=${seed}`;
+
+          // Fetch the image
+          const response = await fetch(avatarUrl);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch avatar: ${response.status}`);
+          }
+
+          // Get the image as a blob
+          const blob = await response.blob();
+
+          // Store in Convex storage
+          const storageId = await ctx.storage.store(blob);
+
+          // Get the storage URL
+          const storageUrl = await ctx.storage.getUrl(storageId);
+          if (!storageUrl) {
+            throw new Error("Failed to get storage URL");
+          }
+
+          // Update the member with the storage URL
+          await ctx.runMutation(internal.dataTest.users.updateMemberAvatar, {
+            memberId: member.memberId,
+            personId: member.personId,
+            pictureURL: storageUrl,
+          });
+
+          updatedCount++;
+        } catch (error) {
+          console.error(`Failed to update avatar for ${member.email}:`, error);
+          failedCount++;
+        }
+      })
+    );
+  }
+
+  return { updatedCount, failedCount };
+}
 
 const FIRST_NAMES = [
   "James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda",
@@ -188,6 +252,7 @@ export const updateMemberAvatar = internalMutation({
 /**
  * Action to populate avatar images for all members in an organization.
  * Fetches images from pravatar.cc and stores them in Convex file storage.
+ * This is the public version for manual invocation via CLI.
  */
 export const populateMemberAvatars = action({
   args: {
@@ -198,61 +263,24 @@ export const populateMemberAvatars = action({
     failedCount: v.number(),
   }),
   handler: async (ctx, args): Promise<{ updatedCount: number; failedCount: number }> => {
-    // Get all members
-    const members = await ctx.runQuery(internal.dataTest.users.getMembersForAvatars, {
-      orgaId: args.orgaId,
-    });
+    return populateAvatarsHandler(ctx, args.orgaId);
+  },
+});
 
-    let updatedCount = 0;
-    let failedCount = 0;
-
-    // Process members in batches to avoid overwhelming the external service
-    const BATCH_SIZE = 10;
-    for (let i = 0; i < members.length; i += BATCH_SIZE) {
-      const batch = members.slice(i, i + BATCH_SIZE);
-
-      await Promise.all(
-        batch.map(async (member) => {
-          try {
-            // Generate unique avatar URL from email
-            const seed = encodeURIComponent(member.email);
-            const avatarUrl = `https://i.pravatar.cc/150?u=${seed}`;
-
-            // Fetch the image
-            const response = await fetch(avatarUrl);
-            if (!response.ok) {
-              throw new Error(`Failed to fetch avatar: ${response.status}`);
-            }
-
-            // Get the image as a blob
-            const blob = await response.blob();
-
-            // Store in Convex storage
-            const storageId = await ctx.storage.store(blob);
-
-            // Get the storage URL
-            const storageUrl = await ctx.storage.getUrl(storageId);
-            if (!storageUrl) {
-              throw new Error("Failed to get storage URL");
-            }
-
-            // Update the member with the storage URL
-            await ctx.runMutation(internal.dataTest.users.updateMemberAvatar, {
-              memberId: member.memberId,
-              personId: member.personId,
-              pictureURL: storageUrl,
-            });
-
-            updatedCount++;
-          } catch (error) {
-            console.error(`Failed to update avatar for ${member.email}:`, error);
-            failedCount++;
-          }
-        })
-      );
-    }
-
-    return { updatedCount, failedCount };
+/**
+ * Internal action to populate avatar images for all members in an organization.
+ * Called by createTestOrganizationWithAvatars action.
+ */
+export const populateMemberAvatarsInternal = internalAction({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.object({
+    updatedCount: v.number(),
+    failedCount: v.number(),
+  }),
+  handler: async (ctx, args): Promise<{ updatedCount: number; failedCount: number }> => {
+    return populateAvatarsHandler(ctx, args.orgaId);
   },
 });
 

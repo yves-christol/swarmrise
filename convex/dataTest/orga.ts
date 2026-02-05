@@ -1,4 +1,4 @@
-import { internalMutation } from "../_generated/server";
+import { internalMutation, internalAction } from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { internal } from "../_generated/api";
@@ -658,6 +658,7 @@ export const deleteTestOrganization = internalMutation({
       decisions: v.number(),
       policies: v.number(),
       topics: v.number(),
+      storageFiles: v.number(),
     }),
   }),
   handler: async (ctx, args) => {
@@ -693,6 +694,7 @@ export const deleteTestOrganization = internalMutation({
             decisions: 0,
             policies: 0,
             topics: 0,
+            storageFiles: 0,
           },
         };
       }
@@ -775,6 +777,25 @@ export const deleteTestOrganization = internalMutation({
       await ctx.db.delete(policy._id);
     }
     
+    // Delete avatar files from Convex storage
+    let storageFileCount = 0;
+    for (const member of members) {
+      if (member.pictureURL) {
+        // Extract storage ID from URL (format: https://xxx.convex.cloud/api/storage/{storageId})
+        const match = member.pictureURL.match(/\/api\/storage\/([a-f0-9-]+)$/);
+        if (match) {
+          const storageId = match[1] as Id<"_storage">;
+          try {
+            await ctx.storage.delete(storageId);
+            storageFileCount++;
+          } catch (error) {
+            // Storage file may already be deleted or URL is from external source
+            console.warn(`Failed to delete storage file for member ${member._id}:`, error);
+          }
+        }
+      }
+    }
+
     // Remove organization from all users' orgaIds and delete members
     for (const member of members) {
       const user = await ctx.db.get(member.personId);
@@ -800,7 +821,46 @@ export const deleteTestOrganization = internalMutation({
         decisions: decisions.length,
         policies: policies.length,
         topics: topicCount,
+        storageFiles: storageFileCount,
       },
+    };
+  },
+});
+
+/**
+ * Create a test organization with avatars stored in Convex storage.
+ * This action wraps createTestOrganization and then populates avatars.
+ */
+export const createTestOrganizationWithAvatars = internalAction({
+  args: {},
+  returns: v.object({
+    orgaId: v.id("orgas"),
+    memberCount: v.number(),
+    teamCount: v.number(),
+    roleCount: v.number(),
+    avatarsPopulated: v.number(),
+    avatarsFailed: v.number(),
+  }),
+  handler: async (ctx): Promise<{
+    orgaId: Id<"orgas">;
+    memberCount: number;
+    teamCount: number;
+    roleCount: number;
+    avatarsPopulated: number;
+    avatarsFailed: number;
+  }> => {
+    // First, create the organization
+    const result = await ctx.runMutation(internal.dataTest.orga.createTestOrganization, {});
+
+    // Then, populate avatars
+    const avatarResult = await ctx.runAction(internal.dataTest.users.populateMemberAvatarsInternal, {
+      orgaId: result.orgaId,
+    });
+
+    return {
+      ...result,
+      avatarsPopulated: avatarResult.updatedCount,
+      avatarsFailed: avatarResult.failedCount,
     };
   },
 });

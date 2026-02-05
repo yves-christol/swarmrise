@@ -80,7 +80,7 @@ export const listMyOrgasWithCounts = query({
 export const createOrganization = mutation({
   args: {
     name: v.string(),
-    logoUrl: v.optional(v.string()),
+    logoStorageId: v.optional(v.id("_storage")), // Storage ID for uploaded logo
     colorScheme: v.object({
       primary: v.object({
         r: v.number(),
@@ -100,10 +100,19 @@ export const createOrganization = mutation({
     // Ensure user is authenticated
     const user = await getAuthenticatedUser(ctx);
 
+    // Get the logo URL from storage if a storage ID was provided
+    let logoUrl: string | undefined;
+    if (args.logoStorageId) {
+      const url = await ctx.storage.getUrl(args.logoStorageId);
+      if (url) {
+        logoUrl = url;
+      }
+    }
+
     // Create the organization first with owner set to the creator
     const orgaId = await ctx.db.insert("orgas", {
       name: args.name,
-      logoUrl: args.logoUrl,
+      logoUrl,
       colorScheme: args.colorScheme,
       owner: user._id,
     });
@@ -183,7 +192,7 @@ export const createOrganization = mutation({
         before: undefined,
         after: {
           name: args.name,
-          logoUrl: args.logoUrl,
+          logoUrl,
           colorScheme: args.colorScheme,
         },
       },
@@ -200,7 +209,7 @@ export const updateOrga = mutation({
   args: {
     orgaId: v.id("orgas"),
     name: v.optional(v.string()),
-    logoUrl: v.optional(v.union(v.string(), v.null())),
+    logoStorageId: v.optional(v.union(v.id("_storage"), v.null())), // Storage ID for uploaded logo, null to remove
     colorScheme: v.optional(
       v.object({
         primary: v.object({
@@ -223,20 +232,25 @@ export const updateOrga = mutation({
     if (!orga) {
       throw new Error("Organization not found");
     }
-    
+
     // Update organization
     const updates: {
       name?: string;
       logoUrl?: string;
       colorScheme?: ColorScheme;
     } = {};
-    
+
     if (args.name !== undefined) updates.name = args.name;
-    if (args.logoUrl !== undefined) {
-      updates.logoUrl = args.logoUrl === null ? undefined : args.logoUrl;
+    if (args.logoStorageId !== undefined) {
+      if (args.logoStorageId === null) {
+        updates.logoUrl = undefined;
+      } else {
+        const url = await ctx.storage.getUrl(args.logoStorageId);
+        updates.logoUrl = url ?? undefined;
+      }
     }
     if (args.colorScheme !== undefined) updates.colorScheme = args.colorScheme;
-    
+
     // Build before and after with only modified fields
     const before: {
       name?: string;
@@ -248,14 +262,14 @@ export const updateOrga = mutation({
       logoUrl?: string;
       colorScheme?: ColorScheme;
     } = {};
-    
+
     if (args.name !== undefined) {
       before.name = orga.name;
       after.name = args.name;
     }
-    if (args.logoUrl !== undefined) {
+    if (args.logoStorageId !== undefined) {
       before.logoUrl = orga.logoUrl;
-      after.logoUrl = args.logoUrl === null ? undefined : args.logoUrl;
+      after.logoUrl = updates.logoUrl;
     }
     if (args.colorScheme !== undefined) {
       before.colorScheme = orga.colorScheme;

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useOrgaStore } from "../../tools/orgaStore";
+import { Id } from "../../../convex/_generated/dataModel";
 
 type RGB = { r: number; g: number; b: number };
 type ColorScheme = { primary: RGB; secondary: RGB };
@@ -97,6 +98,7 @@ export const CreateOrganizationModal = ({
   const { t } = useTranslation("orgs");
   const { selectOrga } = useOrgaStore();
   const createOrganization = useMutation(api.orgas.functions.createOrganization);
+  const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
 
   const [name, setName] = useState("");
   const [selectedPresetId, setSelectedPresetId] = useState("gold-blue");
@@ -107,14 +109,19 @@ export const CreateOrganizationModal = ({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Phase 3: Advanced options
+  // Advanced options
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [firstTeamName, setFirstTeamName] = useState("");
-  const [logoUrl, setLogoUrl] = useState("");
-  const [logoError, setLogoError] = useState(false);
+
+  // Logo upload state
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [logoUploadError, setLogoUploadError] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get current color scheme
   const getColorScheme = useCallback((): ColorScheme => {
@@ -159,12 +166,18 @@ export const CreateOrganizationModal = ({
         setIsSubmitting(false);
         setShowAdvanced(false);
         setFirstTeamName("");
-        setLogoUrl("");
-        setLogoError(false);
+        // Clean up logo preview URL
+        if (logoPreviewUrl) {
+          URL.revokeObjectURL(logoPreviewUrl);
+        }
+        setLogoFile(null);
+        setLogoPreviewUrl(null);
+        setIsUploadingLogo(false);
+        setLogoUploadError(false);
       }, 150);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, logoPreviewUrl]);
 
   // Handle escape key
   useEffect(() => {
@@ -227,6 +240,73 @@ export const CreateOrganizationModal = ({
     setValidationError(error);
   };
 
+  // Handle file selection
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/svg+xml", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      setLogoUploadError(true);
+      return;
+    }
+
+    // Create preview URL
+    if (logoPreviewUrl) {
+      URL.revokeObjectURL(logoPreviewUrl);
+    }
+    const previewUrl = URL.createObjectURL(file);
+
+    setLogoFile(file);
+    setLogoPreviewUrl(previewUrl);
+    setLogoUploadError(false);
+  };
+
+  // Remove selected file
+  const handleRemoveFile = () => {
+    if (logoPreviewUrl) {
+      URL.revokeObjectURL(logoPreviewUrl);
+    }
+    setLogoFile(null);
+    setLogoPreviewUrl(null);
+    setLogoUploadError(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // Upload file to Convex storage
+  const uploadLogo = async (): Promise<Id<"_storage"> | null> => {
+    if (!logoFile) return null;
+
+    setIsUploadingLogo(true);
+    try {
+      // Get upload URL from Convex
+      const uploadUrl = await generateUploadUrl();
+
+      // Upload the file
+      const response = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": logoFile.type },
+        body: logoFile,
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const { storageId } = await response.json();
+      return storageId as Id<"_storage">;
+    } catch (err) {
+      console.error("Failed to upload logo:", err);
+      setLogoUploadError(true);
+      return null;
+    } finally {
+      setIsUploadingLogo(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -241,18 +321,30 @@ export const CreateOrganizationModal = ({
     setError(null);
 
     const colorScheme = getColorScheme();
-    const trimmedLogoUrl = logoUrl.trim();
     const trimmedFirstTeamName = firstTeamName.trim();
 
-    createOrganization({
-      name: name.trim(),
-      colorScheme,
-      ...(trimmedLogoUrl && { logoUrl: trimmedLogoUrl }),
-      ...(trimmedFirstTeamName && { firstTeamName: trimmedFirstTeamName }),
-    })
+    // Upload logo first if selected, then create organization
+    uploadLogo()
+      .then((logoStorageId) => {
+        if (logoFile && !logoStorageId) {
+          // Logo upload failed
+          setError(t("logoUploadError"));
+          setIsSubmitting(false);
+          return;
+        }
+
+        return createOrganization({
+          name: name.trim(),
+          colorScheme,
+          ...(logoStorageId && { logoStorageId }),
+          ...(trimmedFirstTeamName && { firstTeamName: trimmedFirstTeamName }),
+        });
+      })
       .then((orgaId) => {
-        selectOrga(orgaId);
-        onClose();
+        if (orgaId) {
+          selectOrga(orgaId);
+          onClose();
+        }
       })
       .catch((err) => {
         console.error("Failed to create organization:", err);
@@ -284,11 +376,6 @@ export const CreateOrganizationModal = ({
       setCustomSecondary(rgb);
     }
     setSelectedPresetId("custom");
-  };
-
-  const handleLogoUrlChange = (url: string) => {
-    setLogoUrl(url);
-    setLogoError(false);
   };
 
   if (!isOpen) return null;
@@ -488,42 +575,73 @@ export const CreateOrganizationModal = ({
           {/* Advanced options section */}
           {showAdvanced && (
             <div className="flex flex-col gap-4 p-4 rounded-md bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600">
-              {/* Logo URL */}
+              {/* Logo upload */}
               <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="logo-url"
-                  className="text-sm font-medium text-dark dark:text-light"
-                >
-                  {t("logoUrlLabel")}
+                <label className="text-sm font-medium text-dark dark:text-light">
+                  {t("logoLabel")}
                 </label>
-                <div className="flex gap-3">
+                <div className="flex items-center gap-3">
                   {/* Logo preview */}
-                  <div className="w-12 h-12 rounded-md bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    {logoUrl && !logoError ? (
+                  <div className="w-14 h-14 rounded-md bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-300 dark:border-gray-500">
+                    {logoPreviewUrl ? (
                       <img
-                        src={logoUrl}
+                        src={logoPreviewUrl}
                         alt=""
                         className="w-full h-full object-contain"
-                        onError={() => setLogoError(true)}
                       />
                     ) : (
-                      <OrgPlaceholderIcon className="w-6 h-6 text-gray-400" />
+                      <OrgPlaceholderIcon className="w-7 h-7 text-gray-400" />
                     )}
                   </div>
-                  <input
-                    id="logo-url"
-                    type="url"
-                    value={logoUrl}
-                    onChange={(e) => handleLogoUrlChange(e.target.value)}
-                    disabled={isSubmitting}
-                    placeholder={t("logoUrlPlaceholder")}
-                    className="flex-1 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
-                      bg-white dark:bg-gray-900 text-dark dark:text-light text-sm
-                      focus:outline-none focus:ring-2 focus:ring-[#eac840] transition-colors
-                      disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
+                      onChange={handleFileSelect}
+                      disabled={isSubmitting || isUploadingLogo}
+                      className="hidden"
+                      id="logo-file-input"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isSubmitting || isUploadingLogo}
+                        className="px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-600
+                          bg-white dark:bg-gray-800 text-dark dark:text-light
+                          hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors
+                          disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {logoFile ? t("logoChangeButton") : t("logoUploadButton")}
+                      </button>
+                      {logoFile && (
+                        <button
+                          type="button"
+                          onClick={handleRemoveFile}
+                          disabled={isSubmitting || isUploadingLogo}
+                          className="px-3 py-1.5 text-sm rounded-md
+                            text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20
+                            transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {t("logoRemoveButton")}
+                        </button>
+                      )}
+                    </div>
+                    {logoFile && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">
+                        {logoFile.name}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <p className="text-xs text-gray-400">{t("logoUrlHint")}</p>
+                {logoUploadError && (
+                  <p className="flex items-center gap-1 text-sm text-red-600 dark:text-red-400">
+                    <ErrorIcon className="w-4 h-4 flex-shrink-0" />
+                    {t("logoUploadError")}
+                  </p>
+                )}
+                <p className="text-xs text-gray-400">{t("logoHint")}</p>
               </div>
 
               {/* First team name */}

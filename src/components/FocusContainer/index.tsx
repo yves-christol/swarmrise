@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useFocus } from "../../tools/orgaStore";
+import { useFocus, useViewMode } from "../../tools/orgaStore";
 import { OrgNetworkDiagram } from "../OrgNetworkDiagram";
 import { TeamRolesCircle } from "../TeamRolesCircle";
 import { RoleFocusView } from "../RoleFocusView";
 import { MemberFocusView } from "../MemberFocusView";
+import { OrgaManageView } from "../OrgaManageView";
+import { ViewToggle } from "../ViewToggle";
 import { Id } from "../../../convex/_generated/dataModel";
 
 type FocusContainerProps = {
@@ -32,6 +34,7 @@ const TRANSITION_DURATION = 400; // ms
 
 export function FocusContainer({ orgaId }: FocusContainerProps) {
   const { focus, focusOnOrga, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, previousFocusFromMember } = useFocus();
+  const { viewMode, swapPhase, swapDirection, displayedMode, setViewMode } = useViewMode();
 
   // Track which view to show during transition
   const [currentView, setCurrentView] = useState<ViewType>(focus.type);
@@ -187,6 +190,36 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     return {};
   };
 
+  // Get swap animation class for view mode transitions
+  const getSwapClass = (): string => {
+    if (swapPhase === "idle") return "";
+    if (swapPhase === "swapping-out") {
+      return swapDirection === "up" ? "swap-out-up" : "swap-out-down";
+    }
+    return swapDirection === "up" ? "swap-in-up" : "swap-in-down";
+  };
+
+  // Keyboard shortcut for view toggle (V key)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      // Don't handle during focus transitions
+      if (isFocusTransitioning || animationPhase !== "idle") {
+        return;
+      }
+
+      if (e.key === "v" || e.key === "V") {
+        setViewMode(viewMode === "visual" ? "manage" : "visual");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [viewMode, setViewMode, isFocusTransitioning, animationPhase]);
+
   return (
     <div className="absolute inset-0 overflow-hidden">
       {/* CSS for animations */}
@@ -224,14 +257,89 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           }
         }
 
+        /* View mode swap animations */
+        @keyframes swapOutUp {
+          from {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(-24px) scale(0.98);
+          }
+        }
+
+        @keyframes swapInUp {
+          from {
+            opacity: 0;
+            transform: translateY(24px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes swapOutDown {
+          from {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(24px) scale(0.98);
+          }
+        }
+
+        @keyframes swapInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-24px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        .swap-out-up {
+          animation: swapOutUp 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .swap-in-up {
+          animation: swapInUp 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .swap-out-down {
+          animation: swapOutDown 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .swap-in-down {
+          animation: swapInDown 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .focus-view {
             animation: none !important;
             transition: opacity 150ms ease-out !important;
             transform: none !important;
           }
+          .swap-out-up, .swap-in-up, .swap-out-down, .swap-in-down {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+          }
         }
       `}</style>
+
+      {/* View toggle - only show when not transitioning between entity types */}
+      {animationPhase === "idle" && !isFocusTransitioning && currentView === "orga" && (
+        <ViewToggle
+          mode={viewMode}
+          onChange={setViewMode}
+          disabled={swapPhase !== "idle"}
+        />
+      )}
 
       {/* View container with transitions */}
       <div
@@ -258,7 +366,23 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
             onZoomOut={focusOnOrga}
           />
         ) : (
-          <OrgNetworkDiagram orgaId={orgaId} />
+          /* Orga view with swap animation between visual and manage */
+          <div className={`absolute inset-0 ${getSwapClass()}`}>
+            {displayedMode === "visual" ? (
+              <OrgNetworkDiagram orgaId={orgaId} />
+            ) : (
+              <OrgaManageView orgaId={orgaId} />
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Screen reader announcement for view mode */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {swapPhase === "idle" && currentView === "orga" && (
+          displayedMode === "visual"
+            ? "Now viewing visual diagram. Press V to switch to management view."
+            : "Now viewing management options. Press V to switch to visual diagram."
         )}
       </div>
     </div>

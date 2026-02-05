@@ -11,6 +11,11 @@ import type { orgaValidator } from '../../../convex/orgas'
 
 type Orga = Infer<typeof orgaValidator>
 
+// View mode types for switching between visual (SVG) and manage (web) views
+export type ViewMode = "visual" | "manage"
+export type SwapPhase = "idle" | "swapping-out" | "swapping-in"
+export type SwapDirection = "up" | "down"
+
 type OrgaWithCounts = {
   orga: Orga
   counts: {
@@ -83,6 +88,13 @@ type OrgaStoreContextType = {
   clearReturnFromMemberId: () => void
   // Store previous focus for back navigation from member view
   previousFocusFromMember: { type: "role"; roleId: Id<"roles">; teamId: Id<"teams"> } | null
+
+  // View mode state (visual vs manage)
+  viewMode: ViewMode
+  swapPhase: SwapPhase
+  swapDirection: SwapDirection
+  displayedMode: ViewMode
+  setViewMode: (mode: ViewMode) => void
 }
 
 const OrgaStoreContext = createContext<OrgaStoreContextType | undefined>(undefined)
@@ -117,6 +129,41 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
   const [returnFromMemberId, setReturnFromMemberId] = useState<Id<"members"> | null>(null)
   // Track previous focus to navigate back from member view
   const [previousFocusFromMember, setPreviousFocusFromMember] = useState<{ type: "role"; roleId: Id<"roles">; teamId: Id<"teams"> } | null>(null)
+
+  // View mode state (visual vs manage) with swap animation
+  const [viewMode, setViewModeState] = useState<ViewMode>("visual")
+  const [displayedMode, setDisplayedMode] = useState<ViewMode>("visual")
+  const [swapPhase, setSwapPhase] = useState<SwapPhase>("idle")
+  const [swapDirection, setSwapDirection] = useState<SwapDirection>("up")
+
+  const SWAP_DURATION = 350 // ms
+
+  const setViewMode = useCallback((newMode: ViewMode) => {
+    if (newMode === viewMode || swapPhase !== "idle") return
+
+    // Determine direction: visual->manage = up, manage->visual = down
+    setSwapDirection(newMode === "manage" ? "up" : "down")
+    setSwapPhase("swapping-out")
+
+    setTimeout(() => {
+      setDisplayedMode(newMode)
+      setSwapPhase("swapping-in")
+    }, SWAP_DURATION / 2)
+
+    setTimeout(() => {
+      setViewModeState(newMode)
+      setSwapPhase("idle")
+    }, SWAP_DURATION)
+  }, [viewMode, swapPhase])
+
+  // Reset view mode when navigating to different entity
+  useEffect(() => {
+    if (isFocusTransitioning) {
+      setViewModeState("visual")
+      setDisplayedMode("visual")
+      setSwapPhase("idle")
+    }
+  }, [isFocusTransitioning])
 
   // Only fetch organizations when the user is signed in
   const orgasWithCounts = useQuery(
@@ -371,6 +418,11 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       returnFromMemberId,
       clearReturnFromMemberId,
       previousFocusFromMember,
+      viewMode,
+      swapPhase,
+      swapDirection,
+      displayedMode,
+      setViewMode,
     }}>
       {children}
     </OrgaStoreContext.Provider>
@@ -400,6 +452,11 @@ export const useOrgaList = () => {
 export const useFocus = () => {
   const { focus, focusOnTeam, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId, returnFromMemberId, clearReturnFromMemberId, previousFocusFromMember } = useOrgaStore()
   return { focus, focusOnTeam, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, focusOnOrga, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId, returnFromMemberId, clearReturnFromMemberId, previousFocusFromMember }
+}
+
+export const useViewMode = () => {
+  const { viewMode, swapPhase, swapDirection, displayedMode, setViewMode } = useOrgaStore()
+  return { viewMode, swapPhase, swapDirection, displayedMode, setViewMode }
 }
 
 /**

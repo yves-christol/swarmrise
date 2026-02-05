@@ -360,8 +360,96 @@ export const transferOwnership = mutation({
         after: undefined,
       },
     });
-    
+
     return args.orgaId;
+  },
+});
+
+/**
+ * Delete an organization
+ * Only the owner can delete, and only if they are the only member
+ */
+export const deleteOrganization = mutation({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const orga = await ctx.db.get(args.orgaId);
+    if (!orga) {
+      throw new Error("Organization not found");
+    }
+
+    // Verify that the current user is the owner
+    if (!orga.owner || orga.owner !== member.personId) {
+      throw new Error("Only the owner can delete the organization");
+    }
+
+    // Verify that there is only one member
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+
+    if (members.length > 1) {
+      throw new Error("Cannot delete organization with multiple members");
+    }
+
+    // Get user to update their orgaIds
+    const user = await getAuthenticatedUser(ctx);
+
+    // Delete all roles in the organization
+    const roles = await ctx.db
+      .query("roles")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+    for (const role of roles) {
+      await ctx.db.delete(role._id);
+    }
+
+    // Delete all teams in the organization
+    const teams = await ctx.db
+      .query("teams")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+    for (const team of teams) {
+      await ctx.db.delete(team._id);
+    }
+
+    // Delete all decisions in the organization
+    const decisions = await ctx.db
+      .query("decisions")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+    for (const decision of decisions) {
+      await ctx.db.delete(decision._id);
+    }
+
+    // Delete all invitations for the organization
+    const invitations = await ctx.db
+      .query("invitations")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+    for (const invitation of invitations) {
+      await ctx.db.delete(invitation._id);
+    }
+
+    // Delete the member (should be only one - the owner)
+    for (const m of members) {
+      await ctx.db.delete(m._id);
+    }
+
+    // Update user's orgaIds to remove this organization
+    const updatedOrgaIds = user.orgaIds.filter((id) => id !== args.orgaId);
+    await ctx.db.patch(user._id, {
+      orgaIds: updatedOrgaIds,
+    });
+
+    // Finally delete the organization
+    await ctx.db.delete(args.orgaId);
+
+    return null;
   },
 });
 

@@ -9,6 +9,11 @@
   "createOrganization": "créer une organisation",
   "createNewOrganization": "Créer une nouvelle organisation",
   "createFirstOrganization": "Créez votre première organisation",
+  "createOrganizationTitle": "Créer une organisation",
+  "organizationNameLabel": "Nom de l'organisation",
+  "createButton": "Créer",
+  "cancelButton": "Annuler",
+  "creatingButton": "Création...",
   "leaveOrganization": "Quitter l'organisation",
   "joinOrganization": "Rejoindre l'organisation",
   "noBelongYet": "Vous n'êtes membre d'aucune organisation pour le moment.",
@@ -20,6 +25,15 @@
     "roles": "Rôles",
     "memberCount": "{{count}} membres",
     "teamCount": "{{count}} équipes"
+  },
+  "validation": {
+    "nameRequired": "Veuillez entrer un nom pour votre organisation",
+    "nameTooShort": "Le nom doit contenir au moins 2 caractères",
+    "nameTooLong": "Le nom doit contenir moins de 100 caractères"
+  },
+  "errors": {
+    "networkError": "Impossible de créer l'organisation. Veuillez vérifier votre connexion et réessayer.",
+    "unknownError": "Une erreur s'est produite. Veuillez réessayer."
   },
   "confirmLeave": "Êtes-vous sûr de vouloir quitter ? C'est une décision définitive.",
   "letMeGo": "Laissez-moi partir"

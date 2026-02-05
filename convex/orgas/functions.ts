@@ -99,12 +99,18 @@ export const createOrganization = mutation({
   handler: async (ctx, args) => {
     // Ensure user is authenticated
     const user = await getAuthenticatedUser(ctx);
-    
-    // Create member document for the user first (with temporary orgaId, will be updated after org creation)
-    // We need the memberId to set as owner, but we need orgaId to create the member
-    // So we create member with a placeholder, create org with owner, then update member
+
+    // Create the organization first with owner set to the creator
+    const orgaId = await ctx.db.insert("orgas", {
+      name: args.name,
+      logoUrl: args.logoUrl,
+      colorScheme: args.colorScheme,
+      owner: user._id,
+    });
+
+    // Create member document for the user
     const memberId = await ctx.db.insert("members", {
-      orgaId: "" as any, // Temporary placeholder, will be updated immediately after org creation
+      orgaId,
       personId: user._id,
       firstname: user.firstname,
       surname: user.surname,
@@ -112,19 +118,6 @@ export const createOrganization = mutation({
       pictureURL: user.pictureURL,
       contactInfos: user.contactInfos,
       roleIds: [], // Will be populated after roles are created
-    });
-    
-    // Create the organization with owner set to the creator
-    const orgaId = await ctx.db.insert("orgas", {
-      name: args.name,
-      logoUrl: args.logoUrl,
-      colorScheme: args.colorScheme,
-      owner: user._id,
-    });
-    
-    // Update member with correct orgaId
-    await ctx.db.patch(memberId, {
-      orgaId,
     });
     
     // Create the first team (top-level team with no parentTeamId)

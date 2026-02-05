@@ -9,6 +9,11 @@
   "createOrganization": "create an organization",
   "createNewOrganization": "Create new organization",
   "createFirstOrganization": "Create your first organization",
+  "createOrganizationTitle": "Create organization",
+  "organizationNameLabel": "Organization name",
+  "createButton": "Create",
+  "cancelButton": "Cancel",
+  "creatingButton": "Creating...",
   "leaveOrganization": "Leave organization",
   "joinOrganization": "Join organization",
   "noBelongYet": "You are not a member of any organizations yet.",
@@ -20,6 +25,15 @@
     "roles": "Roles",
     "memberCount": "{{count}} members",
     "teamCount": "{{count}} teams"
+  },
+  "validation": {
+    "nameRequired": "Please enter a name for your organization",
+    "nameTooShort": "Name must be at least 2 characters",
+    "nameTooLong": "Name must be less than 100 characters"
+  },
+  "errors": {
+    "networkError": "Could not create organization. Please check your connection and try again.",
+    "unknownError": "Something went wrong. Please try again."
   },
   "confirmLeave": "Are you sure you want to leave ? It's a definitive decision.",
   "letMeGo": "Let me go"

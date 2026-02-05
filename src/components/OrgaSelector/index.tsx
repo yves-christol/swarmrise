@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrgaStore } from '../../tools/orgaStore'
 import { Id } from '../../../convex/_generated/dataModel'
+import { CreateOrganizationModal } from '../CreateOrganizationModal'
 
 // Inline SVG icons to avoid external dependencies
 const ChevronDownIcon = ({ className }: { className?: string }) => (
@@ -41,6 +42,7 @@ export const OrgaSelector = () => {
   const { t } = useTranslation('orgs')
   const { selectedOrgaId, selectedOrga, selectOrga, orgasWithCounts, isLoading, hasOrgas, isSwitchingOrga } = useOrgaStore()
   const [isOpen, setIsOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
 
@@ -182,8 +184,7 @@ export const OrgaSelector = () => {
           <button
             onClick={() => {
               setIsOpen(false)
-              // TODO: Navigate to create organization page or open modal
-              console.log('Create organization clicked')
+              setIsCreateModalOpen(true)
             }}
             className="w-full flex items-center gap-3 px-4 py-2.5
               hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left text-gray-500 dark:text-gray-400"
@@ -195,6 +196,11 @@ export const OrgaSelector = () => {
           </button>
         </div>
       )}
+
+      <CreateOrganizationModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   )
 }

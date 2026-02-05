@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import { Logo } from "../Logo";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useState } from "react";
+import { CreateOrganizationModal } from "../CreateOrganizationModal";
 
 // Inline SVG icons
 const CheckIcon = ({ className }: { className?: string }) => (
@@ -119,6 +120,7 @@ export const EmptyState = () => {
   const pendingInvitations = useQuery(
     api.users.functions.listMyPendingInvitationsWithOrga
   );
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const isLoading = pendingInvitations === undefined;
   const hasInvitations = !isLoading && pendingInvitations.length > 0;
@@ -164,10 +166,7 @@ export const EmptyState = () => {
       )}
 
       <button
-        onClick={() => {
-          // TODO: Navigate to create organization page or open modal
-          console.log("Create organization clicked");
-        }}
+        onClick={() => setIsCreateModalOpen(true)}
         type="button"
         className="px-6 py-3 bg-[#eac840] hover:bg-[#d4af37]
           text-dark font-bold rounded-lg transition-colors"
@@ -176,6 +175,11 @@ export const EmptyState = () => {
           ? t("createNewOrganization")
           : t("createFirstOrganization")}
       </button>
+
+      <CreateOrganizationModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   );
 };

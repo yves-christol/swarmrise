@@ -1,7 +1,12 @@
 // Realistic first names and surnames for test users
-import { internalMutation } from "../_generated/server";
+import {
+  internalMutation,
+  internalQuery,
+  action,
+} from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
+import { internal } from "../_generated/api";
 
 const FIRST_NAMES = [
   "James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda",
@@ -121,6 +126,133 @@ export const createTestUsers = internalMutation({
       createdCount: userIds.length,
       userIds,
     };
+  },
+});
+
+/**
+ * Internal query to get all members in an organization for avatar population.
+ */
+export const getMembersForAvatars = internalQuery({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.array(
+    v.object({
+      memberId: v.id("members"),
+      personId: v.id("users"),
+      email: v.string(),
+    })
+  ),
+  handler: async (ctx, args) => {
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+
+    return members.map((m) => ({
+      memberId: m._id,
+      personId: m.personId,
+      email: m.email,
+    }));
+  },
+});
+
+/**
+ * Internal mutation to update a member's pictureURL with a storage URL.
+ */
+export const updateMemberAvatar = internalMutation({
+  args: {
+    memberId: v.id("members"),
+    personId: v.id("users"),
+    pictureURL: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    // Update member
+    await ctx.db.patch(args.memberId, {
+      pictureURL: args.pictureURL,
+    });
+
+    // Update user
+    const user = await ctx.db.get(args.personId);
+    if (user) {
+      await ctx.db.patch(args.personId, {
+        pictureURL: args.pictureURL,
+      });
+    }
+
+    return null;
+  },
+});
+
+/**
+ * Action to populate avatar images for all members in an organization.
+ * Fetches images from pravatar.cc and stores them in Convex file storage.
+ */
+export const populateMemberAvatars = action({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.object({
+    updatedCount: v.number(),
+    failedCount: v.number(),
+  }),
+  handler: async (ctx, args): Promise<{ updatedCount: number; failedCount: number }> => {
+    // Get all members
+    const members = await ctx.runQuery(internal.dataTest.users.getMembersForAvatars, {
+      orgaId: args.orgaId,
+    });
+
+    let updatedCount = 0;
+    let failedCount = 0;
+
+    // Process members in batches to avoid overwhelming the external service
+    const BATCH_SIZE = 10;
+    for (let i = 0; i < members.length; i += BATCH_SIZE) {
+      const batch = members.slice(i, i + BATCH_SIZE);
+
+      await Promise.all(
+        batch.map(async (member) => {
+          try {
+            // Generate unique avatar URL from email
+            const seed = encodeURIComponent(member.email);
+            const avatarUrl = `https://i.pravatar.cc/150?u=${seed}`;
+
+            // Fetch the image
+            const response = await fetch(avatarUrl);
+            if (!response.ok) {
+              throw new Error(`Failed to fetch avatar: ${response.status}`);
+            }
+
+            // Get the image as a blob
+            const blob = await response.blob();
+
+            // Store in Convex storage
+            const storageId = await ctx.storage.store(blob);
+
+            // Get the storage URL
+            const storageUrl = await ctx.storage.getUrl(storageId);
+            if (!storageUrl) {
+              throw new Error("Failed to get storage URL");
+            }
+
+            // Update the member with the storage URL
+            await ctx.runMutation(internal.dataTest.users.updateMemberAvatar, {
+              memberId: member.memberId,
+              personId: member.personId,
+              pictureURL: storageUrl,
+            });
+
+            updatedCount++;
+          } catch (error) {
+            console.error(`Failed to update avatar for ${member.email}:`, error);
+            failedCount++;
+          }
+        })
+      );
+    }
+
+    return { updatedCount, failedCount };
   },
 });
 

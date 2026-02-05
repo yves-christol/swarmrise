@@ -9,6 +9,7 @@ import { MemberFocusView } from "../MemberFocusView";
 import { OrgaManageView } from "../OrgaManageView";
 import { RoleManageView } from "../RoleManageView";
 import { TeamManageView } from "../TeamManageView";
+import { MemberManageView } from "../MemberManageView";
 import { ViewToggle } from "../ViewToggle";
 import { Id } from "../../../convex/_generated/dataModel";
 
@@ -334,8 +335,8 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         }
       `}</style>
 
-      {/* View toggle - show for orga, team, and role views when not transitioning */}
-      {animationPhase === "idle" && !isFocusTransitioning && (currentView === "orga" || currentView === "team" || currentView === "role") && (
+      {/* View toggle - show for all entity views when not transitioning */}
+      {animationPhase === "idle" && !isFocusTransitioning && (
         <ViewToggle
           mode={viewMode}
           onChange={setViewMode}
@@ -349,12 +350,22 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         style={getAnimationStyles()}
       >
         {currentView === "member" && focus.type === "member" ? (
-          <MemberFocusView
-            memberId={focus.memberId}
-            onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
-            onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
-            onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
-          />
+          /* Member view with swap animation between visual and manage */
+          <div className={`absolute inset-0 ${getSwapClass()}`}>
+            {displayedMode === "visual" ? (
+              <MemberFocusView
+                memberId={focus.memberId}
+                onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
+                onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+                onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
+              />
+            ) : (
+              <MemberManageView
+                memberId={focus.memberId}
+                onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
+              />
+            )}
+          </div>
         ) : currentView === "role" && focus.type === "role" ? (
           /* Role view with swap animation between visual and manage */
           <div className={`absolute inset-0 ${getSwapClass()}`}>
@@ -401,7 +412,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
 
       {/* Screen reader announcement for view mode */}
       <div role="status" aria-live="polite" className="sr-only">
-        {swapPhase === "idle" && (currentView === "orga" || currentView === "team" || currentView === "role") && (
+        {swapPhase === "idle" && (
           displayedMode === "visual"
             ? "Now viewing visual diagram. Press V to switch to management view."
             : "Now viewing management options. Press V to switch to visual diagram."

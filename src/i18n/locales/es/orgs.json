@@ -22,5 +22,18 @@
     "teamCount": "{{count}} equipos"
   },
   "confirmLeave": "¿Estás seguro de que quieres irte? Es una decisión definitiva.",
-  "letMeGo": "Déjame ir"
+  "letMeGo": "Déjame ir",
+  "authorizedDomainsLabel": "Dominios de correo autorizados",
+  "authorizedDomainsPlaceholder": "ej., empresa.com",
+  "authorizedDomainsHint": "Solo usuarios con correos de estos dominios pueden ser invitados. Deja vacio para permitir cualquier correo.",
+  "authorizedDomainsAddButton": "Agregar",
+  "authorizedDomainsEmptyState": "Sin restricciones de dominio. Cualquiera puede ser invitado.",
+  "authorizedDomainsInvalidFormat": "Formato de dominio invalido",
+  "authorizedDomainsSectionTitle": "Restricciones de dominio de correo",
+  "authorizedDomainsSectionDescription": "Restringe quien puede ser invitado a esta organizacion segun su dominio de correo.",
+  "authorizedDomainsSave": "Guardar cambios",
+  "authorizedDomainsSaving": "Guardando...",
+  "authorizedDomainsSaveSuccess": "Restricciones de dominio actualizadas",
+  "authorizedDomainsSaveError": "Error al actualizar restricciones de dominio",
+  "authorizedDomainsOwnerOnly": "Solo el propietario de la organizacion puede gestionar las restricciones de dominio de correo."
 }

@@ -4,6 +4,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useOrgaStore } from "../../tools/orgaStore";
 import { Id } from "../../../convex/_generated/dataModel";
+import { EmailDomainsInput } from "../EmailDomainsInput";
 
 type RGB = { r: number; g: number; b: number };
 type ColorScheme = { primary: RGB; secondary: RGB };
@@ -112,6 +113,7 @@ export const CreateOrganizationModal = ({
   // Advanced options
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [firstTeamName, setFirstTeamName] = useState("");
+  const [authorizedEmailDomains, setAuthorizedEmailDomains] = useState<string[]>([]);
 
   // Logo upload state
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -166,6 +168,7 @@ export const CreateOrganizationModal = ({
         setIsSubmitting(false);
         setShowAdvanced(false);
         setFirstTeamName("");
+        setAuthorizedEmailDomains([]);
         // Clean up logo preview URL
         if (logoPreviewUrl) {
           URL.revokeObjectURL(logoPreviewUrl);
@@ -338,6 +341,7 @@ export const CreateOrganizationModal = ({
           colorScheme,
           ...(logoStorageId && { logoStorageId }),
           ...(trimmedFirstTeamName && { firstTeamName: trimmedFirstTeamName }),
+          ...(authorizedEmailDomains.length > 0 && { authorizedEmailDomains }),
         });
       })
       .then((orgaId) => {
@@ -666,6 +670,14 @@ export const CreateOrganizationModal = ({
                 />
                 <p className="text-xs text-gray-400">{t("firstTeamNameHint")}</p>
               </div>
+
+              {/* Authorized email domains */}
+              <EmailDomainsInput
+                domains={authorizedEmailDomains}
+                onChange={setAuthorizedEmailDomains}
+                disabled={isSubmitting}
+                compact
+              />
             </div>
           )}
 

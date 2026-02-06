@@ -22,5 +22,18 @@
     "teamCount": "{{count}} squadre"
   },
   "confirmLeave": "Sei sicuro di voler partire? È una decisione definitiva.",
-  "letMeGo": "Lasciami andare"
+  "letMeGo": "Lasciami andare",
+  "authorizedDomainsLabel": "Domini email autorizzati",
+  "authorizedDomainsPlaceholder": "es., azienda.com",
+  "authorizedDomainsHint": "Solo utenti con email di questi domini possono essere invitati. Lascia vuoto per consentire qualsiasi email.",
+  "authorizedDomainsAddButton": "Aggiungi",
+  "authorizedDomainsEmptyState": "Nessuna restrizione di dominio. Chiunque puo essere invitato.",
+  "authorizedDomainsInvalidFormat": "Formato dominio non valido",
+  "authorizedDomainsSectionTitle": "Restrizioni dominio email",
+  "authorizedDomainsSectionDescription": "Limita chi puo essere invitato in questa organizzazione in base al dominio email.",
+  "authorizedDomainsSave": "Salva modifiche",
+  "authorizedDomainsSaving": "Salvataggio...",
+  "authorizedDomainsSaveSuccess": "Restrizioni dominio aggiornate",
+  "authorizedDomainsSaveError": "Errore nell'aggiornamento delle restrizioni di dominio",
+  "authorizedDomainsOwnerOnly": "Solo il proprietario dell'organizzazione puo gestire le restrizioni del dominio email."
 }

@@ -94,6 +94,7 @@ export const createOrganization = mutation({
       }),
     }),
     firstTeamName: v.optional(v.string()), // Optional name for the first team, defaults to organization name
+    authorizedEmailDomains: v.optional(v.array(v.string())), // Optional: restrict invitations to these email domains
   },
   returns: v.id("orgas"),
   handler: async (ctx, args) => {
@@ -109,12 +110,19 @@ export const createOrganization = mutation({
       }
     }
 
+    // Validate and normalize email domains if provided
+    let normalizedDomains: string[] | undefined;
+    if (args.authorizedEmailDomains && args.authorizedEmailDomains.length > 0) {
+      normalizedDomains = validateAndNormalizeEmailDomains(args.authorizedEmailDomains);
+    }
+
     // Create the organization first with owner set to the creator
     const orgaId = await ctx.db.insert("orgas", {
       name: args.name,
       logoUrl,
       colorScheme: args.colorScheme,
       owner: user._id,
+      ...(normalizedDomains && { authorizedEmailDomains: normalizedDomains }),
     });
 
     // Create member document for the user

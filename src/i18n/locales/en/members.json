@@ -50,5 +50,22 @@
   "loadingMembers": "Loading members...",
   "noMembersMatchSearch": "No members match your search",
   "noMembersFound": "No members found",
-  "viewContactInfo": "View contact information"
+  "viewContactInfo": "View contact information",
+  "diagram": {
+    "loadingMember": "Loading member...",
+    "memberRemovedDescription": "This member may have been removed from the organization.",
+    "memberDetailsTitle": "{{name}} - Member Details",
+    "memberDetailsAriaLabel": "Member details for {{name}} showing {{roleCount}} roles across {{teamCount}} teams",
+    "rolesInTeams": "{{roleCount}} role in {{teamCount}} team",
+    "rolesInTeams_other": "{{roleCount}} roles in {{teamCount}} teams",
+    "viewMemberDetailsAsText": "View member details as text",
+    "keyboardBack": "Back",
+    "keyboardContact": "Contact",
+    "srMemberAnnouncement": "Now viewing member: {{name}}. This member has {{roleCount}} roles across {{teamCount}} teams. Press Escape to return. Press C to show contact information.",
+    "textName": "Name:",
+    "textEmail": "Email:",
+    "textRoles": "Roles:",
+    "textTeams": "Teams:",
+    "textRoleList": "Role list:"
+  }
 }

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useQuery } from "convex/react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Logo } from "../Logo";
 import { MemberLink } from "./MemberLink";
@@ -31,21 +32,13 @@ function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): st
   }
 }
 
-function getRoleTypeLabel(roleType: "leader" | "secretary" | "referee"): string {
-  switch (roleType) {
-    case "leader":
-      return "Leader";
-    case "secretary":
-      return "Secretary";
-    case "referee":
-      return "Referee";
-  }
-}
+// getRoleTypeLabel is now handled via i18n: t("roleTypes.<type>", { ns: "members" })
 
 export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateToMember }: RoleFocusViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [showDuties, setShowDuties] = useState(false);
+  const { t } = useTranslation("teams");
 
   // Fetch role data
   const role = useQuery(api.roles.functions.getRoleById, { roleId });
@@ -154,7 +147,7 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
             />
           </svg>
           <span className="text-gray-600 dark:text-gray-400 text-sm">
-            Loading role...
+            {t("diagram.loadingRole")}
           </span>
         </div>
       </div>
@@ -169,10 +162,10 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
           <Logo size={48} begin={0} repeatCount={2} />
           <h3 className="font-swarm text-xl font-bold text-dark dark:text-light">
-            Role not found
+            {t("diagram.roleNotFound")}
           </h3>
           <p className="text-gray-400 text-center max-w-xs">
-            This role may have been deleted or moved.
+            {t("diagram.roleNotFoundDescription")}
           </p>
         </div>
       </div>
@@ -329,18 +322,18 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
       <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-gray-400 dark:text-gray-500">
         <span className="flex items-center gap-1">
           <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">Esc</kbd>
-          <span>Back</span>
+          <span>{t("diagram.keyboardBack")}</span>
         </span>
         {role.duties && role.duties.length > 0 && (
           <span className="flex items-center gap-1">
             <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">D</kbd>
-            <span>Duties</span>
+            <span>{t("diagram.keyboardDuties")}</span>
           </span>
         )}
         {role.linkedRoleId && linkedRole && (
           <span className="flex items-center gap-1">
             <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">L</kbd>
-            <span>Source</span>
+            <span>{t("diagram.keyboardSource")}</span>
           </span>
         )}
       </div>
@@ -351,9 +344,9 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
         height={dimensions.height}
         className="block w-full h-full"
         role="img"
-        aria-label={`Role details for ${role.title}`}
+        aria-label={t("diagram.roleDetailsAriaLabel", { name: role.title })}
       >
-        <title>{role.title} - Role Details</title>
+        <title>{t("diagram.roleDetailsTitle", { name: role.title })}</title>
 
         {/* Outer boundary circle */}
         <circle
@@ -425,7 +418,7 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
                   className="text-xs font-medium"
                   style={{ color: getRoleTypeBadgeColor(role.roleType) }}
                 >
-                  {getRoleTypeLabel(role.roleType)}
+                  {t(`roleTypes.${role.roleType}`, { ns: "members" })}
                 </span>
               </div>
             )}
@@ -441,7 +434,7 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
                   <path d="M4,6 C4,3 6,1 9,1 L11,1 C14,1 16,3 16,6 L16,10 C16,13 14,15 11,15 L9,15 C6,15 4,13 4,10 M6,8 L10,8" />
                 </svg>
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Synced from parent
+                  {t("diagram.syncedFromParentShort")}
                 </span>
                 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-500">
                   <path d="M6 4l4 4-4 4" />
@@ -455,7 +448,7 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
                   <path d="M4,6 C4,3 6,1 9,1 L11,1 C14,1 16,3 16,6 L16,10 C16,13 14,15 11,15 L9,15 C6,15 4,13 4,10 M6,8 L10,8" />
                 </svg>
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Synced from parent
+                  {t("diagram.syncedFromParentShort")}
                 </span>
               </div>
             )}
@@ -466,10 +459,10 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
             {/* Mission Section */}
             <div className="role-content-mission flex flex-col items-center gap-1 max-w-xs">
               <h3 className="font-swarm text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                Mission
+                {t("diagram.missionSection")}
               </h3>
               <p className="text-sm text-center text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-3">
-                {role.mission || "No mission defined"}
+                {role.mission || t("diagram.noMissionDefined")}
               </p>
             </div>
 
@@ -493,7 +486,7 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
                     <path d="M6 4l4 4-4 4" />
                   </svg>
                   <span className="font-swarm font-semibold uppercase tracking-wide">
-                    Duties ({role.duties.length})
+                    {t("diagram.dutiesSection", { count: role.duties.length })}
                   </span>
                 </button>
                 <div className={showDuties ? "duties-expanded" : "duties-collapsed"}>
@@ -532,30 +525,29 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
 
       {/* Accessibility: screen reader announcement */}
       <div role="status" aria-live="polite" className="sr-only">
-        Now viewing role: {role.title}.
-        Press Escape to return to team view.
-        {role.duties && role.duties.length > 0 && " Press D to toggle duties."}
-        {role.linkedRoleId && " Press L to navigate to source role."}
+        {t("diagram.srRoleViewAnnouncement", { title: role.title })}
+        {role.duties && role.duties.length > 0 && t("diagram.srRoleViewDutiesHint")}
+        {role.linkedRoleId && t("diagram.srRoleViewSourceHint")}
       </div>
 
       {/* Accessibility: text alternative */}
       <details className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:top-16 focus-within:left-4 focus-within:bg-white dark:focus-within:bg-gray-800 focus-within:p-4 focus-within:rounded-lg focus-within:z-10 focus-within:border focus-within:border-gray-300 dark:focus-within:border-gray-700">
         <summary className="cursor-pointer text-gray-700 dark:text-gray-200">
-          View role details as text
+          {t("diagram.viewRoleDetailsAsText")}
         </summary>
         <div className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-2">
-          <p><strong>Role:</strong> {role.title}</p>
-          {role.roleType && <p><strong>Type:</strong> {role.roleType}</p>}
-          <p><strong>Mission:</strong> {role.mission || "No mission defined"}</p>
+          <p><strong>{t("diagram.textRole")}</strong> {role.title}</p>
+          {role.roleType && <p><strong>{t("diagram.textType")}</strong> {t(`roleTypes.${role.roleType}`, { ns: "members" })}</p>}
+          <p><strong>{t("diagram.textMission")}</strong> {role.mission || t("diagram.noMissionDefined")}</p>
           {role.duties && role.duties.length > 0 && (
             <div>
-              <strong>Duties:</strong>
+              <strong>{t("diagram.textDuties")}</strong>
               <ul className="list-disc ml-4">
                 {role.duties.map((duty, i) => <li key={i}>{duty}</li>)}
               </ul>
             </div>
           )}
-          {member && <p><strong>Assigned to:</strong> {member.firstname} {member.surname}</p>}
+          {member && <p><strong>{t("diagram.textAssignedTo")}</strong> {member.firstname} {member.surname}</p>}
         </div>
       </details>
     </div>
@@ -564,6 +556,7 @@ export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateT
 
 // Back to team button component
 function BackToTeamButton({ teamName, onClick }: { teamName: string; onClick: () => void }) {
+  const { t } = useTranslation("teams");
   return (
     <button
       onClick={onClick}
@@ -580,7 +573,7 @@ function BackToTeamButton({ teamName, onClick }: { teamName: string; onClick: ()
         hover:text-dark dark:hover:text-light
         focus:outline-none focus:ring-2 focus:ring-[#eac840]
       "
-      aria-label={`Return to ${teamName} team view`}
+      aria-label={t("diagram.returnToTeamView", { name: teamName })}
     >
       {/* Circle icon representing team with role dots */}
       <svg

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useFocus } from "../../tools/orgaStore";
@@ -25,6 +26,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [hoveredEdge, setHoveredEdge] = useState<GraphEdge | null>(null);
+  const { t } = useTranslation("teams");
 
   // Focus navigation
   const { focusOnTeam, returnFromTeamId, clearReturnFromTeamId } = useFocus();
@@ -180,7 +182,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
             />
           </svg>
           <span className="text-gray-600 dark:text-gray-400 text-sm">
-            Loading organization structure...
+            {t("diagram.loadingOrgStructure")}
           </span>
         </div>
       </div>
@@ -194,10 +196,10 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
         <Logo size={64} begin={0} repeatCount={2} />
         <div>
           <h3 className="font-swarm text-xl font-bold mb-2 text-dark dark:text-light">
-            No teams yet
+            {t("diagram.noTeamsYet")}
           </h3>
           <p className="text-gray-600 dark:text-gray-400 max-w-sm">
-            Create your first team to start mapping your organization structure.
+            {t("diagram.noTeamsYetDescription")}
           </p>
         </div>
       </div>
@@ -239,7 +241,7 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
         height={dimensions.height}
         className="block w-full h-full"
         role="img"
-        aria-label={`Organization structure diagram showing ${nodes.length} teams`}
+        aria-label={t("diagram.orgStructureAriaLabel", { count: nodes.length })}
         style={{
           cursor: isPanning ? "grabbing" : "grab",
         }}
@@ -248,10 +250,9 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
         tabIndex={0}
         {...handlers}
       >
-        <title>Organization structure</title>
+        <title>{t("diagram.orgStructureTitle")}</title>
         <desc>
-          Interactive diagram showing {nodes.length} teams and their
-          relationships. Use Tab to navigate between teams, Enter to select.
+          {t("diagram.orgStructureDesc", { count: nodes.length })}
         </desc>
 
         {/* Arrow marker definition */}
@@ -323,14 +324,14 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
       {isSimulating && (
         <div className="absolute top-4 left-4 px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2 border border-gray-300 dark:border-gray-700">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          Settling...
+          {t("diagram.settling")}
         </div>
       )}
 
       {/* Accessibility: text list alternative */}
       <details className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:top-4 focus-within:left-4 focus-within:bg-white dark:focus-within:bg-gray-800 focus-within:p-4 focus-within:rounded-lg focus-within:z-10 focus-within:border focus-within:border-gray-300 dark:focus-within:border-gray-700">
         <summary className="cursor-pointer text-gray-700 dark:text-gray-200">
-          View as text list
+          {t("diagram.viewAsTextList")}
         </summary>
         <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300">
           {nodes.map((node) => {
@@ -340,8 +341,8 @@ export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
               : null;
             return (
               <li key={node.id} className="py-1">
-                {node.name} ({node.roleCount} roles)
-                {parentNode && ` - Reports to: ${parentNode.name}`}
+                {node.name} ({t("diagram.roleCountLabel", { count: node.roleCount })})
+                {parentNode && ` - ${t("diagram.reportsTo", { name: parentNode.name })}`}
               </li>
             );
           })}

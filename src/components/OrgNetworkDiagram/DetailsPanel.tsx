@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import type { GraphNode } from "./types";
 
 type DetailsPanelProps = {
@@ -10,6 +11,7 @@ export const DetailsPanel = memo(function DetailsPanel({
   node,
   onClose,
 }: DetailsPanelProps) {
+  const { t } = useTranslation("teams");
   return (
     <aside
       className={`
@@ -29,7 +31,7 @@ export const DetailsPanel = memo(function DetailsPanel({
             <button
               onClick={onClose}
               className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors p-1"
-              aria-label="Close"
+              aria-label={t("diagram.close")}
             >
               <svg
                 className="w-5 h-5"
@@ -52,14 +54,14 @@ export const DetailsPanel = memo(function DetailsPanel({
               <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                 {node.roleCount}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">Roles</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">{t("diagram.rolesLabel")}</div>
             </div>
           </div>
 
           <div className="border-t border-gray-300 dark:border-gray-700 pt-4">
-            <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Team Info</h3>
+            <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">{t("diagram.teamInfoHeading")}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              This team has {node.roleCount} role{node.roleCount !== 1 ? "s" : ""} assigned.
+              {t("diagram.teamRolesAssigned", { count: node.roleCount })}
             </p>
           </div>
         </div>

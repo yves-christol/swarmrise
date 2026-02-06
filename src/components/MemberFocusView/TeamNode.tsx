@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { TeamNodePosition, RoleLinkPosition } from "./types";
 
 type TeamNodeProps = {
@@ -13,6 +14,7 @@ export const TeamNode = memo(function TeamNode({
   onNavigate,
 }: TeamNodeProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useTranslation("teams");
   const { team, x, y, radius, roles } = position;
 
   const handleClick = () => {
@@ -41,7 +43,7 @@ export const TeamNode = memo(function TeamNode({
   return (
     <g
       role="button"
-      aria-label={`Team: ${team.name}. Click to navigate.`}
+      aria-label={t("diagram.teamClickToNavigate", { name: team.name })}
       tabIndex={0}
       style={{
         cursor: "pointer",

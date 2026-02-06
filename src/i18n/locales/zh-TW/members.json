@@ -50,5 +50,22 @@
   "loadingMembers": "載入成員中...",
   "noMembersMatchSearch": "沒有符合搜尋條件的成員",
   "noMembersFound": "找不到成員",
-  "viewContactInfo": "查看聯絡資訊"
+  "viewContactInfo": "查看聯絡資訊",
+  "diagram": {
+    "loadingMember": "載入成員中...",
+    "memberRemovedDescription": "此成員可能已從組織中移除。",
+    "memberDetailsTitle": "{{name}} - 成員詳情",
+    "memberDetailsAriaLabel": "成員 {{name}} 的詳情，顯示 {{roleCount}} 個角色，分佈在 {{teamCount}} 個團隊",
+    "rolesInTeams": "{{roleCount}} 個角色，在 {{teamCount}} 個團隊中",
+    "rolesInTeams_other": "{{roleCount}} 個角色，在 {{teamCount}} 個團隊中",
+    "viewMemberDetailsAsText": "以文字檢視成員詳情",
+    "keyboardBack": "返回",
+    "keyboardContact": "聯絡方式",
+    "srMemberAnnouncement": "正在檢視成員：{{name}}。此成員有 {{roleCount}} 個角色，分佈在 {{teamCount}} 個團隊中。按 Escape 返回。按 C 顯示聯絡資訊。",
+    "textName": "姓名：",
+    "textEmail": "電郵：",
+    "textRoles": "角色：",
+    "textTeams": "團隊：",
+    "textRoleList": "角色列表："
+  }
 }

@@ -50,5 +50,22 @@
   "loadingMembers": "Chargement des membres...",
   "noMembersMatchSearch": "Aucun membre ne correspond à votre recherche",
   "noMembersFound": "Aucun membre trouvé",
-  "viewContactInfo": "Voir les informations de contact"
+  "viewContactInfo": "Voir les informations de contact",
+  "diagram": {
+    "loadingMember": "Chargement du membre...",
+    "memberRemovedDescription": "Ce membre a peut-être été retiré de l'organisation.",
+    "memberDetailsTitle": "{{name}} - Détails du membre",
+    "memberDetailsAriaLabel": "Détails du membre {{name}} montrant {{roleCount}} rôles dans {{teamCount}} équipes",
+    "rolesInTeams": "{{roleCount}} rôle dans {{teamCount}} équipe",
+    "rolesInTeams_other": "{{roleCount}} rôles dans {{teamCount}} équipes",
+    "viewMemberDetailsAsText": "Voir les détails du membre en texte",
+    "keyboardBack": "Retour",
+    "keyboardContact": "Contact",
+    "srMemberAnnouncement": "Vous consultez le membre : {{name}}. Ce membre a {{roleCount}} rôles dans {{teamCount}} équipes. Appuyez sur Échap pour revenir. Appuyez sur C pour afficher les informations de contact.",
+    "textName": "Nom :",
+    "textEmail": "Email :",
+    "textRoles": "Rôles :",
+    "textTeams": "Équipes :",
+    "textRoleList": "Liste des rôles :"
+  }
 }

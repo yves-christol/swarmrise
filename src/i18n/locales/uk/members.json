@@ -50,5 +50,22 @@
   "loadingMembers": "Завантаження учасників...",
   "noMembersMatchSearch": "Жоден учасник не відповідає вашому пошуку",
   "noMembersFound": "Учасників не знайдено",
-  "viewContactInfo": "Переглянути контактну інформацію"
+  "viewContactInfo": "Переглянути контактну інформацію",
+  "diagram": {
+    "loadingMember": "Завантаження учасника...",
+    "memberRemovedDescription": "Цього учасника могло бути видалено з організації.",
+    "memberDetailsTitle": "{{name}} - Деталі учасника",
+    "memberDetailsAriaLabel": "Деталі учасника {{name}}, що показує {{roleCount}} ролей у {{teamCount}} командах",
+    "rolesInTeams": "{{roleCount}} роль у {{teamCount}} команді",
+    "rolesInTeams_other": "{{roleCount}} ролей у {{teamCount}} командах",
+    "viewMemberDetailsAsText": "Переглянути деталі учасника як текст",
+    "keyboardBack": "Назад",
+    "keyboardContact": "Контакт",
+    "srMemberAnnouncement": "Ви переглядаєте учасника: {{name}}. Цей учасник має {{roleCount}} ролей у {{teamCount}} командах. Натисніть Escape, щоб повернутися. Натисніть C, щоб показати контактну інформацію.",
+    "textName": "Ім'я:",
+    "textEmail": "Email:",
+    "textRoles": "Ролі:",
+    "textTeams": "Команди:",
+    "textRoleList": "Список ролей:"
+  }
 }

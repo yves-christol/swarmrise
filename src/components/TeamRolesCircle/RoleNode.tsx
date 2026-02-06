@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { RolePosition } from "./types";
 
 type RoleNodeProps = {
@@ -42,6 +43,7 @@ export const RoleNode = memo(function RoleNode({
   onClick,
 }: RoleNodeProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useTranslation("teams");
   const { role, x, y, radius, memberName } = position;
 
   const strokeColor = getRoleStroke(role.roleType);
@@ -62,7 +64,7 @@ export const RoleNode = memo(function RoleNode({
   return (
     <g
       role="button"
-      aria-label={`${role.title}${role.roleType ? `, ${role.roleType}` : ""}${memberName ? `, assigned to ${memberName}` : ""}${role.linkedRoleId ? ", synced from parent team" : ""}. Click to view details.`}
+      aria-label={t("diagram.roleNodeAriaLabel", { title: role.title, type: role.roleType ? `, ${t(`roleTypes.${role.roleType}`, { ns: "members" })}` : "", member: memberName ? `, ${t("diagram.assignedTo")} ${memberName}` : "", synced: role.linkedRoleId ? `, ${t("diagram.syncedFromParentShort")}` : "" })}
       tabIndex={0}
       style={{
         cursor: "pointer",

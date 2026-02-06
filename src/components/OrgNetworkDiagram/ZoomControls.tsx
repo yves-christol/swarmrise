@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 
 type ZoomControlsProps = {
   onZoomIn: () => void;
@@ -11,6 +12,7 @@ export const ZoomControls = memo(function ZoomControls({
   onZoomOut,
   onReset,
 }: ZoomControlsProps) {
+  const { t } = useTranslation("teams");
   const buttonClass = `
     w-10 h-10 rounded-lg shadow-lg
     flex items-center justify-center text-xl
@@ -27,21 +29,21 @@ export const ZoomControls = memo(function ZoomControls({
       <button
         onClick={onZoomIn}
         className={buttonClass}
-        aria-label="Zoom in"
+        aria-label={t("diagram.zoomIn")}
       >
         +
       </button>
       <button
         onClick={onZoomOut}
         className={buttonClass}
-        aria-label="Zoom out"
+        aria-label={t("diagram.zoomOut")}
       >
         -
       </button>
       <button
         onClick={onReset}
         className={buttonClass + " text-xs"}
-        aria-label="Reset view"
+        aria-label={t("diagram.resetView")}
       >
         1:1
       </button>

@@ -50,5 +50,22 @@
   "loadingMembers": "Caricamento membri...",
   "noMembersMatchSearch": "Nessun membro corrisponde alla tua ricerca",
   "noMembersFound": "Nessun membro trovato",
-  "viewContactInfo": "Visualizza informazioni di contatto"
+  "viewContactInfo": "Visualizza informazioni di contatto",
+  "diagram": {
+    "loadingMember": "Caricamento membro...",
+    "memberRemovedDescription": "Questo membro potrebbe essere stato rimosso dall'organizzazione.",
+    "memberDetailsTitle": "{{name}} - Dettagli del membro",
+    "memberDetailsAriaLabel": "Dettagli del membro {{name}} che mostra {{roleCount}} ruoli in {{teamCount}} squadre",
+    "rolesInTeams": "{{roleCount}} ruolo in {{teamCount}} squadra",
+    "rolesInTeams_other": "{{roleCount}} ruoli in {{teamCount}} squadre",
+    "viewMemberDetailsAsText": "Visualizza dettagli del membro come testo",
+    "keyboardBack": "Indietro",
+    "keyboardContact": "Contatto",
+    "srMemberAnnouncement": "Stai visualizzando il membro: {{name}}. Questo membro ha {{roleCount}} ruoli in {{teamCount}} squadre. Premi Esc per tornare. Premi C per mostrare le informazioni di contatto.",
+    "textName": "Nome:",
+    "textEmail": "Email:",
+    "textRoles": "Ruoli:",
+    "textTeams": "Squadre:",
+    "textRoleList": "Elenco dei ruoli:"
+  }
 }

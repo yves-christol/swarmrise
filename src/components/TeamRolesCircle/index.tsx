@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useFocus } from "../../tools/orgaStore";
@@ -17,6 +18,7 @@ type TeamRolesCircleProps = {
 export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const { t } = useTranslation("teams");
 
   // Focus navigation for clicking into child teams and roles
   const { focusOnTeam, focusOnRole } = useFocus();
@@ -127,7 +129,7 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
             />
           </svg>
           <span className="text-gray-600 dark:text-gray-400 text-sm">
-            Loading team...
+            {t("diagram.loadingTeam")}
           </span>
         </div>
       </div>
@@ -142,10 +144,10 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
           <Logo size={48} begin={0} repeatCount={2} />
           <h3 className="font-swarm text-xl font-bold text-dark dark:text-light">
-            No roles yet
+            {t("diagram.noRolesYet")}
           </h3>
           <p className="text-gray-400 text-center max-w-xs">
-            This team has no roles defined. Create your first role to see it here.
+            {t("diagram.noRolesYetDescription")}
           </p>
         </div>
       </div>
@@ -187,9 +189,9 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
         height={dimensions.height}
         className="block w-full h-full"
         role="img"
-        aria-label={`Team structure diagram for ${team.name} showing ${roles.length} roles`}
+        aria-label={t("diagram.teamStructureAriaLabel", { name: team.name, count: roles.length })}
       >
-        <title>{team.name} - Team Structure</title>
+        <title>{t("diagram.teamStructureTitle", { name: team.name })}</title>
 
         {/* Outer boundary circle */}
         <circle
@@ -255,14 +257,14 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
       {/* Accessibility: text list alternative */}
       <details className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:top-4 focus-within:left-4 focus-within:bg-white dark:focus-within:bg-gray-800 focus-within:p-4 focus-within:rounded-lg focus-within:z-10 focus-within:border focus-within:border-gray-300 dark:focus-within:border-gray-700">
         <summary className="cursor-pointer text-gray-700 dark:text-gray-200">
-          View as text list
+          {t("diagram.viewAsTextList")}
         </summary>
         <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300">
           {rolePositions.map((pos) => (
             <li key={pos.role._id} className="py-1">
               {pos.role.title}
-              {pos.role.roleType && ` (${pos.role.roleType})`}
-              {pos.role.linkedRoleId && " [Synced from parent team]"}
+              {pos.role.roleType && ` (${t(`roleTypes.${pos.role.roleType}`, { ns: "members" })})`}
+              {pos.role.linkedRoleId && ` [${t("diagram.syncedFromParent")}]`}
               {pos.memberName && ` - ${pos.memberName}`}
             </li>
           ))}
@@ -274,6 +276,7 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
 
 // Zoom out button component
 function ZoomOutButton({ onClick }: { onClick: () => void }) {
+  const { t } = useTranslation("teams");
   return (
     <button
       onClick={onClick}
@@ -290,7 +293,7 @@ function ZoomOutButton({ onClick }: { onClick: () => void }) {
         hover:text-dark dark:hover:text-light
         focus:outline-none focus:ring-2 focus:ring-[#eac840]
       "
-      aria-label="Return to organization overview"
+      aria-label={t("diagram.returnToOrgOverview")}
     >
       {/* Simplified network graph icon */}
       <svg
@@ -310,7 +313,7 @@ function ZoomOutButton({ onClick }: { onClick: () => void }) {
         <line x1="10" y1="8" x2="14" y2="12" />
         <line x1="8" y1="15" x2="12" y2="15" />
       </svg>
-      <span className="text-sm font-medium">Overview</span>
+      <span className="text-sm font-medium">{t("diagram.overview")}</span>
     </button>
   );
 }
@@ -590,12 +593,13 @@ function ParentTeamNode({
   onNavigate: () => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useTranslation("teams");
   const { team, x, y, radius, leaderPosition } = position;
 
   return (
     <g
       role="button"
-      aria-label={`Parent team: ${team.name}. Click to navigate.`}
+      aria-label={t("diagram.parentTeamClickToNavigate", { name: team.name })}
       tabIndex={0}
       style={{
         cursor: "pointer",
@@ -709,12 +713,13 @@ function DaughterTeamNode({
   onNavigate: () => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useTranslation("teams");
   const { daughterTeam, x, y, radius, sourceRolePosition } = position;
 
   return (
     <g
       role="button"
-      aria-label={`Daughter team: ${daughterTeam.name}. Click to navigate.`}
+      aria-label={t("diagram.daughterTeamClickToNavigate", { name: daughterTeam.name })}
       tabIndex={0}
       style={{
         cursor: "pointer",

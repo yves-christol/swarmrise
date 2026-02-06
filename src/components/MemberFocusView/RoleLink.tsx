@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { RoleLinkPosition } from "./types";
 
 type RoleLinkProps = {
@@ -31,6 +32,7 @@ export const RoleLink = memo(function RoleLink({
   onClick,
 }: RoleLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useTranslation("teams");
   const { role, x, y, radius } = position;
 
   const strokeColor = getRoleStroke(role.roleType);
@@ -50,7 +52,7 @@ export const RoleLink = memo(function RoleLink({
   return (
     <g
       role="button"
-      aria-label={`${role.title}${role.roleType ? `, ${role.roleType}` : ""}. Click to view details.`}
+      aria-label={t("diagram.roleClickToViewDetails", { title: role.title, type: role.roleType ? `, ${t(`roleTypes.${role.roleType}`, { ns: "members" })}` : "" })}
       tabIndex={0}
       style={{
         cursor: "pointer",

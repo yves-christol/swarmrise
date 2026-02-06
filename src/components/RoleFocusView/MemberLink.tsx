@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Id } from "../../../convex/_generated/dataModel";
 
 type MemberLinkProps = {
@@ -22,6 +23,7 @@ export function MemberLink({
   onMemberClick,
 }: MemberLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useTranslation("teams");
 
   // Position at bottom of circle, outside the main boundary
   const linkX = centerX;
@@ -48,7 +50,7 @@ export function MemberLink({
   return (
     <g
       role="button"
-      aria-label={`Assigned to ${member.firstname} ${member.surname}. Click to view member details.`}
+      aria-label={t("diagram.assignedToMember", { name: `${member.firstname} ${member.surname}` })}
       tabIndex={0}
       style={{
         cursor: "pointer",
@@ -165,7 +167,7 @@ export function MemberLink({
           transition: "opacity 150ms ease-out",
         }}
       >
-        Assigned to
+        {t("diagram.assignedTo")}
       </text>
     </g>
   );

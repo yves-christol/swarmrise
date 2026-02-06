@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { Logo } from "../Logo";
@@ -19,6 +20,7 @@ export function MemberFocusView({
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const { t } = useTranslation("members");
 
   // Fetch member data
   const member = useQuery(api.members.functions.getMemberById, { memberId });
@@ -199,7 +201,7 @@ export function MemberFocusView({
             />
           </svg>
           <span className="text-gray-600 dark:text-gray-400 text-sm">
-            Loading member...
+            {t("diagram.loadingMember")}
           </span>
         </div>
       </div>
@@ -214,10 +216,10 @@ export function MemberFocusView({
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
           <Logo size={48} begin={0} repeatCount={2} />
           <h3 className="font-swarm text-xl font-bold text-dark dark:text-light">
-            Member not found
+            {t("memberNotFound")}
           </h3>
           <p className="text-gray-400 text-center max-w-xs">
-            This member may have been removed from the organization.
+            {t("diagram.memberRemovedDescription")}
           </p>
         </div>
       </div>
@@ -370,11 +372,11 @@ export function MemberFocusView({
       <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-gray-400 dark:text-gray-500">
         <span className="flex items-center gap-1">
           <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">Esc</kbd>
-          <span>Back</span>
+          <span>{t("diagram.keyboardBack")}</span>
         </span>
         <span className="flex items-center gap-1">
           <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">C</kbd>
-          <span>Contact</span>
+          <span>{t("diagram.keyboardContact")}</span>
         </span>
       </div>
 
@@ -389,9 +391,9 @@ export function MemberFocusView({
         height={dimensions.height}
         className="block w-full h-full"
         role="img"
-        aria-label={`Member details for ${member.firstname} ${member.surname} showing ${roles?.length || 0} roles across ${teams?.length || 0} teams`}
+        aria-label={t("diagram.memberDetailsAriaLabel", { name: `${member.firstname} ${member.surname}`, roleCount: roles?.length || 0, teamCount: teams?.length || 0 })}
       >
-        <title>{member.firstname} {member.surname} - Member Details</title>
+        <title>{t("diagram.memberDetailsTitle", { name: `${member.firstname} ${member.surname}` })}</title>
 
         {/* Outer boundary circle */}
         <circle
@@ -510,31 +512,28 @@ export function MemberFocusView({
           fontSize={12}
           style={{ pointerEvents: "none", userSelect: "none" }}
         >
-          {roles?.length || 0} role{(roles?.length || 0) !== 1 ? "s" : ""} in {teams?.length || 0} team{(teams?.length || 0) !== 1 ? "s" : ""}
+          {t("diagram.rolesInTeams", { roleCount: roles?.length || 0, teamCount: teams?.length || 0, count: roles?.length || 0 })}
         </text>
       </svg>
 
       {/* Accessibility: screen reader announcement */}
       <div role="status" aria-live="polite" className="sr-only">
-        Now viewing member: {member.firstname} {member.surname}.
-        This member has {roles?.length || 0} roles across {teams?.length || 0} teams.
-        Press Escape to return.
-        Press C to show contact information.
+        {t("diagram.srMemberAnnouncement", { name: `${member.firstname} ${member.surname}`, roleCount: roles?.length || 0, teamCount: teams?.length || 0 })}
       </div>
 
       {/* Accessibility: text alternative */}
       <details className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:top-16 focus-within:left-4 focus-within:bg-white dark:focus-within:bg-gray-800 focus-within:p-4 focus-within:rounded-lg focus-within:z-10 focus-within:border focus-within:border-gray-300 dark:focus-within:border-gray-700">
         <summary className="cursor-pointer text-gray-700 dark:text-gray-200">
-          View member details as text
+          {t("diagram.viewMemberDetailsAsText")}
         </summary>
         <div className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-2">
-          <p><strong>Name:</strong> {member.firstname} {member.surname}</p>
-          <p><strong>Email:</strong> {member.email}</p>
-          <p><strong>Roles:</strong> {roles?.length || 0}</p>
-          <p><strong>Teams:</strong> {teams?.length || 0}</p>
+          <p><strong>{t("diagram.textName")}</strong> {member.firstname} {member.surname}</p>
+          <p><strong>{t("diagram.textEmail")}</strong> {member.email}</p>
+          <p><strong>{t("diagram.textRoles")}</strong> {roles?.length || 0}</p>
+          <p><strong>{t("diagram.textTeams")}</strong> {teams?.length || 0}</p>
           {roles && roles.length > 0 && (
             <div>
-              <strong>Role list:</strong>
+              <strong>{t("diagram.textRoleList")}</strong>
               <ul className="list-disc ml-4">
                 {roles.map((role) => (
                   <li key={role._id}>
@@ -553,6 +552,7 @@ export function MemberFocusView({
 
 // Back button component
 function BackButton({ onClick }: { onClick: () => void }) {
+  const { t } = useTranslation("members");
   return (
     <button
       onClick={onClick}
@@ -569,7 +569,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
         hover:text-dark dark:hover:text-light
         focus:outline-none focus:ring-2 focus:ring-[#a2dbed]
       "
-      aria-label="Return to previous view"
+      aria-label={t("returnToPreviousView")}
     >
       {/* Role circle icon */}
       <svg
@@ -583,7 +583,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
         <circle cx="10" cy="10" r="8" />
         <circle cx="10" cy="10" r="4" fill="currentColor" fillOpacity="0.3" />
       </svg>
-      <span className="text-sm font-medium">Back</span>
+      <span className="text-sm font-medium">{t("diagram.keyboardBack")}</span>
     </button>
   );
 }

@@ -1,4 +1,5 @@
 import { memo, useState, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Id } from "../../../convex/_generated/dataModel";
 import type { GraphNode } from "./types";
 
@@ -46,6 +47,7 @@ export const TeamNode = memo(function TeamNode({
 }: TeamNodeProps) {
   void _onSelect; // Reserved for future use (e.g., multi-select)
   const [isDragging, setIsDragging] = useState(false);
+  const { t } = useTranslation("teams");
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
   const hasMoved = useRef(false);
 
@@ -149,7 +151,7 @@ export const TeamNode = memo(function TeamNode({
   return (
     <g
       role="button"
-      aria-label={`${node.name}, ${node.roleCount} roles${node.isPinned ? ", pinned" : ""}`}
+      aria-label={t("diagram.teamNodeAriaLabel", { name: node.name, count: node.roleCount, pinned: node.isPinned ? t("diagram.pinned") : "" })}
       tabIndex={0}
       style={{
         cursor,

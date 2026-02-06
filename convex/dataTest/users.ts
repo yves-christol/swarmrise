@@ -134,6 +134,102 @@ const SURNAMES = [
 
 const TEST_EMAIL_DOMAIN = "@test-swarmrise.com";
 
+// Phone number prefixes for generating realistic fake phone numbers
+const PHONE_PREFIXES = [
+  "+1 (555)", "+1 (212)", "+1 (310)", "+1 (415)", "+1 (617)",
+  "+1 (202)", "+1 (312)", "+1 (404)", "+1 (713)", "+1 (503)",
+  "+44 20", "+44 161", "+44 121", "+33 1", "+33 6",
+  "+49 30", "+49 89", "+61 2", "+61 3", "+81 3",
+];
+
+// Other contact types for random selection (excluding Mobile and LinkedIn which are always added)
+type OtherContactType = "Email" | "Twitter" | "Website" | "Whatsapp" | "Facebook" | "Instagram" | "Address";
+const OTHER_CONTACT_TYPES: OtherContactType[] = [
+  "Email", "Twitter", "Website", "Whatsapp", "Facebook", "Instagram", "Address"
+];
+
+// Helper function to generate a fake phone number
+function generateFakePhoneNumber(): string {
+  const prefix = PHONE_PREFIXES[Math.floor(Math.random() * PHONE_PREFIXES.length)];
+  const part1 = Math.floor(Math.random() * 900 + 100); // 100-999
+  const part2 = Math.floor(Math.random() * 9000 + 1000); // 1000-9999
+  return `${prefix} ${part1}-${part2}`;
+}
+
+// Helper function to generate a fake LinkedIn URL
+function generateFakeLinkedIn(firstname: string, surname: string, index: number): string {
+  const cleanFirst = firstname.toLowerCase().replace(/[^a-z]/g, "");
+  const cleanSur = surname.toLowerCase().replace(/[^a-z]/g, "");
+  // Add some variation with random numbers to simulate real LinkedIn URLs
+  const randomSuffix = Math.floor(Math.random() * 900 + 100);
+  return `https://linkedin.com/in/${cleanFirst}-${cleanSur}-${randomSuffix}${index}`;
+}
+
+// Helper arrays for generating random contact info values
+const EMAIL_DOMAINS = ["gmail.com", "outlook.com", "yahoo.com", "proton.me", "icloud.com"];
+const WEBSITE_TLDS = [".com", ".io", ".dev", ".me", ".co"];
+const STREET_NAMES = ["Main St", "Oak Ave", "Park Blvd", "Market St", "Broadway", "First Ave", "Second St", "Tech Drive", "Innovation Way"];
+const CITY_NAMES = ["San Francisco, CA", "New York, NY", "Austin, TX", "Seattle, WA", "Boston, MA", "Denver, CO", "Chicago, IL", "Portland, OR"];
+
+// Helper function to generate a random other contact info
+function generateOtherContact(firstname: string, surname: string, index: number): { type: OtherContactType; value: string } {
+  const type = OTHER_CONTACT_TYPES[Math.floor(Math.random() * OTHER_CONTACT_TYPES.length)];
+  const cleanFirst = firstname.toLowerCase().replace(/[^a-z]/g, "");
+  const cleanSur = surname.toLowerCase().replace(/[^a-z]/g, "");
+
+  switch (type) {
+    case "Email":
+      return { type, value: `${cleanFirst}.${cleanSur}${index}@${EMAIL_DOMAINS[Math.floor(Math.random() * EMAIL_DOMAINS.length)]}` };
+
+    case "Twitter":
+      return { type, value: `@${cleanFirst}${cleanSur}${Math.floor(Math.random() * 1000)}` };
+
+    case "Website":
+      return { type, value: `https://${cleanFirst}${cleanSur}${WEBSITE_TLDS[Math.floor(Math.random() * WEBSITE_TLDS.length)]}` };
+
+    case "Whatsapp":
+      return { type, value: generateFakePhoneNumber() };
+
+    case "Facebook":
+      return { type, value: `https://facebook.com/${cleanFirst}.${cleanSur}.${Math.floor(Math.random() * 10000)}` };
+
+    case "Instagram":
+      return { type, value: `@${cleanFirst}_${cleanSur}${Math.floor(Math.random() * 100)}` };
+
+    case "Address":
+      return {
+        type,
+        value: `${Math.floor(Math.random() * 9000 + 100)} ${STREET_NAMES[Math.floor(Math.random() * STREET_NAMES.length)]}, ${CITY_NAMES[Math.floor(Math.random() * CITY_NAMES.length)]}`,
+      };
+
+    default:
+      return { type: "Website", value: `https://${cleanFirst}${cleanSur}.com` };
+  }
+}
+
+// Helper function to generate contact infos for a test user
+function generateContactInfos(firstname: string, surname: string, index: number): Array<{ type: "LinkedIn" | "Email" | "Mobile" | "Website" | "Twitter" | "Whatsapp" | "Facebook" | "Instagram" | "Address"; value: string }> {
+  const contacts: Array<{ type: "LinkedIn" | "Email" | "Mobile" | "Website" | "Twitter" | "Whatsapp" | "Facebook" | "Instagram" | "Address"; value: string }> = [];
+
+  // Always add a phone number
+  contacts.push({
+    type: "Mobile",
+    value: generateFakePhoneNumber(),
+  });
+
+  // Always add a LinkedIn URL
+  contacts.push({
+    type: "LinkedIn",
+    value: generateFakeLinkedIn(firstname, surname, index),
+  });
+
+  // Add one random other contact type
+  const otherContact = generateOtherContact(firstname, surname, index);
+  contacts.push(otherContact);
+
+  return contacts;
+}
+
 /**
  * Create 80-120 test users with realistic random first names and surnames.
  * All test users will have emails ending with @test-swarmrise.com
@@ -173,13 +269,16 @@ export const createTestUsers = internalMutation({
         continue;
       }
       
+      // Generate contact infos for this user
+      const contactInfos = generateContactInfos(firstname, surname, i);
+
       // Create the test user
       const userId = await ctx.db.insert("users", {
         firstname,
         surname,
         email,
         pictureURL: undefined,
-        contactInfos: [],
+        contactInfos,
         orgaIds: [],
       });
       

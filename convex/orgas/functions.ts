@@ -205,6 +205,54 @@ export const createOrganization = mutation({
 /**
  * Update an organization
  */
+/**
+ * Validates and normalizes an array of email domains.
+ * Returns a clean array with trimmed, lowercased, non-empty domains that contain a dot.
+ * Throws an error if any domain is invalid after normalization.
+ */
+function validateAndNormalizeEmailDomains(domains: string[]): string[] {
+  const normalized: string[] = [];
+
+  for (const domain of domains) {
+    const cleaned = domain.trim().toLowerCase();
+
+    // Skip empty strings
+    if (cleaned.length === 0) {
+      continue;
+    }
+
+    // Validate domain format: must contain a dot, no leading/trailing dots, reasonable length
+    if (!cleaned.includes('.')) {
+      throw new Error(`Invalid domain format: "${domain}" must contain a dot`);
+    }
+    if (cleaned.startsWith('.') || cleaned.endsWith('.')) {
+      throw new Error(`Invalid domain format: "${domain}" cannot start or end with a dot`);
+    }
+    // Check for consecutive dots (e.g., "example..com")
+    if (cleaned.includes('..')) {
+      throw new Error(`Invalid domain format: "${domain}" cannot contain consecutive dots`);
+    }
+    if (cleaned.length > 253) {
+      throw new Error(`Invalid domain format: "${domain}" exceeds maximum length of 253 characters`);
+    }
+    // Check for invalid characters (basic check - domains should only have alphanumeric, dots, and hyphens)
+    if (!/^[a-z0-9.-]+$/.test(cleaned)) {
+      throw new Error(`Invalid domain format: "${domain}" contains invalid characters`);
+    }
+    // Per RFC 1035, domain labels cannot start or end with a hyphen
+    const labels = cleaned.split('.');
+    for (const label of labels) {
+      if (label.startsWith('-') || label.endsWith('-')) {
+        throw new Error(`Invalid domain format: "${domain}" has a label that starts or ends with a hyphen`);
+      }
+    }
+
+    normalized.push(cleaned);
+  }
+
+  return normalized;
+}
+
 export const updateOrga = mutation({
   args: {
     orgaId: v.id("orgas"),
@@ -224,6 +272,9 @@ export const updateOrga = mutation({
         }),
       })
     ),
+    // Optional: list of authorized email domains for invitations (owner-only)
+    // Pass null to remove the restriction, empty array is treated the same as null
+    authorizedEmailDomains: v.optional(v.union(v.array(v.string()), v.null())),
   },
   returns: v.id("orgas"),
   handler: async (ctx, args) => {
@@ -233,11 +284,19 @@ export const updateOrga = mutation({
       throw new Error("Organization not found");
     }
 
+    // Only the owner can modify authorizedEmailDomains
+    if (args.authorizedEmailDomains !== undefined) {
+      if (orga.owner !== member.personId) {
+        throw new Error("Only the organization owner can modify authorized email domains");
+      }
+    }
+
     // Update organization
     const updates: {
       name?: string;
       logoUrl?: string;
       colorScheme?: ColorScheme;
+      authorizedEmailDomains?: string[];
     } = {};
 
     if (args.name !== undefined) updates.name = args.name;
@@ -250,17 +309,28 @@ export const updateOrga = mutation({
       }
     }
     if (args.colorScheme !== undefined) updates.colorScheme = args.colorScheme;
+    if (args.authorizedEmailDomains !== undefined) {
+      if (args.authorizedEmailDomains === null || args.authorizedEmailDomains.length === 0) {
+        // Remove the restriction
+        updates.authorizedEmailDomains = undefined;
+      } else {
+        // Validate and normalize the domains
+        updates.authorizedEmailDomains = validateAndNormalizeEmailDomains(args.authorizedEmailDomains);
+      }
+    }
 
     // Build before and after with only modified fields
     const before: {
       name?: string;
       logoUrl?: string;
       colorScheme?: ColorScheme;
+      authorizedEmailDomains?: string[];
     } = {};
     const after: {
       name?: string;
       logoUrl?: string;
       colorScheme?: ColorScheme;
+      authorizedEmailDomains?: string[];
     } = {};
 
     if (args.name !== undefined) {
@@ -275,7 +345,11 @@ export const updateOrga = mutation({
       before.colorScheme = orga.colorScheme;
       after.colorScheme = args.colorScheme;
     }
-    
+    if (args.authorizedEmailDomains !== undefined) {
+      before.authorizedEmailDomains = orga.authorizedEmailDomains;
+      after.authorizedEmailDomains = updates.authorizedEmailDomains;
+    }
+
     await ctx.db.patch(args.orgaId, updates);
     
     // Create decision record

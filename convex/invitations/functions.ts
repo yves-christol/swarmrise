@@ -55,6 +55,42 @@ export const listInvitationsInOrga = query({
 });
 
 /**
+ * Helper function to extract domain from an email address
+ * Validates basic email format and returns the domain part
+ */
+function extractEmailDomain(email: string): string {
+  const trimmedEmail = email.trim();
+
+  // Basic format check: must have exactly one @ with content on both sides
+  const parts = trimmedEmail.split("@");
+  if (parts.length !== 2) {
+    throw new Error("Invalid email format: must contain exactly one @ symbol");
+  }
+
+  const [localPart, domain] = parts;
+
+  // Validate local part is not empty
+  if (localPart.length === 0) {
+    throw new Error("Invalid email format: missing local part before @");
+  }
+
+  // Validate domain is not empty and has basic structure
+  if (domain.length === 0) {
+    throw new Error("Invalid email format: missing domain after @");
+  }
+
+  if (!domain.includes('.')) {
+    throw new Error("Invalid email format: domain must contain a dot");
+  }
+
+  if (domain.startsWith('.') || domain.endsWith('.')) {
+    throw new Error("Invalid email format: domain cannot start or end with a dot");
+  }
+
+  return domain.toLowerCase();
+}
+
+/**
  * Create a new invitation
  */
 export const createInvitation = mutation({
@@ -65,18 +101,36 @@ export const createInvitation = mutation({
   returns: v.id("invitations"),
   handler: async (ctx, args) => {
     const member = await requireAuthAndMembership(ctx, args.orgaId);
-    
+
+    // Fetch the organization to check for authorized email domains
+    const orga = await ctx.db.get(args.orgaId);
+    if (!orga) {
+      throw new Error("Organization not found");
+    }
+
+    // Validate email domain if authorized domains are configured
+    if (orga.authorizedEmailDomains && orga.authorizedEmailDomains.length > 0) {
+      const emailDomain = extractEmailDomain(args.email);
+      const normalizedAuthorizedDomains = orga.authorizedEmailDomains.map(d => d.toLowerCase());
+
+      if (!normalizedAuthorizedDomains.includes(emailDomain)) {
+        throw new Error(
+          "Email domain is not authorized for this organization. Contact an administrator for the list of allowed domains."
+        );
+      }
+    }
+
     // Check if user with this email already exists in the organization
     const existingMember = await ctx.db
       .query("members")
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .filter((q) => q.eq(q.field("orgaId"), args.orgaId))
       .first();
-    
+
     if (existingMember) {
       throw new Error("User is already a member of this organization");
     }
-    
+
     // Check for pending invitation
     const pendingInvitation = await ctx.db
       .query("invitations")
@@ -85,11 +139,11 @@ export const createInvitation = mutation({
       )
       .filter((q) => q.eq(q.field("email"), args.email))
       .first();
-    
+
     if (pendingInvitation) {
       throw new Error("A pending invitation already exists for this email");
     }
-    
+
     // Create invitation
     const invitationId = await ctx.db.insert("invitations", {
       orgaId: args.orgaId,
@@ -130,22 +184,19 @@ export const createInvitation = mutation({
       .unique();
 
     if (inviteeUser) {
-      // Get organization name for the notification
-      const orga = await ctx.db.get(args.orgaId);
-      if (orga) {
-        const inviterName = `${member.firstname} ${member.surname}`;
-        await ctx.scheduler.runAfter(
-          0,
-          internal.notifications.functions.create,
-          buildInvitationNotification({
-            userId: inviteeUser._id,
-            orgaId: args.orgaId,
-            invitationId: invitationId,
-            orgaName: orga.name,
-            inviterName: inviterName,
-          })
-        );
-      }
+      // Use the orga we already fetched earlier for domain validation
+      const inviterName = `${member.firstname} ${member.surname}`;
+      await ctx.scheduler.runAfter(
+        0,
+        internal.notifications.functions.create,
+        buildInvitationNotification({
+          userId: inviteeUser._id,
+          orgaId: args.orgaId,
+          invitationId: invitationId,
+          orgaName: orga.name,
+          inviterName: inviterName,
+        })
+      );
     }
 
     return invitationId;

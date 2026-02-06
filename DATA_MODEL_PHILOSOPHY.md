@@ -161,10 +161,12 @@ The tenant container for all organizational data.
 | `logoUrl` | `string?` | Optional organization logo |
 | `colorScheme` | `ColorScheme` | Primary and secondary RGB colors for branding |
 | `owner` | `Id<"users">` | The User who owns this organization |
+| `authorizedEmailDomains` | `string[]?` | Optional list of allowed email domains for invitations |
 
 **Key Decisions:**
 - `owner` references a User, not a Member, because ownership transcends membership
 - Color scheme is stored as RGB objects for flexibility in rendering
+- `authorizedEmailDomains` enables organizations to restrict invitations to specific email domains (e.g., only `@company.com` emails). When set and non-empty, the backend enforces this restriction at invitation creation time.
 
 ### Member
 A User's presence within a specific Organization. This is the "persona" of a User in an Orga context.
@@ -714,6 +716,7 @@ if (prefs.inApp) {
 | Initial | Base schema established | N/A |
 | 2026-02-02 | Added `linkedRoleId` field to roles for double role pattern | Safe - new optional field, existing data unaffected |
 | 2026-02-05 | Added notifications and notificationPreferences tables | Safe - new tables, no existing data affected |
+| 2026-02-06 | Added `authorizedEmailDomains` optional field to orgas | Safe - new optional field, existing data unaffected. Enables domain-restricted invitations. |
 
 *This section should be updated when migrations are performed.*
 

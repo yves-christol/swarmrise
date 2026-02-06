@@ -21,6 +21,8 @@ export const orgaType = v.object({
   logoUrl: v.optional(v.string()),
   colorScheme: colorScheme,
   owner: v.id("users"),
+  // When set and non-empty, only emails with domains in this list can be invited
+  authorizedEmailDomains: v.optional(v.array(v.string())),
 })
 
 export const orgaValidator = v.object({

@@ -12,6 +12,7 @@ import {
   getTeamLeader,
   getMemberInOrga,
 } from "../utils";
+import { contactInfo } from "../users";
 
 /**
  * Get the current user's member document in an organization.
@@ -331,6 +332,29 @@ export const leaveOrganization = mutation({
       },
     });
     
+    return null;
+  },
+});
+
+/**
+ * Update the current user's contact information for a specific organization.
+ * Only the member themselves can update their contact info.
+ */
+export const updateMyContactInfos = mutation({
+  args: {
+    orgaId: v.id("orgas"),
+    contactInfos: v.array(contactInfo),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    // Get the current user's member in this organization
+    const member = await getMemberInOrga(ctx, args.orgaId);
+
+    // Update the member's contact infos
+    await ctx.db.patch(member._id, {
+      contactInfos: args.contactInfos,
+    });
+
     return null;
   },
 });

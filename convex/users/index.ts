@@ -3,10 +3,13 @@ import { v, Infer } from "convex/values"
 // Contact info type discriminator
 export const contactInfoType = v.union(
   v.literal("LinkedIn"),
+  v.literal("Email"),
+  v.literal("Mobile"),
+  v.literal("Website"),
+  v.literal("Twitter"),
+  v.literal("Whatsapp"),
   v.literal("Facebook"),
   v.literal("Instagram"),
-  v.literal("Whatsapp"),
-  v.literal("Mobile"),
   v.literal("Address")
 );
 

@@ -1,10 +1,28 @@
 "use client";
 
-import { useMemo } from "react";
-import { useQuery } from "convex/react";
+import { useMemo, useState, useRef } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useSelectedOrga } from "../../tools/orgaStore";
+
+type ContactInfo = {
+  type: string;
+  value: string;
+};
+
+const CONTACT_TYPES = [
+  "LinkedIn",
+  "Email",
+  "Mobile",
+  "Website",
+  "Twitter",
+  "Whatsapp",
+  "Facebook",
+  "Instagram",
+  "Address",
+] as const;
 
 type MemberManageViewProps = {
   memberId: Id<"members">;
@@ -22,15 +40,8 @@ function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): st
   }
 }
 
-function getRoleTypeLabel(roleType: "leader" | "secretary" | "referee"): string {
-  switch (roleType) {
-    case "leader":
-      return "Leader";
-    case "secretary":
-      return "Secretary";
-    case "referee":
-      return "Referee";
-  }
+function getRoleTypeKey(roleType: "leader" | "secretary" | "referee"): string {
+  return `roleTypes.${roleType}`;
 }
 
 function getContactIcon(type: string) {
@@ -39,6 +50,13 @@ function getContactIcon(type: string) {
       return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="text-[#0A66C2]">
           <path d="M13.6 1H2.4C1.6 1 1 1.6 1 2.4v11.2c0 .8.6 1.4 1.4 1.4h11.2c.8 0 1.4-.6 1.4-1.4V2.4c0-.8-.6-1.4-1.4-1.4zM5.2 13H3V6.2h2.2V13zM4.1 5.2c-.7 0-1.3-.6-1.3-1.3s.6-1.3 1.3-1.3 1.3.6 1.3 1.3-.6 1.3-1.3 1.3zM13 13h-2.2V9.7c0-.8 0-1.8-1.1-1.8-1.1 0-1.3.9-1.3 1.8V13H6.2V6.2h2.1v.9h.1c.3-.6 1-1.2 2.1-1.2 2.2 0 2.6 1.5 2.6 3.4V13z"/>
+        </svg>
+      );
+    case "Email":
+      return (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+          <rect x="1" y="3" width="14" height="10" rx="2" />
+          <path d="M1 5l7 4 7-4" />
         </svg>
       );
     case "Facebook":
@@ -66,6 +84,20 @@ function getContactIcon(type: string) {
           <line x1="7" y1="12" x2="9" y2="12" />
         </svg>
       );
+    case "Website":
+      return (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+          <circle cx="8" cy="8" r="6" />
+          <ellipse cx="8" cy="8" rx="2.5" ry="6" />
+          <line x1="2" y1="8" x2="14" y2="8" />
+        </svg>
+      );
+    case "Twitter":
+      return (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="text-gray-800 dark:text-gray-200">
+          <path d="M9.5 6.8L14.2 1H13L9 5.8 5.7 1H1l5 7.3L1 15h1.3l4.4-5.1 3.5 5.1H15L9.5 6.8zm-1.5 1.8l-.5-.7L3.2 2h1.8l3.3 4.7.5.7 4.2 6H11L8 8.6z"/>
+        </svg>
+      );
     case "Address":
       return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
@@ -86,6 +118,8 @@ function getContactLink(type: string, value: string): string | null {
   switch (type) {
     case "LinkedIn":
       return value.startsWith("http") ? value : `https://linkedin.com/in/${value}`;
+    case "Email":
+      return `mailto:${value}`;
     case "Facebook":
       return value.startsWith("http") ? value : `https://facebook.com/${value}`;
     case "Instagram":
@@ -94,12 +128,33 @@ function getContactLink(type: string, value: string): string | null {
       return `https://wa.me/${value.replace(/\D/g, "")}`;
     case "Mobile":
       return `tel:${value}`;
+    case "Website":
+      return value.startsWith("http") ? value : `https://${value}`;
+    case "Twitter":
+      return value.startsWith("http") ? value : `https://x.com/${value.replace(/^@/, "")}`;
     default:
       return null;
   }
 }
 
+function getContactPlaceholderKey(type: string): string {
+  const keyMap: Record<string, string> = {
+    LinkedIn: "contactPlaceholders.linkedin",
+    Email: "contactPlaceholders.email",
+    Mobile: "contactPlaceholders.mobile",
+    Website: "contactPlaceholders.website",
+    Twitter: "contactPlaceholders.twitter",
+    Whatsapp: "contactPlaceholders.whatsapp",
+    Facebook: "contactPlaceholders.facebook",
+    Instagram: "contactPlaceholders.instagram",
+    Address: "contactPlaceholders.address",
+  };
+  return keyMap[type] || "contactPlaceholders.default";
+}
+
 function BackButton({ onClick }: { onClick: () => void }) {
+  const { t } = useTranslation("common");
+  const { t: tMembers } = useTranslation("members");
   return (
     <button
       onClick={onClick}
@@ -116,7 +171,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
         hover:text-dark dark:hover:text-light
         focus:outline-none focus:ring-2 focus:ring-[#a2dbed]
       "
-      aria-label="Return to previous view"
+      aria-label={tMembers("returnToPreviousView")}
     >
       <svg
         width="20"
@@ -129,7 +184,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
         <circle cx="10" cy="10" r="8" />
         <circle cx="10" cy="10" r="4" fill="currentColor" />
       </svg>
-      <span className="text-sm font-medium">Back</span>
+      <span className="text-sm font-medium">{t("back")}</span>
     </button>
   );
 }
@@ -165,6 +220,10 @@ function StatCard({
 }
 
 export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps) {
+  const { t } = useTranslation("common");
+  const { t: tMembers } = useTranslation("members");
+  const { t: tTeams } = useTranslation("teams");
+
   // Fetch member data
   const member = useQuery(api.members.functions.getMemberById, { memberId });
 
@@ -175,8 +234,91 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
   const teams = useQuery(api.members.functions.listMemberTeams, { memberId });
 
   // Get current user's member to check if viewing self
-  const { myMember } = useSelectedOrga();
+  const { myMember, selectedOrgaId } = useSelectedOrga();
   const isCurrentUser = myMember?._id === memberId;
+
+  // Contact info editing state
+  const [isEditingContacts, setIsEditingContacts] = useState(false);
+  const [editedContacts, setEditedContacts] = useState<ContactInfo[]>([]);
+  const [newContactType, setNewContactType] = useState<string>("LinkedIn");
+  const [newContactValue, setNewContactValue] = useState("");
+  const [isSavingContacts, setIsSavingContacts] = useState(false);
+  const [contactSaveMessage, setContactSaveMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  // Use ref to always have current contacts value in async handlers
+  const editedContactsRef = useRef<ContactInfo[]>([]);
+  editedContactsRef.current = editedContacts;
+
+  const updateContactInfos = useMutation(api.members.functions.updateMyContactInfos);
+
+  const handleStartEditingContacts = () => {
+    const contacts = member?.contactInfos
+      ? member.contactInfos.map((c) => ({ type: c.type, value: c.value }))
+      : [];
+    setEditedContacts(contacts);
+    editedContactsRef.current = contacts;
+    setNewContactType("LinkedIn");
+    setNewContactValue("");
+    setIsEditingContacts(true);
+  };
+
+  const handleCancelEditingContacts = () => {
+    setIsEditingContacts(false);
+    setNewContactValue("");
+  };
+
+  const handleAddContact = () => {
+    if (!newContactValue.trim()) return;
+    setEditedContacts((prev) => [...prev, { type: newContactType, value: newContactValue.trim() }]);
+    setNewContactValue("");
+  };
+
+  const handleRemoveContact = (index: number) => {
+    setEditedContacts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleContactTypeChange = (index: number, newType: string) => {
+    setEditedContacts((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], type: newType };
+      return updated;
+    });
+  };
+
+  const handleContactValueChange = (index: number, newValue: string) => {
+    setEditedContacts((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], value: newValue };
+      return updated;
+    });
+  };
+
+  const handleSaveContacts = async () => {
+    if (!selectedOrgaId) return;
+    setIsSavingContacts(true);
+    setContactSaveMessage(null);
+    try {
+      // Use ref to get the current value, avoiding stale closure issues
+      const contactsToSave = editedContactsRef.current.filter((c) => c.value && c.value.trim());
+      await updateContactInfos({
+        orgaId: selectedOrgaId,
+        contactInfos: contactsToSave as { type: typeof CONTACT_TYPES[number]; value: string }[],
+      });
+      setIsEditingContacts(false);
+      setContactSaveMessage({ type: "success", text: tMembers("contactInfoSaved") });
+      setTimeout(() => setContactSaveMessage(null), 3000);
+    } catch (error) {
+      setContactSaveMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : tMembers("contactInfoSaveFailed"),
+      });
+    } finally {
+      setIsSavingContacts(false);
+    }
+  };
 
   // Group roles by team
   const rolesByTeam = useMemo(() => {
@@ -216,7 +358,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
   if (member === undefined) {
     return (
       <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
-        <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+        <div className="text-gray-500 dark:text-gray-400">{t("loading")}</div>
       </div>
     );
   }
@@ -227,7 +369,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
       <div className="absolute inset-0 bg-light dark:bg-dark">
         <BackButton onClick={onZoomOut} />
         <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-gray-500 dark:text-gray-400">Member not found</p>
+          <p className="text-gray-500 dark:text-gray-400">{tMembers("memberNotFound")}</p>
         </div>
       </div>
     );
@@ -267,7 +409,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                 </h1>
                 {isCurrentUser && (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]">
-                    You
+                    {tMembers("you")}
                   </span>
                 )}
               </div>
@@ -284,20 +426,142 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
         {/* Analytics section */}
         <section className="mb-8">
           <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            Overview
+            {t("overview")}
           </h2>
           <div className="grid grid-cols-2 gap-4">
-            <StatCard value={roles?.length || 0} label="Roles" color="purple" />
-            <StatCard value={teams?.length || 0} label="Teams" color="green" />
+            <StatCard value={roles?.length || 0} label={tTeams("roles")} color="purple" />
+            <StatCard value={teams?.length || 0} label={tTeams("teams")} color="green" />
           </div>
         </section>
 
         {/* Contact Information */}
-        {member.contactInfos && member.contactInfos.length > 0 && (
-          <section className="mb-8">
-            <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-              Contact Information
+        <section className="mb-8">
+          {/* Save message */}
+          {contactSaveMessage && (
+            <div
+              className={`mb-4 p-3 rounded-lg text-sm ${
+                contactSaveMessage.type === "success"
+                  ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800"
+                  : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
+              }`}
+            >
+              {contactSaveMessage.text}
+            </div>
+          )}
+
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+              {tMembers("contactInformation")}
             </h2>
+            {isCurrentUser && !isEditingContacts && (
+              <button
+                onClick={handleStartEditingContacts}
+                className="text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
+              >
+                {tMembers("editContacts")}
+              </button>
+            )}
+          </div>
+
+          {isEditingContacts ? (
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              {/* Existing items - editable */}
+              {editedContacts.length > 0 && (
+                <ul className="space-y-3 mb-4">
+                  {editedContacts.map((contact, index) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <select
+                        value={contact.type}
+                        onChange={(e) => handleContactTypeChange(index, e.target.value)}
+                        className="w-28 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-[#eac840]"
+                      >
+                        {CONTACT_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        value={contact.value}
+                        onChange={(e) => handleContactValueChange(index, e.target.value)}
+                        placeholder={tMembers(getContactPlaceholderKey(contact.type))}
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-[#eac840]"
+                      />
+                      <button
+                        onClick={() => handleRemoveContact(index)}
+                        className="p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                        aria-label={tMembers("removeContact")}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M4 4l8 8M12 4l-8 8" />
+                        </svg>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Add new contact */}
+              <div className="flex items-center gap-2 mb-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <select
+                  value={newContactType}
+                  onChange={(e) => setNewContactType(e.target.value)}
+                  className="w-28 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-[#eac840]"
+                >
+                  {CONTACT_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  value={newContactValue}
+                  onChange={(e) => setNewContactValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddContact();
+                    }
+                  }}
+                  placeholder={tMembers(getContactPlaceholderKey(newContactType))}
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-[#eac840]"
+                />
+                <button
+                  onClick={handleAddContact}
+                  disabled={!newContactValue.trim()}
+                  className="px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors duration-75 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {tMembers("addContact")}
+                </button>
+              </div>
+
+              {/* Save/Cancel actions */}
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={handleCancelEditingContacts}
+                  className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                >
+                  {tMembers("cancelEditContacts")}
+                </button>
+                <button
+                  onClick={() => void handleSaveContacts()}
+                  disabled={isSavingContacts}
+                  className="px-3 py-1.5 text-sm bg-[#eac840] hover:bg-[#d4af37] text-dark rounded-lg transition-colors duration-75 disabled:opacity-50"
+                >
+                  {isSavingContacts ? tMembers("savingContacts") : tMembers("saveContacts")}
+                </button>
+              </div>
+            </div>
+          ) : member.contactInfos && member.contactInfos.length > 0 ? (
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
                 {member.contactInfos.map((contact, index) => {
@@ -327,17 +591,31 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                 })}
               </div>
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-8 text-center">
+              <p className="text-gray-500 dark:text-gray-400">
+                {isCurrentUser ? tMembers("noContactInfoYet") : tMembers("noContactInfo")}
+              </p>
+              {isCurrentUser && (
+                <button
+                  onClick={handleStartEditingContacts}
+                  className="mt-3 text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
+                >
+                  {tMembers("addFirstContact")}
+                </button>
+              )}
+            </div>
+          )}
+        </section>
 
         {/* Roles by Team */}
         <section className="mb-8">
           <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            Roles
+            {tTeams("roles")}
           </h2>
           {rolesByTeam.length === 0 ? (
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-              No roles assigned
+              {tMembers("noRolesAssigned")}
             </div>
           ) : (
             <div className="space-y-4">
@@ -365,7 +643,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                       </svg>
                       <span className="font-medium text-dark dark:text-light">{team.name}</span>
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        ({teamRoles.length} {teamRoles.length === 1 ? "role" : "roles"})
+                        ({tMembers("roleCount", { count: teamRoles.length })})
                       </span>
                     </div>
                   </div>
@@ -392,12 +670,12 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                                 color: getRoleTypeBadgeColor(role.roleType),
                               }}
                             >
-                              {getRoleTypeLabel(role.roleType)}
+                              {tMembers(getRoleTypeKey(role.roleType))}
                             </span>
                           )}
                           {role.linkedRoleId && (
                             <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
-                              Synced
+                              {tMembers("synced")}
                             </span>
                           )}
                         </div>
@@ -418,11 +696,11 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
         {/* Teams List */}
         <section className="mb-8">
           <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            Teams
+            {tTeams("teams")}
           </h2>
           {!teams || teams.length === 0 ? (
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-              Not a member of any team
+              {tMembers("notInAnyTeam")}
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
@@ -451,7 +729,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                           <span className="font-medium text-dark dark:text-light">{team.name}</span>
                         </div>
                         <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {teamRoleCount} {teamRoleCount === 1 ? "role" : "roles"}
+                          {tMembers("roleCount", { count: teamRoleCount })}
                         </span>
                       </div>
                     );

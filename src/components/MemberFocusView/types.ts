@@ -8,7 +8,7 @@ export type MemberFocusViewProps = {
 };
 
 export type ContactInfo = {
-  type: "LinkedIn" | "Facebook" | "Instagram" | "Whatsapp" | "Mobile" | "Address";
+  type: "LinkedIn" | "Email" | "Mobile" | "Website" | "Twitter" | "Whatsapp" | "Facebook" | "Instagram" | "Address";
   value: string;
 };
 

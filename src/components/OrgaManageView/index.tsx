@@ -157,6 +157,7 @@ function MemberRow({
   isCurrentUser: boolean;
   onNavigate: () => void;
 }) {
+  const { t: tMembers } = useTranslation("members");
   const [showContacts, setShowContacts] = useState(false);
 
   // Filter out email from contactInfos since it's already displayed
@@ -199,7 +200,7 @@ function MemberRow({
           </span>
           {isCurrentUser && (
             <span className="text-xs px-1.5 py-0.5 rounded bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]">
-              You
+              {tMembers("you")}
             </span>
           )}
         </div>
@@ -223,7 +224,7 @@ function MemberRow({
               transition-colors duration-75
               focus:outline-none focus:ring-2 focus:ring-[#a2dbed]
             "
-            aria-label="View contact information"
+            aria-label={tMembers("viewContactInfo")}
           >
             <svg
               width="16"
@@ -305,6 +306,8 @@ function MemberRow({
 
 export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
   const { t } = useTranslation("orgs");
+  const { t: tCommon } = useTranslation("common");
+  const { t: tMembers } = useTranslation("members");
   const [searchQuery, setSearchQuery] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -421,7 +424,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
   if (!orga || !selectedOrga) {
     return (
       <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
-        <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+        <div className="text-gray-500 dark:text-gray-400">{tCommon("loading")}</div>
       </div>
     );
   }
@@ -434,19 +437,19 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
         <header className="mb-8">
           <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">{orga.name}</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Organization settings and directory
+            {t("settingsAndDirectory")}
           </p>
         </header>
 
         {/* Analytics section */}
         <section className="mb-8">
           <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            Overview
+            {tCommon("overview")}
           </h2>
           <div className="grid grid-cols-3 gap-4">
-            <StatCard value={counts.teams} label="Teams" color="green" />
-            <StatCard value={counts.roles} label="Roles" color="purple" />
-            <StatCard value={counts.members} label="Members" color="blue" />
+            <StatCard value={counts.teams} label={t("metrics.teams")} color="green" />
+            <StatCard value={counts.roles} label={t("metrics.roles")} color="purple" />
+            <StatCard value={counts.members} label={t("metrics.members")} color="blue" />
           </div>
         </section>
 
@@ -454,11 +457,11 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
-              Member Directory
+              {tMembers("memberDirectory")}
             </h2>
             <input
               type="search"
-              placeholder="Search members..."
+              placeholder={tMembers("searchMembers")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="
@@ -477,11 +480,11 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
             {membersLoading ? (
               <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                Loading members...
+                {tMembers("loadingMembers")}
               </div>
             ) : filteredMembers.length === 0 ? (
               <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                {searchQuery ? "No members match your search" : "No members found"}
+                {searchQuery ? tMembers("noMembersMatchSearch") : tMembers("noMembersFound")}
               </div>
             ) : (
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -567,10 +570,10 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
         {canDelete && (
           <section className="mt-12 pt-6 border-t border-red-200 dark:border-red-900/50">
             <h2 className="font-swarm text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
-              Danger Zone
+              {t("dangerZone")}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Once you delete an organization, there is no going back. Please be certain.
+              {t("deleteOrgWarning")}
             </p>
 
             {showDeleteConfirm ? (
@@ -586,7 +589,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                     font-medium
                   "
                 >
-                  Yes, delete this organization
+                  {t("confirmDeleteOrg")}
                 </button>
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
@@ -599,7 +602,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                     transition-colors
                   "
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </button>
               </div>
             ) : (
@@ -613,7 +616,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                   transition-colors
                 "
               >
-                Delete Organization
+                {t("deleteOrganization")}
               </button>
             )}
           </section>

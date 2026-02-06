@@ -72,5 +72,10 @@
     "unknownError": "Une erreur s'est produite. Veuillez réessayer."
   },
   "confirmLeave": "Êtes-vous sûr de vouloir quitter ? C'est une décision définitive.",
-  "letMeGo": "Laissez-moi partir"
+  "letMeGo": "Laissez-moi partir",
+  "settingsAndDirectory": "Paramètres et annuaire de l'organisation",
+  "dangerZone": "Zone de danger",
+  "deleteOrgWarning": "Une fois l'organisation supprimée, il n'y a pas de retour en arrière. Soyez certain.",
+  "confirmDeleteOrg": "Oui, supprimer cette organisation",
+  "deleteOrganization": "Supprimer l'organisation"
 }

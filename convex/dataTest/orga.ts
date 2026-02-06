@@ -486,8 +486,11 @@ export const createTestOrganization = internalMutation({
       totalRoleCount++;
       await assignRoleToMember(leaderMemberId, leaderRoleId);
 
-      // Create Secretary role
-      const secretaryMemberId = getRandomMember();
+      // Create Secretary role - must be a different member than Leader
+      let secretaryMemberId = getRandomMember();
+      while (secretaryMemberId === leaderMemberId && memberIds.length > 1) {
+        secretaryMemberId = getRandomMember();
+      }
       const secretaryRoleId = await ctx.db.insert("roles", {
         orgaId,
         teamId,
@@ -500,8 +503,11 @@ export const createTestOrganization = internalMutation({
       totalRoleCount++;
       await assignRoleToMember(secretaryMemberId, secretaryRoleId);
 
-      // Create Referee role
-      const refereeMemberId = getRandomMember();
+      // Create Referee role - must be a different member than Leader and Secretary
+      let refereeMemberId = getRandomMember();
+      while ((refereeMemberId === leaderMemberId || refereeMemberId === secretaryMemberId) && memberIds.length > 2) {
+        refereeMemberId = getRandomMember();
+      }
       const refereeRoleId = await ctx.db.insert("roles", {
         orgaId,
         teamId,
@@ -516,7 +522,39 @@ export const createTestOrganization = internalMutation({
 
       // Create additional roles from the template (select 2-5 roles randomly)
       const selectedRoles = getRandomRoles(template.roles, 2, 5);
-      for (const roleTemplate of selectedRoles) {
+
+      // Track which members holding special roles might get additional roles in this team
+      // Each special role holder has a 50% chance to get an additional role
+      const specialMembersForAdditionalRoles: Id<"members">[] = [];
+      if (Math.random() < 0.5) specialMembersForAdditionalRoles.push(leaderMemberId);
+      if (Math.random() < 0.5) specialMembersForAdditionalRoles.push(secretaryMemberId);
+      if (Math.random() < 0.5) specialMembersForAdditionalRoles.push(refereeMemberId);
+
+      // Create a pool of role templates for assignment
+      let roleIndex = 0;
+
+      // First, assign additional roles to special members who were selected (50% chance each)
+      for (const specialMemberId of specialMembersForAdditionalRoles) {
+        if (roleIndex < selectedRoles.length) {
+          const roleTemplate = selectedRoles[roleIndex];
+          roleIndex++;
+
+          const roleId = await ctx.db.insert("roles", {
+            orgaId,
+            teamId,
+            title: roleTemplate.title,
+            mission: roleTemplate.mission,
+            duties: roleTemplate.duties,
+            memberId: specialMemberId,
+          });
+          totalRoleCount++;
+          await assignRoleToMember(specialMemberId, roleId);
+        }
+      }
+
+      // Then assign remaining roles to random members
+      for (; roleIndex < selectedRoles.length; roleIndex++) {
+        const roleTemplate = selectedRoles[roleIndex];
         const roleMemberId = getRandomMember();
         const roleId = await ctx.db.insert("roles", {
           orgaId,

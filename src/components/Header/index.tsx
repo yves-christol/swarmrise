@@ -7,6 +7,7 @@ import { Logo } from "../Logo";
 import { OrgaSelector } from "../OrgaSelector";
 import { LanguageSelector } from "../LanguageSelector";
 import { ThemeToggle } from "../ThemeToggle";
+import { NotificationBell } from "../NotificationBell";
 import { useTheme } from "../../contexts/ThemeContext";
 
 type HeaderProps = {
@@ -66,6 +67,7 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
         <div className="flex items-center gap-2">
           <LanguageSelector />
           <ThemeToggle />
+          <NotificationBell />
         </div>
         {/* User identity */}
         {isSignedIn && <UserButton appearance={{ baseTheme: resolvedTheme === "dark" ? dark : undefined }} />}

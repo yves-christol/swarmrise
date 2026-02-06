@@ -1,0 +1,21 @@
+{
+  "title": "Сповіщення",
+  "panel": "Сповіщення",
+  "empty": "Немає сповіщень",
+  "noNotifications": "Немає сповіщень",
+  "countNotifications": "{{count}} сповіщення",
+  "countNotifications_other": "{{count}} сповіщень",
+  "markAllAsRead": "Позначити все як прочитане",
+  "notificationItem": "Сповіщення",
+  "unread": "Непрочитане",
+  "invitationTitle": "Запрошення до {{orgaName}}",
+  "invitedBy": "Запросив {{inviterName}}",
+  "accept": "Прийняти",
+  "decline": "Відхилити",
+  "roleAssignmentTitle": "Нова роль: {{roleTitle}}",
+  "roleAssignmentSubtitle": "У {{teamName}} в {{orgaName}}",
+  "policyTitle": "Нова політика: {{policyTitle}}",
+  "policyGlobalSubtitle": "Організаційна політика в {{orgaName}}",
+  "policyTeamSubtitle": "Політика команди в {{teamName}}",
+  "genericNotification": "Нове сповіщення"
+}

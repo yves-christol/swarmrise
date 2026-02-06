@@ -11,6 +11,7 @@ import enAuth from './locales/en/auth.json'
 import enTeams from './locales/en/teams.json'
 import enGovernance from './locales/en/governance.json'
 import enLegal from './locales/en/legal.json'
+import enNotifications from './locales/en/notifications.json'
 
 // Import French translations
 import frCommon from './locales/fr/common.json'
@@ -21,6 +22,7 @@ import frAuth from './locales/fr/auth.json'
 import frTeams from './locales/fr/teams.json'
 import frGovernance from './locales/fr/governance.json'
 import frLegal from './locales/fr/legal.json'
+import frNotifications from './locales/fr/notifications.json'
 
 // Import Spanish translations
 import esCommon from './locales/es/common.json'
@@ -31,6 +33,7 @@ import esAuth from './locales/es/auth.json'
 import esTeams from './locales/es/teams.json'
 import esGovernance from './locales/es/governance.json'
 import esLegal from './locales/es/legal.json'
+import esNotifications from './locales/es/notifications.json'
 
 // Import Italian translations
 import itCommon from './locales/it/common.json'
@@ -41,6 +44,7 @@ import itAuth from './locales/it/auth.json'
 import itTeams from './locales/it/teams.json'
 import itGovernance from './locales/it/governance.json'
 import itLegal from './locales/it/legal.json'
+import itNotifications from './locales/it/notifications.json'
 
 // Import Ukrainian translations
 import ukCommon from './locales/uk/common.json'
@@ -51,6 +55,7 @@ import ukAuth from './locales/uk/auth.json'
 import ukTeams from './locales/uk/teams.json'
 import ukGovernance from './locales/uk/governance.json'
 import ukLegal from './locales/uk/legal.json'
+import ukNotifications from './locales/uk/notifications.json'
 
 // Import Traditional Chinese translations
 import zhTWCommon from './locales/zh-TW/common.json'
@@ -61,6 +66,7 @@ import zhTWAuth from './locales/zh-TW/auth.json'
 import zhTWTeams from './locales/zh-TW/teams.json'
 import zhTWGovernance from './locales/zh-TW/governance.json'
 import zhTWLegal from './locales/zh-TW/legal.json'
+import zhTWNotifications from './locales/zh-TW/notifications.json'
 
 export const supportedLanguages = ['en', 'fr', 'es', 'it', 'uk', 'zh-TW'] as const
 export type SupportedLanguage = typeof supportedLanguages[number]
@@ -83,7 +89,8 @@ const resources = {
     auth: enAuth,
     teams: enTeams,
     governance: enGovernance,
-    legal: enLegal
+    legal: enLegal,
+    notifications: enNotifications
   },
   fr: {
     common: frCommon,
@@ -93,7 +100,8 @@ const resources = {
     auth: frAuth,
     teams: frTeams,
     governance: frGovernance,
-    legal: frLegal
+    legal: frLegal,
+    notifications: frNotifications
   },
   es: {
     common: esCommon,
@@ -103,7 +111,8 @@ const resources = {
     auth: esAuth,
     teams: esTeams,
     governance: esGovernance,
-    legal: esLegal
+    legal: esLegal,
+    notifications: esNotifications
   },
   it: {
     common: itCommon,
@@ -113,7 +122,8 @@ const resources = {
     auth: itAuth,
     teams: itTeams,
     governance: itGovernance,
-    legal: itLegal
+    legal: itLegal,
+    notifications: itNotifications
   },
   uk: {
     common: ukCommon,
@@ -123,7 +133,8 @@ const resources = {
     auth: ukAuth,
     teams: ukTeams,
     governance: ukGovernance,
-    legal: ukLegal
+    legal: ukLegal,
+    notifications: ukNotifications
   },
   'zh-TW': {
     common: zhTWCommon,
@@ -133,7 +144,8 @@ const resources = {
     auth: zhTWAuth,
     teams: zhTWTeams,
     governance: zhTWGovernance,
-    legal: zhTWLegal
+    legal: zhTWLegal,
+    notifications: zhTWNotifications
   }
 }
 
@@ -144,7 +156,7 @@ void i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal'],
+    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal', 'notifications'],
     interpolation: {
       escapeValue: false // React already escapes values
     },

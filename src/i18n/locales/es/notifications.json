@@ -1,0 +1,21 @@
+{
+  "title": "Notificaciones",
+  "panel": "Notificaciones",
+  "empty": "Sin notificaciones",
+  "noNotifications": "Sin notificaciones",
+  "countNotifications": "{{count}} notificación",
+  "countNotifications_other": "{{count}} notificaciones",
+  "markAllAsRead": "Marcar todo como leído",
+  "notificationItem": "Notificación",
+  "unread": "No leído",
+  "invitationTitle": "Invitación a {{orgaName}}",
+  "invitedBy": "Invitado por {{inviterName}}",
+  "accept": "Aceptar",
+  "decline": "Rechazar",
+  "roleAssignmentTitle": "Nuevo rol: {{roleTitle}}",
+  "roleAssignmentSubtitle": "En {{teamName}} en {{orgaName}}",
+  "policyTitle": "Nueva política: {{policyTitle}}",
+  "policyGlobalSubtitle": "Política organizacional en {{orgaName}}",
+  "policyTeamSubtitle": "Política de equipo en {{teamName}}",
+  "genericNotification": "Nueva notificación"
+}

@@ -1,0 +1,21 @@
+{
+  "title": "通知",
+  "panel": "通知",
+  "empty": "沒有通知",
+  "noNotifications": "沒有通知",
+  "countNotifications": "{{count}} 則通知",
+  "countNotifications_other": "{{count}} 則通知",
+  "markAllAsRead": "全部標記為已讀",
+  "notificationItem": "通知",
+  "unread": "未讀",
+  "invitationTitle": "加入 {{orgaName}} 的邀請",
+  "invitedBy": "由 {{inviterName}} 邀請",
+  "accept": "接受",
+  "decline": "拒絕",
+  "roleAssignmentTitle": "新角色：{{roleTitle}}",
+  "roleAssignmentSubtitle": "在 {{orgaName}} 的 {{teamName}}",
+  "policyTitle": "新政策：{{policyTitle}}",
+  "policyGlobalSubtitle": "{{orgaName}} 的組織政策",
+  "policyTeamSubtitle": "{{teamName}} 的團隊政策",
+  "genericNotification": "新通知"
+}

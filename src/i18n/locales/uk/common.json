@@ -27,5 +27,8 @@
   "selectLanguage": "Вибрати мову",
   "availableLanguages": "Доступні мови",
   "switchToLightMode": "Перейти до світлого режиму",
-  "switchToDarkMode": "Перейти до темного режиму"
+  "switchToDarkMode": "Перейти до темного режиму",
+  "visual": "Візуальний",
+  "manage": "Керувати",
+  "viewMode": "Режим перегляду"
 }

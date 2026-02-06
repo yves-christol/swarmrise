@@ -27,5 +27,8 @@
   "selectLanguage": "Seleccionar idioma",
   "availableLanguages": "Idiomas disponibles",
   "switchToLightMode": "Cambiar a modo claro",
-  "switchToDarkMode": "Cambiar a modo oscuro"
+  "switchToDarkMode": "Cambiar a modo oscuro",
+  "visual": "Visual",
+  "manage": "Gestionar",
+  "viewMode": "Modo de vista"
 }

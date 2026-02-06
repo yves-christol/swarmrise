@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
+
 export type ViewMode = "visual" | "manage";
 
 type ViewToggleProps = {
@@ -9,6 +11,7 @@ type ViewToggleProps = {
 };
 
 export function ViewToggle({ mode, onChange, disabled = false }: ViewToggleProps) {
+  const { t } = useTranslation("common");
   return (
     <div className="absolute top-4 right-4 z-10">
       <div
@@ -21,7 +24,7 @@ export function ViewToggle({ mode, onChange, disabled = false }: ViewToggleProps
           overflow-hidden
         "
         role="tablist"
-        aria-label="View mode"
+        aria-label={t("viewMode")}
       >
         <button
           role="tab"
@@ -56,7 +59,7 @@ export function ViewToggle({ mode, onChange, disabled = false }: ViewToggleProps
             <circle cx="5" cy="12" r="2" />
             <circle cx="13" cy="12" r="2" />
           </svg>
-          <span className="text-sm font-medium sr-only sm:not-sr-only">Visual</span>
+          <span className="text-sm font-medium sr-only sm:not-sr-only">{t("visual")}</span>
         </button>
 
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" aria-hidden="true" />
@@ -93,7 +96,7 @@ export function ViewToggle({ mode, onChange, disabled = false }: ViewToggleProps
             <rect x="3" y="8" width="12" height="3" rx="1" />
             <rect x="3" y="13" width="8" height="3" rx="1" />
           </svg>
-          <span className="text-sm font-medium sr-only sm:not-sr-only">Manage</span>
+          <span className="text-sm font-medium sr-only sm:not-sr-only">{t("manage")}</span>
         </button>
       </div>
     </div>

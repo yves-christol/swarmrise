@@ -27,5 +27,8 @@
   "selectLanguage": "選擇語言",
   "availableLanguages": "可用語言",
   "switchToLightMode": "切換至淺色模式",
-  "switchToDarkMode": "切換至深色模式"
+  "switchToDarkMode": "切換至深色模式",
+  "visual": "視覺",
+  "manage": "管理",
+  "viewMode": "檢視模式"
 }

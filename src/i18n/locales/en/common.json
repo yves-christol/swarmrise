@@ -27,5 +27,8 @@
   "selectLanguage": "Select language",
   "availableLanguages": "Available languages",
   "switchToLightMode": "Switch to light mode",
-  "switchToDarkMode": "Switch to dark mode"
+  "switchToDarkMode": "Switch to dark mode",
+  "visual": "Visual",
+  "manage": "Manage",
+  "viewMode": "View mode"
 }

@@ -1,0 +1,45 @@
+{
+  "title": "glossaire",
+  "subtitle": "Concepts et terminologie cles utilises dans swarmrise.",
+  "relatedDocuments": "documents connexes",
+  "principlesLink": "Nos principes",
+  "principlesDescription": "les idees qui guident le fonctionnement de swarmrise",
+  "footer": "swarmrise est un projet en cours.",
+  "items": {
+    "user": {
+      "title": "Utilisateur",
+      "description": "Une personne qui a cree un compte sur swarmrise. Les utilisateurs peuvent rejoindre plusieurs organisations et participer a la gouvernance de chacune d'elles.",
+      "example": "Lorsque vous vous inscrivez sur swarmrise, vous devenez un utilisateur. Vous pouvez ensuite creer ou rejoindre des organisations."
+    },
+    "orga": {
+      "title": "Organisation",
+      "description": "Un espace de gouvernance autonome ou les equipes, les roles et les decisions sont geres. Chaque organisation a ses propres membres, sa structure et ses politiques, completement isolees des autres organisations.",
+      "example": "Une entreprise, une association ou un groupe communautaire peut chacun etre configure comme une organisation dans swarmrise."
+    },
+    "member": {
+      "title": "Membre",
+      "description": "La presence d'un utilisateur au sein d'une organisation specifique. La meme personne peut etre membre de plusieurs organisations, avec des roles et responsabilites differents dans chacune.",
+      "example": "Vous pourriez etre membre de l'organisation de votre entreprise et egalement membre de l'organisation d'un groupe de benevoles."
+    },
+    "team": {
+      "title": "Equipe",
+      "description": "Un groupe au sein d'une organisation qui travaille vers un objectif commun. Les equipes contiennent des roles qui definissent des responsabilites et des obligations specifiques.",
+      "example": "Une equipe Marketing pourrait contenir des roles comme Responsable du contenu, Community manager et Strategiste de marque."
+    },
+    "role": {
+      "title": "Role",
+      "description": "Un poste specifique au sein d'une equipe qui definit les responsabilites de quelqu'un. Les roles peuvent avoir des types speciaux : leader (guide l'equipe), secretaire (gere la documentation) ou arbitre (resout les conflits).",
+      "example": "Le role de Product Owner pourrait avoir pour mission de definir les priorites du produit et de maintenir le backlog."
+    },
+    "decision": {
+      "title": "Decision",
+      "description": "Tout changement ou action tracee au sein de l'organisation. Les decisions maintiennent une piste d'audit complete montrant qui a fait quel changement et quand, avec les etats avant et apres.",
+      "example": "Lorsque quelqu'un met a jour la mission d'une equipe ou attribue un role, cela est enregistre comme une decision avec un historique complet."
+    },
+    "mission": {
+      "title": "Mission",
+      "description": "L'objectif ou le but qui guide une equipe ou un role. Les missions repondent a la question de pourquoi quelque chose existe et ce qu'il vise a accomplir.",
+      "example": "La mission d'une equipe Support pourrait etre de s'assurer que les clients recoivent une assistance rapide et utile."
+    }
+  }
+}

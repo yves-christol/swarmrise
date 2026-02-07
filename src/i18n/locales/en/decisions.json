@@ -1,0 +1,43 @@
+{
+  "journal": "Journal",
+  "journalDescriptionOrga": "Record of changes made in this organization",
+  "journalDescriptionTeam": "Record of changes related to this team",
+  "toggleFilters": "Toggle filters",
+  "searchJournal": "Search journal...",
+  "noDecisionsYet": "No changes recorded yet",
+  "noDecisionsYetHint": "Changes to teams, roles, and policies will appear here",
+  "noDecisionsMatchFilter": "No changes match the current filter",
+  "loadMore": "Load more",
+  "loadingMore": "Loading...",
+  "filterType": {
+    "all": "All",
+    "teams": "Teams",
+    "roles": "Roles",
+    "members": "Members",
+    "invitations": "Invitations",
+    "policies": "Policies",
+    "orgas": "Organization"
+  },
+  "diffBefore": "Before",
+  "diffAfter": "After",
+  "created": "Created",
+  "updated": "Updated",
+  "removed": "Removed",
+  "summary": {
+    "orgCreated": "Organization created",
+    "orgUpdated": "Organization updated",
+    "teamCreated": "Team created: {{name}}",
+    "teamUpdated": "Team updated: {{name}}",
+    "teamRemoved": "Team removed: {{name}}",
+    "roleCreated": "Role created: {{title}}",
+    "roleUpdated": "Role updated: {{title}}",
+    "roleRemoved": "Role removed: {{title}}",
+    "invitationSent": "Invitation sent to {{email}}",
+    "invitationUpdated": "Invitation updated: {{email}}",
+    "policyCreated": "Policy created: {{title}}",
+    "policyUpdated": "Policy updated: {{title}}",
+    "policyRemoved": "Policy removed: {{title}}"
+  },
+  "today": "today",
+  "yesterday": "yesterday"
+}

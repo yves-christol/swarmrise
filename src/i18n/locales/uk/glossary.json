@@ -1,0 +1,45 @@
+{
+  "title": "hlosarii",
+  "subtitle": "Kliuchovi kontseptsii ta terminolohiia, yaki vykorystovuiutsia u swarmrise.",
+  "relatedDocuments": "poviazani dokumenty",
+  "principlesLink": "Nashi pryntsypy",
+  "principlesDescription": "idei, yaki keruiut robotoiu swarmrise",
+  "footer": "swarmrise - tse robota v prohresi.",
+  "items": {
+    "user": {
+      "title": "Korystuvach",
+      "description": "Liudyna, yaka stvoryly oblikovyi zapys u swarmrise. Korystuvachi mozhut pryiednyuvatysia do kilkokh orhanizatsii ta braty uchast u kerivnytstvi kozhnoi z nykh.",
+      "example": "Koly vy reiiestruietesia u swarmrise, vy staiete korystuvachem. Potim vy mozhete stvoriuvaty abo pryiednuvatisia do orhanizatsii."
+    },
+    "orga": {
+      "title": "Orhanizatsiia",
+      "description": "Avtonomnyi prostir upravlinnia, de keruiutsia komandy, roli ta rishennia. Kozhna orhanizatsiia maie vlasnykh chleniv, strukturu ta polityky, povnistiu izoliovani vid inshykh orhanizatsii.",
+      "example": "Kompaniia, nekomertsiina orhanizatsiia abo hromadska hrupa mozhut buty nalashtoavni yak orhanizatsiia u swarmrise."
+    },
+    "member": {
+      "title": "Chlen",
+      "description": "Prysutnist korystuvacha v konktrenii orhanizatsii. Odna y ta sama liudyna mozhe buty chlenom kilkokh orhanizatsii, z riznymy rolyamy ta oboviaskamy u kozhnii.",
+      "example": "Vy mozhete buty chlenom orhanizatsii vashoii kompanii, a takozh chlenom orhanizatsii volonterskoi hrupy."
+    },
+    "team": {
+      "title": "Komanda",
+      "description": "Hrupa v mezhakh orhanizatsii, yaka pratsiuie nad spilnoiu metoiu. Komandy mistyat roli, yaki vyznachaiut konkretni oboviazky ta vidpovidalnist.",
+      "example": "Komanda marketynhu mozhe mistit roli, taki yak Kerivnyk kontentu, Menedzher sotsialnykh merezh ta Strateh brendu."
+    },
+    "role": {
+      "title": "Rol",
+      "description": "Konkretna pozytsiia v komandi, yaka vyznachaie, za shcho khtos vidpovidaie. Roli mozhut maty spetsialni typy: lider (keruie komandoiu), sekretar (vedie dokumentatsiiu) abo arbiter (vyrishuie superechky).",
+      "example": "Rol Product Owner mozhe maty misiiu vyznachaty priorytety produktu ta pidtrymuvaty bekioh."
+    },
+    "decision": {
+      "title": "Rishennia",
+      "description": "Bud-yaka vidstezhuvana zmina abo diia v mezhakh orhanizatsii. Rishennia zberihaiut povnyi audyt, shcho pokazuie, khto zrobyv yaku zminu i koly, zi stanamy do ta pislia.",
+      "example": "Koly khtos onovliuie misiiu komandy abo pryznachaie rol, tse zapisuietsia yak rishennia z povnoiu istoriieiu."
+    },
+    "mission": {
+      "title": "Misiia",
+      "description": "Meta abo tsil, yaka keruie komandoiu abo rolliu. Misii vidpovidaiut na pytannia, chomu shchos isnuie i choho vono prahnue dosiahty.",
+      "example": "Misiieiu komandy pidtrymky mozhe buty zabezpechennia togo, shchob klienty otrymuvaly svoiechasnu ta korysnu dopomohu."
+    }
+  }
+}

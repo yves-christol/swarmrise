@@ -7,6 +7,7 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useSelectedOrga, useMembers, useFocus } from "../../tools/orgaStore";
 import { EmailDomainsInput } from "../EmailDomainsInput";
+import { DecisionJournal } from "../DecisionJournal";
 
 type ContactInfo = {
   type: string;
@@ -500,6 +501,9 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
             )}
           </div>
         </section>
+
+        {/* Decision journal */}
+        <DecisionJournal scope="orga" orgaId={orgaId} />
 
         {/* Email domain restrictions - only show to owner */}
         {isOwner && (

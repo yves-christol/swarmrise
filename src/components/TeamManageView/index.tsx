@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
+import { DecisionJournal } from "../DecisionJournal";
 
 type TeamManageViewProps = {
   teamId: Id<"teams">;
@@ -494,6 +495,9 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
             )}
           </div>
         </section>
+
+        {/* Decision journal */}
+        <DecisionJournal scope="team" orgaId={team.orgaId} teamName={team.name} />
       </div>
     </div>
   );

@@ -1,0 +1,45 @@
+{
+  "title": "glossario",
+  "subtitle": "Concetti e terminologia chiave utilizzati in swarmrise.",
+  "relatedDocuments": "documenti correlati",
+  "principlesLink": "I nostri principi",
+  "principlesDescription": "le idee che guidano il funzionamento di swarmrise",
+  "footer": "swarmrise e un lavoro in corso.",
+  "items": {
+    "user": {
+      "title": "Utente",
+      "description": "Una persona che ha creato un account su swarmrise. Gli utenti possono unirsi a piu organizzazioni e partecipare alla governance di ciascuna di esse.",
+      "example": "Quando ti registri su swarmrise, diventi un utente. Puoi quindi creare o unirti a organizzazioni."
+    },
+    "orga": {
+      "title": "Organizzazione",
+      "description": "Uno spazio di governance autonomo dove vengono gestiti team, ruoli e decisioni. Ogni organizzazione ha i propri membri, struttura e politiche, completamente isolati dalle altre organizzazioni.",
+      "example": "Un'azienda, un'organizzazione no-profit o un gruppo della comunita possono essere configurati come organizzazione in swarmrise."
+    },
+    "member": {
+      "title": "Membro",
+      "description": "La presenza di un utente all'interno di un'organizzazione specifica. La stessa persona puo essere membro di piu organizzazioni, con ruoli e responsabilita diversi in ciascuna.",
+      "example": "Potresti essere membro dell'organizzazione della tua azienda e anche membro dell'organizzazione di un gruppo di volontari."
+    },
+    "team": {
+      "title": "Team",
+      "description": "Un gruppo all'interno di un'organizzazione che lavora verso uno scopo condiviso. I team contengono ruoli che definiscono responsabilita e obblighi specifici.",
+      "example": "Un team di Marketing potrebbe contenere ruoli come Responsabile contenuti, Social media manager e Brand strategist."
+    },
+    "role": {
+      "title": "Ruolo",
+      "description": "Una posizione specifica all'interno di un team che definisce le responsabilita di qualcuno. I ruoli possono avere tipi speciali: leader (guida il team), segretario (gestisce la documentazione) o arbitro (risolve le dispute).",
+      "example": "Il ruolo di Product Owner potrebbe avere la missione di definire le priorita del prodotto e mantenere il backlog."
+    },
+    "decision": {
+      "title": "Decisione",
+      "description": "Qualsiasi modifica o azione tracciata all'interno dell'organizzazione. Le decisioni mantengono una traccia di audit completa che mostra chi ha fatto quale modifica e quando, con gli stati prima e dopo.",
+      "example": "Quando qualcuno aggiorna la missione di un team o assegna un ruolo, viene registrato come decisione con cronologia completa."
+    },
+    "mission": {
+      "title": "Missione",
+      "description": "Lo scopo o l'obiettivo che guida un team o un ruolo. Le missioni rispondono alla domanda del perche qualcosa esiste e cosa mira a raggiungere.",
+      "example": "La missione di un team di Supporto potrebbe essere garantire che i clienti ricevano assistenza tempestiva e utile."
+    }
+  }
+}

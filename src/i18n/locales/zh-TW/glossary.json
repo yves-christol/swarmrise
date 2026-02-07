@@ -1,0 +1,45 @@
+{
+  "title": "shu yu biao",
+  "subtitle": "swarmrise zhong shi yong de guan jian gai nian he shu yu.",
+  "relatedDocuments": "xiang guan wen jian",
+  "principlesLink": "wo men de yuan ze",
+  "principlesDescription": "zhi dao swarmrise yun zuo de li nian",
+  "footer": "swarmrise shi yi ge jin xing zhong de zuo pin.",
+  "items": {
+    "user": {
+      "title": "yong hu",
+      "description": "zai swarmrise shang chuang jian le zhang hu de ren. yong hu ke yi jia ru duo ge zu zhi bing can yu mei ge zu zhi de zhi li.",
+      "example": "dang nin zhu ce swarmrise shi, nin jiu cheng wei yong hu. ran hou nin ke yi chuang jian huo jia ru zu zhi."
+    },
+    "orga": {
+      "title": "zu zhi",
+      "description": "yi ge zi zhu de zhi li kong jian, zai zhe li guan li tuan dui, jiao se he jue ce. mei ge zu zhi dou you zi ji de cheng yuan, jie gou he zheng ce, yu qi ta zu zhi wan quan ge li.",
+      "example": "gong si, fei ying li zu zhi huo she qu tuan ti dou ke yi zai swarmrise zhong she zhi wei zu zhi."
+    },
+    "member": {
+      "title": "cheng yuan",
+      "description": "yong hu zai te ding zu zhi zhong de cun zai. tong yi ge ren ke yi shi duo ge zu zhi de cheng yuan, zai mei ge zu zhi zhong you bu tong de jiao se he ze ren.",
+      "example": "nin ke neng shi nin gong si zu zhi de cheng yuan, ye shi zhi yuan zhe tuan ti zu zhi de cheng yuan."
+    },
+    "team": {
+      "title": "tuan dui",
+      "description": "zu zhi nei wei gong tong mu biao gong zuo de qun ti. tuan dui bao han ding yi ju ti ze ren he yi wu de jiao se.",
+      "example": "ying xiao tuan dui ke neng bao han nei rong fu ze ren, she jiao mei ti jing li he pin pai ce lue shi deng jiao se."
+    },
+    "role": {
+      "title": "jiao se",
+      "description": "tuan dui zhong de te ding zhi wei, ding yi mou ren fu ze de nei rong. jiao se ke yi you te shu lei xing: ling dao (zhi dao tuan dui), mi shu (chu li wen dang) huo zhong cai (jie jue zheng yi).",
+      "example": "chan pin fu ze ren jiao se ke neng you ding yi chan pin you xian ji bing wei hu dai ban shi xiang de shi ming."
+    },
+    "decision": {
+      "title": "jue ce",
+      "description": "zu zhi nei ren he bei zhui zong de geng gai huo xing dong. jue ce bao chi wan zheng de shen ji gen zong, xian shi shui zai he shi zuo le shen me geng gai, bao kuo qian hou zhuang tai.",
+      "example": "dang you ren geng xin tuan dui de shi ming huo fen pei jiao se shi, ta hui bei ji lu wei yi ge jue ce, bao han wan zheng de li shi."
+    },
+    "mission": {
+      "title": "shi ming",
+      "description": "zhi dao tuan dui huo jiao se de mu di huo mu biao. shi ming hui da le mou shi wu wei he cun zai yi ji ta xi wang da cheng shen me de wen ti.",
+      "example": "zhi yuan tuan dui de shi ming ke neng shi que bao ke hu huo de ji shi he you yong de bang zhu."
+    }
+  }
+}

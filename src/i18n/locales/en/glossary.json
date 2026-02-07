@@ -1,0 +1,45 @@
+{
+  "title": "glossary",
+  "subtitle": "Key concepts and terminology used in swarmrise.",
+  "relatedDocuments": "related documents",
+  "principlesLink": "Our Principles",
+  "principlesDescription": "the ideas that guide how swarmrise works",
+  "footer": "swarmrise is a work in progress.",
+  "items": {
+    "user": {
+      "title": "User",
+      "description": "A person who has created an account on swarmrise. Users can join multiple organizations and participate in governance across all of them.",
+      "example": "When you sign up for swarmrise, you become a user. You can then create or join organizations."
+    },
+    "orga": {
+      "title": "Organization",
+      "description": "A self-contained governance space where teams, roles, and decisions are managed. Each organization has its own members, structure, and policies, completely isolated from other organizations.",
+      "example": "A company, a non-profit, or a community group can each be set up as an organization in swarmrise."
+    },
+    "member": {
+      "title": "Member",
+      "description": "A user's presence within a specific organization. The same person can be a member of multiple organizations, with different roles and responsibilities in each.",
+      "example": "You might be a member of your company's organization and also a member of a volunteer group's organization."
+    },
+    "team": {
+      "title": "Team",
+      "description": "A group within an organization that works toward a shared purpose. Teams contain roles that define specific responsibilities and accountabilities.",
+      "example": "A Marketing team might contain roles like Content Lead, Social Media Manager, and Brand Strategist."
+    },
+    "role": {
+      "title": "Role",
+      "description": "A specific position within a team that defines what someone is responsible for. Roles can have special types: leader (guides the team), secretary (handles documentation), or referee (resolves disputes).",
+      "example": "The Product Owner role might have the mission to define product priorities and maintain the backlog."
+    },
+    "decision": {
+      "title": "Decision",
+      "description": "Any tracked change or action within the organization. Decisions maintain a complete audit trail showing who made what change and when, with before and after states.",
+      "example": "When someone updates a team's mission or assigns a role, it is recorded as a decision with full history."
+    },
+    "mission": {
+      "title": "Mission",
+      "description": "The purpose or goal that guides a team or role. Missions answer the question of why something exists and what it aims to achieve.",
+      "example": "A Support team's mission might be to ensure customers receive timely and helpful assistance."
+    }
+  }
+}

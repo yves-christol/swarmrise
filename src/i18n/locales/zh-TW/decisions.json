@@ -1,0 +1,43 @@
+{
+  "journal": "日誌",
+  "journalDescriptionOrga": "此組織的變更記錄",
+  "journalDescriptionTeam": "與此團隊相關的變更記錄",
+  "toggleFilters": "篩選",
+  "searchJournal": "搜尋日誌...",
+  "noDecisionsYet": "尚未記錄任何變更",
+  "noDecisionsYetHint": "團隊、角色和政策的變更將顯示在此處",
+  "noDecisionsMatchFilter": "沒有符合目前篩選條件的變更",
+  "loadMore": "載入更多",
+  "loadingMore": "載入中...",
+  "filterType": {
+    "all": "全部",
+    "teams": "團隊",
+    "roles": "角色",
+    "members": "成員",
+    "invitations": "邀請",
+    "policies": "政策",
+    "orgas": "組織"
+  },
+  "diffBefore": "變更前",
+  "diffAfter": "變更後",
+  "created": "已建立",
+  "updated": "已更新",
+  "removed": "已移除",
+  "summary": {
+    "orgCreated": "組織已建立",
+    "orgUpdated": "組織已更新",
+    "teamCreated": "團隊已建立：{{name}}",
+    "teamUpdated": "團隊已更新：{{name}}",
+    "teamRemoved": "團隊已移除：{{name}}",
+    "roleCreated": "角色已建立：{{title}}",
+    "roleUpdated": "角色已更新：{{title}}",
+    "roleRemoved": "角色已移除：{{title}}",
+    "invitationSent": "已發送邀請至 {{email}}",
+    "invitationUpdated": "邀請已更新：{{email}}",
+    "policyCreated": "政策已建立：{{title}}",
+    "policyUpdated": "政策已更新：{{title}}",
+    "policyRemoved": "政策已移除：{{title}}"
+  },
+  "today": "今天",
+  "yesterday": "昨天"
+}

@@ -8,6 +8,8 @@ import type enTeams from './locales/en/teams.json'
 import type enGovernance from './locales/en/governance.json'
 import type enLegal from './locales/en/legal.json'
 import type enNotifications from './locales/en/notifications.json'
+import type enDecisions from './locales/en/decisions.json'
+import type enGlossary from './locales/en/glossary.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -22,6 +24,8 @@ declare module 'i18next' {
       governance: typeof enGovernance
       legal: typeof enLegal
       notifications: typeof enNotifications
+      decisions: typeof enDecisions
+      glossary: typeof enGlossary
     }
   }
 }

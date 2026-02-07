@@ -1,0 +1,43 @@
+{
+  "journal": "Журнал",
+  "journalDescriptionOrga": "Запис змін, внесених в цій організації",
+  "journalDescriptionTeam": "Запис змін, пов'язаних з цією командою",
+  "toggleFilters": "Фільтрувати",
+  "searchJournal": "Пошук у журналі...",
+  "noDecisionsYet": "Змін ще не зафіксовано",
+  "noDecisionsYetHint": "Зміни команд, ролей та політик з'являться тут",
+  "noDecisionsMatchFilter": "Жодна зміна не відповідає поточному фільтру",
+  "loadMore": "Завантажити більше",
+  "loadingMore": "Завантаження...",
+  "filterType": {
+    "all": "Усе",
+    "teams": "Команди",
+    "roles": "Ролі",
+    "members": "Учасники",
+    "invitations": "Запрошення",
+    "policies": "Політики",
+    "orgas": "Організація"
+  },
+  "diffBefore": "До",
+  "diffAfter": "Після",
+  "created": "Створено",
+  "updated": "Оновлено",
+  "removed": "Видалено",
+  "summary": {
+    "orgCreated": "Організацію створено",
+    "orgUpdated": "Організацію оновлено",
+    "teamCreated": "Команду створено: {{name}}",
+    "teamUpdated": "Команду оновлено: {{name}}",
+    "teamRemoved": "Команду видалено: {{name}}",
+    "roleCreated": "Роль створено: {{title}}",
+    "roleUpdated": "Роль оновлено: {{title}}",
+    "roleRemoved": "Роль видалено: {{title}}",
+    "invitationSent": "Запрошення надіслано {{email}}",
+    "invitationUpdated": "Запрошення оновлено: {{email}}",
+    "policyCreated": "Політику створено: {{title}}",
+    "policyUpdated": "Політику оновлено: {{title}}",
+    "policyRemoved": "Політику видалено: {{title}}"
+  },
+  "today": "сьогодні",
+  "yesterday": "вчора"
+}

@@ -12,6 +12,8 @@ import enTeams from './locales/en/teams.json'
 import enGovernance from './locales/en/governance.json'
 import enLegal from './locales/en/legal.json'
 import enNotifications from './locales/en/notifications.json'
+import enDecisions from './locales/en/decisions.json'
+import enGlossary from './locales/en/glossary.json'
 
 // Import French translations
 import frCommon from './locales/fr/common.json'
@@ -23,6 +25,8 @@ import frTeams from './locales/fr/teams.json'
 import frGovernance from './locales/fr/governance.json'
 import frLegal from './locales/fr/legal.json'
 import frNotifications from './locales/fr/notifications.json'
+import frDecisions from './locales/fr/decisions.json'
+import frGlossary from './locales/fr/glossary.json'
 
 // Import Spanish translations
 import esCommon from './locales/es/common.json'
@@ -34,6 +38,8 @@ import esTeams from './locales/es/teams.json'
 import esGovernance from './locales/es/governance.json'
 import esLegal from './locales/es/legal.json'
 import esNotifications from './locales/es/notifications.json'
+import esDecisions from './locales/es/decisions.json'
+import esGlossary from './locales/es/glossary.json'
 
 // Import Italian translations
 import itCommon from './locales/it/common.json'
@@ -45,6 +51,8 @@ import itTeams from './locales/it/teams.json'
 import itGovernance from './locales/it/governance.json'
 import itLegal from './locales/it/legal.json'
 import itNotifications from './locales/it/notifications.json'
+import itDecisions from './locales/it/decisions.json'
+import itGlossary from './locales/it/glossary.json'
 
 // Import Ukrainian translations
 import ukCommon from './locales/uk/common.json'
@@ -56,6 +64,8 @@ import ukTeams from './locales/uk/teams.json'
 import ukGovernance from './locales/uk/governance.json'
 import ukLegal from './locales/uk/legal.json'
 import ukNotifications from './locales/uk/notifications.json'
+import ukDecisions from './locales/uk/decisions.json'
+import ukGlossary from './locales/uk/glossary.json'
 
 // Import Traditional Chinese translations
 import zhTWCommon from './locales/zh-TW/common.json'
@@ -67,6 +77,8 @@ import zhTWTeams from './locales/zh-TW/teams.json'
 import zhTWGovernance from './locales/zh-TW/governance.json'
 import zhTWLegal from './locales/zh-TW/legal.json'
 import zhTWNotifications from './locales/zh-TW/notifications.json'
+import zhTWDecisions from './locales/zh-TW/decisions.json'
+import zhTWGlossary from './locales/zh-TW/glossary.json'
 
 export const supportedLanguages = ['en', 'fr', 'es', 'it', 'uk', 'zh-TW'] as const
 export type SupportedLanguage = typeof supportedLanguages[number]
@@ -90,7 +102,9 @@ const resources = {
     teams: enTeams,
     governance: enGovernance,
     legal: enLegal,
-    notifications: enNotifications
+    notifications: enNotifications,
+    decisions: enDecisions,
+    glossary: enGlossary
   },
   fr: {
     common: frCommon,
@@ -101,7 +115,9 @@ const resources = {
     teams: frTeams,
     governance: frGovernance,
     legal: frLegal,
-    notifications: frNotifications
+    notifications: frNotifications,
+    decisions: frDecisions,
+    glossary: frGlossary
   },
   es: {
     common: esCommon,
@@ -112,7 +128,9 @@ const resources = {
     teams: esTeams,
     governance: esGovernance,
     legal: esLegal,
-    notifications: esNotifications
+    notifications: esNotifications,
+    decisions: esDecisions,
+    glossary: esGlossary
   },
   it: {
     common: itCommon,
@@ -123,7 +141,9 @@ const resources = {
     teams: itTeams,
     governance: itGovernance,
     legal: itLegal,
-    notifications: itNotifications
+    notifications: itNotifications,
+    decisions: itDecisions,
+    glossary: itGlossary
   },
   uk: {
     common: ukCommon,
@@ -134,7 +154,9 @@ const resources = {
     teams: ukTeams,
     governance: ukGovernance,
     legal: ukLegal,
-    notifications: ukNotifications
+    notifications: ukNotifications,
+    decisions: ukDecisions,
+    glossary: ukGlossary
   },
   'zh-TW': {
     common: zhTWCommon,
@@ -145,7 +167,9 @@ const resources = {
     teams: zhTWTeams,
     governance: zhTWGovernance,
     legal: zhTWLegal,
-    notifications: zhTWNotifications
+    notifications: zhTWNotifications,
+    decisions: zhTWDecisions,
+    glossary: zhTWGlossary
   }
 }
 
@@ -156,7 +180,7 @@ void i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal', 'notifications'],
+    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal', 'notifications', 'decisions', 'glossary'],
     interpolation: {
       escapeValue: false // React already escapes values
     },

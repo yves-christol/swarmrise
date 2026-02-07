@@ -13,6 +13,7 @@ import type * as aggregates from "../aggregates.js";
 import type * as crons from "../crons.js";
 import type * as dataTest_orga from "../dataTest/orga.js";
 import type * as dataTest_users from "../dataTest/users.js";
+import type * as decisions_functions from "../decisions/functions.js";
 import type * as decisions_index from "../decisions/index.js";
 import type * as http from "../http.js";
 import type * as invitations_functions from "../invitations/functions.js";
@@ -54,6 +55,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   "dataTest/orga": typeof dataTest_orga;
   "dataTest/users": typeof dataTest_users;
+  "decisions/functions": typeof decisions_functions;
   "decisions/index": typeof decisions_index;
   http: typeof http;
   "invitations/functions": typeof invitations_functions;

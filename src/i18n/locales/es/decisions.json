@@ -1,0 +1,43 @@
+{
+  "journal": "Diario",
+  "journalDescriptionOrga": "Registro de cambios realizados en esta organización",
+  "journalDescriptionTeam": "Registro de cambios relacionados con este equipo",
+  "toggleFilters": "Filtrar",
+  "searchJournal": "Buscar en el diario...",
+  "noDecisionsYet": "No se han registrado cambios aún",
+  "noDecisionsYetHint": "Los cambios en equipos, roles y políticas aparecerán aquí",
+  "noDecisionsMatchFilter": "Ningún cambio coincide con el filtro actual",
+  "loadMore": "Cargar más",
+  "loadingMore": "Cargando...",
+  "filterType": {
+    "all": "Todo",
+    "teams": "Equipos",
+    "roles": "Roles",
+    "members": "Miembros",
+    "invitations": "Invitaciones",
+    "policies": "Políticas",
+    "orgas": "Organización"
+  },
+  "diffBefore": "Antes",
+  "diffAfter": "Después",
+  "created": "Creado",
+  "updated": "Actualizado",
+  "removed": "Eliminado",
+  "summary": {
+    "orgCreated": "Organización creada",
+    "orgUpdated": "Organización actualizada",
+    "teamCreated": "Equipo creado: {{name}}",
+    "teamUpdated": "Equipo actualizado: {{name}}",
+    "teamRemoved": "Equipo eliminado: {{name}}",
+    "roleCreated": "Rol creado: {{title}}",
+    "roleUpdated": "Rol actualizado: {{title}}",
+    "roleRemoved": "Rol eliminado: {{title}}",
+    "invitationSent": "Invitación enviada a {{email}}",
+    "invitationUpdated": "Invitación actualizada: {{email}}",
+    "policyCreated": "Política creada: {{title}}",
+    "policyUpdated": "Política actualizada: {{title}}",
+    "policyRemoved": "Política eliminada: {{title}}"
+  },
+  "today": "hoy",
+  "yesterday": "ayer"
+}

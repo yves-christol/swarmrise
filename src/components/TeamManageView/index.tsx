@@ -5,6 +5,9 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { DecisionJournal } from "../DecisionJournal";
+import { MemberListItem, MemberListItemMember } from "../MemberListItem";
+import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
+import { ContactInfo } from "../../utils/contacts";
 
 type TeamManageViewProps = {
   teamId: Id<"teams">;
@@ -147,14 +150,20 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
     }
   }, [team]);
 
-  // Create member lookup map
+  // Get current user's member data and focus navigation
+  const { myMember } = useSelectedOrga();
+  const { focusOnMember } = useFocus();
+
+  // Create member lookup map (includes contactInfos for MemberListItem)
   const memberMap = useMemo(() => {
-    const map = new Map<string, { firstname: string; surname: string; pictureURL?: string; email: string }>();
+    const map = new Map<string, MemberListItemMember>();
     members?.forEach((m) => map.set(m._id, {
+      _id: m._id,
       firstname: m.firstname,
       surname: m.surname,
       pictureURL: m.pictureURL,
       email: m.email,
+      contactInfos: (m.contactInfos ?? []) as ContactInfo[],
     }));
     return map;
   }, [members]);
@@ -165,7 +174,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
     const memberIds = new Set(roles.map((r) => r.memberId));
     return Array.from(memberIds)
       .map((id) => memberMap.get(id))
-      .filter((m): m is NonNullable<typeof m> => m !== undefined);
+      .filter((m): m is MemberListItemMember => m !== undefined);
   }, [roles, memberMap]);
 
   // Sort roles: leader first, then secretary, then referee, then others
@@ -465,31 +474,13 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
               </div>
             ) : (
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                {uniqueMembers.map((member, index) => (
-                  <div key={index} className="flex items-center gap-3 px-4 py-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
-                      {member.pictureURL ? (
-                        <img
-                          src={member.pictureURL}
-                          alt={`${member.firstname} ${member.surname}`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium">
-                          {member.firstname.charAt(0)}
-                          {member.surname.charAt(0)}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium text-dark dark:text-light">
-                        {member.firstname} {member.surname}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {member.email}
-                      </p>
-                    </div>
-                  </div>
+                {uniqueMembers.map((member) => (
+                  <MemberListItem
+                    key={member._id}
+                    member={member}
+                    isCurrentUser={myMember?._id === member._id}
+                    onNavigate={() => focusOnMember(member._id)}
+                  />
                 ))}
               </div>
             )}

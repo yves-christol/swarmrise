@@ -27,6 +27,8 @@
   "notInAnyTeam": "Не є членом жодної команди",
   "synced": "Синхронізовано",
   "leadsTeam": "Очолює команду:",
+  "clickToViewTeam": "Натисніть, щоб переглянути деталі команди",
+  "clickToViewRole": "Натисніть, щоб переглянути деталі ролі",
   "roleCount": "{{count}} роль",
   "roleCount_other": "{{count}} ролей",
   "roleTypes": {

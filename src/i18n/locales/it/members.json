@@ -27,6 +27,8 @@
   "notInAnyTeam": "Non è membro di nessuna squadra",
   "synced": "Sincronizzato",
   "leadsTeam": "Guida la squadra:",
+  "clickToViewTeam": "Clicca per visualizzare i dettagli della squadra",
+  "clickToViewRole": "Clicca per visualizzare i dettagli del ruolo",
   "roleCount": "{{count}} ruolo",
   "roleCount_other": "{{count}} ruoli",
   "roleTypes": {

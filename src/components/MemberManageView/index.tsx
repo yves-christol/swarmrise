@@ -5,7 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import { useSelectedOrga } from "../../tools/orgaStore";
+import { useSelectedOrga, useFocus } from "../../tools/orgaStore";
 
 type ContactInfo = {
   type: string;
@@ -236,6 +236,9 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
   // Get current user's member to check if viewing self
   const { myMember, selectedOrgaId } = useSelectedOrga();
   const isCurrentUser = myMember?._id === memberId;
+
+  // Navigation hooks
+  const { focusOnTeam, focusOnRole } = useFocus();
 
   // Contact info editing state
   const [isEditingContacts, setIsEditingContacts] = useState(false);
@@ -652,8 +655,22 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                   key={team._id}
                   className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
                 >
-                  {/* Team header */}
-                  <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+                  {/* Team header - clickable */}
+                  <button
+                    onClick={() => focusOnTeam(team._id)}
+                    className="
+                      group
+                      w-full px-4 py-2
+                      bg-gray-50 dark:bg-gray-700/50
+                      border-b border-gray-200 dark:border-gray-700
+                      flex items-center justify-between
+                      hover:bg-gray-100 dark:hover:bg-gray-600/50
+                      transition-colors duration-75
+                      focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
+                      text-left
+                    "
+                    aria-label={`${team.name} ${tTeams("team")}. ${tMembers("clickToViewTeam")}`}
+                  >
                     <div className="flex items-center gap-2">
                       <svg
                         width="16"
@@ -674,60 +691,136 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                         ({tMembers("roleCount", { count: teamRoles.length })})
                       </span>
                     </div>
-                  </div>
+                    {/* Chevron indicator */}
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      className="
+                        text-gray-400 dark:text-gray-500
+                        opacity-0 group-hover:opacity-100
+                        transition-opacity duration-75
+                      "
+                      aria-hidden="true"
+                    >
+                      <path d="M6 4l4 4-4 4" />
+                    </svg>
+                  </button>
 
                   {/* Roles list */}
                   <div className="divide-y divide-gray-200 dark:divide-gray-700">
                     {teamRoles.map((role) => {
                       const childTeam = masterToChildTeam.get(role._id);
                       return (
-                        <div key={role._id} className="px-4 py-3">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {role.roleType && (
-                              <span
-                                className="w-2 h-2 rounded-full"
-                                style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
-                              />
-                            )}
-                            <span className="font-medium text-dark dark:text-light">
-                              {role.title}
-                            </span>
-                            {role.roleType && (
-                              <span
-                                className="text-xs px-1.5 py-0.5 rounded"
-                                style={{
-                                  backgroundColor: getRoleTypeBadgeColor(role.roleType) + "20",
-                                  color: getRoleTypeBadgeColor(role.roleType),
-                                }}
-                              >
-                                {tMembers(getRoleTypeKey(role.roleType))}
-                              </span>
-                            )}
-                          </div>
-                          {/* Show child team link for master roles that lead a child team */}
-                          {childTeam && (
-                            <div className="flex items-center gap-1.5 mt-1.5 text-sm text-gray-500 dark:text-gray-400">
-                              <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                className="text-gray-400"
-                              >
-                                <path d="M8 4v8M8 12l-3-3M8 12l3-3" />
-                              </svg>
-                              <span>{tMembers("leadsTeam")}</span>
-                              <span className="font-medium text-dark dark:text-light">{childTeam.name}</span>
+                        <button
+                          key={role._id}
+                          onClick={() => focusOnRole(role._id, role.teamId)}
+                          className="
+                            group
+                            w-full px-4 py-3
+                            hover:bg-gray-50 dark:hover:bg-gray-700/50
+                            transition-colors duration-75
+                            focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
+                            text-left
+                          "
+                          aria-label={`${role.title}. ${tMembers("clickToViewRole")}`}
+                        >
+                          <div className="flex items-center justify-between">
+                            {/* Left: Role info */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                {role.roleType && (
+                                  <span
+                                    className="w-2 h-2 rounded-full flex-shrink-0"
+                                    style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
+                                  />
+                                )}
+                                <span className="font-medium text-dark dark:text-light">
+                                  {role.title}
+                                </span>
+                                {role.roleType && (
+                                  <span
+                                    className="text-xs px-1.5 py-0.5 rounded"
+                                    style={{
+                                      backgroundColor: getRoleTypeBadgeColor(role.roleType) + "20",
+                                      color: getRoleTypeBadgeColor(role.roleType),
+                                    }}
+                                  >
+                                    {tMembers(getRoleTypeKey(role.roleType))}
+                                  </span>
+                                )}
+                              </div>
+                              {/* Show child team link for master roles that lead a child team */}
+                              {childTeam && (
+                                <div className="flex items-center gap-1.5 mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+                                  <svg
+                                    width="14"
+                                    height="14"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="1.5"
+                                    className="text-gray-400"
+                                  >
+                                    <path d="M8 4v8M8 12l-3-3M8 12l3-3" />
+                                  </svg>
+                                  <span>{tMembers("leadsTeam")}</span>
+                                  <span
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      focusOnTeam(childTeam._id);
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter" || e.key === " ") {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        focusOnTeam(childTeam._id);
+                                      }
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                    className="
+                                      font-medium text-dark dark:text-light
+                                      hover:text-[#d4af37] dark:hover:text-[#eac840]
+                                      hover:underline
+                                      transition-colors duration-75
+                                      focus:outline-none focus:underline
+                                    "
+                                  >
+                                    {childTeam.name}
+                                  </span>
+                                </div>
+                              )}
+                              {role.mission && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                                  {role.mission}
+                                </p>
+                              )}
                             </div>
-                          )}
-                          {role.mission && (
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
-                              {role.mission}
-                            </p>
-                          )}
-                        </div>
+                            {/* Right: Chevron */}
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 16 16"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              className="
+                                text-gray-400 dark:text-gray-500
+                                opacity-0 group-hover:opacity-100
+                                transition-opacity duration-75
+                                flex-shrink-0
+                                ml-2
+                              "
+                              aria-hidden="true"
+                            >
+                              <path d="M6 4l4 4-4 4" />
+                            </svg>
+                          </div>
+                        </button>
                       );
                     })}
                   </div>

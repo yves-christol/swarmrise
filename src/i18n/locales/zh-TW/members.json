@@ -27,6 +27,8 @@
   "notInAnyTeam": "不是任何團隊的成員",
   "synced": "已同步",
   "leadsTeam": "領導團隊：",
+  "clickToViewTeam": "點擊查看團隊詳情",
+  "clickToViewRole": "點擊查看角色詳情",
   "roleCount": "{{count}} 個角色",
   "roleCount_other": "{{count}} 個角色",
   "roleTypes": {

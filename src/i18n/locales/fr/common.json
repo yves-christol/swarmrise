@@ -30,5 +30,7 @@
   "switchToDarkMode": "Passer au mode sombre",
   "visual": "Visuel",
   "manage": "Gérer",
-  "viewMode": "Mode d'affichage"
+  "viewMode": "Mode d'affichage",
+  "mission": "Mission",
+  "noMissionDefined": "Aucune mission definie"
 }

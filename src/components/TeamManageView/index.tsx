@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { DecisionJournal } from "../DecisionJournal";
 import { MemberListItem, MemberListItemMember } from "../MemberListItem";
+import { MissionReminder } from "../MissionReminder";
 import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
 import { ContactInfo } from "../../utils/contacts";
 
@@ -111,6 +112,9 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
 
   // Fetch roles for this team
   const roles = useQuery(api.roles.functions.listRolesInTeam, { teamId });
+
+  // Fetch the team's mission (from the leader role)
+  const teamMission = useQuery(api.roles.functions.getTeamMission, { teamId });
 
   // Fetch members
   const members = useQuery(
@@ -306,6 +310,9 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
             Team settings and structure
           </p>
         </header>
+
+        {/* Mission reminder */}
+        <MissionReminder mission={teamMission} isLoading={teamMission === undefined} />
 
         {/* Save message */}
         {saveMessage && (

@@ -9,6 +9,7 @@ import { useSelectedOrga, useMembers, useFocus } from "../../tools/orgaStore";
 import { EmailDomainsInput } from "../EmailDomainsInput";
 import { DecisionJournal } from "../DecisionJournal";
 import { MemberListItem } from "../MemberListItem";
+import { MissionReminder } from "../MissionReminder";
 
 type OrgaManageViewProps = {
   orgaId: Id<"orgas">;
@@ -63,6 +64,9 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
 
   // Get organization data
   const orga = useQuery(api.orgas.functions.getOrgaById, { orgaId });
+
+  // Get the organization's mission (from the top-level team's leader role)
+  const orgaMission = useQuery(api.roles.functions.getOrgaMission, { orgaId });
 
   // Get current user's member data
   const { myMember, selectedOrga } = useSelectedOrga();
@@ -201,6 +205,9 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
             {t("settingsAndDirectory")}
           </p>
         </header>
+
+        {/* Mission reminder */}
+        <MissionReminder mission={orgaMission} isLoading={orgaMission === undefined} />
 
         {/* Analytics section */}
         <section className="mb-8">

@@ -30,5 +30,7 @@
   "switchToDarkMode": "切換至深色模式",
   "visual": "視覺",
   "manage": "管理",
-  "viewMode": "檢視模式"
+  "viewMode": "檢視模式",
+  "mission": "使命",
+  "noMissionDefined": "尚未定義使命"
 }

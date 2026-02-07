@@ -598,7 +598,68 @@ export const deleteRole = mutation({
         after: undefined,
       },
     });
-    
+
+    return null;
+  },
+});
+
+/**
+ * Get the mission for a team
+ * A team's mission is the mission of its leader role
+ */
+export const getTeamMission = query({
+  args: {
+    teamId: v.id("teams"),
+  },
+  returns: v.union(v.string(), v.null()),
+  handler: async (ctx, args) => {
+    const orgaId = await getOrgaFromTeam(ctx, args.teamId);
+    await requireAuthAndMembership(ctx, orgaId);
+
+    // Find the leader role for this team
+    const leaderRole = await ctx.db
+      .query("roles")
+      .withIndex("by_team_and_role_type", (q) => q.eq("teamId", args.teamId).eq("roleType", "leader"))
+      .first();
+
+    if (!leaderRole) {
+      return null;
+    }
+
+    return leaderRole.mission || null;
+  },
+});
+
+/**
+ * Get the mission for an organization
+ * An orga's mission is the mission of the top-level team (the team whose leader has no parentTeamId)
+ */
+export const getOrgaMission = query({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.union(v.string(), v.null()),
+  handler: async (ctx, args) => {
+    await requireAuthAndMembership(ctx, args.orgaId);
+
+    // Get all teams in the organization
+    const allTeams = await ctx.db
+      .query("teams")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+
+    // Find the top-level team (leader role with no parentTeamId)
+    for (const team of allTeams) {
+      const leaderRole = await ctx.db
+        .query("roles")
+        .withIndex("by_team_and_role_type", (q) => q.eq("teamId", team._id).eq("roleType", "leader"))
+        .first();
+
+      if (leaderRole && !leaderRole.parentTeamId) {
+        return leaderRole.mission || null;
+      }
+    }
+
     return null;
   },
 });

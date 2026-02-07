@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useMembers } from "../../tools/orgaStore";
+import { MissionReminder } from "../MissionReminder";
 
 type RoleManageViewProps = {
   roleId: Id<"roles">;
@@ -337,6 +338,9 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             </div>
           )}
         </header>
+
+        {/* Mission reminder */}
+        <MissionReminder mission={role.mission} />
 
         {/* Save message */}
         {saveMessage && (

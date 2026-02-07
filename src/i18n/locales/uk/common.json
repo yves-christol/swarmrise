@@ -30,5 +30,7 @@
   "switchToDarkMode": "Перейти до темного режиму",
   "visual": "Візуальний",
   "manage": "Керувати",
-  "viewMode": "Режим перегляду"
+  "viewMode": "Режим перегляду",
+  "mission": "Місія",
+  "noMissionDefined": "Місія не визначена"
 }

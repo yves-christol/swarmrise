@@ -737,51 +737,6 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
           )}
         </section>
 
-        {/* Teams List */}
-        <section className="mb-8">
-          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            {tTeams("teams")}
-          </h2>
-          {!teams || teams.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-              {tMembers("notInAnyTeam")}
-            </div>
-          ) : (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                {teams
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((team) => {
-                    const teamRoleCount = masterRoles.filter((r) => r.teamId === team._id).length;
-                    return (
-                      <div key={team._id} className="flex items-center justify-between px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            className="text-gray-400"
-                          >
-                            <circle cx="8" cy="8" r="6" />
-                            <circle cx="8" cy="5" r="1.5" />
-                            <circle cx="5" cy="10" r="1.5" />
-                            <circle cx="11" cy="10" r="1.5" />
-                          </svg>
-                          <span className="font-medium text-dark dark:text-light">{team.name}</span>
-                        </div>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {tMembers("roleCount", { count: teamRoleCount })}
-                        </span>
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
-          )}
-        </section>
       </div>
     </div>
   );

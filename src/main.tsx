@@ -11,6 +11,7 @@ import { OrgaStoreProvider } from "./tools/orgaStore/index.tsx";
 import { ThemeProvider } from "./contexts/ThemeContext.tsx";
 import { RawDataPage } from "./pages/RawData/index.tsx";
 import { PrinciplesPage } from "./pages/Principles/index.tsx";
+import { GlossaryPage } from "./pages/Glossary/index.tsx";
 import { TermsPage } from "./pages/Terms/index.tsx";
 import { PrivacyPage } from "./pages/Privacy/index.tsx";
 
@@ -26,6 +27,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/" element={<App />} />
                 <Route path="/rawdata" element={<RawDataPage />} />
                 <Route path="/principles" element={<PrinciplesPage />} />
+                <Route path="/glossary" element={<GlossaryPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
               </Routes>

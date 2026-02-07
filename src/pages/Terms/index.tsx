@@ -221,6 +221,12 @@ export const TermsPage = () => {
               </Link>
               {" "}- {t("terms.principlesDescription")}
             </li>
+            <li>
+              <Link to="/glossary" className="text-gold hover:underline">
+                {t("terms.glossaryLink", "Glossary")}
+              </Link>
+              {" "}- {t("terms.glossaryDescription", "Key concepts and terminology used in swarmrise")}
+            </li>
           </ul>
         </section>
 

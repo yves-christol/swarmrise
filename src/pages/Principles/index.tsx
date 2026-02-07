@@ -50,6 +50,12 @@ export const PrinciplesPage = () => {
               </Link>
               {" "}- {t("principles.privacyDescription")}
             </li>
+            <li>
+              <Link to="/glossary" className="text-gold hover:underline">
+                {t("principles.glossaryLink", "Glossary")}
+              </Link>
+              {" "}- {t("principles.glossaryDescription", "Key concepts and terminology used in swarmrise")}
+            </li>
           </ul>
         </section>
 

@@ -1,45 +1,45 @@
 {
   "title": "glossaire",
-  "subtitle": "Concepts et terminologie cles utilises dans swarmrise.",
+  "subtitle": "Concepts et terminologie clés utilisés dans swarmrise.",
   "relatedDocuments": "documents connexes",
   "principlesLink": "Nos principes",
-  "principlesDescription": "les idees qui guident le fonctionnement de swarmrise",
+  "principlesDescription": "les idées qui guident le fonctionnement de swarmrise",
   "footer": "swarmrise est un projet en cours.",
   "items": {
     "user": {
       "title": "Utilisateur",
-      "description": "Une personne qui a cree un compte sur swarmrise. Les utilisateurs peuvent rejoindre plusieurs organisations et participer a la gouvernance de chacune d'elles.",
-      "example": "Lorsque vous vous inscrivez sur swarmrise, vous devenez un utilisateur. Vous pouvez ensuite creer ou rejoindre des organisations."
+      "description": "Une personne qui a créé un compte sur swarmrise. Les utilisateurs peuvent rejoindre plusieurs organisations et participer à la gouvernance de chacune d'elles.",
+      "example": "Lorsque vous vous inscrivez sur swarmrise, vous devenez un utilisateur. Vous pouvez ensuite créer ou rejoindre des organisations."
     },
     "orga": {
       "title": "Organisation",
-      "description": "Un espace de gouvernance autonome ou les equipes, les roles et les decisions sont geres. Chaque organisation a ses propres membres, sa structure et ses politiques, completement isolees des autres organisations.",
-      "example": "Une entreprise, une association ou un groupe communautaire peut chacun etre configure comme une organisation dans swarmrise."
+      "description": "Un espace de gouvernance autonome où les équipes, les rôles et les décisions sont gérés. Chaque organisation a ses propres membres, sa structure et ses politiques, complètement isolées des autres organisations.",
+      "example": "Une entreprise, une association ou un groupe communautaire peut chacun être configuré comme une organisation dans swarmrise."
     },
     "member": {
       "title": "Membre",
-      "description": "La presence d'un utilisateur au sein d'une organisation specifique. La meme personne peut etre membre de plusieurs organisations, avec des roles et responsabilites differents dans chacune.",
-      "example": "Vous pourriez etre membre de l'organisation de votre entreprise et egalement membre de l'organisation d'un groupe de benevoles."
+      "description": "La présence d'un utilisateur au sein d'une organisation spécifique. La même personne peut être membre de plusieurs organisations, avec des rôles et responsabilités différents dans chacune.",
+      "example": "Vous pourriez être membre de l'organisation de votre entreprise et également membre de l'organisation d'un groupe de bénévoles."
     },
     "team": {
-      "title": "Equipe",
-      "description": "Un groupe au sein d'une organisation qui travaille vers un objectif commun. Les equipes contiennent des roles qui definissent des responsabilites et des obligations specifiques.",
-      "example": "Une equipe Marketing pourrait contenir des roles comme Responsable du contenu, Community manager et Strategiste de marque."
+      "title": "Équipe",
+      "description": "Un groupe au sein d'une organisation qui travaille vers un objectif commun. Les équipes contiennent des rôles qui définissent des responsabilités et des obligations spécifiques.",
+      "example": "Une équipe Marketing pourrait contenir des rôles comme Responsable du contenu, Community manager et Stratégiste de marque."
     },
     "role": {
-      "title": "Role",
-      "description": "Un poste specifique au sein d'une equipe qui definit les responsabilites de quelqu'un. Les roles peuvent avoir des types speciaux : leader (guide l'equipe), secretaire (gere la documentation) ou arbitre (resout les conflits).",
-      "example": "Le role de Product Owner pourrait avoir pour mission de definir les priorites du produit et de maintenir le backlog."
+      "title": "Rôle",
+      "description": "Un poste spécifique au sein d'une équipe qui définit les responsabilités de quelqu'un. Les rôles peuvent avoir des types spéciaux : leader (guide l'équipe), secrétaire (gère la documentation) ou arbitre (résout les conflits).",
+      "example": "Le rôle de Product Owner pourrait avoir pour mission de définir les priorités du produit et de maintenir le backlog."
     },
     "decision": {
-      "title": "Decision",
-      "description": "Tout changement ou action tracee au sein de l'organisation. Les decisions maintiennent une piste d'audit complete montrant qui a fait quel changement et quand, avec les etats avant et apres.",
-      "example": "Lorsque quelqu'un met a jour la mission d'une equipe ou attribue un role, cela est enregistre comme une decision avec un historique complet."
+      "title": "Décision",
+      "description": "Tout changement ou action tracée au sein de l'organisation. Les décisions maintiennent une piste d'audit complète montrant qui a fait quel changement et quand, avec les états avant et après.",
+      "example": "Lorsque quelqu'un met à jour la mission d'une équipe ou attribue un rôle, cela est enregistré comme une décision avec un historique complet."
     },
     "mission": {
       "title": "Mission",
-      "description": "L'objectif ou le but qui guide une equipe ou un role. Les missions repondent a la question de pourquoi quelque chose existe et ce qu'il vise a accomplir.",
-      "example": "La mission d'une equipe Support pourrait etre de s'assurer que les clients recoivent une assistance rapide et utile."
+      "description": "L'objectif ou le but qui guide une équipe ou un rôle. Les missions répondent à la question de pourquoi quelque chose existe et ce qu'il vise à accomplir.",
+      "example": "La mission d'une équipe Support pourrait être de s'assurer que les clients reçoivent une assistance rapide et utile."
     }
   }
 }

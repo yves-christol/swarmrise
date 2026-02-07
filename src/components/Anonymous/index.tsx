@@ -16,6 +16,11 @@ export const Anonymous = () => {
         <div className="flex gap-2">
           <div className="flex flex-col gap-2 w-1/2">
             <ResourceCard
+              title="The glossary"
+              description="Learn the key concepts and terminology used in swarmrise."
+              href="/glossary"
+            />
+            <ResourceCard
               title="The principles"
               description="Discover the few simple concepts that run the show."
               href="/principles"

@@ -45,9 +45,9 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
         </Link>
       ) : (
         <Link
-          to="/principles"
+          to="/glossary"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          aria-label={t("governance:principles", "swarmrise principles")}
+          aria-label={t("governance:glossary.title", "swarmrise glossary")}
         >
           <Logo size={24} begin={2} repeatCount={1} />
           <b className="font-swarm text-dark dark:text-light">swarmrise</b>

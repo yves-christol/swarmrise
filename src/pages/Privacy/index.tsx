@@ -398,6 +398,12 @@ export const PrivacyPage = () => {
               </Link>
               {" "}- {t("privacy.principlesDescription")}
             </li>
+            <li>
+              <Link to="/glossary" className="text-gold hover:underline">
+                {t("privacy.glossaryLink", "Glossary")}
+              </Link>
+              {" "}- {t("privacy.glossaryDescription", "Key concepts and terminology used in swarmrise")}
+            </li>
           </ul>
         </section>
 

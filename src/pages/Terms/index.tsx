@@ -1,6 +1,6 @@
 import { Header } from "../../components/Header";
 import { Logo } from "../../components/Logo";
-import { Link } from "react-router";
+import { LegalFooter } from "../../components/LegalFooter";
 import { useTranslation } from "react-i18next";
 
 export const TermsPage = () => {
@@ -204,39 +204,9 @@ export const TermsPage = () => {
             </ul>
           </TermsSection>
         </div>
-
-        {/* Related documents */}
-        <section className="border-t border-gray-300 dark:border-gray-700 pt-8">
-          <h2 className="font-swarm text-xl font-bold mb-4">{t("terms.relatedDocuments")}</h2>
-          <ul className="space-y-2 ">
-            <li>
-              <Link to="/privacy" className="text-gold hover:underline">
-                {t("terms.privacyLink")}
-              </Link>
-              {" "}- {t("terms.privacyDescription")}
-            </li>
-            <li>
-              <Link to="/principles" className="text-gold hover:underline">
-                {t("terms.principlesLink")}
-              </Link>
-              {" "}- {t("terms.principlesDescription")}
-            </li>
-            <li>
-              <Link to="/glossary" className="text-gold hover:underline">
-                {t("terms.glossaryLink", "Glossary")}
-              </Link>
-              {" "}- {t("terms.glossaryDescription", "Key concepts and terminology used in swarmrise")}
-            </li>
-          </ul>
-        </section>
-
-        {/* Footer */}
-        <section className="text-center py-8 border-t border-gray-300 dark:border-gray-700">
-          <p className="text-sm opacity-70">
-            {t("terms.footer")}
-          </p>
-        </section>
       </main>
+
+      <LegalFooter />
     </>
   );
 };

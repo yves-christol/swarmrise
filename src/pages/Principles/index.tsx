@@ -1,7 +1,7 @@
-import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Header } from "../../components/Header";
 import { Logo } from "../../components/Logo";
+import { LegalFooter } from "../../components/LegalFooter";
 import { PrincipleCard } from "./PrincipleCard";
 import { usePrinciples } from "./principles";
 
@@ -33,39 +33,9 @@ export const PrinciplesPage = () => {
             />
           ))}
         </section>
-
-        {/* Legal documents */}
-        <section className="border-t border-gray-300 dark:border-gray-700 pt-8">
-          <h2 className="font-swarm text-xl font-bold mb-4">{t("principles.legal")}</h2>
-          <ul className="space-y-2">
-            <li>
-              <Link to="/terms" className="text-gold hover:underline">
-                {t("principles.termsLink")}
-              </Link>
-              {" "}- {t("principles.termsDescription")}
-            </li>
-            <li>
-              <Link to="/privacy" className="text-gold hover:underline">
-                {t("principles.privacyLink")}
-              </Link>
-              {" "}- {t("principles.privacyDescription")}
-            </li>
-            <li>
-              <Link to="/glossary" className="text-gold hover:underline">
-                {t("principles.glossaryLink", "Glossary")}
-              </Link>
-              {" "}- {t("principles.glossaryDescription", "Key concepts and terminology used in swarmrise")}
-            </li>
-          </ul>
-        </section>
-
-        {/* Footer */}
-        <section className="text-center py-8 border-t border-gray-300 dark:border-gray-700">
-          <p className="text-sm opacity-70">
-            {t("principles.footer")}
-          </p>
-        </section>
       </main>
+
+      <LegalFooter />
     </>
   );
 };

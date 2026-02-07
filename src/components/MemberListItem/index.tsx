@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Id } from "../../../convex/_generated/dataModel";
 import { ContactInfo, getContactIcon, getContactLink } from "../../utils/contacts";
@@ -20,6 +21,12 @@ export type MemberListItemProps = {
   onNavigate?: () => void;
 };
 
+type PopoverPosition = {
+  top: number;
+  right: number;
+  direction: "below" | "above";
+};
+
 export function MemberListItem({
   member,
   isCurrentUser = false,
@@ -27,6 +34,39 @@ export function MemberListItem({
 }: MemberListItemProps) {
   const { t: tMembers } = useTranslation("members");
   const [showContacts, setShowContacts] = useState(false);
+  const [popoverPosition, setPopoverPosition] = useState<PopoverPosition | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Calculate popover position when it opens
+  useEffect(() => {
+    if (showContacts && buttonRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      const spaceBelow = viewportHeight - buttonRect.bottom;
+      const estimatedPopoverHeight = 120; // Approximate height of popover
+
+      // Calculate right position (distance from right edge of viewport)
+      const rightOffset = viewportWidth - buttonRect.right;
+
+      // If not enough space below, position above
+      if (spaceBelow < estimatedPopoverHeight && buttonRect.top > estimatedPopoverHeight) {
+        setPopoverPosition({
+          top: buttonRect.top - 4, // Position above button with small gap
+          right: rightOffset,
+          direction: "above",
+        });
+      } else {
+        setPopoverPosition({
+          top: buttonRect.bottom + 4, // Position below button with small gap
+          right: rightOffset,
+          direction: "below",
+        });
+      }
+    } else {
+      setPopoverPosition(null);
+    }
+  }, [showContacts]);
 
   // Filter out email from contactInfos since it's already displayed
   const additionalContacts = member.contactInfos.filter((c) => c.type !== "Email");
@@ -71,6 +111,7 @@ export function MemberListItem({
       {hasAdditionalContacts && (
         <div className="relative">
           <button
+            ref={buttonRef}
             onClick={(e) => {
               e.stopPropagation();
               setShowContacts(!showContacts);
@@ -98,11 +139,17 @@ export function MemberListItem({
             </svg>
           </button>
 
-          {/* Contact popover */}
-          {showContacts && (
+          {/* Contact popover - rendered via portal to escape overflow:hidden containers */}
+          {showContacts && popoverPosition && createPortal(
             <div
+              style={{
+                position: "fixed",
+                top: popoverPosition.direction === "below" ? popoverPosition.top : undefined,
+                bottom: popoverPosition.direction === "above" ? `calc(100vh - ${popoverPosition.top}px)` : undefined,
+                right: popoverPosition.right,
+              }}
               className="
-                absolute right-0 top-full mt-1 z-20
+                z-50
                 bg-white dark:bg-gray-800
                 border border-gray-200 dark:border-gray-700
                 rounded-lg shadow-lg
@@ -135,7 +182,8 @@ export function MemberListItem({
                   );
                 })}
               </div>
-            </div>
+            </div>,
+            document.body
           )}
         </div>
       )}

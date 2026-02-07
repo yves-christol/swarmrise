@@ -52,6 +52,8 @@
   "noMembersMatchSearch": "No members match your search",
   "noMembersFound": "No members found",
   "viewContactInfo": "View contact information",
+  "loadMore": "Load more members",
+  "showingCount": "Showing {{shown}} of {{total}} members",
   "diagram": {
     "loadingMember": "Loading member...",
     "memberRemovedDescription": "This member may have been removed from the organization.",

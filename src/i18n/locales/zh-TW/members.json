@@ -52,6 +52,8 @@
   "noMembersMatchSearch": "沒有符合搜尋條件的成員",
   "noMembersFound": "找不到成員",
   "viewContactInfo": "查看聯絡資訊",
+  "loadMore": "載入更多成員",
+  "showingCount": "顯示 {{shown}} / {{total}} 位成員",
   "diagram": {
     "loadingMember": "載入成員中...",
     "memberRemovedDescription": "此成員可能已從組織中移除。",

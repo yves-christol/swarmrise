@@ -52,6 +52,8 @@
   "noMembersMatchSearch": "Nessun membro corrisponde alla tua ricerca",
   "noMembersFound": "Nessun membro trovato",
   "viewContactInfo": "Visualizza informazioni di contatto",
+  "loadMore": "Carica altri membri",
+  "showingCount": "Visualizzando {{shown}} di {{total}} membri",
   "diagram": {
     "loadingMember": "Caricamento membro...",
     "memberRemovedDescription": "Questo membro potrebbe essere stato rimosso dall'organizzazione.",

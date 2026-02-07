@@ -305,12 +305,15 @@ function MemberRow({
   );
 }
 
+const MEMBERS_PAGE_SIZE = 10;
+
 export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
   const { t } = useTranslation("orgs");
   const { t: tCommon } = useTranslation("common");
   const { t: tMembers } = useTranslation("members");
   const [searchQuery, setSearchQuery] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [displayedCount, setDisplayedCount] = useState(MEMBERS_PAGE_SIZE);
 
   // Email domains state
   const [emailDomains, setEmailDomains] = useState<string[]>([]);
@@ -350,6 +353,23 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
         m.email.toLowerCase().includes(query)
     );
   }, [members, searchQuery]);
+
+  // Reset pagination when search query changes
+  useEffect(() => {
+    setDisplayedCount(MEMBERS_PAGE_SIZE);
+  }, [searchQuery]);
+
+  // Paginate the filtered members
+  const displayedMembers = useMemo(() => {
+    return filteredMembers.slice(0, displayedCount);
+  }, [filteredMembers, displayedCount]);
+
+  const totalMemberCount = filteredMembers.length;
+  const hasMoreMembers = displayedCount < totalMemberCount;
+
+  const handleLoadMoreMembers = () => {
+    setDisplayedCount((prev) => prev + MEMBERS_PAGE_SIZE);
+  };
 
   // Check if current user is the owner
   const isOwner = useMemo(() => {
@@ -483,21 +503,51 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
               <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                 {tMembers("loadingMembers")}
               </div>
-            ) : filteredMembers.length === 0 ? (
+            ) : displayedMembers.length === 0 ? (
               <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                 {searchQuery ? tMembers("noMembersMatchSearch") : tMembers("noMembersFound")}
               </div>
             ) : (
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredMembers.map((member) => (
-                  <MemberRow
-                    key={member._id}
-                    member={member}
-                    isCurrentUser={myMember?._id === member._id}
-                    onNavigate={() => focusOnMember(member._id)}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {displayedMembers.map((member) => (
+                    <MemberRow
+                      key={member._id}
+                      member={member}
+                      isCurrentUser={myMember?._id === member._id}
+                      onNavigate={() => focusOnMember(member._id)}
+                    />
+                  ))}
+                </div>
+
+                {/* Count indicator - only show if paginated */}
+                {totalMemberCount > MEMBERS_PAGE_SIZE && (
+                  <div className="px-4 py-2 text-xs text-gray-400 dark:text-gray-500 text-center border-t border-gray-100 dark:border-gray-700">
+                    {tMembers("showingCount", {
+                      shown: displayedMembers.length,
+                      total: totalMemberCount,
+                    })}
+                  </div>
+                )}
+
+                {/* Load more button */}
+                {hasMoreMembers && (
+                  <button
+                    onClick={handleLoadMoreMembers}
+                    className="
+                      w-full py-3
+                      text-sm text-gray-500 dark:text-gray-400
+                      hover:text-gray-700 dark:hover:text-gray-300
+                      hover:bg-gray-50 dark:hover:bg-gray-700/50
+                      transition-colors duration-75
+                      border-t border-gray-200 dark:border-gray-700
+                      focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
+                    "
+                  >
+                    {tMembers("loadMore")}
+                  </button>
+                )}
+              </>
             )}
           </div>
         </section>

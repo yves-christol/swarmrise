@@ -52,6 +52,8 @@
   "noMembersMatchSearch": "Жоден учасник не відповідає вашому пошуку",
   "noMembersFound": "Учасників не знайдено",
   "viewContactInfo": "Переглянути контактну інформацію",
+  "loadMore": "Завантажити більше учасників",
+  "showingCount": "Показано {{shown}} з {{total}} учасників",
   "diagram": {
     "loadingMember": "Завантаження учасника...",
     "memberRemovedDescription": "Цього учасника могло бути видалено з організації.",

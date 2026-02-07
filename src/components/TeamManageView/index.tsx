@@ -152,7 +152,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
 
   // Get current user's member data and focus navigation
   const { myMember } = useSelectedOrga();
-  const { focusOnMember } = useFocus();
+  const { focusOnMember, focusOnRole } = useFocus();
 
   // Create member lookup map (includes contactInfos for MemberListItem)
   const memberMap = useMemo(() => {
@@ -388,47 +388,61 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                 {sortedRoles.map((role) => {
                   const member = memberMap.get(role.memberId);
                   return (
-                    <div key={role._id} className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {/* Role type badge */}
-                          {role.roleType && (
-                            <span
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
-                              title={getRoleTypeLabel(role.roleType)}
-                            />
-                          )}
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-dark dark:text-light">
-                                {role.title}
+                    <button
+                      key={role._id}
+                      onClick={() => focusOnRole(role._id, teamId)}
+                      className="
+                        group
+                        w-full flex items-center justify-between
+                        px-4 py-3
+                        hover:bg-gray-50 dark:hover:bg-gray-700/50
+                        transition-colors duration-75
+                        focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
+                        text-left
+                      "
+                      aria-label={`${role.title}${role.roleType ? `, ${getRoleTypeLabel(role.roleType)}` : ""}. View role details.`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {/* Role type badge */}
+                        {role.roleType && (
+                          <span
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
+                            title={getRoleTypeLabel(role.roleType)}
+                          />
+                        )}
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-dark dark:text-light">
+                              {role.title}
+                            </span>
+                            {role.roleType && (
+                              <span
+                                className="text-xs px-1.5 py-0.5 rounded"
+                                style={{
+                                  backgroundColor: getRoleTypeBadgeColor(role.roleType) + "20",
+                                  color: getRoleTypeBadgeColor(role.roleType),
+                                }}
+                              >
+                                {getRoleTypeLabel(role.roleType)}
                               </span>
-                              {role.roleType && (
-                                <span
-                                  className="text-xs px-1.5 py-0.5 rounded"
-                                  style={{
-                                    backgroundColor: getRoleTypeBadgeColor(role.roleType) + "20",
-                                    color: getRoleTypeBadgeColor(role.roleType),
-                                  }}
-                                >
-                                  {getRoleTypeLabel(role.roleType)}
-                                </span>
-                              )}
-                              {role.linkedRoleId && (
-                                <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
-                                  Synced
-                                </span>
-                              )}
-                            </div>
-                            {role.mission && (
-                              <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-md mt-0.5">
-                                {role.mission}
-                              </p>
+                            )}
+                            {role.linkedRoleId && (
+                              <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+                                Synced
+                              </span>
                             )}
                           </div>
+                          {role.mission && (
+                            <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-md mt-0.5">
+                              {role.mission}
+                            </p>
+                          )}
                         </div>
+                      </div>
 
+                      {/* Right side: member info + chevron */}
+                      <div className="flex items-center gap-3">
                         {/* Assigned member */}
                         {member && (
                           <div className="flex items-center gap-2">
@@ -451,8 +465,27 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                             </span>
                           </div>
                         )}
+
+                        {/* Navigation chevron - appears on hover */}
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          className="
+                            text-gray-400 dark:text-gray-500
+                            opacity-0 group-hover:opacity-100
+                            transition-opacity duration-75
+                            flex-shrink-0
+                          "
+                          aria-hidden="true"
+                        >
+                          <path d="M6 4l4 4-4 4" />
+                        </svg>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>

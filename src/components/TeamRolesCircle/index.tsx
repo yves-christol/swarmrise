@@ -793,23 +793,10 @@ function DaughterTeamNode({
         }}
       />
 
-      {/* Down arrow indicator */}
-      <text
-        x={x}
-        y={y - 4}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill="var(--diagram-node-text)"
-        fontSize={12}
-        style={{ pointerEvents: "none", userSelect: "none" }}
-      >
-        ↓
-      </text>
-
       {/* Team name */}
       <text
         x={x}
-        y={y + 8}
+        y={y}
         textAnchor="middle"
         dominantBaseline="central"
         fill="var(--diagram-muted-text)"

@@ -16,7 +16,8 @@ This document defines the user experience philosophy that guides all interface d
 6. [Feedback and States](#feedback-and-states)
 7. [Notifications](#notifications)
 8. [Accessibility](#accessibility)
-9. [Anti-Patterns](#anti-patterns)
+9. [Language Guidelines](#language-guidelines)
+10. [Anti-Patterns](#anti-patterns)
 
 ---
 
@@ -621,6 +622,53 @@ For visual-only content (diagrams, charts), provide text alternatives:
 
 ---
 
+## Language Guidelines
+
+### Terminology That Reflects Our Values
+
+The words we use in the interface reinforce our organizational philosophy. Swarmrise exists to support flat, collaborative structures - our language should reflect this.
+
+#### Avoid "Hierarchy" for Swarmrise Concepts
+
+The word "hierarchy" should **only** be used when referring to external systems that are NOT swarmrise. Within the swarmrise product, use collaborative and networked language instead.
+
+| Instead of... | Use... | Why |
+|---------------|--------|-----|
+| "Team Hierarchy" | "Team Connections" | Emphasizes relationships, not rank |
+| "Hierarchical structure" | "Team network" or "Team structure" | Networks are peer-based |
+| "Reporting hierarchy" | "Accountability links" | Describes function, not power |
+| "Hierarchy view" | "Organization map" or "Team map" | Maps show connections, not levels |
+
+**When "hierarchy" IS appropriate:**
+
+- Discussing traditional organizational structures that swarmrise replaces
+- Comparative content (e.g., "Unlike hierarchy, swarmrise...")
+- Legal or philosophy pages explaining the swarmrise difference
+
+**Implementation:**
+
+```tsx
+// CORRECT: Collaborative language
+<h2>Team Connections</h2>
+<p>See how this team connects to others in the organization.</p>
+
+// INCORRECT: Hierarchical language within product
+<h2>Team Hierarchy</h2>
+<p>View the reporting structure.</p>
+```
+
+#### Other Language Patterns
+
+Prefer language that emphasizes:
+
+- **Connections** over "reporting lines"
+- **Coordination** over "management"
+- **Accountability** over "authority"
+- **Peers** over "subordinates"
+- **Network** over "chain of command"
+
+---
+
 ## Anti-Patterns
 
 ### What NOT to Do
@@ -686,6 +734,7 @@ className="p-8 gap-8" // Page sections
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-02-07 | 1.2.0 | Added language guidelines section - "hierarchy" reserved for external systems |
 | 2026-02-06 | 1.1.0 | Added comprehensive notification patterns section |
 | 2026-02-02 | 1.0.0 | Initial UX principles established |
 

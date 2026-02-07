@@ -331,11 +331,11 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
           </div>
         </section>
 
-        {/* Team Hierarchy */}
+        {/* Team Connections */}
         {(parentTeam || (linkedLeaderRoles && linkedLeaderRoles.length > 0)) && (
           <section className="mb-8">
             <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-              Team Hierarchy
+              Team Connections
             </h2>
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4">
               {/* Parent team */}
@@ -359,16 +359,14 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                   <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Child Teams ({linkedLeaderRoles.length})
                   </span>
-                  <ul className="mt-1 space-y-1">
-                    {linkedLeaderRoles.map((link) => (
-                      <li key={link.linkedRole._id} className="flex items-center gap-2">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-400">
-                          <path d="M8 4V12M8 12L4 8M8 12L12 8" />
-                        </svg>
-                        <span className="text-dark dark:text-light">{link.daughterTeam.name}</span>
-                      </li>
+                  <p className="mt-1 text-dark dark:text-light">
+                    {linkedLeaderRoles.map((link, index) => (
+                      <span key={link.linkedRole._id}>
+                        {link.daughterTeam.name}
+                        {index < linkedLeaderRoles.length - 1 && ", "}
+                      </span>
                     ))}
-                  </ul>
+                  </p>
                 </div>
               )}
             </div>

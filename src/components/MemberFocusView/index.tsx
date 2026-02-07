@@ -72,16 +72,44 @@ export function MemberFocusView({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onZoomOut]);
 
+  // Filter out replica roles (linked roles) - only show master roles
+  // Replica roles have linkedRoleId set, pointing to their master in the parent team
+  const masterRoles = useMemo(() => {
+    if (!roles) return [];
+    return roles.filter((role) => !role.linkedRoleId);
+  }, [roles]);
+
+  // Build a map from master role ID -> child team info
+  // This maps master roles to the child teams they lead (via their replica/linked roles)
+  const masterToChildTeam = useMemo(() => {
+    if (!roles || !teams) return new Map<string, { _id: Id<"teams">; name: string }>();
+
+    const teamMap = new Map(teams.map((t) => [t._id, t]));
+    const result = new Map<string, { _id: Id<"teams">; name: string }>();
+
+    // Find replica roles and map their linkedRoleId to their team (the child team)
+    for (const role of roles) {
+      if (role.linkedRoleId) {
+        const childTeam = teamMap.get(role.teamId);
+        if (childTeam) {
+          result.set(role.linkedRoleId, { _id: childTeam._id, name: childTeam.name });
+        }
+      }
+    }
+
+    return result;
+  }, [roles, teams]);
+
   // Group roles by team
   const rolesByTeam = useMemo(() => {
-    if (!roles || !teams) return [];
+    if (!masterRoles.length || !teams) return [];
 
     const teamMap = new Map(teams.map((t) => [t._id, t]));
     const grouped: RolesByTeam[] = [];
 
     // Group roles by teamId
-    const roleGroups = new Map<string, typeof roles>();
-    for (const role of roles) {
+    const roleGroups = new Map<string, typeof masterRoles>();
+    for (const role of masterRoles) {
       const existing = roleGroups.get(role.teamId) || [];
       existing.push(role);
       roleGroups.set(role.teamId, existing);
@@ -96,7 +124,7 @@ export function MemberFocusView({
     }
 
     return grouped;
-  }, [roles, teams]);
+  }, [masterRoles, teams]);
 
   // Calculate positions
   const { rolePositions, teamPositions, centerX, centerY, maxRadius, memberRadius } = useMemo(() => {
@@ -120,29 +148,63 @@ export function MemberFocusView({
       };
     }
 
-    // Calculate sector angles for each team
-    const teamCount = rolesByTeam.length;
+    // Collect all teams that need to be displayed (parent teams + child teams for master roles)
+    const allTeams = new Map<string, { _id: Id<"teams">; name: string }>();
+    for (const group of rolesByTeam) {
+      allTeams.set(group.team._id, { _id: group.team._id, name: group.team.name });
+    }
+    // Add child teams from masterToChildTeam map
+    for (const [, childTeam] of masterToChildTeam) {
+      if (!allTeams.has(childTeam._id)) {
+        allTeams.set(childTeam._id, childTeam);
+      }
+    }
+
+    // Calculate sector angles for all teams
+    const allTeamsList = Array.from(allTeams.values());
+    const teamCount = allTeamsList.length;
     const sectorAngle = (2 * Math.PI) / teamCount;
+
+    // Create a map for team positions by team ID
+    const teamPositionMap = new Map<string, TeamNodePosition>();
 
     const rPositions: RoleLinkPosition[] = [];
     const tPositions: TeamNodePosition[] = [];
 
-    rolesByTeam.forEach((group, teamIndex) => {
-      // Team sector starts at this angle
-      const sectorStart = (teamIndex * sectorAngle) - Math.PI / 2;
-      const sectorMid = sectorStart + sectorAngle / 2;
+    // First pass: create all team positions
+    allTeamsList.forEach((team, teamIndex) => {
+      const sectorMid = (teamIndex * sectorAngle) - Math.PI / 2;
+      const teamPos: TeamNodePosition = {
+        team: { _id: team._id, _creationTime: 0, orgaId: "" as Id<"orgas">, name: team.name },
+        x: cX + Math.cos(sectorMid) * teamRingRadius,
+        y: cY + Math.sin(sectorMid) * teamRingRadius,
+        radius: teamR,
+        roles: [],
+      };
+      teamPositionMap.set(team._id, teamPos);
+      tPositions.push(teamPos);
+    });
 
-      // Position roles within the sector
+    // Second pass: position roles and link them to teams
+    rolesByTeam.forEach((group) => {
+      const teamPos = teamPositionMap.get(group.team._id);
+      if (!teamPos) return;
+
+      // Calculate the team's angle from its position
+      const teamAngle = Math.atan2(teamPos.y - cY, teamPos.x - cX);
+
+      // Position roles near their parent team
       const roleCount = group.roles.length;
       const roleSpread = roleCount > 1 ? sectorAngle * 0.7 : 0;
-      const roleStartAngle = sectorMid - roleSpread / 2;
-
-      const teamRolePositions: RoleLinkPosition[] = [];
+      const roleStartAngle = teamAngle - roleSpread / 2;
 
       group.roles.forEach((role, roleIndex) => {
         const roleAngle = roleCount > 1
           ? roleStartAngle + (roleIndex / (roleCount - 1)) * roleSpread
-          : sectorMid;
+          : teamAngle;
+
+        // Check if this role has a child team
+        const childTeam = masterToChildTeam.get(role._id);
 
         const pos: RoleLinkPosition = {
           role,
@@ -150,18 +212,18 @@ export function MemberFocusView({
           y: cY + Math.sin(roleAngle) * roleRingRadius,
           radius: roleR,
           teamId: group.team._id,
+          childTeamId: childTeam?._id,
         };
         rPositions.push(pos);
-        teamRolePositions.push(pos);
-      });
+        teamPos.roles.push(pos);
 
-      // Position team node at outer edge of sector
-      tPositions.push({
-        team: group.team,
-        x: cX + Math.cos(sectorMid) * teamRingRadius,
-        y: cY + Math.sin(sectorMid) * teamRingRadius,
-        radius: teamR,
-        roles: teamRolePositions,
+        // If this role has a child team, also add it to the child team's role list
+        if (childTeam) {
+          const childTeamPos = teamPositionMap.get(childTeam._id);
+          if (childTeamPos) {
+            childTeamPos.roles.push(pos);
+          }
+        }
       });
     });
 
@@ -173,7 +235,7 @@ export function MemberFocusView({
       maxRadius: mR,
       memberRadius: memberR,
     };
-  }, [dimensions, rolesByTeam]);
+  }, [dimensions, rolesByTeam, masterToChildTeam]);
 
   // Loading state
   if (member === undefined || roles === undefined || teams === undefined) {
@@ -391,7 +453,7 @@ export function MemberFocusView({
         height={dimensions.height}
         className="block w-full h-full"
         role="img"
-        aria-label={t("diagram.memberDetailsAriaLabel", { name: `${member.firstname} ${member.surname}`, roleCount: roles?.length || 0, teamCount: teams?.length || 0 })}
+        aria-label={t("diagram.memberDetailsAriaLabel", { name: `${member.firstname} ${member.surname}`, roleCount: masterRoles.length, teamCount: teams?.length || 0 })}
       >
         <title>{t("diagram.memberDetailsTitle", { name: `${member.firstname} ${member.surname}` })}</title>
 
@@ -512,13 +574,13 @@ export function MemberFocusView({
           fontSize={12}
           style={{ pointerEvents: "none", userSelect: "none" }}
         >
-          {t("diagram.rolesInTeams", { roleCount: roles?.length || 0, teamCount: teams?.length || 0, count: roles?.length || 0 })}
+          {t("diagram.rolesInTeams", { roleCount: masterRoles.length, teamCount: teams?.length || 0, count: masterRoles.length })}
         </text>
       </svg>
 
       {/* Accessibility: screen reader announcement */}
       <div role="status" aria-live="polite" className="sr-only">
-        {t("diagram.srMemberAnnouncement", { name: `${member.firstname} ${member.surname}`, roleCount: roles?.length || 0, teamCount: teams?.length || 0 })}
+        {t("diagram.srMemberAnnouncement", { name: `${member.firstname} ${member.surname}`, roleCount: masterRoles.length, teamCount: teams?.length || 0 })}
       </div>
 
       {/* Accessibility: text alternative */}
@@ -529,13 +591,13 @@ export function MemberFocusView({
         <div className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-2">
           <p><strong>{t("diagram.textName")}</strong> {member.firstname} {member.surname}</p>
           <p><strong>{t("diagram.textEmail")}</strong> {member.email}</p>
-          <p><strong>{t("diagram.textRoles")}</strong> {roles?.length || 0}</p>
+          <p><strong>{t("diagram.textRoles")}</strong> {masterRoles.length}</p>
           <p><strong>{t("diagram.textTeams")}</strong> {teams?.length || 0}</p>
-          {roles && roles.length > 0 && (
+          {masterRoles.length > 0 && (
             <div>
               <strong>{t("diagram.textRoleList")}</strong>
               <ul className="list-disc ml-4">
-                {roles.map((role) => (
+                {masterRoles.map((role) => (
                   <li key={role._id}>
                     {role.title}
                     {role.roleType && ` (${role.roleType})`}

@@ -26,6 +26,7 @@
   "noRolesAssigned": "Ролі не призначені",
   "notInAnyTeam": "Не є членом жодної команди",
   "synced": "Синхронізовано",
+  "leadsTeam": "Очолює команду:",
   "roleCount": "{{count}} роль",
   "roleCount_other": "{{count}} ролей",
   "roleTypes": {

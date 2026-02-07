@@ -320,16 +320,44 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
     }
   };
 
-  // Group roles by team
-  const rolesByTeam = useMemo(() => {
-    if (!roles || !teams) return [];
+  // Filter out replica roles (linked roles) - only show master roles
+  // Replica roles have linkedRoleId set, pointing to their master in the parent team
+  const masterRoles = useMemo(() => {
+    if (!roles) return [];
+    return roles.filter((role) => !role.linkedRoleId);
+  }, [roles]);
+
+  // Build a map from master role ID -> child team info
+  // This maps master roles to the child teams they lead (via their replica/linked roles)
+  const masterToChildTeam = useMemo(() => {
+    if (!roles || !teams) return new Map<string, { _id: Id<"teams">; name: string }>();
 
     const teamMap = new Map(teams.map((t) => [t._id, t]));
-    const grouped: { team: { _id: Id<"teams">; name: string }; roles: typeof roles }[] = [];
+    const result = new Map<string, { _id: Id<"teams">; name: string }>();
+
+    // Find replica roles and map their linkedRoleId to their team (the child team)
+    for (const role of roles) {
+      if (role.linkedRoleId) {
+        const childTeam = teamMap.get(role.teamId);
+        if (childTeam) {
+          result.set(role.linkedRoleId, { _id: childTeam._id, name: childTeam.name });
+        }
+      }
+    }
+
+    return result;
+  }, [roles, teams]);
+
+  // Group roles by team
+  const rolesByTeam = useMemo(() => {
+    if (!masterRoles.length || !teams) return [];
+
+    const teamMap = new Map(teams.map((t) => [t._id, t]));
+    const grouped: { team: { _id: Id<"teams">; name: string }; roles: typeof masterRoles }[] = [];
 
     // Group roles by teamId
-    const roleGroups = new Map<string, typeof roles>();
-    for (const role of roles) {
+    const roleGroups = new Map<string, typeof masterRoles>();
+    for (const role of masterRoles) {
       const existing = roleGroups.get(role.teamId) || [];
       existing.push(role);
       roleGroups.set(role.teamId, existing);
@@ -352,7 +380,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
     }
 
     return grouped.sort((a, b) => a.team.name.localeCompare(b.team.name));
-  }, [roles, teams]);
+  }, [masterRoles, teams]);
 
   // Loading state
   if (member === undefined) {
@@ -429,7 +457,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
             {t("overview")}
           </h2>
           <div className="grid grid-cols-2 gap-4">
-            <StatCard value={roles?.length || 0} label={tTeams("roles")} color="purple" />
+            <StatCard value={masterRoles.length} label={tTeams("roles")} color="purple" />
             <StatCard value={teams?.length || 0} label={tTeams("teams")} color="green" />
           </div>
         </section>
@@ -650,42 +678,58 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
 
                   {/* Roles list */}
                   <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {teamRoles.map((role) => (
-                      <div key={role._id} className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          {role.roleType && (
-                            <span
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
-                            />
-                          )}
-                          <span className="font-medium text-dark dark:text-light">
-                            {role.title}
-                          </span>
-                          {role.roleType && (
-                            <span
-                              className="text-xs px-1.5 py-0.5 rounded"
-                              style={{
-                                backgroundColor: getRoleTypeBadgeColor(role.roleType) + "20",
-                                color: getRoleTypeBadgeColor(role.roleType),
-                              }}
-                            >
-                              {tMembers(getRoleTypeKey(role.roleType))}
+                    {teamRoles.map((role) => {
+                      const childTeam = masterToChildTeam.get(role._id);
+                      return (
+                        <div key={role._id} className="px-4 py-3">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {role.roleType && (
+                              <span
+                                className="w-2 h-2 rounded-full"
+                                style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
+                              />
+                            )}
+                            <span className="font-medium text-dark dark:text-light">
+                              {role.title}
                             </span>
+                            {role.roleType && (
+                              <span
+                                className="text-xs px-1.5 py-0.5 rounded"
+                                style={{
+                                  backgroundColor: getRoleTypeBadgeColor(role.roleType) + "20",
+                                  color: getRoleTypeBadgeColor(role.roleType),
+                                }}
+                              >
+                                {tMembers(getRoleTypeKey(role.roleType))}
+                              </span>
+                            )}
+                          </div>
+                          {/* Show child team link for master roles that lead a child team */}
+                          {childTeam && (
+                            <div className="flex items-center gap-1.5 mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                className="text-gray-400"
+                              >
+                                <path d="M8 4v8M8 12l-3-3M8 12l3-3" />
+                              </svg>
+                              <span>{tMembers("leadsTeam")}</span>
+                              <span className="font-medium text-dark dark:text-light">{childTeam.name}</span>
+                            </div>
                           )}
-                          {role.linkedRoleId && (
-                            <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
-                              {tMembers("synced")}
-                            </span>
+                          {role.mission && (
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                              {role.mission}
+                            </p>
                           )}
                         </div>
-                        {role.mission && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
-                            {role.mission}
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -708,7 +752,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                 {teams
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((team) => {
-                    const teamRoleCount = roles?.filter((r) => r.teamId === team._id).length || 0;
+                    const teamRoleCount = masterRoles.filter((r) => r.teamId === team._id).length;
                     return (
                       <div key={team._id} className="flex items-center justify-between px-4 py-3">
                         <div className="flex items-center gap-2">

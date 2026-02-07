@@ -26,6 +26,7 @@
   "noRolesAssigned": "No roles assigned",
   "notInAnyTeam": "Not a member of any team",
   "synced": "Synced",
+  "leadsTeam": "Leads team:",
   "roleCount": "{{count}} role",
   "roleCount_other": "{{count}} roles",
   "roleTypes": {

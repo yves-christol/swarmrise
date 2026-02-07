@@ -57,6 +57,7 @@ export type RoleLinkPosition = {
   y: number;
   radius: number;
   teamId: Id<"teams">;
+  childTeamId?: Id<"teams">; // For master roles that lead a child team
 };
 
 export type TeamNodePosition = {

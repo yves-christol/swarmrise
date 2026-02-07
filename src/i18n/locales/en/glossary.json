@@ -18,7 +18,7 @@
     },
     "member": {
       "title": "Member",
-      "description": "A user's presence within a specific organization. The same person can be a member of multiple organizations, with different roles and responsibilities in each.",
+      "description": "A user's presence within a specific organization. A given member can hold several roles in the same team or in several teams of the organization. This is a significant difference with traditional organizations.",
       "example": "You might be a member of your company's organization and also a member of a volunteer group's organization."
     },
     "team": {

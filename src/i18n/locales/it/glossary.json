@@ -18,7 +18,7 @@
     },
     "member": {
       "title": "Membro",
-      "description": "La presenza di un utente all'interno di un'organizzazione specifica. La stessa persona puo essere membro di piu organizzazioni, con ruoli e responsabilita diversi in ciascuna.",
+      "description": "La presenza di un utente all'interno di un'organizzazione specifica. Un dato membro puo ricoprire piu ruoli nello stesso team o in piu team dell'organizzazione. Questa e una differenza significativa rispetto alle organizzazioni tradizionali.",
       "example": "Potresti essere membro dell'organizzazione della tua azienda e anche membro dell'organizzazione di un gruppo di volontari."
     },
     "team": {

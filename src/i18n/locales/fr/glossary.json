@@ -18,7 +18,7 @@
     },
     "member": {
       "title": "Membre",
-      "description": "La présence d'un utilisateur au sein d'une organisation spécifique. La même personne peut être membre de plusieurs organisations, avec des rôles et responsabilités différents dans chacune.",
+      "description": "La presence d'un utilisateur au sein d'une organisation specifique. Un membre donne peut detenir plusieurs roles dans la meme equipe ou dans plusieurs equipes de l'organisation. C'est une difference significative avec les organisations traditionnelles.",
       "example": "Vous pourriez être membre de l'organisation de votre entreprise et également membre de l'organisation d'un groupe de bénévoles."
     },
     "team": {

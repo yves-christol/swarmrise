@@ -18,7 +18,7 @@
     },
     "member": {
       "title": "Chlen",
-      "description": "Prysutnist korystuvacha v konktrenii orhanizatsii. Odna y ta sama liudyna mozhe buty chlenom kilkokh orhanizatsii, z riznymy rolyamy ta oboviaskamy u kozhnii.",
+      "description": "Prysutnist korystuvacha v konkretnii orhanizatsii. Pevnyi chlen mozhe maty kilka rolei v odnii komandi abo v kilkokh komandakh orhanizatsii. Tse znachna vidminnist vid tradytsiinykh orhanizatsii.",
       "example": "Vy mozhete buty chlenom orhanizatsii vashoii kompanii, a takozh chlenom orhanizatsii volonterskoi hrupy."
     },
     "team": {

@@ -94,6 +94,8 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
 
   // Local state for editing
   const [selectedMemberId, setSelectedMemberId] = useState<Id<"members"> | null>(null);
+  const [roleName, setRoleName] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
   const [mission, setMission] = useState("");
   const [duties, setDuties] = useState<string[]>([]);
   const [newDuty, setNewDuty] = useState("");
@@ -106,6 +108,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
   useEffect(() => {
     if (role) {
       setSelectedMemberId(role.memberId);
+      setRoleName(role.title);
       setMission(role.mission || "");
       setDuties(role.duties || []);
     }
@@ -134,6 +137,30 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
     } catch (error) {
       setSaveMessage({ type: "error", text: error instanceof Error ? error.message : "Failed to update" });
       setSelectedMemberId(role.memberId);
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(null), 3000);
+    }
+  };
+
+  const handleSaveName = async () => {
+    if (isLinkedRole || !role) return;
+    const trimmedName = roleName.trim();
+    if (!trimmedName || trimmedName === role.title) {
+      setRoleName(role.title);
+      setIsEditingName(false);
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage(null);
+    try {
+      await updateRole({ roleId, title: trimmedName });
+      setIsEditingName(false);
+      setSaveMessage({ type: "success", text: "Name updated" });
+    } catch (error) {
+      setSaveMessage({ type: "error", text: error instanceof Error ? error.message : "Failed to update" });
+      setRoleName(role.title);
     } finally {
       setIsSaving(false);
       setTimeout(() => setSaveMessage(null), 3000);
@@ -221,22 +248,82 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
       <div className="pt-20 px-8 pb-8 max-w-2xl mx-auto">
         {/* Header */}
         <header className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">
-              {role.title}
-            </h1>
-            {role.roleType && (
-              <span
-                className="px-2 py-0.5 rounded-full text-xs font-medium"
-                style={{
-                  backgroundColor: getRoleTypeBadgeColor(role.roleType) + "30",
-                  color: getRoleTypeBadgeColor(role.roleType),
+          {isEditingName ? (
+            <div className="flex items-center gap-3 mb-2">
+              <input
+                type="text"
+                value={roleName}
+                onChange={(e) => setRoleName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void handleSaveName();
+                  } else if (e.key === "Escape") {
+                    setRoleName(role.title);
+                    setIsEditingName(false);
+                  }
                 }}
+                autoFocus
+                aria-label="Role name"
+                className="
+                  font-swarm text-3xl font-bold
+                  text-dark dark:text-light
+                  bg-transparent
+                  border-b-2 border-[#eac840]
+                  focus:outline-none
+                  w-full
+                "
+              />
+              <button
+                onClick={() => void handleSaveName()}
+                disabled={isSaving}
+                className="
+                  px-3 py-1.5 text-sm
+                  bg-[#eac840] hover:bg-[#d4af37]
+                  text-dark
+                  rounded-lg
+                  transition-colors duration-75
+                  disabled:opacity-50
+                "
               >
-                {getRoleTypeLabel(role.roleType)}
-              </span>
-            )}
-          </div>
+                {isSaving ? "..." : "Save"}
+              </button>
+              <button
+                onClick={() => {
+                  setRoleName(role.title);
+                  setIsEditingName(false);
+                }}
+                className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">
+                {role.title}
+              </h1>
+              {role.roleType && (
+                <span
+                  className="px-2 py-0.5 rounded-full text-xs font-medium"
+                  style={{
+                    backgroundColor: getRoleTypeBadgeColor(role.roleType) + "30",
+                    color: getRoleTypeBadgeColor(role.roleType),
+                  }}
+                >
+                  {getRoleTypeLabel(role.roleType)}
+                </span>
+              )}
+              {!isLinkedRole && (
+                <button
+                  onClick={() => setIsEditingName(true)}
+                  className="text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
+                >
+                  Edit
+                </button>
+              )}
+            </div>
+          )}
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Role settings and configuration
           </p>

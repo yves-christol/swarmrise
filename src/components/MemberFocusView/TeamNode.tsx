@@ -125,7 +125,7 @@ export const TeamNode = memo(function TeamNode({
         fontWeight={500}
         style={{ pointerEvents: "none", userSelect: "none" }}
       >
-        {team.name.length > 8 ? team.name.slice(0, 7) + "..." : team.name}
+        {team.name.length > 12 ? team.name.slice(0, 11) + "..." : team.name}
       </text>
     </g>
   );

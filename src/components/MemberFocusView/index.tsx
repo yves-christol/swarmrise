@@ -137,7 +137,7 @@ export function MemberFocusView({
     const roleRingRadius = mR * 0.65;
     const teamRingRadius = mR * 0.95;
     const roleR = 28;
-    const teamR = 22;
+    const teamR = 32;
 
     if (rolesByTeam.length === 0) {
       return {

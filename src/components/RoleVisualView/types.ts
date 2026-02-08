@@ -1,4 +1,7 @@
 import { Id } from "../../../convex/_generated/dataModel";
+import { RoleData } from "../shared/visualTypes";
+
+export type { RoleData };
 
 export type RoleVisualViewProps = {
   roleId: Id<"roles">;
@@ -7,21 +10,8 @@ export type RoleVisualViewProps = {
   onNavigateToMember?: (memberId: Id<"members">, origin?: { x: number; y: number; radius: number }) => void;
 };
 
-export type RoleData = {
-  _id: Id<"roles">;
-  _creationTime: number;
-  orgaId: Id<"orgas">;
-  teamId: Id<"teams">;
-  parentTeamId?: Id<"teams">;
-  linkedRoleId?: Id<"roles">;
-  title: string;
-  roleType?: "leader" | "secretary" | "referee";
-  mission: string;
-  duties: string[];
-  memberId: Id<"members">;
-};
-
-export type MemberData = {
+// Simplified member data for role view (doesn't need full member details)
+export type RoleMemberData = {
   _id: Id<"members">;
   firstname: string;
   surname: string;

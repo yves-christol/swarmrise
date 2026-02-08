@@ -1,4 +1,7 @@
 import { Id } from "../../../convex/_generated/dataModel";
+import { ViewportState } from "../shared/visualTypes";
+
+export type { ViewportState };
 
 export type TeamWithRoleCount = {
   _id: Id<"teams">;
@@ -26,10 +29,4 @@ export type GraphNode = {
 export type GraphEdge = {
   source: string;
   target: string;
-};
-
-export type ViewportState = {
-  scale: number;
-  offsetX: number;
-  offsetY: number;
 };

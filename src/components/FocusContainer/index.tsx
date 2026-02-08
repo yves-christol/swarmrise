@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useFocus, useViewMode } from "../../tools/orgaStore";
+import "./animations.css";
 import { OrgaVisualView } from "../OrgaVisualView";
 import { TeamVisualView } from "../TeamVisualView";
 import { RoleVisualView } from "../RoleVisualView";
@@ -223,116 +224,6 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* CSS for animations */}
-      <style>{`
-        @keyframes fadeScaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @keyframes fadeScaleInFromSmall {
-          from {
-            opacity: 0;
-            transform: scale(0.6);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @keyframes fadeScaleInFromLarge {
-          from {
-            opacity: 0;
-            transform: scale(1.3);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        /* View mode swap animations */
-        @keyframes swapOutUp {
-          from {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-          to {
-            opacity: 0;
-            transform: translateY(-24px) scale(0.98);
-          }
-        }
-
-        @keyframes swapInUp {
-          from {
-            opacity: 0;
-            transform: translateY(24px) scale(0.98);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-
-        @keyframes swapOutDown {
-          from {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-          to {
-            opacity: 0;
-            transform: translateY(24px) scale(0.98);
-          }
-        }
-
-        @keyframes swapInDown {
-          from {
-            opacity: 0;
-            transform: translateY(-24px) scale(0.98);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-
-        .swap-out-up {
-          animation: swapOutUp 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .swap-in-up {
-          animation: swapInUp 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .swap-out-down {
-          animation: swapOutDown 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .swap-in-down {
-          animation: swapInDown 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .focus-view {
-            animation: none !important;
-            transition: opacity 150ms ease-out !important;
-            transform: none !important;
-          }
-          .swap-out-up, .swap-in-up, .swap-out-down, .swap-in-down {
-            animation: none !important;
-            opacity: 1 !important;
-            transform: none !important;
-          }
-        }
-      `}</style>
-
       {/* View toggle - show for all entity views when not transitioning */}
       {animationPhase === "idle" && !isFocusTransitioning && (
         <ViewToggle

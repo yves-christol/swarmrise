@@ -5,6 +5,7 @@ import type { RolePosition } from "./types";
 type RoleNodeProps = {
   position: RolePosition;
   index: number;
+  isDaughterTeamSource?: boolean;
   onClick?: () => void;
 };
 
@@ -13,7 +14,11 @@ function truncateTitle(title: string, maxLength: number = 12): string {
   return title.slice(0, maxLength - 1) + "…";
 }
 
-function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
+function getRoleStroke(roleType?: "leader" | "secretary" | "referee", isDaughterTeamSource?: boolean): string {
+  // Roles connecting to daughter teams always get golden styling
+  if (isDaughterTeamSource) {
+    return "var(--diagram-golden-bee)";
+  }
   switch (roleType) {
     case "leader":
       return "var(--diagram-golden-bee)"; // Golden-bee (theme-aware)
@@ -40,13 +45,14 @@ function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): st
 export const RoleNode = memo(function RoleNode({
   position,
   index,
+  isDaughterTeamSource,
   onClick,
 }: RoleNodeProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation("teams");
   const { role, x, y, radius, memberName } = position;
 
-  const strokeColor = getRoleStroke(role.roleType);
+  const strokeColor = getRoleStroke(role.roleType, isDaughterTeamSource);
   // All roles use same stroke width - flat organization, no visual hierarchy
   const strokeWidth = 2;
 

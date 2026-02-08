@@ -98,6 +98,12 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
     return calculateDaughterTeamPlacements(linkedLeaderRoles, rolePositions, dimensions);
   }, [linkedLeaderRoles, rolePositions, dimensions]);
 
+  // Set of role IDs that are source roles for daughter teams (should be styled golden)
+  const daughterTeamSourceRoleIds = useMemo(() => {
+    if (!linkedLeaderRoles) return new Set<string>();
+    return new Set(linkedLeaderRoles.map((link) => link.sourceRoleId));
+  }, [linkedLeaderRoles]);
+
   // Calculate center and radius
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
@@ -231,6 +237,7 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
             key={pos.role._id}
             position={pos}
             index={index}
+            isDaughterTeamSource={daughterTeamSourceRoleIds.has(pos.role._id)}
             onClick={() => focusOnRole(pos.role._id, teamId, { x: pos.x, y: pos.y, radius: pos.radius })}
           />
         ))}
@@ -673,8 +680,6 @@ function ParentTeamNode({
             y2={edgeY}
             stroke="var(--diagram-golden-bee)"
             strokeWidth={2}
-            opacity={isHovered ? 0.9 : 0.6}
-            style={{ transition: "opacity 150ms ease-out" }}
           />
         );
       })()}
@@ -791,10 +796,8 @@ function DaughterTeamNode({
             y1={y}
             x2={edgeX}
             y2={edgeY}
-            stroke="#a78bfa"
+            stroke="var(--diagram-golden-bee)"
             strokeWidth={2}
-            opacity={isHovered ? 0.9 : 0.6}
-            style={{ transition: "opacity 150ms ease-out" }}
           />
         );
       })()}
@@ -806,11 +809,11 @@ function DaughterTeamNode({
           cy={y}
           r={radius + 4}
           fill="none"
-          stroke="#a78bfa"
+          stroke="var(--diagram-golden-bee)"
           strokeWidth={1}
           opacity={0.5}
           style={{
-            filter: "drop-shadow(0 0 8px rgba(167, 139, 250, 0.5))",
+            filter: "drop-shadow(0 0 8px rgba(234, 200, 64, 0.5))",
           }}
         />
       )}
@@ -821,7 +824,7 @@ function DaughterTeamNode({
         cy={y}
         r={radius}
         fill="var(--diagram-node-fill)"
-        stroke={isHovered ? "#a78bfa" : "var(--diagram-node-stroke)"}
+        stroke={isHovered ? "var(--diagram-golden-bee)" : "var(--diagram-node-stroke)"}
         strokeWidth={2}
         style={{
           transition: "stroke 150ms ease-out",

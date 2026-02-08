@@ -79,20 +79,22 @@ export function MemberFocusView({
     return roles.filter((role) => !role.linkedRoleId);
   }, [roles]);
 
-  // Build a map from master role ID -> child team info
+  // Build a map from master role ID -> child team info and roleType from replica
   // This maps master roles to the child teams they lead (via their replica/linked roles)
+  // Also captures the roleType from the replica role (e.g., "leader") to propagate to the master role display
   const masterToChildTeam = useMemo(() => {
-    if (!roles || !teams) return new Map<string, { _id: Id<"teams">; name: string }>();
+    if (!roles || !teams) return new Map<string, { _id: Id<"teams">; name: string; roleType?: "leader" | "secretary" | "referee" }>();
 
     const teamMap = new Map(teams.map((t) => [t._id, t]));
-    const result = new Map<string, { _id: Id<"teams">; name: string }>();
+    const result = new Map<string, { _id: Id<"teams">; name: string; roleType?: "leader" | "secretary" | "referee" }>();
 
     // Find replica roles and map their linkedRoleId to their team (the child team)
+    // Also capture the roleType from the replica role
     for (const role of roles) {
       if (role.linkedRoleId) {
         const childTeam = teamMap.get(role.teamId);
         if (childTeam) {
-          result.set(role.linkedRoleId, { _id: childTeam._id, name: childTeam.name });
+          result.set(role.linkedRoleId, { _id: childTeam._id, name: childTeam.name, roleType: role.roleType });
         }
       }
     }
@@ -203,11 +205,18 @@ export function MemberFocusView({
           ? roleStartAngle + (roleIndex / (roleCount - 1)) * roleSpread
           : teamAngle;
 
-        // Check if this role has a child team
+        // Check if this role has a child team (via replica/linked role)
         const childTeam = masterToChildTeam.get(role._id);
 
+        // If this master role has a replica role that's a leader of a child team,
+        // propagate the roleType from the replica to ensure the golden ring is shown
+        const effectiveRoleType = role.roleType || childTeam?.roleType;
+        const displayRole = effectiveRoleType !== role.roleType
+          ? { ...role, roleType: effectiveRoleType }
+          : role;
+
         const pos: RoleLinkPosition = {
-          role,
+          role: displayRole,
           x: cX + Math.cos(roleAngle) * roleRingRadius,
           y: cY + Math.sin(roleAngle) * roleRingRadius,
           radius: roleR,

@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useFocus, useViewMode } from "../../tools/orgaStore";
-import { OrgNetworkDiagram } from "../OrgNetworkDiagram";
-import { TeamRolesCircle } from "../TeamRolesCircle";
-import { RoleFocusView } from "../RoleFocusView";
-import { MemberFocusView } from "../MemberFocusView";
+import { OrgaVisualView } from "../OrgaVisualView";
+import { TeamVisualView } from "../TeamVisualView";
+import { RoleVisualView } from "../RoleVisualView";
+import { MemberVisualView } from "../MemberVisualView";
 import { OrgaManageView } from "../OrgaManageView";
 import { RoleManageView } from "../RoleManageView";
 import { TeamManageView } from "../TeamManageView";
@@ -353,7 +353,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           /* Member view with swap animation between visual and manage */
           <div className={`absolute inset-0 ${getSwapClass()}`}>
             {displayedMode === "visual" ? (
-              <MemberFocusView
+              <MemberVisualView
                 memberId={focus.memberId}
                 onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
                 onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
@@ -370,7 +370,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           /* Role view with swap animation between visual and manage */
           <div className={`absolute inset-0 ${getSwapClass()}`}>
             {displayedMode === "visual" ? (
-              <RoleFocusView
+              <RoleVisualView
                 roleId={focus.roleId}
                 onZoomOut={focusOnTeamFromRole}
                 onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
@@ -387,7 +387,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           /* Team view with swap animation between visual and manage */
           <div className={`absolute inset-0 ${getSwapClass()}`}>
             {displayedMode === "visual" ? (
-              <TeamRolesCircle
+              <TeamVisualView
                 teamId={focus.teamId}
                 onZoomOut={focusOnOrga}
               />
@@ -402,7 +402,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           /* Orga view with swap animation between visual and manage */
           <div className={`absolute inset-0 ${getSwapClass()}`}>
             {displayedMode === "visual" ? (
-              <OrgNetworkDiagram orgaId={orgaId} />
+              <OrgaVisualView orgaId={orgaId} />
             ) : (
               <OrgaManageView orgaId={orgaId} />
             )}

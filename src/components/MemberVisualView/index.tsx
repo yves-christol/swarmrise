@@ -9,14 +9,14 @@ import { Logo } from "../Logo";
 import { RoleLink } from "./RoleLink";
 import { TeamNode } from "./TeamNode";
 import { ContactInfo } from "./ContactInfo";
-import type { MemberFocusViewProps, RoleLinkPosition, TeamNodePosition, RolesByTeam } from "./types";
+import type { MemberVisualViewProps, RoleLinkPosition, TeamNodePosition, RolesByTeam } from "./types";
 
-export function MemberFocusView({
+export function MemberVisualView({
   memberId,
   onZoomOut,
   onNavigateToRole,
   onNavigateToTeam,
-}: MemberFocusViewProps) {
+}: MemberVisualViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [showContactInfo, setShowContactInfo] = useState(false);

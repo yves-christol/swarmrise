@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Logo } from "../Logo";
 import { MemberLink } from "./MemberLink";
-import type { RoleFocusViewProps } from "./types";
+import type { RoleVisualViewProps } from "./types";
 
 function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
   switch (roleType) {
@@ -34,7 +34,7 @@ function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): st
 
 // getRoleTypeLabel is now handled via i18n: t("roleTypes.<type>", { ns: "members" })
 
-export function RoleFocusView({ roleId, onZoomOut, onNavigateToRole, onNavigateToMember }: RoleFocusViewProps) {
+export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigateToMember }: RoleVisualViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [showDuties, setShowDuties] = useState(false);

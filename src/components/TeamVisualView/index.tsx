@@ -10,12 +10,12 @@ import { Logo } from "../Logo";
 import { RoleNode } from "./RoleNode";
 import type { RolePosition } from "./types";
 
-type TeamRolesCircleProps = {
+type TeamVisualViewProps = {
   teamId: Id<"teams">;
   onZoomOut: () => void;
 };
 
-export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
+export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const { t } = useTranslation("teams");

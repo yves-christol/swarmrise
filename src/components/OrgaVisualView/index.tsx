@@ -15,11 +15,11 @@ import { DetailsPanel } from "./DetailsPanel";
 import { Logo } from "../Logo";
 import type { GraphNode, GraphEdge } from "./types";
 
-type OrgNetworkDiagramProps = {
+type OrgaVisualViewProps = {
   orgaId: Id<"orgas">;
 };
 
-export function OrgNetworkDiagram({ orgaId }: OrgNetworkDiagramProps) {
+export function OrgaVisualView({ orgaId }: OrgaVisualViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });

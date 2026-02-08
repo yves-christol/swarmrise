@@ -1,6 +1,6 @@
 import { Id } from "../../../convex/_generated/dataModel";
 
-export type RoleFocusViewProps = {
+export type RoleVisualViewProps = {
   roleId: Id<"roles">;
   onZoomOut: () => void;
   onNavigateToRole?: (roleId: Id<"roles">, teamId: Id<"teams">) => void;

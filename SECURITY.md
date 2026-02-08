@@ -4,7 +4,7 @@
 **Auditor:** Gunter (Security Analyst Agent)
 **Scope:** Full codebase review of swarmrise -- React 19 + Convex + Clerk + Tailwind CSS v4
 **Risk Level:** Low (after remediation)
-**Last Updated:** 2026-02-08 -- All High and Medium findings remediated
+**Last Updated:** 2026-02-08 -- All High, Medium, and Low findings remediated
 
 ---
 
@@ -12,7 +12,7 @@
 
 The swarmrise codebase demonstrates a generally solid security posture for a multi-tenant organizational management application. Authentication is consistently enforced across most Convex functions via well-structured auth helpers (`getAuthenticatedUser`, `requireAuthAndMembership`). Multi-tenant data isolation is well-implemented through indexed `orgaId` filtering on all organizational queries. Webhook signature verification is properly implemented using svix.
 
-The initial audit identified several findings. All High and Medium severity issues have since been remediated (commits `5ad7e74` and `f079038`). Remaining open items are Low and Informational.
+The initial audit identified several findings. All High, Medium, and Low severity issues have since been remediated (commits `5ad7e74`, `f079038`, and `da6b6e7`). Remaining open items are Informational only.
 
 ---
 
@@ -29,12 +29,12 @@ The initial audit identified several findings. All High and Medium severity issu
 | M5  | Medium        | No rate limiting on invitation creation                   | **Fixed** (f079038) |
 | M6  | Medium        | `deleteTeam` does not clean up roles before deletion      | **Fixed** (f079038) |
 | M7  | Medium        | User-supplied URLs rendered as `href` without sanitization | **Fixed** (f079038) |
-| L1  | Low           | Missing Content Security Policy (CSP) headers             | Open        |
-| L2  | Low           | No upper bound on `limit` parameter in decisions pagination | Open      |
-| L3  | Low           | `listMyPendingInvitationsWithOrga` uses `filter()` instead of index for status | Open |
-| L4  | Low           | Error messages may leak internal state                    | Open        |
-| L5  | Low           | `decisions.listDecisionsForOrga` collects all then slices in memory | Open |
-| L6  | Low           | Notification expiration cleanup is scan-heavy             | Open        |
+| L1  | Low           | Missing Content Security Policy (CSP) headers             | **Fixed** (da6b6e7) |
+| L2  | Low           | No upper bound on `limit` parameter in decisions pagination | **Fixed** (da6b6e7) |
+| L3  | Low           | `listMyPendingInvitationsWithOrga` uses `filter()` instead of index for status | **Fixed** (da6b6e7) |
+| L4  | Low           | Error messages may leak internal state                    | **Fixed** (da6b6e7) |
+| L5  | Low           | `decisions.listDecisionsForOrga` collects all then slices in memory | **Fixed** (da6b6e7) |
+| L6  | Low           | Notification expiration cleanup is scan-heavy             | **Fixed** (da6b6e7) |
 | I1  | Informational | Dependency vulnerability: js-yaml prototype pollution     | Open        |
 | I2  | Informational | No HTTPS enforcement in Vite dev config                   | Open        |
 | I3  | Informational | localStorage usage for non-sensitive UI preferences       | Acceptable  |
@@ -290,6 +290,8 @@ Add a CSP meta tag to `index.html` or configure CSP headers on the hosting platf
   content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.convex.cloud https://*.convex.site https://*.clerk.accounts.dev; img-src 'self' https://*.convex.cloud data: blob:;">
 ```
 
+**Remediation (commit da6b6e7):** Added a CSP meta tag to `index.html` with restrictive policies: `default-src 'self'`, `script-src 'self'`, whitelisted Convex, Clerk, and Google Fonts origins for `connect-src`, `style-src`, `font-src`, and `img-src`. Clerk iframe origin whitelisted under `frame-src`.
+
 ---
 
 ### L2: No Upper Bound on `limit` Parameter in Decisions Pagination -- LOW
@@ -311,6 +313,8 @@ Cap the limit parameter:
 const limit = Math.min(args.limit ?? DECISIONS_PAGE_SIZE, 100);
 ```
 
+**Remediation (commit da6b6e7):** Added `DECISIONS_MAX_LIMIT = 100` constant and capped the limit parameter with `Math.min(args.limit ?? DECISIONS_PAGE_SIZE, DECISIONS_MAX_LIMIT)` in `listDecisionsForOrga`.
+
 ---
 
 ### L3: `listMyPendingInvitationsWithOrga` Uses `filter()` Instead of Index for Status -- LOW
@@ -324,6 +328,8 @@ The query filters pending invitations using `.filter()` after an index lookup on
 
 **Recommendation:**
 Create compound indexes (e.g., `by_email_and_status`) and use `withIndex()` instead of `filter()`.
+
+**Remediation (commit da6b6e7):** Added `by_email_and_status` compound index to the invitations table in `convex/schema.ts`. Updated `listMyPendingInvitationsWithOrga` in `convex/users/functions.ts` to use `.withIndex("by_email_and_status", ...)` instead of `.filter()`.
 
 ---
 
@@ -342,6 +348,8 @@ Several error messages include specific internal details that could aid an attac
 
 **Recommendation:**
 Use generic error messages for client-facing errors. Log detailed errors server-side only. For example, replace detailed messages with `"Operation not permitted"` or `"Resource not found"`.
+
+**Remediation (commit da6b6e7):** Genericized error messages in `convex/utils.ts` ("Resource not found", "Operation not permitted"), `convex/roles/functions.ts` ("Operation not permitted on this role"), and `convex/members/functions.ts` (removed full error object from `console.error`).
 
 ---
 
@@ -365,6 +373,8 @@ const decisions = filtered.slice(0, limit);
 **Recommendation:**
 Use Convex's built-in pagination support or limit the query using `.take()` with cursor-based filtering at the index level rather than in memory.
 
+**Remediation (commit da6b6e7):** Replaced `.collect()` with `.take(limit + 1)` in `listDecisionsForOrga`, combined with cursor-based index filtering using `.filter((q) => q.lt(...))` before `.take()`. Note: `listDecisionsForTeam` still uses `.collect()` because it requires in-memory `teamName` filtering that cannot be indexed.
+
 ---
 
 ### L6: Notification Expiration Cleanup Is Scan-Heavy -- LOW
@@ -378,6 +388,8 @@ The `cleanupExpired` internal mutation queries all notifications with the `by_ex
 
 **Recommendation:**
 Use a more targeted index query that leverages the timestamp ordering, or use Convex's scheduled deletion pattern.
+
+**Remediation (commit da6b6e7):** Changed the query to use index range query `.withIndex("by_expires", (q) => q.lt("expiresAt", now))` which leverages the index ordering to only retrieve already-expired notifications, avoiding scanning non-expired ones.
 
 ---
 
@@ -478,7 +490,7 @@ Consider moving test utilities to a separate directory that can be excluded from
 1. **No string length limits**: String fields like `name`, `title`, `mission`, `text` have no maximum length restrictions via validators. A malicious user could submit extremely long strings.
 2. ~~**No URL validation on contact info**~~: *(Fixed in M7)* Frontend `getContactLink` functions now sanitize URLs to only allow `https:`, `http:`, `mailto:`, and `tel:` protocols.
 3. **No RGB value range validation**: The `colorScheme` RGB values accept any number, not just 0-255.
-4. **No limit cap on pagination**: The `limit` parameter in decisions queries accepts any positive number.
+4. ~~**No limit cap on pagination**~~: *(Fixed in L2)* The `limit` parameter is now capped at 100 via `Math.min()`.
 
 ---
 
@@ -510,7 +522,7 @@ Consider moving test utilities to a separate directory that can be excluded from
 ### Weaknesses
 
 1. ~~**User-supplied URLs in `href` attributes**~~: *(Fixed in M7)* Contact info URLs are now sanitized via `sanitizeUrl()` allowlist.
-2. **No CSP headers**: Missing Content Security Policy (see L1).
+2. ~~**No CSP headers**~~: *(Fixed in L1)* Content Security Policy meta tag added to `index.html`.
 
 ---
 
@@ -550,12 +562,15 @@ Key improvements made:
 4. ~~**Rate limiting (M5)**~~ -- invitation creation capped at 50/day per member
 5. ~~**Data integrity (M6)**~~ -- team deletion now cleans up roles, topics, and policies
 6. ~~**XSS prevention (M7)**~~ -- URL protocol sanitization applied to all contact links
+7. ~~**CSP headers (L1)**~~ -- Content Security Policy meta tag added to index.html
+8. ~~**Pagination hardening (L2, L5)**~~ -- limit capped at 100, `.take()` replaces `.collect()`
+9. ~~**Query optimization (L3)**~~ -- compound index `by_email_and_status` replaces in-memory filter
+10. ~~**Error message sanitization (L4)**~~ -- generic error messages replace implementation-revealing ones
+11. ~~**Notification cleanup (L6)**~~ -- index range query replaces full scan
 
 Remaining areas for improvement:
 1. **Add role-based authorization** to remaining mutations (`updateTeam`, `deletePolicy`, `createPolicy`)
 2. **Add input length limits** to string validators to prevent abuse
-3. **Improve pagination** to avoid collecting all records into memory
-4. **Add Content Security Policy** headers
 
 The absence of full role-based access control (RBAC) remains the most significant architectural gap. While the data model supports roles (leader, secretary, referee), most mutations beyond `updateOrga` and `updateInvitationStatus` still only check membership.
 
@@ -574,10 +589,10 @@ The absence of full role-based access control (RBAC) remains the most significan
 9. ~~**[MEDIUM]** Add rate limiting on invitation creation~~ -- **Done** (f079038)
 10. **[MEDIUM]** Implement role-based authorization for `deletePolicy` and `createPolicy`
 11. **[MEDIUM]** Add string length limits to all `v.string()` validators
-12. **[LOW]** Cap `limit` parameter in pagination queries
-13. **[LOW]** Add Content Security Policy headers
-14. **[LOW]** Replace in-memory pagination with proper cursor-based queries
-15. **[LOW]** Sanitize error messages to avoid leaking internal implementation details
+12. ~~**[LOW]** Cap `limit` parameter in pagination queries~~ -- **Done** (da6b6e7)
+13. ~~**[LOW]** Add Content Security Policy headers~~ -- **Done** (da6b6e7)
+14. ~~**[LOW]** Replace in-memory pagination with proper cursor-based queries~~ -- **Done** (da6b6e7)
+15. ~~**[LOW]** Sanitize error messages to avoid leaking internal implementation details~~ -- **Done** (da6b6e7)
 
 ---
 

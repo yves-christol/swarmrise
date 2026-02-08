@@ -216,9 +216,10 @@ export function TeamRolesCircle({ teamId, onZoomOut }: TeamRolesCircleProps) {
           opacity={0.15}
         />
 
-        {/* Team name - centered inside the circle */}
+        {/* Team name and mission - centered inside the circle */}
         <TeamNameText
           name={team.name}
+          mission={leaderRole?.mission}
           centerX={centerX}
           centerY={centerY}
           fontSize={Math.min(22, maxRadius * 0.11)}
@@ -318,20 +319,25 @@ function ZoomOutButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-// Team name text component with two-line wrapping
+// Team name and mission text component with two-line wrapping
 function TeamNameText({
   name,
+  mission,
   centerX,
   centerY,
   fontSize,
 }: {
   name: string;
+  mission?: string;
   centerX: number;
   centerY: number;
   fontSize: number;
 }) {
   const maxCharsPerLine = 16;
   const lineHeight = fontSize * 1.2;
+  const missionFontSize = fontSize * 0.6;
+  const missionLineHeight = missionFontSize * 1.3;
+  const gap = 8;
 
   // Split name into lines (max 2 lines, truncate if needed)
   const getLines = (text: string): string[] => {
@@ -373,31 +379,61 @@ function TeamNameText({
   };
 
   const lines = getLines(name);
-  const isTwoLines = lines.length === 2;
-  const yOffset = isTwoLines ? -lineHeight / 2 : 0;
+  const hasMission = mission && mission.trim().length > 0;
+
+  // Calculate total height for vertical centering
+  const nameHeight = lines.length * lineHeight;
+  const totalHeight = hasMission
+    ? nameHeight + gap + missionLineHeight
+    : nameHeight;
+  const startY = centerY - totalHeight / 2 + lineHeight / 2;
+
+  // Truncate mission for display
+  const maxMissionChars = Math.floor(fontSize * 2);
+  const displayMission = mission && mission.length > maxMissionChars
+    ? mission.slice(0, maxMissionChars - 1) + "…"
+    : mission;
 
   return (
-    <text
-      x={centerX}
-      y={centerY + yOffset}
-      textAnchor="middle"
-      dominantBaseline="central"
-      fill="var(--diagram-node-text)"
-      fontSize={fontSize}
-      fontWeight={600}
-      fontFamily="'Montserrat Alternates', sans-serif"
-      style={{ pointerEvents: "none", userSelect: "none" }}
-    >
-      {lines.map((line, i) => (
-        <tspan
-          key={i}
+    <g style={{ pointerEvents: "none", userSelect: "none" }}>
+      {/* Team name */}
+      <text
+        x={centerX}
+        y={startY}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="var(--diagram-node-text)"
+        fontSize={fontSize}
+        fontWeight={600}
+        fontFamily="'Montserrat Alternates', sans-serif"
+      >
+        {lines.map((line, i) => (
+          <tspan
+            key={i}
+            x={centerX}
+            dy={i === 0 ? 0 : lineHeight}
+          >
+            {line}
+          </tspan>
+        ))}
+      </text>
+
+      {/* Mission - secondary text below name */}
+      {hasMission && (
+        <text
           x={centerX}
-          dy={i === 0 ? 0 : lineHeight}
+          y={startY + nameHeight + gap}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="var(--diagram-muted-text)"
+          fontSize={missionFontSize}
+          fontWeight={400}
+          fontFamily="Arial, Helvetica, sans-serif"
         >
-          {line}
-        </tspan>
-      ))}
-    </text>
+          {displayMission}
+        </text>
+      )}
+    </g>
   );
 }
 

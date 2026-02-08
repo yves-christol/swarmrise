@@ -52,33 +52,33 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     teamId: Id<"teams">;
   } | null>(null);
 
-  // View mode state (visual vs manage) with swap animation
+  // View mode state (visual vs manage) with 3D flip animation
+  // With CSS-driven 3D flip, we only need the viewMode state
+  // The CSS transition handles the animation automatically
   const [viewMode, setViewModeState] = useState<ViewMode>("visual");
   const [displayedMode, setDisplayedMode] = useState<ViewMode>("visual");
   const [swapPhase, setSwapPhase] = useState<SwapPhase>("idle");
   const [swapDirection, setSwapDirection] = useState<SwapDirection>("up");
 
-  const SWAP_DURATION = 350; // ms
+  const FLIP_DURATION = 500; // ms - matches CSS transition
 
   const setViewMode = useCallback(
     (newMode: ViewMode) => {
-      if (newMode === viewMode || swapPhase !== "idle") return;
+      if (newMode === viewMode) return;
 
-      // Determine direction: visual->manage = up, manage->visual = down
-      setSwapDirection(newMode === "manage" ? "up" : "down");
+      // Update both states immediately - CSS handles the animation
+      setViewModeState(newMode);
+      setDisplayedMode(newMode);
+      // Set swapPhase briefly for ViewToggle disable state
       setSwapPhase("swapping-out");
+      setSwapDirection(newMode === "manage" ? "up" : "down");
 
+      // Clear swap phase after animation completes
       setTimeout(() => {
-        setDisplayedMode(newMode);
-        setSwapPhase("swapping-in");
-      }, SWAP_DURATION / 2);
-
-      setTimeout(() => {
-        setViewModeState(newMode);
         setSwapPhase("idle");
-      }, SWAP_DURATION);
+      }, FLIP_DURATION);
     },
-    [viewMode, swapPhase]
+    [viewMode]
   );
 
   // Route-driven focus update (no animation, instant sync)

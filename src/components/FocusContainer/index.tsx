@@ -39,7 +39,7 @@ const TRANSITION_DURATION = 400; // ms
 
 export function FocusContainer({ orgaId }: FocusContainerProps) {
   const { focus, focusOnOrga, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, previousFocusFromMember } = useFocus();
-  const { viewMode, swapPhase, swapDirection, displayedMode, setViewMode } = useViewMode();
+  const { viewMode, swapPhase, displayedMode, setViewMode } = useViewMode();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -216,13 +216,9 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     return {};
   };
 
-  // Get swap animation class for view mode transitions
-  const getSwapClass = (): string => {
-    if (swapPhase === "idle") return "";
-    if (swapPhase === "swapping-out") {
-      return swapDirection === "up" ? "swap-out-up" : "swap-out-down";
-    }
-    return swapDirection === "up" ? "swap-in-up" : "swap-in-down";
+  // Get the flip state class for 3D card rotation
+  const getFlipClass = (): string => {
+    return viewMode === "manage" ? "manage" : "visual";
   };
 
   // Keyboard shortcut for view toggle (V key)
@@ -263,62 +259,74 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         style={getAnimationStyles()}
       >
         {currentView === "member" && focus.type === "member" ? (
-          /* Member view with swap animation between visual and manage */
-          <div className={`absolute inset-0 ${getSwapClass()}`}>
-            {displayedMode === "visual" ? (
-              <MemberVisualView
-                memberId={focus.memberId}
-                onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
-                onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
-                onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
-              />
-            ) : (
-              <MemberManageView
-                memberId={focus.memberId}
-                onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
-              />
-            )}
+          /* Member view with 3D flip between visual and manage */
+          <div className="flip-container absolute inset-0">
+            <div className={`flip-card absolute inset-0 ${getFlipClass()}`}>
+              <div className="flip-face flip-face-visual">
+                <MemberVisualView
+                  memberId={focus.memberId}
+                  onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
+                  onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+                  onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
+                />
+              </div>
+              <div className="flip-face flip-face-manage">
+                <MemberManageView
+                  memberId={focus.memberId}
+                  onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
+                />
+              </div>
+            </div>
           </div>
         ) : currentView === "role" && focus.type === "role" ? (
-          /* Role view with swap animation between visual and manage */
-          <div className={`absolute inset-0 ${getSwapClass()}`}>
-            {displayedMode === "visual" ? (
-              <RoleVisualView
-                roleId={focus.roleId}
-                onZoomOut={focusOnTeamFromRole}
-                onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
-                onNavigateToMember={(memberId, origin) => focusOnMember(memberId, origin)}
-              />
-            ) : (
-              <RoleManageView
-                roleId={focus.roleId}
-                onZoomOut={focusOnTeamFromRole}
-              />
-            )}
+          /* Role view with 3D flip between visual and manage */
+          <div className="flip-container absolute inset-0">
+            <div className={`flip-card absolute inset-0 ${getFlipClass()}`}>
+              <div className="flip-face flip-face-visual">
+                <RoleVisualView
+                  roleId={focus.roleId}
+                  onZoomOut={focusOnTeamFromRole}
+                  onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+                  onNavigateToMember={(memberId, origin) => focusOnMember(memberId, origin)}
+                />
+              </div>
+              <div className="flip-face flip-face-manage">
+                <RoleManageView
+                  roleId={focus.roleId}
+                  onZoomOut={focusOnTeamFromRole}
+                />
+              </div>
+            </div>
           </div>
         ) : currentView === "team" && focus.type === "team" ? (
-          /* Team view with swap animation between visual and manage */
-          <div className={`absolute inset-0 ${getSwapClass()}`}>
-            {displayedMode === "visual" ? (
-              <TeamVisualView
-                teamId={focus.teamId}
-                onZoomOut={focusOnOrga}
-              />
-            ) : (
-              <TeamManageView
-                teamId={focus.teamId}
-                onZoomOut={focusOnOrga}
-              />
-            )}
+          /* Team view with 3D flip between visual and manage */
+          <div className="flip-container absolute inset-0">
+            <div className={`flip-card absolute inset-0 ${getFlipClass()}`}>
+              <div className="flip-face flip-face-visual">
+                <TeamVisualView
+                  teamId={focus.teamId}
+                  onZoomOut={focusOnOrga}
+                />
+              </div>
+              <div className="flip-face flip-face-manage">
+                <TeamManageView
+                  teamId={focus.teamId}
+                  onZoomOut={focusOnOrga}
+                />
+              </div>
+            </div>
           </div>
         ) : (
-          /* Orga view with swap animation between visual and manage */
-          <div className={`absolute inset-0 ${getSwapClass()}`}>
-            {displayedMode === "visual" ? (
-              <OrgaVisualView orgaId={orgaId} />
-            ) : (
-              <OrgaManageView orgaId={orgaId} />
-            )}
+          /* Orga view with 3D flip between visual and manage */
+          <div className="flip-container absolute inset-0">
+            <div className={`flip-card absolute inset-0 ${getFlipClass()}`}>
+              <div className="flip-face flip-face-visual">
+                <OrgaVisualView orgaId={orgaId} />
+              </div>
+              <div className="flip-face flip-face-manage">
+                <OrgaManageView orgaId={orgaId} />
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -15,7 +15,7 @@ The Swarmrise codebase has a well-developed animation system with consistent pat
 | Category | Status | Location | Purpose |
 |----------|--------|----------|---------|
 | Focus Navigation | Complete | `FocusContainer/animations.css` | View transitions between orga/team/role/member |
-| View Mode Swap | Complete | `FocusContainer/animations.css` | Visual/Manage toggle transitions |
+| View Mode Flip | Complete | `FocusContainer/animations.css` | 3D coin flip between Visual/Manage modes |
 | Node Reveal | Complete | Inline in visual views | Staggered element appearance on load |
 | Logo Animation | Complete | `Logo/index.tsx` | Interactive SVG bee wing animation (SMIL) |
 | Theme Transition | Complete | `index.css` | Background/text color transitions |
@@ -74,10 +74,10 @@ From the codebase analysis:
 - **75ms**: Button and link hover states (`transition-colors duration-75`)
 - **100ms**: Node drag transitions (`transition: transform 100ms ease-out`)
 - **150ms**: Icon crossfades, stroke transitions
-- **175ms**: View mode swap animations (`swap-out-up`, `swap-in-up`)
 - **200ms**: Focus transition half-duration, theme transitions
 - **300ms**: Content fade-in sequences
 - **400ms**: Full focus navigation, node reveal animations
+- **500ms**: View mode 3D flip transition (visual/manage toggle)
 - **500-600ms**: Complex circle reveal sequences
 
 ---
@@ -139,24 +139,48 @@ The core navigation animation system for transitioning between entity views.
 - `role-to-member` / `member-to-role`
 - Direct jumps: `orga-to-role`, `orga-to-member`
 
-#### View Mode Swap (Visual/Manage Toggle)
+#### View Mode Flip (Visual/Manage Toggle)
+
+The view mode toggle uses a 3D coin flip effect for switching between visual and manage modes.
 
 ```css
-/* Swapping view modes with directional hint */
-@keyframes swapOutUp {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to { opacity: 0; transform: translateY(-24px) scale(0.98); }
+/* Container with perspective for 3D effect */
+.flip-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
 }
 
-@keyframes swapInUp {
-  from { opacity: 0; transform: translateY(24px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+/* The rotating card */
+.flip-card {
+  transform-style: preserve-3d;
+  transition: transform 500ms cubic-bezier(0.2, 0.8, 0.3, 1);
 }
+
+/* Flip states */
+.flip-card.visual { transform: rotateY(0deg); }
+.flip-card.manage { transform: rotateY(180deg); }
+
+/* Faces with backface hidden */
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+.flip-face-visual { transform: rotateY(0deg); }
+.flip-face-manage { transform: rotateY(180deg); }
 ```
 
-**Duration**: 175ms
+**Duration**: 500ms
 
-**Design Rationale**: The vertical translation (24px) combined with subtle scale (0.98) creates a sense of physical pages swapping, reinforcing the conceptual shift between views.
+**Easing**: `cubic-bezier(0.2, 0.8, 0.3, 1)` - starts slow, accelerates through middle, gentle landing
+
+**Key Properties**:
+- `perspective: 1200px` on container creates depth for 3D effect
+- `transform-style: preserve-3d` enables 3D space for children
+- `backface-visibility: hidden` hides the back of each face during rotation
+- Both faces are rendered simultaneously and pre-rotated
+
+**Design Rationale**: The coin flip metaphor creates a satisfying tactile feel, reinforcing that the user is "flipping" between two sides of the same entity. The 500ms duration allows the user to perceive the 3D motion without feeling slow.
 
 ### Node Reveal Animations
 

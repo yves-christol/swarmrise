@@ -33,7 +33,49 @@
   }
 }
 
-/* View mode swap animations */
+/* View mode flip transition - 3D coin flip effect */
+
+/* Container with perspective for 3D effect */
+.flip-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+/* The rotating element */
+.flip-card {
+  transform-style: preserve-3d;
+  transition: transform 500ms cubic-bezier(0.2, 0.8, 0.3, 1);
+  will-change: transform;
+}
+
+/* Flip states */
+.flip-card.visual {
+  transform: rotateY(0deg);
+}
+
+.flip-card.manage {
+  transform: rotateY(180deg);
+}
+
+/* Both faces share common positioning */
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Front face (visual) - no rotation needed */
+.flip-face-visual {
+  transform: rotateY(0deg);
+}
+
+/* Back face (manage) - pre-rotated 180deg so it shows correctly when flipped */
+.flip-face-manage {
+  transform: rotateY(180deg);
+}
+
+/* Legacy swap animation classes (kept for backwards compatibility during transition) */
 @keyframes swapOutUp {
   from {
     opacity: 1;
@@ -105,5 +147,27 @@
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+  /* Disable 3D flip animation for reduced motion */
+  .flip-card {
+    transition: none !important;
+    transform: none !important;
+  }
+  .flip-face {
+    backface-visibility: visible !important;
+    -webkit-backface-visibility: visible !important;
+    transform: none !important;
+  }
+  .flip-face-visual {
+    opacity: 1;
+  }
+  .flip-face-manage {
+    opacity: 0;
+  }
+  .flip-card.manage .flip-face-visual {
+    opacity: 0;
+  }
+  .flip-card.manage .flip-face-manage {
+    opacity: 1;
   }
 }

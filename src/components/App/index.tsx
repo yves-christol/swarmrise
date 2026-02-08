@@ -5,16 +5,16 @@ import { Header } from "../Header"
 
 export default function App() {
   return (
-    <>
+    <div className="h-screen flex flex-col">
       <Header />
-      <main className="p-8 flex flex-col gap-16">
-        <Authenticated>
-          <AuthenticatedView />
-        </Authenticated>
-        <Unauthenticated>
+      <Authenticated>
+        <AuthenticatedView />
+      </Authenticated>
+      <Unauthenticated>
+        <main className="flex-1 min-h-0 p-8 flex flex-col gap-16 overflow-auto">
           <Anonymous />
-        </Unauthenticated>
-      </main>
-    </>
+        </main>
+      </Unauthenticated>
+    </div>
   )
 }

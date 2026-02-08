@@ -24,48 +24,53 @@ export const AuthenticatedView = () => {
   // Loading state (initial load)
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16">
+      <main className="flex-1 min-h-0 p-8 overflow-auto flex flex-col items-center justify-center">
         <Spinner />
-      </div>
+      </main>
     );
   }
 
   // Switching organizations - show transition state
   if (isSwitchingOrga) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 gap-4">
+      <main className="flex-1 min-h-0 p-8 overflow-auto flex flex-col items-center justify-center gap-4">
         <Spinner text={t("switchingOrganization")} />
-      </div>
+      </main>
     );
   }
 
   // Empty state - no organizations
   if (!hasOrgas) {
-    return <EmptyState />;
+    return (
+      <main className="flex-1 min-h-0 p-8 overflow-auto">
+        <EmptyState />
+      </main>
+    );
   }
 
   // No organization selected yet (multi-org user hasn't chosen)
   if (!selectedOrga) {
     return (
-      <div className="flex flex-col gap-8 max-w-4xl mx-auto p-8">
-        <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">{t("selectOrganization")}</h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          {t("selectOrgPrompt")}
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {orgasWithCounts?.map(({ orga, counts }) => (
-            <OrgaCard key={orga._id} orga={orga} counts={counts} />
-          ))}
+      <main className="flex-1 min-h-0 p-8 overflow-auto">
+        <div className="flex flex-col gap-8 max-w-4xl mx-auto">
+          <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">{t("selectOrganization")}</h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            {t("selectOrgPrompt")}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {orgasWithCounts?.map(({ orga, counts }) => (
+              <OrgaCard key={orga._id} orga={orga} counts={counts} />
+            ))}
+          </div>
         </div>
-      </div>
+      </main>
     );
   }
 
   // Organization selected - show org content (full screen diagram)
-  // Use negative margin to break out of parent p-8 padding for edge-to-edge diagram
-  // relative positioning creates containing block for the absolute positioned diagram
+  // flex-1 + min-h-0 fills exactly the remaining space after the Header
   return (
-    <div className="-m-8 h-[calc(100vh-4rem)] relative">
+    <div className="flex-1 min-h-0 relative">
       <FocusContainer orgaId={selectedOrga._id} />
     </div>
   );

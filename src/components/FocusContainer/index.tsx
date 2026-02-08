@@ -1,6 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { useFocus, useViewMode } from "../../tools/orgaStore";
 import { useRouteSync } from "../../hooks/useRouteSync";
+import type { ViewMode } from "../../tools/orgaStore/types";
 import "./animations.css";
 import { OrgaVisualView } from "../OrgaVisualView";
 import { TeamVisualView } from "../TeamVisualView";
@@ -38,9 +40,27 @@ const TRANSITION_DURATION = 400; // ms
 export function FocusContainer({ orgaId }: FocusContainerProps) {
   const { focus, focusOnOrga, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, previousFocusFromMember } = useFocus();
   const { viewMode, swapPhase, swapDirection, displayedMode, setViewMode } = useViewMode();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Sync focus state with URL
   useRouteSync();
+
+  // Handle view mode toggle with immediate URL update
+  const handleViewModeChange = useCallback((newMode: ViewMode) => {
+    // Update URL immediately (before animation completes)
+    const currentPath = location.pathname;
+    const newPath = newMode === "manage"
+      ? currentPath.endsWith("/manage") ? currentPath : `${currentPath}/manage`
+      : currentPath.replace(/\/manage$/, "");
+
+    if (currentPath !== newPath) {
+      navigate(newPath, { replace: true });
+    }
+
+    // Trigger the animated state change
+    setViewMode(newMode);
+  }, [location.pathname, navigate, setViewMode]);
 
   // Track which view to show during transition
   const [currentView, setCurrentView] = useState<ViewType>(focus.type);
@@ -218,13 +238,13 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
       }
 
       if (e.key === "v" || e.key === "V") {
-        setViewMode(viewMode === "visual" ? "manage" : "visual");
+        handleViewModeChange(viewMode === "visual" ? "manage" : "visual");
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [viewMode, setViewMode, isFocusTransitioning, animationPhase]);
+  }, [viewMode, handleViewModeChange, isFocusTransitioning, animationPhase]);
 
   return (
     <div className="absolute inset-0 overflow-hidden">
@@ -232,7 +252,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
       {animationPhase === "idle" && !isFocusTransitioning && (
         <ViewToggle
           mode={viewMode}
-          onChange={setViewMode}
+          onChange={handleViewModeChange}
           disabled={swapPhase !== "idle"}
         />
       )}

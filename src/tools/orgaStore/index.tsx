@@ -81,6 +81,20 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     [viewMode, swapPhase]
   );
 
+  // Route-driven focus update (no animation, instant sync)
+  const setFocusFromRoute = useCallback((newFocus: FocusTarget) => {
+    // Skip the initial focus logic when route-driven
+    hasSetInitialFocusRef.current = true;
+    setFocus(newFocus);
+  }, []);
+
+  // Route-driven view mode update (no animation)
+  const setViewModeFromRoute = useCallback((mode: ViewMode) => {
+    setViewModeState(mode);
+    setDisplayedMode(mode);
+    setSwapPhase("idle");
+  }, []);
+
   // Reset view mode when navigating to different entity
   useEffect(() => {
     if (isFocusTransitioning) {
@@ -350,6 +364,8 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
         swapDirection,
         displayedMode,
         setViewMode,
+        setFocusFromRoute,
+        setViewModeFromRoute,
       }}
     >
       {children}

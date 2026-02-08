@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useFocus, useViewMode } from "../../tools/orgaStore";
+import { useRouteSync } from "../../hooks/useRouteSync";
 import "./animations.css";
 import { OrgaVisualView } from "../OrgaVisualView";
 import { TeamVisualView } from "../TeamVisualView";
@@ -37,6 +38,9 @@ const TRANSITION_DURATION = 400; // ms
 export function FocusContainer({ orgaId }: FocusContainerProps) {
   const { focus, focusOnOrga, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, previousFocusFromMember } = useFocus();
   const { viewMode, swapPhase, swapDirection, displayedMode, setViewMode } = useViewMode();
+
+  // Sync focus state with URL
+  useRouteSync();
 
   // Track which view to show during transition
   const [currentView, setCurrentView] = useState<ViewType>(focus.type);

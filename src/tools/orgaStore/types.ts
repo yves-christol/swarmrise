@@ -87,4 +87,8 @@ export type OrgaStoreContextType = {
   swapDirection: SwapDirection;
   displayedMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
+
+  // Route-driven focus (for URL sync, no animation)
+  setFocusFromRoute: (focus: FocusTarget) => void;
+  setViewModeFromRoute: (mode: ViewMode) => void;
 };

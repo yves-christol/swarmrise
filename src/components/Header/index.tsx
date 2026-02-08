@@ -49,7 +49,7 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
           aria-label={t("governance:glossary.title", "swarmrise glossary")}
         >
           <Logo size={24} begin={2} repeatCount={1} />
-          <b className="font-swarm text-dark dark:text-light">swarmrise</b>
+          <b className="font-swarm text-dark dark:text-light hidden sm:inline">swarmrise</b>
         </Link>
       )}
 

@@ -12,7 +12,7 @@
 
 The swarmrise codebase demonstrates a generally solid security posture for a multi-tenant organizational management application. Authentication is consistently enforced across most Convex functions via well-structured auth helpers (`getAuthenticatedUser`, `requireAuthAndMembership`). Multi-tenant data isolation is well-implemented through indexed `orgaId` filtering on all organizational queries. Webhook signature verification is properly implemented using svix.
 
-The initial audit identified several findings. All High, Medium, and Low severity issues have since been remediated (commits `5ad7e74`, `f079038`, and `da6b6e7`). Remaining open items are Informational only.
+The initial audit identified several findings. All High, Medium, and Low severity issues have since been remediated (commits `5ad7e74`, `f079038`, `da6b6e7`, and `b5c52d7`). Remaining open items are Informational only.
 
 ---
 
@@ -29,7 +29,7 @@ The initial audit identified several findings. All High, Medium, and Low severit
 | M5  | Medium        | No rate limiting on invitation creation                   | **Fixed** (f079038) |
 | M6  | Medium        | `deleteTeam` does not clean up roles before deletion      | **Fixed** (f079038) |
 | M7  | Medium        | User-supplied URLs rendered as `href` without sanitization | **Fixed** (f079038) |
-| L1  | Low           | Missing Content Security Policy (CSP) headers             | **Fixed** (da6b6e7) |
+| L1  | Low           | Missing Content Security Policy (CSP) headers             | **Fixed** (da6b6e7, b5c52d7) |
 | L2  | Low           | No upper bound on `limit` parameter in decisions pagination | **Fixed** (da6b6e7) |
 | L3  | Low           | `listMyPendingInvitationsWithOrga` uses `filter()` instead of index for status | **Fixed** (da6b6e7) |
 | L4  | Low           | Error messages may leak internal state                    | **Fixed** (da6b6e7) |
@@ -284,13 +284,9 @@ The application does not define Content Security Policy headers in the HTML or t
 **Impact:** Reduced defense-in-depth against XSS attacks. Without CSP, any injected script can load resources from any origin.
 
 **Recommendation:**
-Add a CSP meta tag to `index.html` or configure CSP headers on the hosting platform (e.g., Vercel):
-```html
-<meta http-equiv="Content-Security-Policy"
-  content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.convex.cloud https://*.convex.site https://*.clerk.accounts.dev; img-src 'self' https://*.convex.cloud data: blob:;">
-```
+Add a CSP meta tag to `index.html` or configure CSP headers on the hosting platform (e.g., Vercel). Ensure all runtime dependencies are whitelisted -- including WebSocket schemes (`wss://`), blob workers, external scripts (Clerk), and image CDNs.
 
-**Remediation (commit da6b6e7):** Added a CSP meta tag to `index.html` with restrictive policies: `default-src 'self'`, `script-src 'self'`, whitelisted Convex, Clerk, and Google Fonts origins for `connect-src`, `style-src`, `font-src`, and `img-src`. Clerk iframe origin whitelisted under `frame-src`.
+**Remediation (commit da6b6e7, refined in b5c52d7):** Added a CSP meta tag to `index.html` with restrictive policies. The initial policy was too restrictive and blocked legitimate runtime resources. Commit `b5c52d7` corrected the CSP to allow: Clerk scripts (`script-src https://*.clerk.accounts.dev`), Convex WebSocket sync (`connect-src wss://*.convex.cloud`), web workers from blob URLs (`worker-src 'self' blob:`), and Clerk avatar images (`img-src https://img.clerk.com`). Final policy: `default-src 'self'; script-src 'self' https://*.clerk.accounts.dev; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://*.clerk.accounts.dev https://clerk.accounts.dev; img-src 'self' https://*.convex.cloud https://img.clerk.com data: blob:; frame-src https://*.clerk.accounts.dev`.
 
 ---
 
@@ -522,7 +518,7 @@ Consider moving test utilities to a separate directory that can be excluded from
 ### Weaknesses
 
 1. ~~**User-supplied URLs in `href` attributes**~~: *(Fixed in M7)* Contact info URLs are now sanitized via `sanitizeUrl()` allowlist.
-2. ~~**No CSP headers**~~: *(Fixed in L1)* Content Security Policy meta tag added to `index.html`.
+2. ~~**No CSP headers**~~: *(Fixed in L1)* Content Security Policy meta tag added to `index.html`, refined to allow all Clerk/Convex runtime resources.
 
 ---
 
@@ -562,7 +558,7 @@ Key improvements made:
 4. ~~**Rate limiting (M5)**~~ -- invitation creation capped at 50/day per member
 5. ~~**Data integrity (M6)**~~ -- team deletion now cleans up roles, topics, and policies
 6. ~~**XSS prevention (M7)**~~ -- URL protocol sanitization applied to all contact links
-7. ~~**CSP headers (L1)**~~ -- Content Security Policy meta tag added to index.html
+7. ~~**CSP headers (L1)**~~ -- Content Security Policy meta tag added to index.html, refined to whitelist Clerk scripts/images, Convex WebSockets, and blob workers
 8. ~~**Pagination hardening (L2, L5)**~~ -- limit capped at 100, `.take()` replaces `.collect()`
 9. ~~**Query optimization (L3)**~~ -- compound index `by_email_and_status` replaces in-memory filter
 10. ~~**Error message sanitization (L4)**~~ -- generic error messages replace implementation-revealing ones
@@ -590,7 +586,7 @@ The absence of full role-based access control (RBAC) remains the most significan
 10. **[MEDIUM]** Implement role-based authorization for `deletePolicy` and `createPolicy`
 11. **[MEDIUM]** Add string length limits to all `v.string()` validators
 12. ~~**[LOW]** Cap `limit` parameter in pagination queries~~ -- **Done** (da6b6e7)
-13. ~~**[LOW]** Add Content Security Policy headers~~ -- **Done** (da6b6e7)
+13. ~~**[LOW]** Add Content Security Policy headers~~ -- **Done** (da6b6e7, refined in b5c52d7)
 14. ~~**[LOW]** Replace in-memory pagination with proper cursor-based queries~~ -- **Done** (da6b6e7)
 15. ~~**[LOW]** Sanitize error messages to avoid leaking internal implementation details~~ -- **Done** (da6b6e7)
 

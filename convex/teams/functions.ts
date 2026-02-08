@@ -357,7 +357,43 @@ export const deleteTeam = mutation({
       orgaId: team.orgaId,
       name: team.name,
     };
-    
+
+    // Clean up roles belonging to this team and remove from members' roleIds
+    const teamRoles = await ctx.db
+      .query("roles")
+      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
+      .collect();
+    for (const role of teamRoles) {
+      // Remove role from the assigned member's roleIds
+      if (role.memberId) {
+        const roleMember = await ctx.db.get(role.memberId);
+        if (roleMember) {
+          await ctx.db.patch(role.memberId, {
+            roleIds: roleMember.roleIds.filter((id) => id !== role._id),
+          });
+        }
+      }
+      await ctx.db.delete(role._id);
+    }
+
+    // Clean up topics belonging to this team
+    const teamTopics = await ctx.db
+      .query("topics")
+      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
+      .collect();
+    for (const topic of teamTopics) {
+      await ctx.db.delete(topic._id);
+    }
+
+    // Clean up policies belonging to this team
+    const teamPolicies = await ctx.db
+      .query("policies")
+      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
+      .collect();
+    for (const policy of teamPolicies) {
+      await ctx.db.delete(policy._id);
+    }
+
     // Delete team
     await ctx.db.delete(args.teamId);
     

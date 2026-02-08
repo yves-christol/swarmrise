@@ -292,11 +292,19 @@ export const updateOrga = mutation({
       throw new Error("Organization not found");
     }
 
-    // Only the owner can modify authorizedEmailDomains
-    if (args.authorizedEmailDomains !== undefined) {
-      if (orga.owner !== member.personId) {
-        throw new Error("Only the organization owner can modify authorized email domains");
-      }
+    // Only the owner can modify organization settings
+    const isOwner = orga.owner === member.personId;
+    if (args.name !== undefined && !isOwner) {
+      throw new Error("Only the organization owner can modify the organization name");
+    }
+    if (args.logoStorageId !== undefined && !isOwner) {
+      throw new Error("Only the organization owner can modify the organization logo");
+    }
+    if (args.colorScheme !== undefined && !isOwner) {
+      throw new Error("Only the organization owner can modify the color scheme");
+    }
+    if (args.authorizedEmailDomains !== undefined && !isOwner) {
+      throw new Error("Only the organization owner can modify authorized email domains");
     }
 
     // Update organization

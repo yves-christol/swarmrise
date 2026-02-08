@@ -77,25 +77,48 @@ export function getContactIcon(type: string) {
   }
 }
 
+/**
+ * Sanitize a URL to only allow safe protocols (https, http, mailto, tel).
+ * Returns null if the URL uses a dangerous protocol (javascript:, data:, etc).
+ */
+function sanitizeUrl(url: string): string | null {
+  const trimmed = url.trim();
+  // Allow only safe protocols
+  if (/^https?:\/\//i.test(trimmed) || /^mailto:/i.test(trimmed) || /^tel:/i.test(trimmed)) {
+    return trimmed;
+  }
+  return null;
+}
+
 export function getContactLink(type: string, value: string): string | null {
+  let url: string;
   switch (type) {
     case "LinkedIn":
-      return value.startsWith("http") ? value : `https://linkedin.com/in/${value}`;
+      url = value.startsWith("http") ? value : `https://linkedin.com/in/${value}`;
+      break;
     case "Email":
-      return `mailto:${value}`;
+      url = `mailto:${value}`;
+      break;
     case "Facebook":
-      return value.startsWith("http") ? value : `https://facebook.com/${value}`;
+      url = value.startsWith("http") ? value : `https://facebook.com/${value}`;
+      break;
     case "Instagram":
-      return value.startsWith("http") ? value : `https://instagram.com/${value}`;
+      url = value.startsWith("http") ? value : `https://instagram.com/${value}`;
+      break;
     case "Whatsapp":
-      return `https://wa.me/${value.replace(/\D/g, "")}`;
+      url = `https://wa.me/${value.replace(/\D/g, "")}`;
+      break;
     case "Mobile":
-      return `tel:${value}`;
+      url = `tel:${value}`;
+      break;
     case "Website":
-      return value.startsWith("http") ? value : `https://${value}`;
+      url = value.startsWith("http") ? value : `https://${value}`;
+      break;
     case "Twitter":
-      return value.startsWith("http") ? value : `https://x.com/${value.replace(/^@/, "")}`;
+      url = value.startsWith("http") ? value : `https://x.com/${value.replace(/^@/, "")}`;
+      break;
     default:
       return null;
   }
+  return sanitizeUrl(url);
 }

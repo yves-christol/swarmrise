@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthenticatedUser } from "./utils";
 
@@ -18,7 +18,7 @@ export const generateUploadUrl = mutation({
 
 /**
  * Get the URL for a stored file.
- * Returns null if the file doesn't exist.
+ * Requires authentication. Returns null if the file doesn't exist.
  */
 export const getStorageUrl = query({
   args: {
@@ -26,21 +26,21 @@ export const getStorageUrl = query({
   },
   returns: v.union(v.string(), v.null()),
   handler: async (ctx, args) => {
+    await getAuthenticatedUser(ctx);
     return await ctx.storage.getUrl(args.storageId);
   },
 });
 
 /**
  * Delete a file from storage.
- * Requires authentication.
+ * Internal only - not exposed to clients.
  */
-export const deleteStorageFile = mutation({
+export const deleteStorageFile = internalMutation({
   args: {
     storageId: v.id("_storage"),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    await getAuthenticatedUser(ctx);
     await ctx.storage.delete(args.storageId);
     return null;
   },

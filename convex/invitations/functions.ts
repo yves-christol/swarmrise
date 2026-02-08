@@ -102,6 +102,17 @@ export const createInvitation = mutation({
   handler: async (ctx, args) => {
     const member = await requireAuthAndMembership(ctx, args.orgaId);
 
+    // Rate limit: max 50 invitations per member per 24 hours
+    const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+    const recentInvitations = await ctx.db
+      .query("invitations")
+      .withIndex("by_emitter", (q) => q.eq("emitterMemberId", member._id))
+      .filter((q) => q.gte(q.field("sentDate"), oneDayAgo))
+      .collect();
+    if (recentInvitations.length >= 50) {
+      throw new Error("Rate limit exceeded: maximum 50 invitations per day");
+    }
+
     // Fetch the organization to check for authorized email domains
     const orga = await ctx.db.get(args.orgaId);
     if (!orga) {
@@ -217,9 +228,28 @@ export const updateInvitationStatus = mutation({
     if (!invitation) {
       throw new Error("Invitation not found");
     }
-    
+
     const member = await requireAuthAndMembership(ctx, invitation.orgaId);
-    
+
+    // Only the emitter or org owner can change invitation status
+    const orga = await ctx.db.get(invitation.orgaId);
+    const isEmitter = invitation.emitterMemberId === member._id;
+    const isOwner = orga?.owner === member.personId;
+    if (!isEmitter && !isOwner) {
+      throw new Error("Only the invitation emitter or organization owner can change invitation status");
+    }
+
+    // State machine: only allow valid forward transitions
+    // pending -> rejected (emitter/owner retracting the invitation)
+    // pending -> accepted/rejected by invitee is handled by acceptInvitation/rejectInvitation
+    const validTransitions: Record<string, string[]> = {
+      pending: ["rejected"],
+    };
+    const allowed = validTransitions[invitation.status];
+    if (!allowed || !allowed.includes(args.status)) {
+      throw new Error(`Cannot transition invitation from "${invitation.status}" to "${args.status}"`);
+    }
+
     // Update invitation
     await ctx.db.patch(args.invitationId, {
       status: args.status,

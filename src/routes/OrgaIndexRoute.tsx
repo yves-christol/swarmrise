@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router";
+import { Navigate, useLocation } from "react-router";
 import { useOrgaStore } from "../tools/orgaStore";
 import { routes } from "./index";
 import App from "../components/App";
@@ -10,12 +10,25 @@ const YOU_COME_FIRST_KEY = "swarmrise_you_come_first";
  * Route component for /o/:orgaId (index route).
  * Implements "You come first" behavior: redirects to user's member view
  * if they have a member in this org (unless disabled via preference).
+ *
+ * Note: Skips redirect when user explicitly navigated here via zoom out
+ * (detected via navigation state.fromFocus).
  */
 export const OrgaIndexRoute = () => {
   const { selectedOrgaId, myMember } = useOrgaStore();
+  const location = useLocation();
   const [shouldRedirect, setShouldRedirect] = useState<boolean | null>(null);
 
+  // Check if this navigation came from focus system (user clicked zoom out)
+  const fromFocus = (location.state as { fromFocus?: boolean } | null)?.fromFocus === true;
+
   useEffect(() => {
+    // If user explicitly navigated here (zoom out), don't redirect
+    if (fromFocus) {
+      setShouldRedirect(false);
+      return;
+    }
+
     // Check if "You come first" is enabled (default: true)
     const stored = localStorage.getItem(YOU_COME_FIRST_KEY);
     const isEnabled = stored === null ? true : stored === "true";
@@ -28,7 +41,12 @@ export const OrgaIndexRoute = () => {
       setShouldRedirect(false);
     }
     // If myMember is undefined, still loading - wait
-  }, [myMember, selectedOrgaId]);
+  }, [myMember, selectedOrgaId, fromFocus]);
+
+  // If user explicitly navigated here, render immediately without waiting
+  if (fromFocus) {
+    return <App />;
+  }
 
   // Still determining whether to redirect
   if (shouldRedirect === null) {

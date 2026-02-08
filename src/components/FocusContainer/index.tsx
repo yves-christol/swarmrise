@@ -55,7 +55,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
       : currentPath.replace(/\/manage$/, "");
 
     if (currentPath !== newPath) {
-      navigate(newPath, { replace: true });
+      void navigate(newPath, { replace: true });
     }
 
     // Trigger the animated state change

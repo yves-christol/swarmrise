@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { useParams, useLocation, useNavigate } from "react-router";
 import { Id } from "../../convex/_generated/dataModel";
 import { useOrgaStore } from "../tools/orgaStore";
@@ -157,8 +157,14 @@ function focusEquals(a: FocusTarget, b: FocusTarget): boolean {
 
 /**
  * Hook that synchronizes URL with focus state.
- * - URL changes update focus state (URL is source of truth)
- * - Focus changes update URL (user navigation)
+ *
+ * Two-way sync with clear ownership:
+ * 1. URL changes (browser nav, direct URL) → update focus (URL is source of truth)
+ * 2. Focus changes (user clicks) → update URL (focus drives URL)
+ *
+ * Key insight: We track the LAST KNOWN pathname to distinguish between:
+ * - URL actually changed (browser nav) → sync focus FROM URL
+ * - Focus changed (user click) → sync URL FROM focus
  */
 export function useRouteSync() {
   const params = useParams<RouteParams>();
@@ -169,6 +175,7 @@ export function useRouteSync() {
     selectedOrgaId,
     focus,
     viewMode,
+    swapPhase,
     setFocusFromRoute,
     setViewModeFromRoute,
     setFocusFromRouteWithAnimation,
@@ -176,14 +183,16 @@ export function useRouteSync() {
     isSwitchingOrga,
   } = useOrgaStore();
 
-  // Track if we're currently syncing to avoid loops
-  const isSyncingRef = useRef(false);
-  // Track the last URL we navigated to
-  const lastUrlRef = useRef<string | null>(null);
   // Track if this is a popstate (browser back/forward) navigation
   const isPopstateRef = useRef(false);
   // Track previous focus for animation direction
   const previousFocusRef = useRef<FocusTarget>(focus);
+  // Track the last pathname we processed to detect actual URL changes
+  const lastPathnameRef = useRef<string>(location.pathname);
+  // Track if we're in the middle of updating the URL from focus
+  const isUpdatingUrlRef = useRef(false);
+  // Track if we just synced focus FROM URL (prevent reverse sync)
+  const justSyncedFromUrlRef = useRef(false);
 
   // Listen for popstate events (browser back/forward)
   useEffect(() => {
@@ -195,10 +204,31 @@ export function useRouteSync() {
     return () => window.removeEventListener("popstate", handlePopstate);
   }, []);
 
-  // URL -> Focus sync (URL is source of truth on route change)
+  // URL → Focus sync: Only runs when URL actually changes
   useEffect(() => {
     // Skip if not on an org route
     if (!params.orgaId) return;
+
+    // Skip if we're the ones updating the URL
+    if (isUpdatingUrlRef.current) {
+      isUpdatingUrlRef.current = false;
+      lastPathnameRef.current = location.pathname;
+      return;
+    }
+
+    // Skip if a focus transition is already in progress (user-initiated animation)
+    // This prevents double-rendering during click navigation
+    if (isFocusTransitioning && !isPopstateRef.current) {
+      return;
+    }
+
+    // Only sync if the pathname actually changed
+    if (location.pathname === lastPathnameRef.current) {
+      return;
+    }
+
+    // Update our tracking ref
+    lastPathnameRef.current = location.pathname;
 
     // Parse current URL
     const parsed = parseRouteToFocus(params, location.pathname);
@@ -210,8 +240,8 @@ export function useRouteSync() {
 
     if (!focusNeedsUpdate && !viewModeNeedsUpdate) return;
 
-    // Mark as syncing to prevent URL update loop
-    isSyncingRef.current = true;
+    // Mark that we're syncing from URL to prevent Focus→URL from running
+    justSyncedFromUrlRef.current = true;
 
     if (focusNeedsUpdate) {
       // Use animation for browser back/forward navigation
@@ -223,13 +253,15 @@ export function useRouteSync() {
       }
       previousFocusRef.current = parsed.focus;
     }
-    if (viewModeNeedsUpdate) {
+    // Only sync viewMode from URL if no animation is in progress
+    // (FocusContainer handles view mode toggle animation directly)
+    if (viewModeNeedsUpdate && swapPhase === "idle") {
       setViewModeFromRoute(parsed.viewMode);
     }
 
-    // Reset flags after a tick
+    // Reset flags after a tick (allows React to complete the render cycle)
     requestAnimationFrame(() => {
-      isSyncingRef.current = false;
+      justSyncedFromUrlRef.current = false;
       isPopstateRef.current = false;
     });
   }, [
@@ -237,34 +269,40 @@ export function useRouteSync() {
     location.pathname,
     focus,
     viewMode,
+    swapPhase,
     setFocusFromRoute,
     setViewModeFromRoute,
     setFocusFromRouteWithAnimation,
     isFocusTransitioning,
   ]);
 
-  // Focus -> URL sync (update URL when user navigates via UI)
+  // Focus → URL sync: Update URL when focus changes (user navigation)
   useEffect(() => {
-    // Skip if syncing from URL or no org selected
-    if (isSyncingRef.current || !selectedOrgaId) return;
+    // Skip if we just synced focus FROM URL (prevent reverse sync loop)
+    if (justSyncedFromUrlRef.current) return;
 
-    // Only sync if already on an org route (don't redirect from "/" to "/o/:orgaId")
+    // Skip if no org selected
+    if (!selectedOrgaId) return;
+
+    // Only sync if already on an org route
     if (!params.orgaId) return;
 
     // Skip during org switching (OrgaSelector handles navigation)
     if (isSwitchingOrga) return;
 
-    // Skip during focus transitions (animation in progress)
-    if (isFocusTransitioning) return;
-
     // Build the expected URL for current state
     const expectedUrl = buildUrlFromFocus(selectedOrgaId, focus, viewMode);
 
     // Only update if different from current URL
-    if (location.pathname !== expectedUrl && lastUrlRef.current !== expectedUrl) {
-      lastUrlRef.current = expectedUrl;
-      // Use replace to avoid polluting history during sync
-      navigate(expectedUrl, { replace: true });
+    if (location.pathname !== expectedUrl) {
+      // Mark that we're updating the URL so the URL→Focus sync skips
+      isUpdatingUrlRef.current = true;
+      // Push to history so browser back works for user navigation
+      // Pass state to indicate this is a user-initiated navigation (not URL typed)
+      void navigate(expectedUrl, { state: { fromFocus: true } });
+      // Update tracking refs
+      lastPathnameRef.current = expectedUrl;
+      previousFocusRef.current = focus;
     }
   }, [
     selectedOrgaId,
@@ -272,7 +310,6 @@ export function useRouteSync() {
     viewMode,
     location.pathname,
     navigate,
-    isFocusTransitioning,
     isSwitchingOrga,
     params.orgaId,
   ]);

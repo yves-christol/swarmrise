@@ -76,7 +76,7 @@ export const OrgaSelector = () => {
     if (orgaId !== selectedOrgaId) {
       selectOrga(orgaId)
       // Navigate to the new org's root (will trigger "You come first" redirect if enabled)
-      navigate(routes.orga(orgaId))
+      void navigate(routes.orga(orgaId))
     }
     setIsOpen(false)
     triggerRef.current?.focus()

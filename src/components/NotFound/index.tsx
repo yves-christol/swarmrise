@@ -26,9 +26,9 @@ export function NotFound({
     if (onNavigateBack) {
       onNavigateBack();
     } else if (backTo) {
-      navigate(backTo);
+      void navigate(backTo);
     } else {
-      navigate("/");
+      void navigate("/");
     }
   };
 

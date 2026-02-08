@@ -108,6 +108,26 @@ Swarmrise uses a minimal, high-contrast palette that works in both light and dar
 | Wing Blue | `#a2dbed` | Secondary accent, info states | `bg-[#a2dbed]` |
 | Wing Blue Light | `#e0f0f4` | Subtle backgrounds, highlights | `bg-[#e0f0f4]` |
 
+#### Golden-Bee (Semantic Alias)
+
+When documentation, code comments, or discussions refer to "golden" in the context of Swarmrise UI, this always means "golden-bee" - our bee-inspired accent color:
+
+| Mode | Hex | Usage |
+|------|-----|-------|
+| Light Mode | `#D4AF37` | Golden accent on light backgrounds |
+| Dark Mode | `#EAC840` | Golden accent on dark backgrounds |
+
+This naming convention ties our accent color directly to the brand's bee metaphor. Use "golden" or "golden-bee" interchangeably in conversation and documentation.
+
+**Tailwind Usage:**
+
+```tsx
+// Light/dark responsive golden-bee
+className="text-[#D4AF37] dark:text-[#EAC840]"
+className="border-[#D4AF37] dark:border-[#EAC840]"
+className="stroke-[#D4AF37] dark:stroke-[#EAC840]"
+```
+
 #### Semantic Colors
 
 | Purpose | Light Mode | Dark Mode | Usage |
@@ -383,6 +403,7 @@ className="max-w-4xl mx-auto"
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-02-08 | 1.1.0 | Added golden-bee semantic color alias with light/dark mode specifications |
 | 2026-02-01 | 1.0.0 | Initial brand guidelines established |
 
 ---

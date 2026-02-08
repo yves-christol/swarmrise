@@ -346,7 +346,7 @@ export function MemberFocusView({
             stroke-dashoffset: 100;
           }
           to {
-            opacity: 0.4;
+            opacity: 1;
             stroke-dashoffset: 0;
           }
         }

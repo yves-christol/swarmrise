@@ -74,7 +74,6 @@ export const TeamNode = memo(function TeamNode({
           y2={line.y2}
           stroke={line.isGoldConnection ? "var(--diagram-golden-bee)" : "var(--diagram-node-stroke)"}
           strokeWidth={line.isGoldConnection ? 2 : 1.5}
-          opacity={isHovered ? 0.8 : (line.isGoldConnection ? 0.6 : 0.4)}
           style={{
             transition: "opacity 150ms ease-out",
             animation: `connectionReveal 300ms ease-out both`,

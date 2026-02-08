@@ -1,6 +1,16 @@
 {
   "organization": "organization",
   "organizations": "organizations",
+  "settings": {
+    "title": "Organization Settings",
+    "button": "Settings",
+    "ariaLabel": "Open organization settings",
+    "generalSection": "General",
+    "accessSection": "Access",
+    "saveButton": "Save changes",
+    "saving": "Saving...",
+    "unsavedChangesWarning": "You have unsaved changes. Are you sure you want to close?"
+  },
   "orga": "orga",
   "noOrganization": "No organization",
   "selectOrganization": "Select organization",

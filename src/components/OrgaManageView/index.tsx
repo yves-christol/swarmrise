@@ -1,14 +1,14 @@
 import { useState, useMemo, useEffect } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useSelectedOrga, useMembers, useTeams, useRoles, useFocus } from "../../tools/orgaStore";
-import { EmailDomainsInput } from "../EmailDomainsInput";
 import { DecisionJournal } from "../DecisionJournal";
 import { MemberListItem } from "../MemberListItem";
 import { TeamListItem, TeamListItemTeam } from "../TeamListItem";
 import { MissionReminder } from "../MissionReminder";
+import { OrgaSettingsModal } from "../OrgaSettingsModal";
 
 type OrgaManageViewProps = {
   orgaId: Id<"orgas">;
@@ -54,15 +54,9 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
   const { t: tMembers } = useTranslation("members");
   const [memberSearchQuery, setMemberSearchQuery] = useState("");
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [displayedMemberCount, setDisplayedMemberCount] = useState(MEMBERS_PAGE_SIZE);
   const [displayedTeamCount, setDisplayedTeamCount] = useState(TEAMS_PAGE_SIZE);
-
-  // Email domains state
-  const [emailDomains, setEmailDomains] = useState<string[]>([]);
-  const [isSavingDomains, setIsSavingDomains] = useState(false);
-  const [domainsSaveStatus, setDomainsSaveStatus] = useState<"idle" | "success" | "error">("idle");
-  const [hasDomainsChanged, setHasDomainsChanged] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   // Get organization data
   const orga = useQuery(api.orgas.functions.getOrgaById, { orgaId });
@@ -184,64 +178,6 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
     return orga.owner === myMember.personId && members.length === 1;
   }, [orga, myMember, members]);
 
-  // Mutations
-  const deleteOrga = useMutation(api.orgas.functions.deleteOrganization);
-  const updateOrga = useMutation(api.orgas.functions.updateOrga);
-
-  // Initialize email domains from orga data
-  useEffect(() => {
-    if (orga) {
-      setEmailDomains(orga.authorizedEmailDomains ?? []);
-      setHasDomainsChanged(false);
-    }
-  }, [orga]);
-
-  // Track changes to email domains
-  const handleEmailDomainsChange = (newDomains: string[]) => {
-    setEmailDomains(newDomains);
-    // Check if changed from original
-    const originalDomains = orga?.authorizedEmailDomains ?? [];
-    const changed =
-      newDomains.length !== originalDomains.length ||
-      newDomains.some((d, i) => d !== originalDomains[i]);
-    setHasDomainsChanged(changed);
-    // Reset status when editing
-    if (domainsSaveStatus !== "idle") {
-      setDomainsSaveStatus("idle");
-    }
-  };
-
-  const handleSaveDomains = async () => {
-    if (!isOwner) return;
-    setIsSavingDomains(true);
-    setDomainsSaveStatus("idle");
-    try {
-      await updateOrga({
-        orgaId,
-        authorizedEmailDomains: emailDomains.length > 0 ? emailDomains : null,
-      });
-      setDomainsSaveStatus("success");
-      setHasDomainsChanged(false);
-      // Reset success message after a delay
-      setTimeout(() => setDomainsSaveStatus("idle"), 3000);
-    } catch (error) {
-      console.error("Failed to update email domains:", error);
-      setDomainsSaveStatus("error");
-    } finally {
-      setIsSavingDomains(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!canDelete) return;
-    try {
-      await deleteOrga({ orgaId });
-      // The store will handle navigation after deletion
-    } catch (error) {
-      console.error("Failed to delete organization:", error);
-    }
-  };
-
   if (!orga || !selectedOrga) {
     return (
       <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
@@ -256,7 +192,31 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
       <div className="pt-20 px-8 pb-8 max-w-4xl mx-auto">
         {/* Header */}
         <header className="mb-8">
-          <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">{orga.name}</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">{orga.name}</h1>
+            {isOwner && (
+              <button
+                onClick={() => setShowSettingsModal(true)}
+                className="
+                  flex items-center gap-2
+                  px-3 py-1.5
+                  text-sm
+                  text-gray-600 dark:text-gray-400
+                  hover:text-dark dark:hover:text-light
+                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  rounded-md
+                  transition-colors duration-75
+                  focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                "
+                aria-label={t("settings.ariaLabel")}
+              >
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M8.34 1.804A1 1 0 019.32 1h1.36a1 1 0 01.98.804l.295 1.473c.497.144.971.342 1.416.587l1.25-.834a1 1 0 011.262.125l.962.962a1 1 0 01.125 1.262l-.834 1.25c.245.445.443.919.587 1.416l1.473.295a1 1 0 01.804.98v1.36a1 1 0 01-.804.98l-1.473.295a6.95 6.95 0 01-.587 1.416l.834 1.25a1 1 0 01-.125 1.262l-.962.962a1 1 0 01-1.262.125l-1.25-.834a6.953 6.953 0 01-1.416.587l-.295 1.473a1 1 0 01-.98.804H9.32a1 1 0 01-.98-.804l-.295-1.473a6.957 6.957 0 01-1.416-.587l-1.25.834a1 1 0 01-1.262-.125l-.962-.962a1 1 0 01-.125-1.262l.834-1.25a6.957 6.957 0 01-.587-1.416l-1.473-.295A1 1 0 011 10.68V9.32a1 1 0 01.804-.98l1.473-.295c.144-.497.342-.971.587-1.416l-.834-1.25a1 1 0 01.125-1.262l.962-.962A1 1 0 015.38 3.03l1.25.834a6.957 6.957 0 011.416-.587l.295-1.473zM13 10a3 3 0 11-6 0 3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
+                <span>{t("settings.button")}</span>
+              </button>
+            )}
+          </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             {t("settingsAndDirectory")}
           </p>
@@ -434,128 +394,17 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
 
         {/* Decision journal */}
         <DecisionJournal scope="orga" orgaId={orgaId} />
-
-        {/* Email domain restrictions - only show to owner */}
-        {isOwner && (
-          <section className="mb-8">
-            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light mb-2">
-              {t("authorizedDomainsSectionTitle")}
-            </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              {t("authorizedDomainsSectionDescription")}
-            </p>
-
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-              <EmailDomainsInput
-                domains={emailDomains}
-                onChange={handleEmailDomainsChange}
-                disabled={isSavingDomains}
-              />
-
-              {/* Save button and status */}
-              <div className="mt-4 flex items-center gap-3">
-                <button
-                  onClick={() => void handleSaveDomains()}
-                  disabled={isSavingDomains || !hasDomainsChanged}
-                  className="
-                    px-4 py-2
-                    bg-[#eac840] hover:bg-[#d4af37]
-                    text-dark
-                    font-medium
-                    rounded-lg
-                    transition-colors
-                    disabled:opacity-50 disabled:cursor-not-allowed
-                    flex items-center gap-2
-                  "
-                >
-                  {isSavingDomains ? (
-                    <>
-                      <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      {t("authorizedDomainsSaving")}
-                    </>
-                  ) : (
-                    t("authorizedDomainsSave")
-                  )}
-                </button>
-
-                {domainsSaveStatus === "success" && (
-                  <span className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
-                    <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-                    </svg>
-                    {t("authorizedDomainsSaveSuccess")}
-                  </span>
-                )}
-
-                {domainsSaveStatus === "error" && (
-                  <span className="text-sm text-red-600 dark:text-red-400">
-                    {t("authorizedDomainsSaveError")}
-                  </span>
-                )}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Danger zone - only show if user can delete */}
-        {canDelete && (
-          <section className="mt-12 pt-6 border-t border-red-200 dark:border-red-900/50">
-            <h2 className="font-swarm text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
-              {t("dangerZone")}
-            </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              {t("deleteOrgWarning")}
-            </p>
-
-            {showDeleteConfirm ? (
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => void handleDelete()}
-                  className="
-                    px-4 py-2
-                    bg-red-600 hover:bg-red-700
-                    text-white
-                    rounded-lg
-                    transition-colors
-                    font-medium
-                  "
-                >
-                  {t("confirmDeleteOrg")}
-                </button>
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="
-                    px-4 py-2
-                    bg-gray-200 dark:bg-gray-700
-                    hover:bg-gray-300 dark:hover:bg-gray-600
-                    text-gray-700 dark:text-gray-300
-                    rounded-lg
-                    transition-colors
-                  "
-                >
-                  {tCommon("cancel")}
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="
-                  px-4 py-2
-                  bg-red-600 hover:bg-red-700
-                  text-white
-                  rounded-lg
-                  transition-colors
-                "
-              >
-                {t("deleteOrganization")}
-              </button>
-            )}
-          </section>
-        )}
       </div>
+
+      {/* Settings modal - only for owner */}
+      {isOwner && (
+        <OrgaSettingsModal
+          isOpen={showSettingsModal}
+          onClose={() => setShowSettingsModal(false)}
+          orgaId={orgaId}
+          canDelete={canDelete}
+        />
+      )}
     </div>
   );
 }

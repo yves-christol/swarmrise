@@ -3,10 +3,11 @@ import { useQuery, useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import { useSelectedOrga, useMembers, useFocus } from "../../tools/orgaStore";
+import { useSelectedOrga, useMembers, useTeams, useRoles, useFocus } from "../../tools/orgaStore";
 import { EmailDomainsInput } from "../EmailDomainsInput";
 import { DecisionJournal } from "../DecisionJournal";
 import { MemberListItem } from "../MemberListItem";
+import { TeamListItem, TeamListItemTeam } from "../TeamListItem";
 import { MissionReminder } from "../MissionReminder";
 
 type OrgaManageViewProps = {
@@ -45,14 +46,17 @@ function StatCard({
 }
 
 const MEMBERS_PAGE_SIZE = 10;
+const TEAMS_PAGE_SIZE = 10;
 
 export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
   const { t } = useTranslation("orgs");
   const { t: tCommon } = useTranslation("common");
   const { t: tMembers } = useTranslation("members");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [memberSearchQuery, setMemberSearchQuery] = useState("");
+  const [teamSearchQuery, setTeamSearchQuery] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [displayedCount, setDisplayedCount] = useState(MEMBERS_PAGE_SIZE);
+  const [displayedMemberCount, setDisplayedMemberCount] = useState(MEMBERS_PAGE_SIZE);
+  const [displayedTeamCount, setDisplayedTeamCount] = useState(TEAMS_PAGE_SIZE);
 
   // Email domains state
   const [emailDomains, setEmailDomains] = useState<string[]>([]);
@@ -70,10 +74,14 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
   const { myMember, selectedOrga } = useSelectedOrga();
 
   // Focus navigation
-  const { focusOnMember } = useFocus();
+  const { focusOnMember, focusOnTeam } = useFocus();
 
   // Get all members
   const { data: members, isLoading: membersLoading } = useMembers();
+
+  // Get all teams and roles
+  const { data: teams, isLoading: teamsLoading } = useTeams();
+  const { data: roles } = useRoles();
 
   // Get counts from the orga list (cached data)
   const orgasWithCounts = useQuery(api.orgas.functions.listMyOrgasWithCounts, {});
@@ -82,35 +90,85 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
     return found?.counts ?? { members: 0, teams: 0, roles: 0 };
   }, [orgasWithCounts, orgaId]);
 
+  // Compute role counts per team
+  const roleCountByTeam = useMemo(() => {
+    const counts = new Map<string, number>();
+    if (roles) {
+      for (const role of roles) {
+        const current = counts.get(role.teamId) || 0;
+        counts.set(role.teamId, current + 1);
+      }
+    }
+    return counts;
+  }, [roles]);
+
+  // Enrich teams with role counts
+  const teamsWithRoleCounts: TeamListItemTeam[] = useMemo(() => {
+    if (!teams) return [];
+    return teams.map((team) => ({
+      _id: team._id,
+      name: team.name,
+      roleCount: roleCountByTeam.get(team._id) || 0,
+    }));
+  }, [teams, roleCountByTeam]);
+
   // Filter members by search query
   const filteredMembers = useMemo(() => {
     if (!members) return [];
-    if (!searchQuery.trim()) return members;
+    if (!memberSearchQuery.trim()) return members;
 
-    const query = searchQuery.toLowerCase();
+    const query = memberSearchQuery.toLowerCase();
     return members.filter(
       (m) =>
         m.firstname.toLowerCase().includes(query) ||
         m.surname.toLowerCase().includes(query) ||
         m.email.toLowerCase().includes(query)
     );
-  }, [members, searchQuery]);
+  }, [members, memberSearchQuery]);
 
-  // Reset pagination when search query changes
+  // Filter teams by search query
+  const filteredTeams = useMemo(() => {
+    if (!teamsWithRoleCounts.length) return [];
+    if (!teamSearchQuery.trim()) return teamsWithRoleCounts;
+
+    const query = teamSearchQuery.toLowerCase();
+    return teamsWithRoleCounts.filter((team) =>
+      team.name.toLowerCase().includes(query)
+    );
+  }, [teamsWithRoleCounts, teamSearchQuery]);
+
+  // Reset member pagination when search query changes
   useEffect(() => {
-    setDisplayedCount(MEMBERS_PAGE_SIZE);
-  }, [searchQuery]);
+    setDisplayedMemberCount(MEMBERS_PAGE_SIZE);
+  }, [memberSearchQuery]);
+
+  // Reset team pagination when search query changes
+  useEffect(() => {
+    setDisplayedTeamCount(TEAMS_PAGE_SIZE);
+  }, [teamSearchQuery]);
 
   // Paginate the filtered members
   const displayedMembers = useMemo(() => {
-    return filteredMembers.slice(0, displayedCount);
-  }, [filteredMembers, displayedCount]);
+    return filteredMembers.slice(0, displayedMemberCount);
+  }, [filteredMembers, displayedMemberCount]);
 
   const totalMemberCount = filteredMembers.length;
-  const hasMoreMembers = displayedCount < totalMemberCount;
+  const hasMoreMembers = displayedMemberCount < totalMemberCount;
 
   const handleLoadMoreMembers = () => {
-    setDisplayedCount((prev) => prev + MEMBERS_PAGE_SIZE);
+    setDisplayedMemberCount((prev) => prev + MEMBERS_PAGE_SIZE);
+  };
+
+  // Paginate the filtered teams
+  const displayedTeams = useMemo(() => {
+    return filteredTeams.slice(0, displayedTeamCount);
+  }, [filteredTeams, displayedTeamCount]);
+
+  const totalTeamCount = filteredTeams.length;
+  const hasMoreTeams = displayedTeamCount < totalTeamCount;
+
+  const handleLoadMoreTeams = () => {
+    setDisplayedTeamCount((prev) => prev + TEAMS_PAGE_SIZE);
   };
 
   // Check if current user is the owner
@@ -228,8 +286,8 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
             <input
               type="search"
               placeholder={tMembers("searchMembers")}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={memberSearchQuery}
+              onChange={(e) => setMemberSearchQuery(e.target.value)}
               className="
                 px-3 py-1.5 text-sm
                 border border-gray-300 dark:border-gray-600
@@ -250,7 +308,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
               </div>
             ) : displayedMembers.length === 0 ? (
               <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                {searchQuery ? tMembers("noMembersMatchSearch") : tMembers("noMembersFound")}
+                {memberSearchQuery ? tMembers("noMembersMatchSearch") : tMembers("noMembersFound")}
               </div>
             ) : (
               <>
@@ -290,6 +348,83 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                     "
                   >
                     {tMembers("loadMore")}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* Team directory */}
+        <section className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+              {t("teamDirectory")}
+            </h2>
+            <input
+              type="search"
+              placeholder={t("searchTeams")}
+              value={teamSearchQuery}
+              onChange={(e) => setTeamSearchQuery(e.target.value)}
+              className="
+                px-3 py-1.5 text-sm
+                border border-gray-300 dark:border-gray-600
+                rounded-lg
+                bg-white dark:bg-gray-800
+                text-dark dark:text-light
+                placeholder:text-gray-400
+                focus:outline-none focus:ring-2 focus:ring-[#eac840]
+              "
+            />
+          </div>
+
+          {/* Team list */}
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            {teamsLoading ? (
+              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                {t("loadingTeams")}
+              </div>
+            ) : displayedTeams.length === 0 ? (
+              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                {teamSearchQuery ? t("noTeamsMatchSearch") : t("noTeamsFound")}
+              </div>
+            ) : (
+              <>
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {displayedTeams.map((team) => (
+                    <TeamListItem
+                      key={team._id}
+                      team={team}
+                      onNavigate={() => focusOnTeam(team._id)}
+                    />
+                  ))}
+                </div>
+
+                {/* Count indicator - only show if paginated */}
+                {totalTeamCount > TEAMS_PAGE_SIZE && (
+                  <div className="px-4 py-2 text-xs text-gray-400 dark:text-gray-500 text-center border-t border-gray-100 dark:border-gray-700">
+                    {t("showingTeamsCount", {
+                      shown: displayedTeams.length,
+                      total: totalTeamCount,
+                    })}
+                  </div>
+                )}
+
+                {/* Load more button */}
+                {hasMoreTeams && (
+                  <button
+                    onClick={handleLoadMoreTeams}
+                    className="
+                      w-full py-3
+                      text-sm text-gray-500 dark:text-gray-400
+                      hover:text-gray-700 dark:hover:text-gray-300
+                      hover:bg-gray-50 dark:hover:bg-gray-700/50
+                      transition-colors duration-75
+                      border-t border-gray-200 dark:border-gray-700
+                      focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
+                    "
+                  >
+                    {t("loadMoreTeams")}
                   </button>
                 )}
               </>

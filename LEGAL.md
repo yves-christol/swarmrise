@@ -47,7 +47,6 @@ The project is licensed under the Apache License 2.0, which is a permissive open
 | `@clerk/clerk-react` | MIT | Compliant | Authentication SDK |
 | `@clerk/themes` | MIT | Compliant | UI themes for Clerk |
 | `@convex-dev/aggregate` | Apache-2.0 | Compliant | Convex aggregation utilities |
-| `@google-cloud/translate` | Apache-2.0 | Compliant | Translation API (server-side) |
 | `convex` | Apache-2.0 | Compliant | Backend framework |
 | `react` | MIT | Compliant | UI framework |
 | `react-dom` | MIT | Compliant | React DOM renderer |
@@ -222,18 +221,7 @@ The application uses browser `localStorage` for the following purposes:
 3. Implement appropriate transfer mechanism (SCCs)
 4. Document in Privacy Policy
 
-### 5.3 Google Cloud Translate
-
-**Service:** Google Cloud Translation API
-**Purpose:** i18n translation (server-side)
-**Data Processed:** Text strings for translation
-**Note:** This is a dev dependency for translation - verify if used in production
-
-**Compliance Actions Required:**
-1. If used in production, review Google Cloud DPA
-2. Ensure no personal data is sent for translation
-
-### 5.4 Google Fonts
+### 5.3 Google Fonts
 
 **Service:** Google Fonts CDN
 **Purpose:** Font loading (Montserrat Alternates)

@@ -475,21 +475,16 @@ export const cleanupExpired = internalMutation({
   handler: async (ctx) => {
     const now = Date.now();
 
-    // Get notifications that have expired
-    // Note: We query all with expiresAt set and filter for expired ones
+    // Query only notifications that have already expired using index ordering
     const expiredNotifications = await ctx.db
       .query("notifications")
-      .withIndex("by_expires")
+      .withIndex("by_expires", (q) => q.lt("expiresAt", now))
       .collect();
 
-    let count = 0;
     for (const notification of expiredNotifications) {
-      if (notification.expiresAt && notification.expiresAt < now) {
-        await ctx.db.delete(notification._id);
-        count++;
-      }
+      await ctx.db.delete(notification._id);
     }
 
-    return count;
+    return expiredNotifications.length;
   },
 });

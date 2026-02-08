@@ -4,6 +4,7 @@ import { decisionValidator, targetType } from ".";
 import { requireAuthAndMembership } from "../utils";
 
 const DECISIONS_PAGE_SIZE = 20;
+const DECISIONS_MAX_LIMIT = 100;
 
 /**
  * List decisions for an organization with cursor-based pagination.
@@ -24,7 +25,7 @@ export const listDecisionsForOrga = query({
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
 
-    const limit = args.limit ?? DECISIONS_PAGE_SIZE;
+    const limit = Math.min(args.limit ?? DECISIONS_PAGE_SIZE, DECISIONS_MAX_LIMIT);
 
     let q;
     if (args.targetType) {
@@ -39,15 +40,14 @@ export const listDecisionsForOrga = query({
         .withIndex("by_orga", (idx) => idx.eq("orgaId", args.orgaId));
     }
 
-    const all = await q.order("desc").collect();
+    // Use cursor-based filtering and take only what we need
+    const queryOrdered = q.order("desc");
+    const all = args.cursor
+      ? await queryOrdered.filter((q) => q.lt(q.field("_creationTime"), args.cursor!)).take(limit + 1)
+      : await queryOrdered.take(limit + 1);
 
-    // Apply cursor filter (cursor is the _creationTime of the last item from previous page)
-    const filtered = args.cursor
-      ? all.filter((d) => d._creationTime < args.cursor!)
-      : all;
-
-    const decisions = filtered.slice(0, limit);
-    const hasMore = filtered.length > limit;
+    const decisions = all.slice(0, limit);
+    const hasMore = all.length > limit;
     const nextCursor =
       decisions.length > 0
         ? decisions[decisions.length - 1]._creationTime
@@ -77,7 +77,7 @@ export const listDecisionsForTeam = query({
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
 
-    const limit = args.limit ?? DECISIONS_PAGE_SIZE;
+    const limit = Math.min(args.limit ?? DECISIONS_PAGE_SIZE, DECISIONS_MAX_LIMIT);
 
     let q;
     if (args.targetType) {

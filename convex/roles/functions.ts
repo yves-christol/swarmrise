@@ -236,7 +236,7 @@ export const updateRole = mutation({
     // Forbid direct updates to linked leader roles (double role pattern)
     // All changes must go through the source role in the parent team
     if (role.linkedRoleId) {
-      throw new Error("Cannot update a linked leader role directly. Update the source role in the parent team instead.");
+      throw new Error("Operation not permitted on this role");
     }
 
     // Enforce one leader per team when setting roleType to leader

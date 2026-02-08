@@ -294,7 +294,7 @@ export const leaveOrganization = mutation({
         // If we can't get the team leader (e.g., team doesn't exist), 
         // we can't reassign the role, so we skip it
         // This shouldn't happen in normal operation, but we handle it gracefully
-        console.error(`Failed to reassign role ${role._id}:`, error);
+        console.error("Failed to reassign role during leave operation");
       }
     }
     

@@ -79,8 +79,7 @@ export const listMyPendingInvitationsWithOrga = query({
     // Get all pending invitations for this user
     const invitations = await ctx.db
       .query("invitations")
-      .withIndex("by_email", (q) => q.eq("email", user.email))
-      .filter((q) => q.eq(q.field("status"), "pending"))
+      .withIndex("by_email_and_status", (q) => q.eq("email", user.email).eq("status", "pending"))
       .collect();
 
     // Enrich with org data

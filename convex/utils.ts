@@ -107,11 +107,11 @@ export async function getTeamLeaderMemberId(
     .first();
   
   if (!leaderRole) {
-    throw new Error("Team leader role not found");
+    throw new Error("Resource not found");
   }
-  
+
   if (!leaderRole.memberId) {
-    throw new Error("Team leader role is not assigned to a member");
+    throw new Error("Operation not permitted");
   }
   
   return leaderRole.memberId;

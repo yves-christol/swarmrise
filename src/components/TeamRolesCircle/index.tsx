@@ -326,7 +326,7 @@ function ZoomOutButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-// Team name and mission text component with two-line wrapping
+// Team name and mission text component - name positioned higher, mission up to 3 lines
 function TeamNameText({
   name,
   mission,
@@ -347,7 +347,7 @@ function TeamNameText({
   const gap = 8;
 
   // Split name into lines (max 2 lines, truncate if needed)
-  const getLines = (text: string): string[] => {
+  const getNameLines = (text: string): string[] => {
     // If short enough, single line
     if (text.length <= maxCharsPerLine) {
       return [text];
@@ -385,25 +385,71 @@ function TeamNameText({
     return line2 ? [line1, line2] : [line1];
   };
 
-  const lines = getLines(name);
+  // Split mission into lines (max 3 lines, truncate last line if needed)
+  const getMissionLines = (text: string, maxLines: number = 3): string[] => {
+    const missionMaxChars = Math.floor(maxCharsPerLine * 2.5); // Mission uses smaller font, so can be much wider
+
+    // If short enough, single line
+    if (text.length <= missionMaxChars) {
+      return [text];
+    }
+
+    const words = text.split(" ");
+    const lines: string[] = [];
+    let currentLine = "";
+
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      if (testLine.length <= missionMaxChars) {
+        currentLine = testLine;
+      } else {
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+        currentLine = word;
+
+        // Check if we've reached max lines
+        if (lines.length >= maxLines - 1) {
+          // This is the last line - add remaining words with truncation
+          const remainingWords = words.slice(words.indexOf(word));
+          const remaining = remainingWords.join(" ");
+          if (remaining.length > missionMaxChars) {
+            lines.push(remaining.slice(0, missionMaxChars - 1) + "…");
+          } else {
+            lines.push(remaining);
+          }
+          return lines;
+        }
+      }
+    }
+
+    // Don't forget the last line
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    return lines;
+  };
+
+  const nameLines = getNameLines(name);
   const hasMission = mission && mission.trim().length > 0;
+  const missionLines = hasMission ? getMissionLines(mission.trim()) : [];
 
-  // Calculate total height for vertical centering
-  const nameHeight = lines.length * lineHeight;
+  // Calculate heights
+  const nameHeight = nameLines.length * lineHeight;
+  const missionHeight = missionLines.length * missionLineHeight;
   const totalHeight = hasMission
-    ? nameHeight + gap + missionLineHeight
+    ? nameHeight + gap + missionHeight
     : nameHeight;
-  const startY = centerY - totalHeight / 2 + lineHeight / 2;
 
-  // Truncate mission for display
-  const maxMissionChars = Math.floor(fontSize * 2);
-  const displayMission = mission && mission.length > maxMissionChars
-    ? mission.slice(0, maxMissionChars - 1) + "…"
-    : mission;
+  // Position name higher in the circle - offset upward from center
+  // The name sits above center, with mission flowing below
+  const verticalOffset = hasMission ? totalHeight * 0.15 : 0;
+  const startY = centerY - totalHeight / 2 + lineHeight / 2 - verticalOffset;
 
   return (
     <g style={{ pointerEvents: "none", userSelect: "none" }}>
-      {/* Team name */}
+      {/* Team name - positioned higher */}
       <text
         x={centerX}
         y={startY}
@@ -414,7 +460,7 @@ function TeamNameText({
         fontWeight={600}
         fontFamily="'Montserrat Alternates', sans-serif"
       >
-        {lines.map((line, i) => (
+        {nameLines.map((line, i) => (
           <tspan
             key={i}
             x={centerX}
@@ -425,8 +471,8 @@ function TeamNameText({
         ))}
       </text>
 
-      {/* Mission - secondary text below name */}
-      {hasMission && (
+      {/* Mission - up to 3 lines below name */}
+      {hasMission && missionLines.length > 0 && (
         <text
           x={centerX}
           y={startY + nameHeight + gap}
@@ -437,7 +483,15 @@ function TeamNameText({
           fontWeight={400}
           fontFamily="Arial, Helvetica, sans-serif"
         >
-          {displayMission}
+          {missionLines.map((line, i) => (
+            <tspan
+              key={i}
+              x={centerX}
+              dy={i === 0 ? 0 : missionLineHeight}
+            >
+              {line}
+            </tspan>
+          ))}
         </text>
       )}
     </g>

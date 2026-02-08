@@ -1,7 +1,5 @@
-"use client";
-
 import { Authenticated, Unauthenticated } from "convex/react"
-import { Authentified } from "../Authentified"
+import { AuthenticatedView } from "../AuthenticatedView"
 import { Anonymous } from "../Anonymous"
 import { Header } from "../Header"
 
@@ -11,7 +9,7 @@ export default function App() {
       <Header />
       <main className="p-8 flex flex-col gap-16">
         <Authenticated>
-          <Authentified />
+          <AuthenticatedView />
         </Authenticated>
         <Unauthenticated>
           <Anonymous />

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useMemo, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";

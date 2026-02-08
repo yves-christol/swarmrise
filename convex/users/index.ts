@@ -38,3 +38,5 @@ export const userValidator = v.object({
   ...userType.fields
 })
 
+export type User = Infer<typeof userValidator>
+

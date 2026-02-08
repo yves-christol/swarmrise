@@ -118,25 +118,6 @@ export async function getTeamLeader(
 }
 
 /**
- * Get the leader role for a given team
- */
-export async function getLeaderRole(
-  ctx: QueryCtx | MutationCtx,
-  teamId: Id<"teams">
-) {
-  const leaderRole = await ctx.db
-    .query("roles")
-    .withIndex("by_team_and_role_type", (q) => q.eq("teamId", teamId).eq("roleType", "leader"))
-    .first();
-  
-  if (!leaderRole) {
-    throw new Error("Team leader role not found");
-  }
-  
-  return leaderRole;
-}
-
-/**
  * Check if a team already has a leader
  */
 export async function hasTeamLeader(

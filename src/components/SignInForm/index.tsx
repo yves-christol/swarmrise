@@ -1,4 +1,3 @@
-"use client";
 import { SignInButton, SignUpButton } from "@clerk/clerk-react";
 
 export function SignInForm() {

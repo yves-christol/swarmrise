@@ -31,3 +31,5 @@ export const orgaValidator = v.object({
   ...orgaType.fields
 })
 
+export type Orga = Infer<typeof orgaValidator>
+

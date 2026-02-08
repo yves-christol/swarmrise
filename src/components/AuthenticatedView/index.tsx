@@ -1,5 +1,3 @@
-"use client";
-
 import { useTranslation } from "react-i18next";
 import { useOrgaStore } from "../../tools/orgaStore";
 import { EmptyState } from "../EmptyState";
@@ -19,7 +17,7 @@ const Spinner = ({ text }: { text?: string }) => {
   );
 };
 
-export const Authentified = () => {
+export const AuthenticatedView = () => {
   const { t } = useTranslation("orgs");
   const { orgasWithCounts, isLoading, hasOrgas, selectedOrga, isSwitchingOrga } = useOrgaStore();
 

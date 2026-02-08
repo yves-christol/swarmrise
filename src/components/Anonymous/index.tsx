@@ -1,4 +1,3 @@
-"use client";
 import { SignInForm } from "../SignInForm"
 
 export const Anonymous = () => {

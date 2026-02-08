@@ -1,4 +1,3 @@
-"use client";
 import { dark } from "@clerk/themes";
 import { UserButton, useAuth } from "@clerk/clerk-react";
 import { useTranslation } from "react-i18next";

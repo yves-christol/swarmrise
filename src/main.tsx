@@ -14,6 +14,7 @@ import { PrinciplesPage } from "./pages/Principles/index.tsx";
 import { GlossaryPage } from "./pages/Glossary/index.tsx";
 import { TermsPage } from "./pages/Terms/index.tsx";
 import { PrivacyPage } from "./pages/Privacy/index.tsx";
+import { OrgaRoute } from "./routes/OrgaRoute.tsx";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 createRoot(document.getElementById("root")!).render(
@@ -25,11 +26,23 @@ createRoot(document.getElementById("root")!).render(
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<App />} />
+                {/* Static pages */}
                 <Route path="/rawdata" element={<RawDataPage />} />
                 <Route path="/principles" element={<PrinciplesPage />} />
                 <Route path="/glossary" element={<GlossaryPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
+                {/* Organization routes */}
+                <Route path="/o/:orgaId" element={<OrgaRoute />}>
+                  <Route index element={<App />} />
+                  <Route path="manage" element={<App />} />
+                  <Route path="teams/:teamId" element={<App />} />
+                  <Route path="teams/:teamId/manage" element={<App />} />
+                  <Route path="teams/:teamId/roles/:roleId" element={<App />} />
+                  <Route path="teams/:teamId/roles/:roleId/manage" element={<App />} />
+                  <Route path="members/:memberId" element={<App />} />
+                  <Route path="members/:memberId/manage" element={<App />} />
+                </Route>
               </Routes>
             </BrowserRouter>
           </OrgaStoreProvider>

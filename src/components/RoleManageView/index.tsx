@@ -4,6 +4,7 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useMembers } from "../../tools/orgaStore";
 import { MissionReminder } from "../MissionReminder";
+import { NotFound } from "../NotFound";
 
 type RoleManageViewProps = {
   roleId: Id<"roles">;
@@ -228,14 +229,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
 
   // Not found
   if (role === null) {
-    return (
-      <div className="absolute inset-0 bg-light dark:bg-dark">
-        <BackToTeamButton teamName={team?.name || "Team"} onClick={onZoomOut} />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-gray-500 dark:text-gray-400">Role not found</p>
-        </div>
-      </div>
-    );
+    return <NotFound entityType="role" onNavigateBack={onZoomOut} />;
   }
 
   return (

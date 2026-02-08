@@ -32,5 +32,18 @@
   "manage": "Manage",
   "viewMode": "View mode",
   "mission": "Mission",
-  "noMissionDefined": "No mission defined yet"
+  "noMissionDefined": "No mission defined yet",
+  "notFound": {
+    "team": "Team not found",
+    "role": "Role not found",
+    "member": "Member not found",
+    "organization": "Organization not found",
+    "generic": "Not found",
+    "teamDescription": "This team may have been deleted or you don't have access to it.",
+    "roleDescription": "This role may have been deleted or you don't have access to it.",
+    "memberDescription": "This member may have been removed or you don't have access to their profile.",
+    "organizationDescription": "This organization may have been deleted or you don't have access to it.",
+    "genericDescription": "The page you're looking for doesn't exist or has been moved.",
+    "goBack": "Go back"
+  }
 }

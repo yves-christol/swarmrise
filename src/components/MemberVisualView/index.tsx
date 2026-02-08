@@ -7,6 +7,7 @@ import { Logo } from "../Logo";
 import { RoleLink } from "./RoleLink";
 import { TeamNode } from "./TeamNode";
 import { ContactInfo } from "./ContactInfo";
+import { NotFound } from "../NotFound";
 import type { MemberVisualViewProps, RoleLinkPosition, TeamNodePosition, RolesByTeam } from "./types";
 
 export function MemberVisualView({
@@ -279,20 +280,7 @@ export function MemberVisualView({
 
   // Member not found
   if (member === null) {
-    return (
-      <div className="absolute inset-0 bg-light dark:bg-dark">
-        <BackButton onClick={onZoomOut} />
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          <Logo size={48} begin={0} repeatCount={2} />
-          <h3 className="font-swarm text-xl font-bold text-dark dark:text-light">
-            {t("memberNotFound")}
-          </h3>
-          <p className="text-gray-400 text-center max-w-xs">
-            {t("diagram.memberRemovedDescription")}
-          </p>
-        </div>
-      </div>
-    );
+    return <NotFound entityType="member" onNavigateBack={onZoomOut} />;
   }
 
   // Get initials for avatar fallback

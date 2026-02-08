@@ -5,6 +5,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { DecisionJournal } from "../DecisionJournal";
 import { MemberListItem, MemberListItemMember } from "../MemberListItem";
 import { MissionReminder } from "../MissionReminder";
+import { NotFound } from "../NotFound";
 import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
 import { ContactInfo } from "../../utils/contacts";
 
@@ -223,14 +224,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
 
   // Not found
   if (team === null) {
-    return (
-      <div className="absolute inset-0 bg-light dark:bg-dark">
-        <ZoomOutButton onClick={onZoomOut} />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-gray-500 dark:text-gray-400">Team not found</p>
-        </div>
-      </div>
-    );
+    return <NotFound entityType="team" onNavigateBack={onZoomOut} />;
   }
 
   return (

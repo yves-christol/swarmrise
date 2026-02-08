@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useSelectedOrga, useFocus } from "../../tools/orgaStore";
+import { NotFound } from "../NotFound";
 
 type ContactInfo = {
   type: string;
@@ -394,14 +395,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
 
   // Not found
   if (member === null) {
-    return (
-      <div className="absolute inset-0 bg-light dark:bg-dark">
-        <BackButton onClick={onZoomOut} />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-gray-500 dark:text-gray-400">{tMembers("memberNotFound")}</p>
-        </div>
-      </div>
-    );
+    return <NotFound entityType="member" onNavigateBack={onZoomOut} />;
   }
 
   return (

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Logo } from "../Logo";
 import { MemberLink } from "./MemberLink";
+import { NotFound } from "../NotFound";
 import type { RoleVisualViewProps } from "./types";
 
 function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
@@ -154,20 +155,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
 
   // Role not found
   if (role === null) {
-    return (
-      <div className="absolute inset-0 bg-light dark:bg-dark">
-        <BackToTeamButton teamName={team?.name || "Team"} onClick={onZoomOut} />
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          <Logo size={48} begin={0} repeatCount={2} />
-          <h3 className="font-swarm text-xl font-bold text-dark dark:text-light">
-            {t("diagram.roleNotFound")}
-          </h3>
-          <p className="text-gray-400 text-center max-w-xs">
-            {t("diagram.roleNotFoundDescription")}
-          </p>
-        </div>
-      </div>
-    );
+    return <NotFound entityType="role" onNavigateBack={onZoomOut} />;
   }
 
   const strokeColor = getRoleStroke(role.roleType);

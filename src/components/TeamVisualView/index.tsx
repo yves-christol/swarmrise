@@ -6,6 +6,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { useFocus } from "../../tools/orgaStore";
 import { Logo } from "../Logo";
 import { RoleNode } from "./RoleNode";
+import { NotFound } from "../NotFound";
 import type { RolePosition } from "./types";
 
 type TeamVisualViewProps = {
@@ -107,8 +108,13 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
   const centerY = dimensions.height / 2;
   const maxRadius = Math.min(dimensions.width, dimensions.height) / 2 - 40;
 
+  // Not found state - team doesn't exist or no access
+  if (team === null) {
+    return <NotFound entityType="team" onNavigateBack={onZoomOut} />;
+  }
+
   // Loading state
-  if (team === undefined || team === null || roles === undefined) {
+  if (team === undefined || roles === undefined) {
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-light dark:bg-dark">
         <div className="flex flex-col items-center gap-4">

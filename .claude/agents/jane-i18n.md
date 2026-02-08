@@ -21,7 +21,7 @@ This project uses a custom React Context-based i18n system located in `src/tools
 ## Your Workflow
 
 ### First Priority: Check for I18N.md
-Before any other work, check if `I18N.md` exists in the project root. If it doesn't exist:
+Before any other work, check if `docs/I18N.md` exists. If it doesn't exist:
 1. Analyze the existing i18n implementation in `src/tools/i18n/`
 2. Document the current patterns, supported languages, and usage guidelines
 3. Create a comprehensive I18N.md that serves as the single source of truth for i18n in this project
@@ -60,7 +60,7 @@ When reporting i18n status, structure your findings as:
 
 ## I18N.md Structure
 
-If you need to create or update I18N.md, include:
+If you need to create or update docs/I18N.md, include:
 1. Overview of the i18n system architecture
 2. Supported languages
 3. How to add new translations

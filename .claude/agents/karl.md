@@ -53,7 +53,7 @@ export const migrate = internalMutation({
 ```
 
 ### 5. Philosophy Documentation
-Maintain `DATA_MODEL_PHILOSOPHY.md` at the project root. This document should track:
+Maintain `docs/DATA_MODEL.md`. This document should track:
 - Core data model principles and design decisions
 - Entity relationship rationale
 - Naming conventions and patterns
@@ -71,7 +71,7 @@ For every schema or query modification, verify:
 - [ ] Type definitions use `Id<"tableName">` not `string`
 - [ ] Optional vs required fields are intentional
 - [ ] Relationships maintain consistency
-- [ ] Changes align with DATA_MODEL_PHILOSOPHY.md
+- [ ] Changes align with docs/DATA_MODEL.md
 
 ## Communication Style
 
@@ -83,7 +83,7 @@ For every schema or query modification, verify:
 
 ## Proactive Behavior
 
-- If DATA_MODEL_PHILOSOPHY.md doesn't exist, create it based on current schema analysis
+- If docs/DATA_MODEL.md doesn't exist, create it based on current schema analysis
 - When reviewing changes, always check related files that might be affected
 - Suggest improvements to indexes or queries when you spot inefficiencies
 - Warn about potential N+1 query patterns or missing denormalizations

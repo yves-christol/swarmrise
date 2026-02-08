@@ -173,6 +173,7 @@ export function useRouteSync() {
     setViewModeFromRoute,
     setFocusFromRouteWithAnimation,
     isFocusTransitioning,
+    isSwitchingOrga,
   } = useOrgaStore();
 
   // Track if we're currently syncing to avoid loops
@@ -250,6 +251,9 @@ export function useRouteSync() {
     // Only sync if already on an org route (don't redirect from "/" to "/o/:orgaId")
     if (!params.orgaId) return;
 
+    // Skip during org switching (OrgaSelector handles navigation)
+    if (isSwitchingOrga) return;
+
     // Skip during focus transitions (animation in progress)
     if (isFocusTransitioning) return;
 
@@ -269,5 +273,7 @@ export function useRouteSync() {
     location.pathname,
     navigate,
     isFocusTransitioning,
+    isSwitchingOrga,
+    params.orgaId,
   ]);
 }

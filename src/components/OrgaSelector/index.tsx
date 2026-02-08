@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router'
 import { useOrgaStore } from '../../tools/orgaStore'
 import { Id } from '../../../convex/_generated/dataModel'
 import { CreateOrganizationModal } from '../CreateOrganizationModal'
+import { routes } from '../../routes'
 
 // Inline SVG icons to avoid external dependencies
 const ChevronDownIcon = ({ className }: { className?: string }) => (
@@ -40,6 +42,7 @@ const SpinnerIcon = ({ className }: { className?: string }) => (
 
 export const OrgaSelector = () => {
   const { t } = useTranslation('orgs')
+  const navigate = useNavigate()
   const { selectedOrgaId, selectedOrga, selectOrga, orgasWithCounts, isLoading, hasOrgas, isSwitchingOrga } = useOrgaStore()
   const [isOpen, setIsOpen] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -69,7 +72,12 @@ export const OrgaSelector = () => {
   }, [])
 
   const handleSelectOrga = (orgaId: Id<"orgas">) => {
-    selectOrga(orgaId)
+    // Only navigate if switching to a different org
+    if (orgaId !== selectedOrgaId) {
+      selectOrga(orgaId)
+      // Navigate to the new org's root (will trigger "You come first" redirect if enabled)
+      navigate(routes.orga(orgaId))
+    }
     setIsOpen(false)
     triggerRef.current?.focus()
   }

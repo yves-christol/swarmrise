@@ -3,7 +3,6 @@ import {
   internalMutation,
   internalQuery,
   internalAction,
-  action,
   ActionCtx,
 } from "../_generated/server";
 import { v } from "convex/values";
@@ -353,7 +352,7 @@ export const updateMemberAvatar = internalMutation({
  * Fetches images from pravatar.cc and stores them in Convex file storage.
  * This is the public version for manual invocation via CLI.
  */
-export const populateMemberAvatars = action({
+export const populateMemberAvatars = internalAction({
   args: {
     orgaId: v.id("orgas"),
   },

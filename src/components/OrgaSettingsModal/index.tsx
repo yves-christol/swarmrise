@@ -107,7 +107,7 @@ export const OrgaSettingsModal = ({
     api.storage.getUrl,
     orga?.logoStorageId ? { storageId: orga.logoStorageId } : "skip"
   );
-  const members = useQuery(api.members.functions.listMembersInOrga, { orgaId });
+  const members = useQuery(api.members.functions.listMembers, { orgaId });
 
   // Mutations
   const updateOrga = useMutation(api.orgas.functions.updateOrga);

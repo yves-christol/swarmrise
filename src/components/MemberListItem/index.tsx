@@ -209,22 +209,30 @@ export function MemberListItem({
     </>
   );
 
-  // If navigable, wrap in a button
+  // If navigable, wrap in a div with button role to avoid nested <button> (contact info button)
   if (onNavigate) {
     return (
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={onNavigate}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onNavigate();
+          }
+        }}
         className="
           group
           w-full flex items-center gap-3 px-4 py-3
           hover:bg-gray-50 dark:hover:bg-gray-700/50
           transition-colors duration-75
           focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
-          text-left
+          text-left cursor-pointer
         "
       >
         {content}
-      </button>
+      </div>
     );
   }
 

@@ -67,29 +67,12 @@ export const RoleLink = memo(function RoleLink({
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
-      {/* Leader golden ring highlight - always visible */}
-      {role.roleType === "leader" && (
-        <circle
-          cx={x}
-          cy={y}
-          r={radius + 5}
-          fill="none"
-          stroke="#eac840"
-          strokeWidth={2}
-          opacity={0.6}
-          strokeDasharray="4 2"
-          style={{
-            filter: "drop-shadow(0 0 4px rgba(234, 200, 64, 0.4))",
-          }}
-        />
-      )}
-
       {/* Hover glow effect */}
       {isHovered && (
         <circle
           cx={x}
           cy={y}
-          r={radius + (role.roleType === "leader" ? 8 : 3)}
+          r={radius + 3}
           fill="none"
           stroke={strokeColor}
           strokeWidth={1}

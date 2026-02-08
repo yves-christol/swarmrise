@@ -97,7 +97,7 @@ export async function getOrgaFromRole(
  * Get the team leader member ID for a given team
  * The leader is the member who holds the role with roleType "leader" in the team
  */
-export async function getTeamLeader(
+export async function getTeamLeaderMemberId(
   ctx: QueryCtx | MutationCtx,
   teamId: Id<"teams">
 ): Promise<Id<"members">> {

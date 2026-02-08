@@ -6,7 +6,7 @@ import { getAuthenticatedUser } from "../utils";
 import {
   notificationValidator,
   notificationPayload,
-  notificationPriority,
+  notificationPriorityType,
   NotificationCategory,
 } from "./index";
 
@@ -355,7 +355,7 @@ export const create = internalMutation({
     orgaId: v.optional(v.id("orgas")),
     memberId: v.optional(v.id("members")),
     payload: notificationPayload,
-    priority: notificationPriority,
+    priority: notificationPriorityType,
     expiresAt: v.optional(v.number()),
     groupKey: v.optional(v.string()),
   },
@@ -389,7 +389,7 @@ export const createBatch = internalMutation({
         orgaId: v.optional(v.id("orgas")),
         memberId: v.optional(v.id("members")),
         payload: notificationPayload,
-        priority: notificationPriority,
+        priority: notificationPriorityType,
         expiresAt: v.optional(v.number()),
         groupKey: v.optional(v.string()),
       })

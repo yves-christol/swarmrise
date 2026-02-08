@@ -9,7 +9,7 @@ import {
   getRoleAndTeamInfo,
   getOrgaFromRole,
   getOrgaFromTeam,
-  getTeamLeader,
+  getTeamLeaderMemberId,
   hasTeamLeader,
 } from "../utils";
 import { buildRoleAssignmentNotification } from "../notifications/helpers";
@@ -134,7 +134,7 @@ export const createRole = mutation({
       assignedMemberId = args.memberId;
     } else {
       // Default to team leader
-      assignedMemberId = await getTeamLeader(ctx, args.teamId);
+      assignedMemberId = await getTeamLeaderMemberId(ctx, args.teamId);
     }
     
     // Create role

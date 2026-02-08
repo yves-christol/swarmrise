@@ -731,17 +731,17 @@ contactInfoType = "LinkedIn" | "Facebook" | "Instagram" | "Whatsapp" | "Mobile" 
 
 ### Special Role Types
 ```typescript
-specialRole = "leader" | "secretary" | "referee"
+specialRoleType = "leader" | "secretary" | "referee"
 ```
 
 ### Invitation Status
 ```typescript
-invitationStatus = "pending" | "rejected" | "accepted"
+invitationStatusType = "pending" | "rejected" | "accepted"
 ```
 
 ### Policy Visibility
 ```typescript
-policyVisibility = "private" | "public"
+policyVisibilityType = "private" | "public"
 ```
 
 ### Target Types (for Decisions)
@@ -751,12 +751,12 @@ targetType = "orgas" | "teams" | "roles" | "members" | "policies" | "invitations
 
 ### Notification Categories
 ```typescript
-notificationCategory = "invitation" | "message" | "policy_global" | "policy_team" | "decision" | "role_assignment" | "mention" | "system"
+notificationCategoryType = "invitation" | "message" | "policy_global" | "policy_team" | "decision" | "role_assignment" | "mention" | "system"
 ```
 
 ### Notification Priority
 ```typescript
-notificationPriority = "low" | "normal" | "high" | "urgent"
+notificationPriorityType = "low" | "normal" | "high" | "urgent"
 ```
 
 ### Digest Frequency

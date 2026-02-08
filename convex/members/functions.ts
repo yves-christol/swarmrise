@@ -9,7 +9,7 @@ import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
-  getTeamLeader,
+  getTeamLeaderMemberId,
   getMemberInOrga,
 } from "../utils";
 import { contactInfo } from "../users";
@@ -269,7 +269,7 @@ export const leaveOrganization = mutation({
     for (const role of roles) {
       try {
         // Get the team leader for this role's team
-        const teamLeaderId = await getTeamLeader(ctx, role.teamId);
+        const teamLeaderId = await getTeamLeaderMemberId(ctx, role.teamId);
         
         // Reassign the role to the team leader
         await ctx.db.patch(role._id, {

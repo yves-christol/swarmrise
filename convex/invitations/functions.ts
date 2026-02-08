@@ -1,7 +1,7 @@
 import { query, mutation, internalMutation } from "../_generated/server";
 import { internal } from "../_generated/api";
 import { v } from "convex/values";
-import { invitationValidator, invitationStatus } from ".";
+import { invitationValidator, invitationStatusType } from ".";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -33,7 +33,7 @@ export const getInvitationById = query({
 export const listInvitationsInOrga = query({
   args: {
     orgaId: v.id("orgas"),
-    status: invitationStatus,
+    status: invitationStatusType,
   },
   returns: v.array(invitationValidator),
   handler: async (ctx, args) => {
@@ -209,7 +209,7 @@ export const createInvitation = mutation({
 export const updateInvitationStatus = mutation({
   args: {
     invitationId: v.id("invitations"),
-    status: invitationStatus,
+    status: invitationStatusType,
   },
   returns: v.id("invitations"),
   handler: async (ctx, args) => {

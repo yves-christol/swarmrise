@@ -1,7 +1,7 @@
 import { v } from"convex/values"
 import { colorScheme } from "../orgas";
-import { policyVisibility } from "../policies";
-import { invitationStatus } from "../invitations";
+import { policyVisibilityType } from "../policies";
+import { invitationStatusType } from "../invitations";
 
 export const targetType = v.union(
   v.literal('orgas'), 
@@ -79,14 +79,14 @@ const invitationDiff = v.object({
     orgaId: v.optional(v.id("orgas")),
     emitterMemberId: v.optional(v.id("members")),
     email: v.optional(v.string()),
-    status: v.optional(invitationStatus),
+    status: v.optional(invitationStatusType),
     sentDate: v.optional(v.number()),
   })),
   after: v.optional(v.object({
     orgaId: v.optional(v.id("orgas")),
     emitterMemberId: v.optional(v.id("members")),
     email: v.optional(v.string()),
-    status: v.optional(invitationStatus),
+    status: v.optional(invitationStatusType),
     sentDate: v.optional(v.number()),
   })),
 });
@@ -101,7 +101,7 @@ const policyDiff = v.object({
     issuedDate: v.optional(v.number()),
     title: v.optional(v.string()),
     text: v.optional(v.string()),
-    visibility: v.optional(policyVisibility),
+    visibility: v.optional(policyVisibilityType),
     expirationDate: v.optional(v.number()),
   })),
   after: v.optional(v.object({
@@ -111,7 +111,7 @@ const policyDiff = v.object({
     issuedDate: v.optional(v.number()),
     title: v.optional(v.string()),
     text: v.optional(v.string()),
-    visibility: v.optional(policyVisibility),
+    visibility: v.optional(policyVisibilityType),
     expirationDate: v.optional(v.number()),
   })),
 });

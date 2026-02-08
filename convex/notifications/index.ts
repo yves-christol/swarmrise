@@ -1,7 +1,7 @@
 import { v, Infer } from "convex/values";
 
 // Notification categories - extensible for future notification types
-export const notificationCategory = v.union(
+export const notificationCategoryType = v.union(
   v.literal("invitation"),       // Pending invitation to join org
   v.literal("message"),          // Unread message in team (future)
   v.literal("policy_global"),    // New org-wide policy
@@ -12,17 +12,17 @@ export const notificationCategory = v.union(
   v.literal("system")            // System announcements
 );
 
-export type NotificationCategory = Infer<typeof notificationCategory>;
+export type NotificationCategory = Infer<typeof notificationCategoryType>;
 
 // Priority levels for notification ordering and display
-export const notificationPriority = v.union(
+export const notificationPriorityType = v.union(
   v.literal("low"),
   v.literal("normal"),
   v.literal("high"),
   v.literal("urgent")
 );
 
-export type NotificationPriority = Infer<typeof notificationPriority>;
+export type NotificationPriority = Infer<typeof notificationPriorityType>;
 
 // Invitation payload
 export const invitationPayload = v.object({
@@ -117,7 +117,7 @@ export const notificationType = v.object({
 
   // Content
   payload: notificationPayload,
-  priority: notificationPriority,
+  priority: notificationPriorityType,
 
   // State
   isRead: v.boolean(),

@@ -1,16 +1,16 @@
 import { v, Infer } from "convex/values"
 
-export const invitationStatus = v.union(
+export const invitationStatusType = v.union(
   v.literal("pending"), v.literal("rejected"), v.literal("accepted")
 )
 
-export type InvitationStatus = Infer<typeof invitationStatus>;
+export type InvitationStatus = Infer<typeof invitationStatusType>;
 
 export const invitationType = v.object({
   orgaId: v.id("orgas"),
   emitterMemberId: v.id("members"),
   email: v.string(),
-  status: invitationStatus,
+  status: invitationStatusType,
   sentDate: v.number(),
 })
 

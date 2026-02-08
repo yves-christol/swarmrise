@@ -1,9 +1,50 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useParams, useLocation, useNavigate } from "react-router";
 import { Id } from "../../convex/_generated/dataModel";
 import { useOrgaStore } from "../tools/orgaStore";
 import type { FocusTarget, ViewMode } from "../tools/orgaStore/types";
 import { routes } from "../routes";
+
+/**
+ * Calculate the depth of a focus target for animation direction.
+ * orga: 0, team: 1, role: 2, member: 2
+ */
+function getFocusDepth(focus: FocusTarget): number {
+  switch (focus.type) {
+    case "orga":
+      return 0;
+    case "team":
+      return 1;
+    case "role":
+      return 2;
+    case "member":
+      return 2;
+  }
+}
+
+/**
+ * Determine animation direction when navigating between focus targets.
+ * Returns "in" when going deeper, "out" when going shallower.
+ */
+function getNavigationDirection(from: FocusTarget, to: FocusTarget): "in" | "out" {
+  const fromDepth = getFocusDepth(from);
+  const toDepth = getFocusDepth(to);
+
+  if (toDepth > fromDepth) {
+    return "in";
+  } else if (toDepth < fromDepth) {
+    return "out";
+  }
+
+  // Same depth - check if it's a different entity type (role <-> member)
+  if (from.type !== to.type) {
+    // Member to role = out (going to structure), role to member = in (going to person)
+    return to.type === "member" ? "in" : "out";
+  }
+
+  // Same type, different entity - default to "in" (feels like navigating forward)
+  return "in";
+}
 
 type RouteParams = {
   orgaId?: string;
@@ -130,6 +171,7 @@ export function useRouteSync() {
     viewMode,
     setFocusFromRoute,
     setViewModeFromRoute,
+    setFocusFromRouteWithAnimation,
     isFocusTransitioning,
   } = useOrgaStore();
 
@@ -137,6 +179,20 @@ export function useRouteSync() {
   const isSyncingRef = useRef(false);
   // Track the last URL we navigated to
   const lastUrlRef = useRef<string | null>(null);
+  // Track if this is a popstate (browser back/forward) navigation
+  const isPopstateRef = useRef(false);
+  // Track previous focus for animation direction
+  const previousFocusRef = useRef<FocusTarget>(focus);
+
+  // Listen for popstate events (browser back/forward)
+  useEffect(() => {
+    const handlePopstate = () => {
+      isPopstateRef.current = true;
+    };
+
+    window.addEventListener("popstate", handlePopstate);
+    return () => window.removeEventListener("popstate", handlePopstate);
+  }, []);
 
   // URL -> Focus sync (URL is source of truth on route change)
   useEffect(() => {
@@ -157,15 +213,23 @@ export function useRouteSync() {
     isSyncingRef.current = true;
 
     if (focusNeedsUpdate) {
-      setFocusFromRoute(parsed.focus);
+      // Use animation for browser back/forward navigation
+      if (isPopstateRef.current && !isFocusTransitioning) {
+        const direction = getNavigationDirection(previousFocusRef.current, parsed.focus);
+        setFocusFromRouteWithAnimation(parsed.focus, direction);
+      } else {
+        setFocusFromRoute(parsed.focus);
+      }
+      previousFocusRef.current = parsed.focus;
     }
     if (viewModeNeedsUpdate) {
       setViewModeFromRoute(parsed.viewMode);
     }
 
-    // Reset sync flag after a tick
+    // Reset flags after a tick
     requestAnimationFrame(() => {
       isSyncingRef.current = false;
+      isPopstateRef.current = false;
     });
   }, [
     params,
@@ -174,6 +238,8 @@ export function useRouteSync() {
     viewMode,
     setFocusFromRoute,
     setViewModeFromRoute,
+    setFocusFromRouteWithAnimation,
+    isFocusTransitioning,
   ]);
 
   // Focus -> URL sync (update URL when user navigates via UI)

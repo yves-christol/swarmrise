@@ -9,7 +9,14 @@
     "accessSection": "Access",
     "saveButton": "Save changes",
     "saving": "Saving...",
-    "unsavedChangesWarning": "You have unsaved changes. Are you sure you want to close?"
+    "unsavedChangesWarning": "You have unsaved changes. Are you sure you want to close?",
+    "transferOwnership": "Transfer Ownership",
+    "transferOwnershipDescription": "Transfer this organization to another member. You will lose owner privileges.",
+    "noOtherMembers": "No other members to transfer to. Invite members first.",
+    "selectNewOwner": "Select new owner...",
+    "confirmTransfer": "Transfer Ownership",
+    "transferring": "Transferring...",
+    "deleteOrgDisabledReason": "You must be the only member to delete this organization. Transfer ownership or remove other members first."
   },
   "orga": "orga",
   "noOrganization": "No organization",

@@ -9,7 +9,14 @@
     "accessSection": "Acces",
     "saveButton": "Enregistrer les modifications",
     "saving": "Enregistrement...",
-    "unsavedChangesWarning": "Vous avez des modifications non enregistrees. Voulez-vous vraiment fermer ?"
+    "unsavedChangesWarning": "Vous avez des modifications non enregistrees. Voulez-vous vraiment fermer ?",
+    "transferOwnership": "Transferer la propriete",
+    "transferOwnershipDescription": "Transferez cette organisation a un autre membre. Vous perdrez vos privileges de proprietaire.",
+    "noOtherMembers": "Aucun autre membre a qui transferer. Invitez d'abord des membres.",
+    "selectNewOwner": "Selectionner le nouveau proprietaire...",
+    "confirmTransfer": "Transferer la propriete",
+    "transferring": "Transfert en cours...",
+    "deleteOrgDisabledReason": "Vous devez etre le seul membre pour supprimer cette organisation. Transferez la propriete ou supprimez les autres membres d'abord."
   },
   "orga": "orga",
   "noOrganization": "Aucune organisation",

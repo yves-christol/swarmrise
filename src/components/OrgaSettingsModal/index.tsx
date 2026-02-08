@@ -107,10 +107,12 @@ export const OrgaSettingsModal = ({
     api.storage.getUrl,
     orga?.logoStorageId ? { storageId: orga.logoStorageId } : "skip"
   );
+  const members = useQuery(api.members.functions.listMembersInOrga, { orgaId });
 
   // Mutations
   const updateOrga = useMutation(api.orgas.functions.updateOrga);
   const deleteOrga = useMutation(api.orgas.functions.deleteOrganization);
+  const transferOwnership = useMutation(api.orgas.functions.transferOwnership);
   const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
 
   // Form state
@@ -133,6 +135,8 @@ export const OrgaSettingsModal = ({
   const [error, setError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showTransferConfirm, setShowTransferConfirm] = useState(false);
+  const [selectedNewOwnerId, setSelectedNewOwnerId] = useState<Id<"members"> | null>(null);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -163,8 +167,16 @@ export const OrgaSettingsModal = ({
       setLogoRemoved(false);
       setLogoUploadError(false);
       setShowDeleteConfirm(false);
+      setShowTransferConfirm(false);
+      setSelectedNewOwnerId(null);
     }
   }, [orga, isOpen]);
+
+  // Get other members (for transfer ownership dropdown)
+  const otherMembers = useMemo(() => {
+    if (!members || !orga) return [];
+    return members.filter((m) => m.personId !== orga.owner);
+  }, [members, orga]);
 
   // Get current color scheme
   const getColorScheme = useCallback((): ColorScheme => {
@@ -435,6 +447,20 @@ export const OrgaSettingsModal = ({
     } catch (err) {
       console.error("Failed to delete organization:", err);
       setError(t("errors.unknownError"));
+    }
+  };
+
+  const handleTransferOwnership = async () => {
+    if (!selectedNewOwnerId) return;
+    setIsSubmitting(true);
+    try {
+      await transferOwnership({ orgaId, newOwnerMemberId: selectedNewOwnerId });
+      onClose();
+    } catch (err) {
+      console.error("Failed to transfer ownership:", err);
+      setError(t("errors.unknownError"));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -713,13 +739,80 @@ export const OrgaSettingsModal = ({
           </section>
 
           {/* Danger Zone Section */}
-          {canDelete && (
-            <section className="pt-4 border-t border-red-200 dark:border-red-900/50">
-              <h3 className="font-swarm text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
-                {t("dangerZone")}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                {t("deleteOrgWarning")}
+          <section className="pt-4 border-t border-red-200 dark:border-red-900/50">
+            <h3 className="font-swarm text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
+              {t("dangerZone")}
+            </h3>
+
+            {/* Transfer Ownership */}
+            <div className="mb-6">
+              <h4 className="text-sm font-semibold text-dark dark:text-light mb-2">
+                {t("settings.transferOwnership")}
+              </h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {t("settings.transferOwnershipDescription")}
+              </p>
+
+              {otherMembers.length === 0 ? (
+                <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                  {t("settings.noOtherMembers")}
+                </p>
+              ) : showTransferConfirm ? (
+                <div className="flex flex-col gap-3">
+                  <select
+                    value={selectedNewOwnerId ?? ""}
+                    onChange={(e) => setSelectedNewOwnerId(e.target.value as Id<"members">)}
+                    disabled={isSubmitting}
+                    className="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
+                      bg-white dark:bg-gray-900 text-dark dark:text-light text-sm
+                      focus:outline-none focus:ring-2 focus:ring-red-500
+                      disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="">{t("settings.selectNewOwner")}</option>
+                    {otherMembers.map((member) => (
+                      <option key={member._id} value={member._id}>
+                        {member.firstname} {member.surname} ({member.email})
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => void handleTransferOwnership()}
+                      disabled={isSubmitting || !selectedNewOwnerId}
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? t("settings.transferring") : t("settings.confirmTransfer")}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowTransferConfirm(false);
+                        setSelectedNewOwnerId(null);
+                      }}
+                      disabled={isSubmitting}
+                      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {tCommon("cancel")}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowTransferConfirm(true)}
+                  disabled={isSubmitting}
+                  className="px-4 py-2 border border-red-600 text-red-600 dark:text-red-400 dark:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {t("settings.transferOwnership")}
+                </button>
+              )}
+            </div>
+
+            {/* Delete Organization */}
+            <div>
+              <h4 className="text-sm font-semibold text-dark dark:text-light mb-2">
+                {t("deleteOrganization")}
+              </h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                {canDelete ? t("deleteOrgWarning") : t("settings.deleteOrgDisabledReason")}
               </p>
 
               {showDeleteConfirm ? (
@@ -742,14 +835,14 @@ export const OrgaSettingsModal = ({
               ) : (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  disabled={isSubmitting}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                  disabled={isSubmitting || !canDelete}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t("deleteOrganization")}
                 </button>
               )}
-            </section>
-          )}
+            </div>
+          </section>
 
           {/* Error message */}
           {error && (

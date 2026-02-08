@@ -16,7 +16,7 @@ function truncateTitle(title: string, maxLength: number = 12): string {
 function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
   switch (roleType) {
     case "leader":
-      return "#eac840"; // Bee Gold
+      return "var(--diagram-golden-bee)"; // Golden-bee (theme-aware)
     case "secretary":
       return "#a2dbed"; // Wing Blue
     case "referee":
@@ -29,7 +29,7 @@ function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
 function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): string {
   switch (roleType) {
     case "leader":
-      return "#d4af37"; // Dark Gold
+      return "var(--diagram-golden-bee)"; // Golden-bee (theme-aware)
     case "secretary":
       return "#7dd3fc"; // Light Blue
     case "referee":

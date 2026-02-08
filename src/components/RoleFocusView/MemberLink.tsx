@@ -70,7 +70,7 @@ export function MemberLink({
         y1={circleEdgeY}
         x2={linkX}
         y2={linkY - linkRadius}
-        stroke={isHovered ? "#eac840" : "var(--diagram-node-stroke)"}
+        stroke={isHovered ? "var(--diagram-golden-bee)" : "var(--diagram-node-stroke)"}
         strokeWidth={2}
         opacity={isHovered ? 0.8 : 0.4}
         style={{ transition: "stroke 150ms ease-out, opacity 150ms ease-out" }}
@@ -83,7 +83,7 @@ export function MemberLink({
           cy={linkY}
           r={linkRadius + 4}
           fill="none"
-          stroke="#eac840"
+          stroke="var(--diagram-golden-bee)"
           strokeWidth={1}
           opacity={0.5}
           style={{
@@ -98,7 +98,7 @@ export function MemberLink({
         cy={linkY}
         r={linkRadius}
         fill="var(--diagram-node-fill)"
-        stroke={isHovered ? "#eac840" : "var(--diagram-node-stroke)"}
+        stroke={isHovered ? "var(--diagram-golden-bee)" : "var(--diagram-node-stroke)"}
         strokeWidth={2}
         style={{
           transition: "stroke 150ms ease-out",

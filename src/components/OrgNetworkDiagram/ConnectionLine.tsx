@@ -64,7 +64,7 @@ export const ConnectionLine = memo(function ConnectionLine({
     return null;
   }
 
-  const strokeColor = isHovered ? "#d4af37" : "rgb(75 85 99)"; // Bee Gold Dark or gray-600
+  const strokeColor = isHovered ? "var(--diagram-golden-bee)" : "rgb(75 85 99)"; // Golden-bee (theme-aware) or gray-600
   const strokeWidth = isHovered ? 3 : 2;
 
   return (

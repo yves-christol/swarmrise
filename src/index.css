@@ -126,6 +126,7 @@ body {
   --diagram-tooltip-text: #1f2937;     /* gray-800 */
   --diagram-badge-bg: #a78bfa;         /* purple-400 */
   --diagram-arrow: #6b7280;            /* gray-500 */
+  --diagram-golden-bee: #D4AF37;       /* golden-bee light mode */
 }
 
 :root.dark {
@@ -139,6 +140,7 @@ body {
   --diagram-tooltip-text: #e5e7eb;     /* gray-200 */
   --diagram-badge-bg: #8b5cf6;         /* purple-500 */
   --diagram-arrow: #6b7280;            /* gray-500 */
+  --diagram-golden-bee: #EAC840;       /* golden-bee dark mode */
 }
 
 /* Principles page animations */

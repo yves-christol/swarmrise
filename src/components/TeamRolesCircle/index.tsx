@@ -671,7 +671,7 @@ function ParentTeamNode({
             y1={y}
             x2={edgeX}
             y2={edgeY}
-            stroke="#eac840"
+            stroke="var(--diagram-golden-bee)"
             strokeWidth={2}
             opacity={isHovered ? 0.9 : 0.6}
             style={{ transition: "opacity 150ms ease-out" }}
@@ -686,7 +686,7 @@ function ParentTeamNode({
           cy={y}
           r={radius + 4}
           fill="none"
-          stroke="#eac840"
+          stroke="var(--diagram-golden-bee)"
           strokeWidth={1}
           opacity={0.5}
           style={{
@@ -701,7 +701,7 @@ function ParentTeamNode({
         cy={y}
         r={radius}
         fill="var(--diagram-node-fill)"
-        stroke={isHovered ? "#eac840" : "var(--diagram-node-stroke)"}
+        stroke={isHovered ? "var(--diagram-golden-bee)" : "var(--diagram-node-stroke)"}
         strokeWidth={2}
         style={{
           transition: "stroke 150ms ease-out",

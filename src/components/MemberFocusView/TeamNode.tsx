@@ -37,7 +37,13 @@ export const TeamNode = memo(function TeamNode({
     // Point on role circle edge in direction of team node
     const edgeX = rolePos.x + (dx / dist) * rolePos.radius;
     const edgeY = rolePos.y + (dy / dist) * rolePos.radius;
-    return { x1: x, y1: y, x2: edgeX, y2: edgeY, roleId: rolePos.role._id };
+    // Check if this is a leader connection (gold):
+    // 1. Leader role connecting to its child team (master role leading child team)
+    // 2. Leader role directly in this team with no child team (root team leader)
+    const isLeaderToChildTeam = rolePos.role.roleType === "leader" && rolePos.childTeamId === team._id;
+    const isDirectLeaderOfTeam = rolePos.role.roleType === "leader" && rolePos.teamId === team._id && !rolePos.childTeamId;
+    const isGoldConnection = isLeaderToChildTeam || isDirectLeaderOfTeam;
+    return { x1: x, y1: y, x2: edgeX, y2: edgeY, roleId: rolePos.role._id, isGoldConnection };
   });
 
   return (
@@ -66,9 +72,9 @@ export const TeamNode = memo(function TeamNode({
           y1={line.y1}
           x2={line.x2}
           y2={line.y2}
-          stroke="var(--diagram-node-stroke)"
-          strokeWidth={1.5}
-          opacity={isHovered ? 0.7 : 0.4}
+          stroke={line.isGoldConnection ? "#eac840" : "var(--diagram-node-stroke)"}
+          strokeWidth={line.isGoldConnection ? 2 : 1.5}
+          opacity={isHovered ? 0.8 : (line.isGoldConnection ? 0.6 : 0.4)}
           style={{
             transition: "opacity 150ms ease-out",
             animation: `connectionReveal 300ms ease-out both`,

@@ -50,10 +50,10 @@ Every item below must be verified before the first production deployment. Items 
 ### Security (cross-reference `docs/SECURITY.md`)
 
 - [x] `.env*` files (except `.env.example`) are in `.gitignore` and not in git history
-- [ ] `[BLOCKER]` All user-facing Convex functions verify authentication via `getAuthenticatedUser` or `requireAuthAndMembership`
-- [ ] `[BLOCKER]` All queries with organizational data scope to `orgaId` (multi-tenant isolation)
-- [ ] `[BLOCKER]` `updateUser` mutation has authorization check (Security finding M1)
-- [ ] `[BLOCKER]` Debug/sample functions removed (`debugAuth`, `myFunctions.ts` -- Security findings M2, M5)
+- [x] All user-facing Convex functions verify authentication via `getAuthenticatedUser` or `requireAuthAndMembership`
+- [x] All queries with organizational data scope to `orgaId` (multi-tenant isolation)
+- [x] `updateUser` mutation has authorization check (Security finding M1)
+- [x] Debug/sample functions removed (`debugAuth`, `myFunctions.ts` -- Security findings M2, M5)
 - [x] Admin email is read from `ADMIN_EMAIL` env var, not hardcoded (Security finding M3)
 - [x] CSP header is configured in `index.html` with both dev and prod Clerk domains
 - [x] Clerk webhook secret (`CLERK_WEBHOOK_SECRET`) is configured on Convex production environment

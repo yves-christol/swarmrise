@@ -1,13 +1,11 @@
 import { v } from "convex/values";
 import { query, mutation, internalMutation } from "../_generated/server";
-import { internal } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
 import { getAuthenticatedUser } from "../utils";
 import {
   notificationValidator,
   notificationPayload,
   notificationPriorityType,
-  NotificationCategory,
 } from "./index";
 
 // ============================================================================

@@ -476,7 +476,7 @@ export const CreateOrganizationModal = ({
                         : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                     }`}
                   aria-pressed={selectedPresetId === preset.id}
-                  aria-label={t(`presets.${preset.id}`)}
+                  aria-label={t(`presets.${preset.id}` as any)}
                 >
                   <div
                     className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-500"

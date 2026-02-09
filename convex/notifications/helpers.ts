@@ -1,5 +1,4 @@
 import { MutationCtx, QueryCtx } from "../_generated/server";
-import { internal } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
 import { NotificationCategory, NotificationPriority } from "./index";
 import { ChannelPreferences } from "../notificationPreferences";

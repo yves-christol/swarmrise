@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router";
 import { useOrgaStore } from "../tools/orgaStore";

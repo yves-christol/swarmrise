@@ -39,8 +39,8 @@ function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): st
   }
 }
 
-function getRoleTypeKey(roleType: "leader" | "secretary" | "referee"): string {
-  return `roleTypes.${roleType}`;
+function getRoleTypeKey(roleType: "leader" | "secretary" | "referee") {
+  return `roleTypes.${roleType}` as const;
 }
 
 function getContactIcon(type: string) {
@@ -154,8 +154,8 @@ function getContactLink(type: string, value: string): string | null {
   return sanitizeUrl(url);
 }
 
-function getContactPlaceholderKey(type: string): string {
-  const keyMap: Record<string, string> = {
+function getContactPlaceholderKey(type: string) {
+  const keyMap = {
     LinkedIn: "contactPlaceholders.linkedin",
     Email: "contactPlaceholders.email",
     Mobile: "contactPlaceholders.mobile",
@@ -165,8 +165,8 @@ function getContactPlaceholderKey(type: string): string {
     Facebook: "contactPlaceholders.facebook",
     Instagram: "contactPlaceholders.instagram",
     Address: "contactPlaceholders.address",
-  };
-  return keyMap[type] || "contactPlaceholders.default";
+  } as const;
+  return (keyMap[type as keyof typeof keyMap] ?? "contactPlaceholders.default") as any;
 }
 
 function BackButton({ onClick }: { onClick: () => void }) {

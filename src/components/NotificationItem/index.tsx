@@ -1,6 +1,7 @@
 import { useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
+import { Id } from "../../../convex/_generated/dataModel";
 import { useOrgaStore } from "../../tools/orgaStore";
 import type { Notification } from "../../../convex/notifications";
 
@@ -96,7 +97,7 @@ export const NotificationItem = ({
   onActionComplete,
 }: NotificationItemProps) => {
   const { t } = useTranslation();
-  const { setCurrentOrgaId } = useOrgaStore();
+  const { selectOrga } = useOrgaStore();
 
   // Mutations
   const markAsRead = useMutation(api.notifications.functions.markAsRead);
@@ -151,7 +152,7 @@ export const NotificationItem = ({
         await acceptInvitation({ invitationId: payload.invitationId });
         // Switch to the new organization
         if ("orgaId" in payload) {
-          setCurrentOrgaId(payload.orgaId as string);
+          selectOrga(payload.orgaId as Id<"orgas">);
         }
         // Archive the notification
         await archiveNotification({ notificationId: notification._id });

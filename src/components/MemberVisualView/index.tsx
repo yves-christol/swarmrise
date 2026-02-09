@@ -3,7 +3,6 @@ import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import { Logo } from "../Logo";
 import { RoleLink } from "./RoleLink";
 import { TeamNode } from "./TeamNode";
 import { ContactInfo } from "./ContactInfo";

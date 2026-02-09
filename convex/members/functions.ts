@@ -290,8 +290,8 @@ export const leaveOrganization = mutation({
             roleIds: member.roleIds.filter((id) => id !== role._id),
           });
         }
-      } catch (error) {
-        // If we can't get the team leader (e.g., team doesn't exist), 
+      } catch {
+        // If we can't get the team leader (e.g., team doesn't exist),
         // we can't reassign the role, so we skip it
         // This shouldn't happen in normal operation, but we handle it gracefully
         console.error("Failed to reassign role during leave operation");

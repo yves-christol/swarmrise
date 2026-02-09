@@ -6,9 +6,7 @@ import {
   channelPreferences,
   digestFrequency,
   createDefaultPreferences,
-  ChannelPreferences,
 } from "./index";
-import { NotificationCategory } from "../notifications";
 
 // ============================================================================
 // QUERIES

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useState, useEffect, useCallback, useRef, ReactNode } from "react";
 import { useQuery } from "convex/react";
 import { useAuth } from "@clerk/clerk-react";

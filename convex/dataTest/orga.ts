@@ -301,15 +301,6 @@ const ORGANIZATION_TREE: TeamTemplate = {
   ],
 };
 
-// Helper to count total teams in tree (useful for debugging/validation)
-function _countTeamsInTree(template: TeamTemplate): number {
-  let count = 1;
-  for (const child of template.children) {
-    count += _countTeamsInTree(child);
-  }
-  return count;
-}
-
 // Helper to get a random subset of roles
 function getRandomRoles(roles: RoleTemplate[], minCount: number, maxCount: number): RoleTemplate[] {
   const count = minCount + Math.floor(Math.random() * (maxCount - minCount + 1));

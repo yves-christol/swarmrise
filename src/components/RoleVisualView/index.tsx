@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
-import { Logo } from "../Logo";
 import { MemberLink } from "./MemberLink";
 import { NotFound } from "../NotFound";
 import type { RoleVisualViewProps } from "./types";

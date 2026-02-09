@@ -23,9 +23,9 @@
 
 | Layer | Technology | Hosting / Provider |
 |-------|-----------|-------------------|
-| Frontend | React 19 + Vite + Tailwind CSS v4 | Static hosting (TBD: Vercel, Netlify, Cloudflare Pages) |
-| Backend | Convex (serverless functions + real-time database) | Convex Cloud |
-| Authentication | Clerk | Clerk Cloud |
+| Frontend | React 19 + Vite + Tailwind CSS v4 | `https://swarmrise.com` |
+| Backend | Convex (serverless functions + real-time database) | `https://ceaseless-echidna-512.convex.cloud` |
+| Authentication | Clerk | `https://clerk.swarmrise.com` |
 | Webhook verification | Svix (via Clerk webhooks) | Runs inside Convex Node.js actions |
 | Package manager | Bun (enforced via `npx only-allow bun`) | Local / CI |
 | Node runtime (Convex) | Node.js 22 (configured in `convex.json`) | Convex Cloud |
@@ -40,39 +40,40 @@ Every item below must be verified before the first production deployment. Items 
 
 ### Build & Code Quality
 
-- [ ] `[BLOCKER]` `bun run build` passes with zero errors and zero warnings
-- [ ] `[BLOCKER]` `bun run lint` passes with zero errors and zero warnings (currently 19 warnings -- see "Current Build Status" below)
-- [ ] `[BLOCKER]` All TypeScript compilation errors are resolved
+- [x] `bun run build` passes with zero errors and zero warnings
+- [x] `bun run lint` passes with zero errors and zero warnings
+- [x] All TypeScript compilation errors are resolved
 - [ ] All Convex functions have `args` and `returns` validators
 - [ ] No `filter()` used in Convex queries -- use `withIndex()` instead
 - [ ] No `console.log` in production code (use structured error handling)
 
 ### Security (cross-reference `docs/SECURITY.md`)
 
-- [ ] `[BLOCKER]` `.env*` files (except `.env.example`) are in `.gitignore` and not in git history
+- [x] `.env*` files (except `.env.example`) are in `.gitignore` and not in git history
 - [ ] `[BLOCKER]` All user-facing Convex functions verify authentication via `getAuthenticatedUser` or `requireAuthAndMembership`
 - [ ] `[BLOCKER]` All queries with organizational data scope to `orgaId` (multi-tenant isolation)
 - [ ] `[BLOCKER]` `updateUser` mutation has authorization check (Security finding M1)
 - [ ] `[BLOCKER]` Debug/sample functions removed (`debugAuth`, `myFunctions.ts` -- Security findings M2, M5)
-- [ ] Admin email is read from `ADMIN_EMAIL` env var, not hardcoded (Security finding M3 -- already fixed)
-- [ ] CSP header is configured in `index.html` (already present)
-- [ ] Clerk webhook secret (`CLERK_WEBHOOK_SECRET`) is configured on Convex production environment
+- [x] Admin email is read from `ADMIN_EMAIL` env var, not hardcoded (Security finding M3)
+- [x] CSP header is configured in `index.html` with both dev and prod Clerk domains
+- [x] Clerk webhook secret (`CLERK_WEBHOOK_SECRET`) is configured on Convex production environment
 
 ### Environment & Secrets
 
-- [ ] `[BLOCKER]` Production Convex deployment created (`npx convex deploy --prod`)
-- [ ] `[BLOCKER]` Production Clerk application created (separate from development)
-- [ ] `[BLOCKER]` All required environment variables are set (see "Environment Configuration" section)
-- [ ] `[BLOCKER]` Clerk webhook endpoint configured pointing to Convex production HTTP endpoint
-- [ ] Frontend environment variables (`VITE_*`) configured on hosting platform build settings
-- [ ] Convex environment variables set via `npx convex env set` on the production deployment
+- [x] Production Convex deployment created (`https://ceaseless-echidna-512.convex.cloud`)
+- [x] Production Clerk application created (`https://clerk.swarmrise.com`)
+- [x] All required environment variables are set (verified via `npx convex env list --prod`)
+- [x] Clerk webhook endpoint configured pointing to `https://ceaseless-echidna-512.convex.site/webhooks/clerk`
+- [x] Frontend environment variables (`VITE_*`) configured on hosting platform
+- [x] Convex environment variables set via `npx convex env set` on the production deployment
 
 ### Infrastructure
 
-- [ ] Frontend hosting platform selected and configured (Vercel, Netlify, or Cloudflare Pages)
-- [ ] Custom domain configured with HTTPS
-- [ ] CSP header updated to include production Clerk domain (replace `*.clerk.accounts.dev` with production Clerk domain)
-- [ ] DNS configured for custom domain
+- [x] Frontend hosting platform configured, serving at `https://swarmrise.com`
+- [x] Custom domain configured with HTTPS
+- [x] CSP header updated to include production Clerk domain (`*.clerk.com`)
+- [x] DNS configured for custom domain
+- [x] CI/CD pipeline configured (`.github/workflows/ci.yml`)
 
 ### Observability
 
@@ -80,20 +81,6 @@ Every item below must be verified before the first production deployment. Items 
 - [ ] Convex function logs accessible
 - [ ] Clerk dashboard configured for the production instance
 - [ ] Error monitoring set up (see "Monitoring" section)
-
-### Current Build Status (as of 2026-02-09)
-
-The build currently has **18 TypeScript errors** and **19 lint warnings**. These must all be resolved before production deployment. Key issues:
-
-**TypeScript errors:**
-- Unused imports in `convex/notifications/`, `convex/notificationPreferences/`, `convex/dataTest/`
-- Type errors in `src/components/CreateOrganizationModal/`, `src/components/MemberManageView/`, `src/components/OrgaSettingsModal/` (i18n key typing and missing properties)
-- Missing property `setCurrentOrgaId` in `src/components/NotificationItem/`
-- Unused `Logo` imports in `src/components/MemberVisualView/` and `src/components/RoleVisualView/`
-
-**Lint warnings:**
-- Unused variable/import warnings in Convex functions
-- `react-refresh/only-export-components` warnings for context providers
 
 ---
 
@@ -118,7 +105,7 @@ npx convex login
 
 # Create a new production deployment for the project
 # This will create a new deployment and give you the production URL
-npx convex deploy --prod
+npx convex deploy
 ```
 
 This will:
@@ -145,7 +132,7 @@ npx convex env set ADMIN_EMAIL "admin@yourdomain.com" --prod
 1. In the Clerk Dashboard, create a production instance (or switch your existing instance to production mode)
 2. Note the **publishable key** (starts with `pk_live_`)
 3. Configure a webhook endpoint:
-   - URL: `https://your-convex-deployment.convex.site/webhooks/clerk`
+   - URL: `https://ceaseless-echidna-512.convex.site/webhooks/clerk`
    - Events: `user.created`, `user.updated`
    - Copy the **signing secret** -- this is the `CLERK_WEBHOOK_SECRET`
 
@@ -153,8 +140,8 @@ npx convex env set ADMIN_EMAIL "admin@yourdomain.com" --prod
 
 ```bash
 # Set production environment variables (or configure in hosting platform)
-export VITE_CONVEX_URL="https://your-production-deployment.convex.cloud"
-export VITE_CLERK_PUBLISHABLE_KEY="pk_live_your_production_key"
+export VITE_CONVEX_URL="https://ceaseless-echidna-512.convex.cloud"
+export VITE_CLERK_PUBLISHABLE_KEY="pk_live_..."
 
 # Build
 bun run build
@@ -182,7 +169,7 @@ For ongoing deployments:
 bun run scripts/pre-deploy-check.ts
 
 # 2. Deploy Convex backend
-npx convex deploy --prod
+npx convex deploy
 
 # 3. Build frontend
 bun run build
@@ -215,7 +202,7 @@ These are embedded into the built JavaScript bundle. They must be prefixed with 
 
 | Variable | Required | Description | Example |
 |----------|----------|-------------|---------|
-| `VITE_CONVEX_URL` | Yes | Convex deployment cloud URL | `https://your-deployment.convex.cloud` |
+| `VITE_CONVEX_URL` | Yes | Convex deployment cloud URL | `https://ceaseless-echidna-512.convex.cloud` |
 | `VITE_CLERK_PUBLISHABLE_KEY` | Yes | Clerk publishable key (pk_test_ or pk_live_) | `pk_live_abc123...` |
 
 **Where to set:** In the hosting platform's build environment settings (Vercel, Netlify, etc.), or in a `.env.production` file that is NOT committed to git.
@@ -242,8 +229,8 @@ These are used by the Convex CLI locally and should be in `.env.local` (gitignor
 
 | Environment | Clerk Instance | Convex Deployment | Frontend URL |
 |-------------|---------------|-------------------|-------------|
-| Development | Dev (`pk_test_*`) | Dev (`dev:*`) | `localhost:5173` |
-| Production | Production (`pk_live_*`) | Production (`prod:*`) | Your production domain |
+| Development | Dev (`pk_test_*`, `current-slug-83.clerk.accounts.dev`) | Dev (`dev:youthful-starling-351`) | `http://localhost:5173` |
+| Production | Production (`pk_live_*`, `clerk.swarmrise.com`) | Prod (`ceaseless-echidna-512`) | `https://swarmrise.com` |
 
 **Critical rule:** Never use development Clerk keys or Convex deployments in production, and vice versa. Each environment must have its own isolated set of credentials.
 
@@ -369,7 +356,7 @@ bun run scripts/env-check.ts --prod
 1. Check Clerk Dashboard > Webhooks for delivery failures
 2. Verify `CLERK_WEBHOOK_SECRET` is correct on the Convex deployment
 3. Check Convex logs for webhook handler errors (`convex/webhooks/clerk.ts`)
-4. Verify the webhook URL: `https://your-deployment.convex.site/webhooks/clerk`
+4. Verify the webhook URL: `https://ceaseless-echidna-512.convex.site/webhooks/clerk`
 5. Test by sending a test webhook from Clerk Dashboard
 
 #### Convex functions are failing
@@ -410,7 +397,7 @@ git log --oneline -10
 git checkout <previous-good-commit>
 
 # Deploy that version to production
-npx convex deploy --prod
+npx convex deploy
 
 # Return to the current branch
 git checkout master
@@ -419,7 +406,7 @@ git checkout master
 **Option B: Revert the bad commit and deploy**
 ```bash
 git revert <bad-commit-hash>
-npx convex deploy --prod
+npx convex deploy
 ```
 
 **Important caveats:**
@@ -489,7 +476,7 @@ git checkout master
 
 **Operational impact:**
 - `dev:*` deployments are used during local development (`npx convex dev`)
-- `prod:*` deployment is used for production (`npx convex deploy --prod`)
+- `prod:*` deployment is used for production (`npx convex deploy`)
 - Environment variables must be set independently on each deployment
 
 ### ADR-003: Clerk Webhooks for User Sync
@@ -543,7 +530,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - run: npx convex deploy --prod
+      - run: npx convex deploy
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
 ```

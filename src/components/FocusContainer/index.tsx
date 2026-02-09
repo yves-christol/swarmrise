@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useLayoutEffect, useState, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useFocus, useViewMode } from "../../tools/orgaStore";
 import { useRouteSync } from "../../hooks/useRouteSync";
@@ -14,6 +14,7 @@ import { TeamManageView } from "../TeamManageView";
 import { MemberManageView } from "../MemberManageView";
 import { ViewToggle } from "../ViewToggle";
 import { Id } from "../../../convex/_generated/dataModel";
+import type { FocusTarget } from "../../tools/orgaStore/types";
 
 type FocusContainerProps = {
   orgaId: Id<"orgas">;
@@ -35,40 +36,102 @@ type TransitionType =
   | "team-to-member"
   | null;
 
-const TRANSITION_DURATION = 400; // ms
+// Snappy 300ms transition (macOS Mission Control feel)
+const TRANSITION_DURATION = 300; // ms
+
+// Spatial zoom transitions use proxy circle + simultaneous layers
+const SPATIAL_TRANSITIONS = new Set<TransitionType>([
+  "orga-to-team",
+  "team-to-orga",
+]);
+
+function isSpatialTransition(type: TransitionType): boolean {
+  return SPATIAL_TRANSITIONS.has(type);
+}
 
 export function FocusContainer({ orgaId }: FocusContainerProps) {
-  const { focus, focusOnOrga, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, previousFocusFromMember } = useFocus();
+  const {
+    focus,
+    focusOnOrga,
+    focusOnRole,
+    focusOnMember,
+    focusOnTeamFromRole,
+    focusOnRoleFromMember,
+    focusOnTeamFromMember,
+    focusOnOrgaFromMember,
+    isFocusTransitioning,
+    transitionOrigin,
+    transitionDirection,
+    onTransitionEnd,
+    previousFocusFromMember,
+  } = useFocus();
   const { viewMode, swapPhase, displayedMode, setViewMode } = useViewMode();
   const location = useLocation();
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Sync focus state with URL
   useRouteSync();
 
   // Handle view mode toggle with immediate URL update
-  const handleViewModeChange = useCallback((newMode: ViewMode) => {
-    // Update URL immediately (before animation completes)
-    const currentPath = location.pathname;
-    const newPath = newMode === "manage"
-      ? currentPath.endsWith("/manage") ? currentPath : `${currentPath}/manage`
-      : currentPath.replace(/\/manage$/, "");
+  const handleViewModeChange = useCallback(
+    (newMode: ViewMode) => {
+      const currentPath = location.pathname;
+      const newPath =
+        newMode === "manage"
+          ? currentPath.endsWith("/manage")
+            ? currentPath
+            : `${currentPath}/manage`
+          : currentPath.replace(/\/manage$/, "");
 
-    if (currentPath !== newPath) {
-      void navigate(newPath, { replace: true });
-    }
+      if (currentPath !== newPath) {
+        void navigate(newPath, { replace: true });
+      }
+      setViewMode(newMode);
+    },
+    [location.pathname, navigate, setViewMode]
+  );
 
-    // Trigger the animated state change
-    setViewMode(newMode);
-  }, [location.pathname, navigate, setViewMode]);
+  // --- Transition state ---
 
-  // Track which view to show during transition
   const [currentView, setCurrentView] = useState<ViewType>(focus.type);
-  const [animationPhase, setAnimationPhase] = useState<"idle" | "zoom-out-old" | "zoom-in-new">("idle");
+  // For spatial transitions: the old view that is animating out
+  const [exitingView, setExitingView] = useState<ViewType | null>(null);
+  const [exitingFocus, setExitingFocus] = useState<FocusTarget | null>(null);
 
-  // Track previous view for determining transition type
+  const [animationPhase, setAnimationPhase] = useState<
+    "idle" | "zoom-out-old" | "zoom-in-new" | "spatial-zoom"
+  >("idle");
+
   const previousViewRef = useRef<ViewType>(focus.type);
+  const previousFocusRef = useRef<FocusTarget>(focus);
   const [transitionType, setTransitionType] = useState<TransitionType>(null);
+
+  // Proxy circle state
+  type ProxyCircleState = {
+    startX: number;
+    startY: number;
+    startRadius: number;
+    endX: number;
+    endY: number;
+    endRadius: number;
+  };
+  const [proxyCircle, setProxyCircle] = useState<ProxyCircleState | null>(null);
+
+  // Ref for the clip-path animated layer during spatial zoom
+  const clipLayerRef = useRef<HTMLDivElement>(null);
+
+  // Ref for OrgaVisualView's node position lookup
+  const getNodeScreenPositionRef = useRef<
+    ((teamId: string) => { x: number; y: number; radius: number } | null) | null
+  >(null);
+
+  const registerNodePositionLookup = useCallback(
+    (lookup: (teamId: string) => { x: number; y: number; radius: number } | null) => {
+      getNodeScreenPositionRef.current = lookup;
+    },
+    []
+  );
 
   // Determine transition type when focus changes
   useEffect(() => {
@@ -84,139 +147,176 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     if (!isFocusTransitioning) {
       setAnimationPhase("idle");
       setCurrentView(focus.type);
+      setExitingView(null);
+      setExitingFocus(null);
       previousViewRef.current = focus.type;
+      previousFocusRef.current = focus;
       setTransitionType(null);
+      setProxyCircle(null);
       return;
     }
 
-    // Start transition animation
-    setAnimationPhase("zoom-out-old");
+    const from = previousViewRef.current;
+    const to = focus.type;
+    const type = `${from}-to-${to}` as TransitionType;
 
-    const timer1 = setTimeout(() => {
-      setCurrentView(focus.type);
-      setAnimationPhase("zoom-in-new");
-    }, TRANSITION_DURATION / 2);
+    if (isSpatialTransition(type)) {
+      // === SPATIAL ZOOM TRANSITION ===
+      const container = containerRef.current;
+      if (!container) return;
 
-    const timer2 = setTimeout(() => {
-      previousViewRef.current = focus.type;
-      onTransitionEnd();
-    }, TRANSITION_DURATION);
+      const containerRect = container.getBoundingClientRect();
+      const containerCenterX = containerRect.width / 2;
+      const containerCenterY = containerRect.height / 2;
+      const viewportDiagonal = Math.sqrt(
+        containerRect.width * containerRect.width +
+          containerRect.height * containerRect.height
+      );
+      const fullRadius = viewportDiagonal / 2;
 
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
-  }, [isFocusTransitioning, transitionDirection, focus.type, onTransitionEnd]);
+      if (type === "orga-to-team") {
+        // ZOOM IN: node expands to fill viewport
+        const origin = transitionOrigin;
+        const nodeX = origin ? origin.x : containerCenterX;
+        const nodeY = origin ? origin.y : containerCenterY;
+        const nodeRadius = origin ? origin.radius : 40;
 
-  // Calculate transform origin based on transition origin
+        setProxyCircle({
+          startX: nodeX,
+          startY: nodeY,
+          startRadius: nodeRadius,
+          endX: containerCenterX,
+          endY: containerCenterY,
+          endRadius: fullRadius,
+        });
+      } else if (type === "team-to-orga") {
+        // ZOOM OUT: viewport shrinks to viewport center.
+        // The orga view centers on returnFromTeamId, so the team node
+        // will end up at viewport center — contract the clip there.
+        setProxyCircle({
+          startX: containerCenterX,
+          startY: containerCenterY,
+          startRadius: fullRadius,
+          endX: containerCenterX,
+          endY: containerCenterY,
+          endRadius: 40,
+        });
+      }
+
+      // Store the exiting view info, then show the new view
+      setExitingView(from);
+      setExitingFocus(previousFocusRef.current);
+      setCurrentView(to);
+      setAnimationPhase("spatial-zoom");
+
+      const timer = setTimeout(() => {
+        previousViewRef.current = focus.type;
+        previousFocusRef.current = focus;
+        onTransitionEnd();
+      }, TRANSITION_DURATION);
+
+      return () => clearTimeout(timer);
+    } else {
+      // === NON-SPATIAL TRANSITION (two-phase scale) ===
+      setAnimationPhase("zoom-out-old");
+
+      const timer1 = setTimeout(() => {
+        setCurrentView(focus.type);
+        setAnimationPhase("zoom-in-new");
+      }, TRANSITION_DURATION / 2);
+
+      const timer2 = setTimeout(() => {
+        previousViewRef.current = focus.type;
+        previousFocusRef.current = focus;
+        onTransitionEnd();
+      }, TRANSITION_DURATION);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
+  }, [isFocusTransitioning, transitionDirection, focus, onTransitionEnd, transitionOrigin]);
+
+  // Transform origin CSS string from transition origin
   const transformOrigin = transitionOrigin
     ? `${transitionOrigin.x}px ${transitionOrigin.y}px`
     : "center center";
 
-  // Get animation parameters based on transition type
+  // --- Non-spatial animation helpers ---
+
   const getZoomOutParams = (): { scale: number; origin: string } => {
     switch (transitionType) {
-      case "orga-to-team":
-        // Zooming into a team from org view
-        return { scale: 1.5, origin: transformOrigin };
       case "team-to-role":
-        // Zooming into a role from team view
         return { scale: 1.8, origin: transformOrigin };
-      case "team-to-orga":
-        // Zooming out from team to org
-        return { scale: 0.7, origin: "center center" };
       case "role-to-team":
-        // Zooming out from role to team
-        return { scale: 0.6, origin: "center center" };
+        return { scale: 0.4, origin: "center center" };
       case "orga-to-role":
-        // Direct jump to role (rare)
         return { scale: 2, origin: transformOrigin };
       case "role-to-orga":
-        // Direct jump from role to org (rare)
-        return { scale: 0.5, origin: "center center" };
+        return { scale: 0.3, origin: "center center" };
       case "role-to-member":
-        // Zooming into member from role view
         return { scale: 1.6, origin: transformOrigin };
       case "member-to-role":
-        // Zooming out from member to role
-        return { scale: 0.6, origin: "center center" };
+        return { scale: 0.4, origin: "center center" };
       case "member-to-team":
-        // Zooming out from member to team
-        return { scale: 0.7, origin: "center center" };
+        return { scale: 0.4, origin: "center center" };
       case "member-to-orga":
-        // Zooming out from member to org (when started on member via "You come first")
-        return { scale: 0.5, origin: "center center" };
+        return { scale: 0.3, origin: "center center" };
       case "orga-to-member":
-        // Zooming into member from org view (direct)
         return { scale: 2, origin: transformOrigin };
       case "team-to-member":
-        // Zooming into member from team view (rare)
         return { scale: 1.5, origin: transformOrigin };
       default:
-        // Fallback based on direction
         return transitionDirection === "in"
-          ? { scale: 1.5, origin: transformOrigin }
-          : { scale: 0.8, origin: "center center" };
+          ? { scale: 2, origin: transformOrigin }
+          : { scale: 0.4, origin: "center center" };
     }
   };
 
-  // Get the animation name for zoom-in based on transition type
   const getZoomInAnimation = (): string => {
     switch (transitionType) {
       case "team-to-role":
-        return "fadeScaleInFromSmall";
-      case "role-to-team":
-        return "fadeScaleInFromLarge";
-      case "orga-to-team":
-        return "fadeScaleInFromSmall";
-      case "team-to-orga":
-        return "fadeScaleInFromLarge";
       case "role-to-member":
-        return "fadeScaleInFromSmall";
-      case "member-to-role":
-        return "fadeScaleInFromLarge";
-      case "member-to-team":
-        return "fadeScaleInFromLarge";
-      case "member-to-orga":
-        return "fadeScaleInFromLarge";
       case "orga-to-member":
-        return "fadeScaleInFromSmall";
+      case "orga-to-role":
       case "team-to-member":
         return "fadeScaleInFromSmall";
+      case "role-to-team":
+      case "member-to-role":
+      case "member-to-team":
+      case "member-to-orga":
+      case "role-to-orga":
+        return "fadeScaleInFromLarge";
       default:
         return "fadeScaleIn";
     }
   };
 
-  // Animation styles
-  const getAnimationStyles = (): React.CSSProperties => {
+  const getNonSpatialStyles = (): React.CSSProperties => {
     if (animationPhase === "idle") {
       return { opacity: 1, transform: "scale(1)" };
     }
-
     if (animationPhase === "zoom-out-old") {
       const { scale, origin } = getZoomOutParams();
       return {
         opacity: 0,
         transform: `scale(${scale})`,
         transformOrigin: origin,
-        transition: `all ${TRANSITION_DURATION / 2}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+        transition: `all ${TRANSITION_DURATION / 2}ms cubic-bezier(0.2, 0, 0, 1)`,
       };
     }
-
     if (animationPhase === "zoom-in-new") {
       const animationName = getZoomInAnimation();
       return {
         opacity: 1,
         transform: "scale(1)",
-        animation: `${animationName} ${TRANSITION_DURATION / 2}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
+        animation: `${animationName} ${TRANSITION_DURATION / 2}ms cubic-bezier(0.2, 0, 0, 1) forwards`,
       };
     }
-
     return {};
   };
 
-  // Get the flip state class for 3D card rotation
   const getFlipClass = (): string => {
     return viewMode === "manage" ? "manage" : "visual";
   };
@@ -224,15 +324,15 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
   // Keyboard shortcut for view toggle (V key)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't handle if user is typing in an input
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
         return;
       }
-      // Don't handle during focus transitions
       if (isFocusTransitioning || animationPhase !== "idle") {
         return;
       }
-
       if (e.key === "v" || e.key === "V") {
         handleViewModeChange(viewMode === "visual" ? "manage" : "visual");
       }
@@ -242,9 +342,137 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [viewMode, handleViewModeChange, isFocusTransitioning, animationPhase]);
 
+  // --- Render helper ---
+
+  const renderView = (viewType: ViewType, focusTarget: FocusTarget, flipClass: string) => {
+    if (viewType === "member" && focusTarget.type === "member") {
+      return (
+        <div className="flip-container absolute inset-0">
+          <div className={`flip-card absolute inset-0 ${flipClass}`}>
+            <div className="flip-face flip-face-visual">
+              <MemberVisualView
+                memberId={focusTarget.memberId}
+                onZoomOut={
+                  previousFocusFromMember
+                    ? focusOnRoleFromMember
+                    : focusOnOrgaFromMember
+                }
+                onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+                onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
+              />
+            </div>
+            <div className="flip-face flip-face-manage">
+              <MemberManageView
+                memberId={focusTarget.memberId}
+                onZoomOut={
+                  previousFocusFromMember
+                    ? focusOnRoleFromMember
+                    : focusOnOrgaFromMember
+                }
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (viewType === "role" && focusTarget.type === "role") {
+      return (
+        <div className="flip-container absolute inset-0">
+          <div className={`flip-card absolute inset-0 ${flipClass}`}>
+            <div className="flip-face flip-face-visual">
+              <RoleVisualView
+                roleId={focusTarget.roleId}
+                onZoomOut={focusOnTeamFromRole}
+                onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+                onNavigateToMember={(memberId, origin) =>
+                  focusOnMember(memberId, origin)
+                }
+              />
+            </div>
+            <div className="flip-face flip-face-manage">
+              <RoleManageView
+                roleId={focusTarget.roleId}
+                onZoomOut={focusOnTeamFromRole}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (viewType === "team" && focusTarget.type === "team") {
+      return (
+        <div className="flip-container absolute inset-0">
+          <div className={`flip-card absolute inset-0 ${flipClass}`}>
+            <div className="flip-face flip-face-visual">
+              <TeamVisualView
+                teamId={focusTarget.teamId}
+                onZoomOut={focusOnOrga}
+              />
+            </div>
+            <div className="flip-face flip-face-manage">
+              <TeamManageView
+                teamId={focusTarget.teamId}
+                onZoomOut={focusOnOrga}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Default: orga view
+    return (
+      <div className="flip-container absolute inset-0">
+        <div className={`flip-card absolute inset-0 ${flipClass}`}>
+          <div className="flip-face flip-face-visual">
+            <OrgaVisualView
+              orgaId={orgaId}
+              onRegisterNodePositionLookup={registerNodePositionLookup}
+            />
+          </div>
+          <div className="flip-face flip-face-manage">
+            <OrgaManageView orgaId={orgaId} />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // --- Clip-path animation for spatial zoom (FLIP technique) ---
+
+  useLayoutEffect(() => {
+    if (animationPhase !== "spatial-zoom" || !clipLayerRef.current || !proxyCircle) return;
+
+    const el = clipLayerRef.current;
+    const { startX, startY, startRadius, endX, endY, endRadius } = proxyCircle;
+
+    // Set initial clip-path (before paint)
+    el.style.clipPath = `circle(${startRadius}px at ${startX}px ${startY}px)`;
+    el.style.transition = "none";
+
+    // Force reflow so browser registers the start state
+    el.getBoundingClientRect();
+
+    // Animate to end state
+    el.style.transition = `clip-path ${TRANSITION_DURATION}ms cubic-bezier(0.2, 0, 0, 1)`;
+    el.style.clipPath = `circle(${endRadius}px at ${endX}px ${endY}px)`;
+
+    // Cleanup: remove inline clip-path when transition ends or deps change
+    return () => {
+      el.style.clipPath = "";
+      el.style.transition = "";
+    };
+  }, [animationPhase, proxyCircle]);
+
+  // --- Main render ---
+
+  const isSpatial = isSpatialTransition(transitionType);
+
   return (
-    <div className="absolute inset-0 overflow-hidden">
-      {/* View toggle - show for all entity views when not transitioning */}
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
+      {/* View toggle -- visible only when idle */}
       {animationPhase === "idle" && !isFocusTransitioning && (
         <ViewToggle
           mode={viewMode}
@@ -253,91 +481,39 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         />
       )}
 
-      {/* View container with transitions */}
+      {/* ========== MAIN VIEW (always rendered here, persists after transitions) ========== */}
       <div
+        ref={isSpatial && animationPhase === "spatial-zoom" && transitionType === "orga-to-team" ? clipLayerRef : undefined}
         className="focus-view absolute inset-0"
-        style={getAnimationStyles()}
+        style={isSpatial && animationPhase === "spatial-zoom" ? undefined : getNonSpatialStyles()}
       >
-        {currentView === "member" && focus.type === "member" ? (
-          /* Member view with 3D flip between visual and manage */
-          <div className="flip-container absolute inset-0">
-            <div className={`flip-card absolute inset-0 ${getFlipClass()}`}>
-              <div className="flip-face flip-face-visual">
-                <MemberVisualView
-                  memberId={focus.memberId}
-                  onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
-                  onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
-                  onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
-                />
-              </div>
-              <div className="flip-face flip-face-manage">
-                <MemberManageView
-                  memberId={focus.memberId}
-                  onZoomOut={previousFocusFromMember ? focusOnRoleFromMember : focusOnOrgaFromMember}
-                />
-              </div>
-            </div>
-          </div>
-        ) : currentView === "role" && focus.type === "role" ? (
-          /* Role view with 3D flip between visual and manage */
-          <div className="flip-container absolute inset-0">
-            <div className={`flip-card absolute inset-0 ${getFlipClass()}`}>
-              <div className="flip-face flip-face-visual">
-                <RoleVisualView
-                  roleId={focus.roleId}
-                  onZoomOut={focusOnTeamFromRole}
-                  onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
-                  onNavigateToMember={(memberId, origin) => focusOnMember(memberId, origin)}
-                />
-              </div>
-              <div className="flip-face flip-face-manage">
-                <RoleManageView
-                  roleId={focus.roleId}
-                  onZoomOut={focusOnTeamFromRole}
-                />
-              </div>
-            </div>
-          </div>
-        ) : currentView === "team" && focus.type === "team" ? (
-          /* Team view with 3D flip between visual and manage */
-          <div className="flip-container absolute inset-0">
-            <div className={`flip-card absolute inset-0 ${getFlipClass()}`}>
-              <div className="flip-face flip-face-visual">
-                <TeamVisualView
-                  teamId={focus.teamId}
-                  onZoomOut={focusOnOrga}
-                />
-              </div>
-              <div className="flip-face flip-face-manage">
-                <TeamManageView
-                  teamId={focus.teamId}
-                  onZoomOut={focusOnOrga}
-                />
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* Orga view with 3D flip between visual and manage */
-          <div className="flip-container absolute inset-0">
-            <div className={`flip-card absolute inset-0 ${getFlipClass()}`}>
-              <div className="flip-face flip-face-visual">
-                <OrgaVisualView orgaId={orgaId} />
-              </div>
-              <div className="flip-face flip-face-manage">
-                <OrgaManageView orgaId={orgaId} />
-              </div>
-            </div>
-          </div>
-        )}
+        {renderView(currentView, focus, getFlipClass())}
       </div>
+
+      {/* ========== EXITING OVERLAY (spatial zoom only, removed when transition ends) ========== */}
+      {isSpatial && animationPhase === "spatial-zoom" && exitingView !== null && exitingFocus !== null && (
+        transitionType === "orga-to-team" ? (
+          /* Old orga view fading/scaling — sits on top, reveals clipped team view as it fades */
+          <div
+            className="zoom-layer-old zoom-in-exit"
+            style={{ transformOrigin }}
+          >
+            {renderView(exitingView, exitingFocus, getFlipClass())}
+          </div>
+        ) : transitionType === "team-to-orga" ? (
+          /* Old team view contracting via clip-path — sits on top of the orga view */
+          <div ref={clipLayerRef} className="zoom-layer-old">
+            {renderView(exitingView, exitingFocus, getFlipClass())}
+          </div>
+        ) : null
+      )}
 
       {/* Screen reader announcement for view mode */}
       <div role="status" aria-live="polite" className="sr-only">
-        {swapPhase === "idle" && (
-          displayedMode === "visual"
+        {swapPhase === "idle" &&
+          (displayedMode === "visual"
             ? "Now viewing visual diagram. Press V to switch to management view."
-            : "Now viewing management options. Press V to switch to visual diagram."
-        )}
+            : "Now viewing management options. Press V to switch to visual diagram.")}
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ type TeamVisualViewProps = {
 
 export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const { t } = useTranslation("teams");
 
   // Focus navigation for clicking into child teams and roles
@@ -113,52 +113,53 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
     return <NotFound entityType="team" onNavigateBack={onZoomOut} />;
   }
 
-  // Loading state
-  if (team === undefined || roles === undefined) {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center bg-light dark:bg-dark">
-        <div className="flex flex-col items-center gap-4">
-          <svg
-            className="animate-spin h-8 w-8 text-gray-500 dark:text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-          <span className="text-gray-600 dark:text-gray-400 text-sm">
-            {t("diagram.loadingTeam")}
-          </span>
-        </div>
-      </div>
-    );
-  }
+  // Always render container div so ResizeObserver can measure dimensions
+  const isLoading = team === undefined || roles === undefined;
+  const hasDimensions = dimensions.width > 0 && dimensions.height > 0;
+  const isEmpty = !isLoading && roles !== undefined && roles.length === 0;
 
-  // Empty state - no roles
-  if (roles.length === 0) {
+  if (isLoading || !hasDimensions || isEmpty) {
     return (
-      <div className="absolute inset-0 bg-light dark:bg-dark">
-        <ZoomOutButton onClick={onZoomOut} />
+      <div ref={containerRef} className="absolute inset-0 bg-light dark:bg-dark overflow-hidden">
+        {isEmpty && <ZoomOutButton onClick={onZoomOut} />}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          <Logo size={48} begin={0} repeatCount={2} />
-          <h3 className="font-swarm text-xl font-bold text-dark dark:text-light">
-            {t("diagram.noRolesYet")}
-          </h3>
-          <p className="text-gray-400 text-center max-w-xs">
-            {t("diagram.noRolesYetDescription")}
-          </p>
+          {isLoading ? (
+            <>
+              <svg
+                className="animate-spin h-8 w-8 text-gray-500 dark:text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              <span className="text-gray-600 dark:text-gray-400 text-sm">
+                {t("diagram.loadingTeam")}
+              </span>
+            </>
+          ) : isEmpty ? (
+            <>
+              <Logo size={48} begin={0} repeatCount={2} />
+              <h3 className="font-swarm text-xl font-bold text-dark dark:text-light">
+                {t("diagram.noRolesYet")}
+              </h3>
+              <p className="text-gray-400 text-center max-w-xs">
+                {t("diagram.noRolesYetDescription")}
+              </p>
+            </>
+          ) : null}
         </div>
       </div>
     );

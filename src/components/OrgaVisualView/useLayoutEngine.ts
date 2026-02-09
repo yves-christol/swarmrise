@@ -73,7 +73,7 @@ export function useLayoutEngine(
 
   // Run force simulation
   useEffect(() => {
-    if (initialNodes.length === 0) {
+    if (initialNodes.length === 0 || width === 0 || height === 0) {
       setNodes([]);
       return;
     }
@@ -119,23 +119,35 @@ export function useLayoutEngine(
           .strength(0.8)
       )
       .alphaDecay(0.02)
-      .velocityDecay(0.4);
+      .velocityDecay(0.4)
+      .stop(); // Prevent auto-start — we'll run it synchronously first
+
+    // Run simulation to completion synchronously so nodes start at final positions
+    const alphaMin = simulation.alphaMin();
+    while (simulation.alpha() > alphaMin) {
+      simulation.tick();
+    }
+
+    // Set settled positions immediately (no visible settling animation)
+    const snapshotNodes = () =>
+      simNodes.map((n) => ({
+        id: n.id,
+        name: n.name,
+        roleCount: n.roleCount,
+        radius: n.radius,
+        x: n.x ?? 0,
+        y: n.y ?? 0,
+        isPinned: n.fx != null && n.fy != null,
+      }));
+
+    setNodes(snapshotNodes());
+    setIsSimulating(false);
 
     simulationRef.current = simulation;
 
-    // Update nodes on each tick
+    // Set up tick handler for future interactions (drag reheat)
     simulation.on("tick", () => {
-      setNodes(
-        simNodes.map((n) => ({
-          id: n.id,
-          name: n.name,
-          roleCount: n.roleCount,
-          radius: n.radius,
-          x: n.x ?? 0,
-          y: n.y ?? 0,
-          isPinned: n.fx != null && n.fy != null,
-        }))
-      );
+      setNodes(snapshotNodes());
     });
 
     simulation.on("end", () => {

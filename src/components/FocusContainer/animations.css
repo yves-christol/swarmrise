@@ -1,5 +1,54 @@
 /* Focus view transition animations */
 
+/* ============================================================
+   SPATIAL ZOOM TRANSITIONS (Tier 3 - FLIP-inspired)
+
+   The spatial zoom creates visual continuity between orga and
+   team views using clip-path circle reveal.
+
+   Zoom-in: clip-path on new view expands from clicked node to viewport.
+   Zoom-out: clip-path on old view contracts from viewport to node position.
+
+   Duration: 300ms (snappy, macOS Mission Control feel)
+   Easing: cubic-bezier(0.2, 0, 0, 1) - fast start, smooth decel
+   ============================================================ */
+
+/* --- Old/new view layers during transition --- */
+
+.zoom-layer-old {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+.zoom-layer-new {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+/* Zoom-in: old view scales up toward click point and fades */
+.zoom-layer-old.zoom-in-exit {
+  animation: zoomInExit 300ms cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+
+/* --- Keyframes --- */
+
+@keyframes zoomInExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+
+/* --- Fallback for non-orga-team transitions --- */
+
 @keyframes fadeScaleIn {
   from {
     opacity: 0;
@@ -14,7 +63,7 @@
 @keyframes fadeScaleInFromSmall {
   from {
     opacity: 0;
-    transform: scale(0.6);
+    transform: scale(0.3);
   }
   to {
     opacity: 1;
@@ -25,7 +74,7 @@
 @keyframes fadeScaleInFromLarge {
   from {
     opacity: 0;
-    transform: scale(1.3);
+    transform: scale(2);
   }
   to {
     opacity: 1;
@@ -33,7 +82,9 @@
   }
 }
 
-/* View mode flip transition - 3D coin flip effect */
+/* ============================================================
+   VIEW MODE FLIP (3D coin flip - visual/manage toggle)
+   ============================================================ */
 
 /* Container with perspective for 3D effect */
 .flip-container {
@@ -75,7 +126,10 @@
   transform: rotateY(180deg);
 }
 
-/* Legacy swap animation classes (kept for backwards compatibility during transition) */
+/* ============================================================
+   LEGACY SWAP ANIMATIONS (kept for backwards compatibility)
+   ============================================================ */
+
 @keyframes swapOutUp {
   from {
     opacity: 1;
@@ -136,18 +190,36 @@
   animation: swapInDown 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* Reduced motion preferences */
+/* ============================================================
+   REDUCED MOTION PREFERENCES
+   ============================================================ */
+
 @media (prefers-reduced-motion: reduce) {
   .focus-view {
     animation: none !important;
     transition: opacity 150ms ease-out !important;
     transform: none !important;
   }
+
+  /* Disable spatial zoom for reduced motion */
+  .zoom-layer-old,
+  .zoom-layer-new {
+    animation: none !important;
+    clip-path: none !important;
+    will-change: auto !important;
+  }
+  .zoom-layer-old.zoom-in-exit {
+    opacity: 0 !important;
+    transform: none !important;
+    transition: opacity 150ms ease-out !important;
+  }
+
   .swap-out-up, .swap-in-up, .swap-out-down, .swap-in-down {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
   }
+
   /* Disable 3D flip animation for reduced motion */
   .flip-card {
     transition: none !important;

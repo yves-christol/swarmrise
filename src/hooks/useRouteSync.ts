@@ -290,6 +290,11 @@ export function useRouteSync() {
     // Skip during org switching (OrgaSelector handles navigation)
     if (isSwitchingOrga) return;
 
+    // Delay URL update while focus transition animation is playing.
+    // The URL will update once the animation completes and isFocusTransitioning becomes false.
+    // This prevents React Router from unmounting/remounting the component tree mid-animation.
+    if (isFocusTransitioning) return;
+
     // Build the expected URL for current state
     const expectedUrl = buildUrlFromFocus(selectedOrgaId, focus, viewMode);
 
@@ -311,6 +316,7 @@ export function useRouteSync() {
     location.pathname,
     navigate,
     isSwitchingOrga,
+    isFocusTransitioning,
     params.orgaId,
   ]);
 }

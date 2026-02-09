@@ -64,7 +64,7 @@ Use these standard durations consistently across the codebase:
 | `fast` | 150ms | Hover states, small transitions | `--duration-fast: 150ms` |
 | `normal` | 200ms | Theme changes, standard transitions | `--duration-normal: 200ms` |
 | `emphasis` | 300ms | Content reveals, attention-drawing | `--duration-emphasis: 300ms` |
-| `dramatic` | 400ms | Focus navigation, major view changes | `--duration-dramatic: 400ms` |
+| `dramatic` | 300ms | Focus navigation, major view changes | `--duration-dramatic: 300ms` |
 | `reveal` | 600ms | Complex sequences, circle reveals | `--duration-reveal: 600ms` |
 
 ### Currently Used Durations
@@ -74,9 +74,9 @@ From the codebase analysis:
 - **75ms**: Button and link hover states (`transition-colors duration-75`)
 - **100ms**: Node drag transitions (`transition: transform 100ms ease-out`)
 - **150ms**: Icon crossfades, stroke transitions
-- **200ms**: Focus transition half-duration, theme transitions
+- **150ms**: Focus transition half-duration (non-spatial), theme transitions
 - **300ms**: Content fade-in sequences
-- **400ms**: Full focus navigation, node reveal animations
+- **300ms**: Full focus navigation (spatial zoom), node reveal animations at 400ms
 - **500ms**: View mode 3D flip transition (visual/manage toggle)
 - **500-600ms**: Complex circle reveal sequences
 
@@ -91,6 +91,7 @@ From the codebase analysis:
 | `ease-out` | `ease-out` | Entering elements, reveals |
 | `ease-in` | `ease-in` | Exiting elements (rare) |
 | `ease-emphasized` | `cubic-bezier(0.4, 0, 0.2, 1)` | Focus navigation, major transitions |
+| `ease-snappy` | `cubic-bezier(0.2, 0, 0, 1)` | Spatial zoom, snappy transitions |
 | `ease-spring` | `cubic-bezier(0.34, 1.56, 0.64, 1)` | Playful bounces (use sparingly) |
 
 ### Current Usage
@@ -113,31 +114,82 @@ The core navigation animation system for transitioning between entity views.
 
 **Location**: `src/components/FocusContainer/`
 
-**Duration**: 400ms total (200ms zoom-out + 200ms zoom-in)
+**Duration**: 300ms (snappy, macOS Mission Control feel)
 
-**Easing**: `cubic-bezier(0.4, 0, 0.2, 1)`
+**Easing**: `cubic-bezier(0.2, 0, 0, 1)` -- fast start, smooth deceleration
 
-#### Zoom Animations
+#### Spatial Zoom (orga <-> team)
+
+The orga-to-team and team-to-orga transitions use a **FLIP-inspired spatial zoom** that creates visual continuity between the two views. This is the most important transition in the app because it communicates the spatial hierarchy: teams live inside the organization.
+
+**How it works:**
+
+1. **Both views render simultaneously** during the transition (old view exits, new view enters).
+2. **A proxy circle** bridges the visual gap -- it starts at the clicked team node's position and expands to fill the viewport (zoom-in), or starts viewport-sized and contracts to the team node position (zoom-out).
+3. **Transform origin** is set to the clicked node's screen position so the old view scales away from the right point.
 
 ```css
-/* Zooming into a deeper level (orga -> team, team -> role) */
-@keyframes fadeScaleInFromSmall {
-  from { opacity: 0; transform: scale(0.6); }
+/* Zoom-in: old orga view scales up toward click point */
+@keyframes zoomInExit {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(2.5); }
+}
+
+/* Zoom-in: new team view enters from small */
+@keyframes zoomInEnter {
+  from { opacity: 0; transform: scale(0.3); }
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Zooming out to a higher level (role -> team, team -> orga) */
+/* Zoom-out: team view shrinks */
+@keyframes zoomOutExit {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.3); }
+}
+
+/* Zoom-out: orga view enters from large */
+@keyframes zoomOutEnter {
+  from { opacity: 0; transform: scale(2.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+```
+
+**Proxy Circle (FLIP technique):**
+- Positioned at its end state in CSS, then transformed to its start state via `transform: translate(...) scale(...)`
+- On the next frame, the transform is removed, triggering a CSS transition to animate smoothly
+- For zoom-in: starts at node position/size, ends at viewport-covering circle
+- For zoom-out: starts at viewport-covering circle, ends at node position/size
+- Uses `var(--diagram-node-fill)` and `var(--diagram-node-stroke)` for theme-aware styling
+
+**OrgaVisualView integration:**
+- Exposes a `onRegisterNodePositionLookup` prop that provides a function to query team node screen positions
+- Used by FocusContainer during zoom-out to target the correct node position
+- The orga view also centers on `returnFromTeamId` after zoom-out completes
+
+#### Non-Spatial Zoom (all other transitions)
+
+Other transitions (team-to-role, role-to-member, etc.) use a two-phase scale animation:
+
+**Duration**: 300ms total (150ms exit + 150ms enter)
+
+```css
+/* Entering from deeper level */
+@keyframes fadeScaleInFromSmall {
+  from { opacity: 0; transform: scale(0.3); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Entering from shallower level */
 @keyframes fadeScaleInFromLarge {
-  from { opacity: 0; transform: scale(1.3); }
+  from { opacity: 0; transform: scale(2); }
   to { opacity: 1; transform: scale(1); }
 }
 ```
 
 **Transition Types Supported**:
-- `orga-to-team` / `team-to-orga`
-- `team-to-role` / `role-to-team`
-- `role-to-member` / `member-to-role`
-- Direct jumps: `orga-to-role`, `orga-to-member`
+- **Spatial**: `orga-to-team` / `team-to-orga` (proxy circle + dual layers)
+- **Non-spatial**: `team-to-role` / `role-to-team`, `role-to-member` / `member-to-role`
+- **Direct jumps**: `orga-to-role`, `orga-to-member` (non-spatial)
 
 #### View Mode Flip (Visual/Manage Toggle)
 

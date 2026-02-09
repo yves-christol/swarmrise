@@ -504,21 +504,17 @@ git checkout master
 - If webhooks fail silently, new users will not appear in the database
 - Clerk Dashboard > Webhooks shows delivery history and allows manual retries
 
-### ADR-004: No CI/CD Pipeline Yet
+### ADR-004: CI/CD Pipeline
 
-**Decision:** CI/CD is not yet configured. Deployments are manual.
+**Decision:** GitHub Actions CI/CD is configured in `.github/workflows/ci.yml`.
 
-**Rationale:** The project is in early development. A CI/CD pipeline should be set up before or during the first production deployment.
+**Behavior:**
+1. On PR to master: Runs `bun run build` and `bun run lint` (check job)
+2. On push to master: Runs checks, then deploys Convex backend to production
 
-**Recommended next step:** Set up GitHub Actions with:
-1. On PR: Run `bun run build` and `bun run lint`
-2. On merge to master: Deploy Convex backend and frontend automatically
+**Required secret:** `CONVEX_DEPLOY_KEY` — generate from Convex Dashboard > Settings > Deploy Keys.
 
-See the "Recommended CI/CD Pipeline" section below.
-
-### Recommended CI/CD Pipeline (GitHub Actions)
-
-When ready, create `.github/workflows/deploy.yml`:
+### CI/CD Pipeline (`.github/workflows/ci.yml`)
 
 ```yaml
 name: CI/CD

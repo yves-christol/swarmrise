@@ -7,6 +7,7 @@
   /* Custom colors - these automatically generate bg-*, text-*, etc utilities */
   --color-light: #eeeeee;
   --color-dark: #212121;
+  --color-light-paper: #FAFAEE;
   --color-dark-paper: #1a1a1a;
 
   /* Brand gold colors */
@@ -37,6 +38,10 @@
 
   .text-dark {
     color: var(--color-dark);
+  }
+
+  .bg-light-paper {
+    background-color: var(--color-light-paper);
   }
 
   .bg-dark-paper {

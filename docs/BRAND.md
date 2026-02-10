@@ -97,6 +97,7 @@ Swarmrise uses a minimal, high-contrast palette that works in both light and dar
 | Name | Light Mode | Dark Mode | Tailwind Class | CSS Variable |
 |------|------------|-----------|----------------|--------------|
 | Background | `#eeeeee` | `#212121` | `bg-light` / `bg-dark` | `--color-light` / `--color-dark` |
+| Paper (surface) | `#FAFAEE` | `#1a1a1a` | `bg-light-paper` / `bg-dark-paper` | `--color-light-paper` / `--color-dark-paper` |
 | Text | `#212121` | `#eeeeee` | `text-dark` / `text-light` | `--color-dark` / `--color-light` |
 
 #### Brand Colors (from Logo)
@@ -364,6 +365,8 @@ The Logo component serves as the primary brand icon. Use it for:
 @theme {
   --color-light: #eeeeee;
   --color-dark: #212121;
+  --color-light-paper: #FAFAEE;
+  --color-dark-paper: #1a1a1a;
   --font-family-swarm: 'Montserrat Alternates', sans-serif;
 }
 ```
@@ -374,6 +377,8 @@ The Logo component serves as the primary brand icon. Use it for:
 |---------|-------|
 | `bg-light` | Light background |
 | `bg-dark` | Dark background |
+| `bg-light-paper` | Light paper surface (warm off-white) |
+| `bg-dark-paper` | Dark paper surface |
 | `text-light` | Light text |
 | `text-dark` | Dark text |
 | `font-swarm` | Brand heading font |
@@ -403,6 +408,7 @@ className="max-w-4xl mx-auto"
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-02-10 | 1.2.0 | Added light-paper surface color (#FAFAEE) as warm off-white for light mode surfaces |
 | 2026-02-08 | 1.1.0 | Added golden-bee semantic color alias with light/dark mode specifications |
 | 2026-02-01 | 1.0.0 | Initial brand guidelines established |
 

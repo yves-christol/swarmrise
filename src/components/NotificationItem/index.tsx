@@ -101,7 +101,6 @@ export const NotificationItem = ({
 
   // Mutations
   const markAsRead = useMutation(api.notifications.functions.markAsRead);
-  const archiveNotification = useMutation(api.notifications.functions.archive);
   const acceptInvitation = useMutation(api.users.functions.acceptInvitation);
   const rejectInvitation = useMutation(api.users.functions.rejectInvitation);
 
@@ -154,8 +153,7 @@ export const NotificationItem = ({
         if ("orgaId" in payload) {
           selectOrga(payload.orgaId as Id<"orgas">);
         }
-        // Archive the notification
-        await archiveNotification({ notificationId: notification._id });
+        // Notification is deleted reactively by the backend mutation
         onActionComplete?.();
       } catch (error) {
         console.error("Failed to accept invitation:", error);
@@ -165,8 +163,7 @@ export const NotificationItem = ({
     const handleDecline = async () => {
       try {
         await rejectInvitation({ invitationId: payload.invitationId });
-        // Archive the notification
-        await archiveNotification({ notificationId: notification._id });
+        // Notification is deleted reactively by the backend mutation
         onActionComplete?.();
       } catch (error) {
         console.error("Failed to decline invitation:", error);

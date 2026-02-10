@@ -1,4 +1,5 @@
 import { query, mutation, internalMutation } from "../_generated/server";
+import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { userValidator, contactInfos, ContactInfos } from ".";
 import { orgaValidator } from "../orgas";
@@ -259,7 +260,14 @@ export const acceptInvitation = mutation({
         after,
       },
     });
-    
+
+    // Delete the invitation notification so it disappears reactively
+    await ctx.scheduler.runAfter(
+      0,
+      internal.notifications.functions.deleteByGroupKey,
+      { groupKey: `invitation-${args.invitationId}` }
+    );
+
     return args.invitationId;
   },
 });
@@ -319,7 +327,14 @@ export const rejectInvitation = mutation({
         after,
       },
     });
-    
+
+    // Delete the invitation notification so it disappears reactively
+    await ctx.scheduler.runAfter(
+      0,
+      internal.notifications.functions.deleteByGroupKey,
+      { groupKey: `invitation-${args.invitationId}` }
+    );
+
     return args.invitationId;
   },
 });

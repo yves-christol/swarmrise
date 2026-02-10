@@ -282,7 +282,14 @@ export const updateInvitationStatus = mutation({
         after,
       },
     });
-    
+
+    // Delete the invitation notification so it disappears reactively for the invitee
+    await ctx.scheduler.runAfter(
+      0,
+      internal.notifications.functions.deleteByGroupKey,
+      { groupKey: `invitation-${args.invitationId}` }
+    );
+
     return args.invitationId;
   },
 });

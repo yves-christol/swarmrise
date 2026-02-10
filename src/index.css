@@ -121,6 +121,7 @@ body {
 
 /* OrgNetworkDiagram theme tokens */
 :root.light {
+  --diagram-bg: #eeeeee;              /* matches --color-light */
   --diagram-node-fill: #e2e8f0;        /* slate-200 */
   --diagram-node-stroke: #9ca3af;      /* gray-400 */
   --diagram-node-stroke-hover: #6b7280; /* gray-500 */
@@ -135,6 +136,7 @@ body {
 }
 
 :root.dark {
+  --diagram-bg: #212121;              /* matches --color-dark */
   --diagram-node-fill: #1f2937;        /* gray-800 */
   --diagram-node-stroke: #9ca3af;      /* gray-400 */
   --diagram-node-stroke-hover: #6b7280; /* gray-500 */

@@ -236,6 +236,27 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
           fontSize={Math.min(22, maxRadius * 0.11)}
         />
 
+        {/* Connection lines (render first, below nodes) */}
+        {parentTeamPosition && (
+          <ConnectionLine
+            fromX={parentTeamPosition.x}
+            fromY={parentTeamPosition.y}
+            toX={parentTeamPosition.leaderPosition.x}
+            toY={parentTeamPosition.leaderPosition.y}
+            targetRadius={36}
+          />
+        )}
+        {daughterTeamPositions.map((pos) => (
+          <ConnectionLine
+            key={`link-${pos.daughterTeam._id}`}
+            fromX={pos.x}
+            fromY={pos.y}
+            toX={pos.sourceRolePosition.x}
+            toY={pos.sourceRolePosition.y}
+            targetRadius={36}
+          />
+        ))}
+
         {/* Role nodes */}
         {rolePositions.map((pos, index) => (
           <RoleNode
@@ -464,6 +485,12 @@ function TeamNameText({
         fontSize={fontSize}
         fontWeight={600}
         fontFamily="'Montserrat Alternates', sans-serif"
+        style={{
+          paintOrder: "stroke",
+          stroke: "var(--diagram-bg)",
+          strokeWidth: 5,
+          strokeLinejoin: "round",
+        }}
       >
         {nameLines.map((line, i) => (
           <tspan
@@ -487,6 +514,12 @@ function TeamNameText({
           fontSize={missionFontSize}
           fontWeight={400}
           fontFamily="Arial, Helvetica, sans-serif"
+          style={{
+            paintOrder: "stroke",
+            stroke: "var(--diagram-bg)",
+            strokeWidth: 4,
+            strokeLinejoin: "round",
+          }}
         >
           {missionLines.map((line, i) => (
             <tspan
@@ -696,7 +729,7 @@ function ParentTeamNode({
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation("teams");
-  const { team, x, y, radius, leaderPosition } = position;
+  const { team, x, y, radius } = position;
 
   return (
     <g
@@ -721,28 +754,6 @@ function ParentTeamNode({
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
-      {/* Connection line to leader role (from edge of leader circle, not center) */}
-      {(() => {
-        // Calculate the point on the leader circle's edge closest to parent team
-        const dx = x - leaderPosition.x;
-        const dy = y - leaderPosition.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const leaderRadius = 36; // Same as ROLE_RADIUS
-        // Point on leader circle edge in direction of parent team
-        const edgeX = leaderPosition.x + (dx / dist) * leaderRadius;
-        const edgeY = leaderPosition.y + (dy / dist) * leaderRadius;
-        return (
-          <line
-            x1={x}
-            y1={y}
-            x2={edgeX}
-            y2={edgeY}
-            stroke="var(--diagram-golden-bee)"
-            strokeWidth={2}
-          />
-        );
-      })()}
-
       {/* Hover glow */}
       {isHovered && (
         <circle
@@ -814,7 +825,7 @@ function DaughterTeamNode({
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation("teams");
-  const { daughterTeam, x, y, radius, sourceRolePosition } = position;
+  const { daughterTeam, x, y, radius } = position;
 
   return (
     <g
@@ -839,28 +850,6 @@ function DaughterTeamNode({
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
-      {/* Connection line to source role (from edge of role circle, not center) */}
-      {(() => {
-        // Calculate the point on the source role circle's edge closest to daughter team
-        const dx = x - sourceRolePosition.x;
-        const dy = y - sourceRolePosition.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const roleRadius = 36; // Same as ROLE_RADIUS
-        // Point on role circle edge in direction of daughter team
-        const edgeX = sourceRolePosition.x + (dx / dist) * roleRadius;
-        const edgeY = sourceRolePosition.y + (dy / dist) * roleRadius;
-        return (
-          <line
-            x1={x}
-            y1={y}
-            x2={edgeX}
-            y2={edgeY}
-            stroke="var(--diagram-golden-bee)"
-            strokeWidth={2}
-          />
-        );
-      })()}
-
       {/* Hover glow */}
       {isHovered && (
         <circle
@@ -904,5 +893,40 @@ function DaughterTeamNode({
         {daughterTeam.name.length > 8 ? daughterTeam.name.slice(0, 7) + "…" : daughterTeam.name}
       </text>
     </g>
+  );
+}
+
+// Connection line between an external node and a role node (rendered below nodes)
+function ConnectionLine({
+  fromX,
+  fromY,
+  toX,
+  toY,
+  targetRadius,
+}: {
+  fromX: number;
+  fromY: number;
+  toX: number;
+  toY: number;
+  targetRadius: number;
+}) {
+  // Calculate the point on the target circle's edge closest to the source
+  const dx = fromX - toX;
+  const dy = fromY - toY;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  if (dist === 0) return null;
+  const edgeX = toX + (dx / dist) * targetRadius;
+  const edgeY = toY + (dy / dist) * targetRadius;
+
+  return (
+    <line
+      x1={fromX}
+      y1={fromY}
+      x2={edgeX}
+      y2={edgeY}
+      stroke="var(--diagram-golden-bee)"
+      strokeWidth={2}
+      style={{ pointerEvents: "none" }}
+    />
   );
 }

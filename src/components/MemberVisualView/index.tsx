@@ -481,7 +481,42 @@ export function MemberVisualView({
           strokeDasharray="2 4"
         />
 
-        {/* Team nodes with connection lines */}
+        {/* Connection lines (render first, below nodes) */}
+        {teamPositions.map((pos, teamIndex) =>
+          pos.roles.map((rolePos) => {
+            // Calculate the point on the role circle's edge closest to team node
+            const dx = pos.x - rolePos.x;
+            const dy = pos.y - rolePos.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist === 0) return null;
+            const edgeX = rolePos.x + (dx / dist) * rolePos.radius;
+            const edgeY = rolePos.y + (dy / dist) * rolePos.radius;
+            // Check if this is a leader connection (gold):
+            // 1. Leader role connecting to its child team (master role leading child team)
+            // 2. Leader role directly in this team with no child team (root team leader)
+            const isLeaderToChildTeam = rolePos.role.roleType === "leader" && rolePos.childTeamId === pos.team._id;
+            const isDirectLeaderOfTeam = rolePos.role.roleType === "leader" && rolePos.teamId === pos.team._id && !rolePos.childTeamId;
+            const isGoldConnection = isLeaderToChildTeam || isDirectLeaderOfTeam;
+            return (
+              <line
+                key={`conn-${pos.team._id}-${rolePos.role._id}`}
+                x1={pos.x}
+                y1={pos.y}
+                x2={edgeX}
+                y2={edgeY}
+                stroke={isGoldConnection ? "var(--diagram-golden-bee)" : "var(--diagram-node-stroke)"}
+                strokeWidth={isGoldConnection ? 2 : 1.5}
+                style={{
+                  pointerEvents: "none",
+                  animation: `connectionReveal 300ms ease-out both`,
+                  animationDelay: `${400 + teamIndex * 60}ms`,
+                }}
+              />
+            );
+          })
+        )}
+
+        {/* Team nodes */}
         {teamPositions.map((pos, index) => (
           <TeamNode
             key={pos.team._id}
@@ -559,7 +594,14 @@ export function MemberVisualView({
           fontSize={16}
           fontWeight={600}
           fontFamily="'Montserrat Alternates', sans-serif"
-          style={{ pointerEvents: "none", userSelect: "none" }}
+          style={{
+            pointerEvents: "none",
+            userSelect: "none",
+            paintOrder: "stroke",
+            stroke: "var(--diagram-bg)",
+            strokeWidth: 5,
+            strokeLinejoin: "round",
+          }}
         >
           {member.firstname} {member.surname}
         </text>
@@ -573,7 +615,14 @@ export function MemberVisualView({
           dominantBaseline="central"
           fill="var(--diagram-muted-text)"
           fontSize={12}
-          style={{ pointerEvents: "none", userSelect: "none" }}
+          style={{
+            pointerEvents: "none",
+            userSelect: "none",
+            paintOrder: "stroke",
+            stroke: "var(--diagram-bg)",
+            strokeWidth: 4,
+            strokeLinejoin: "round",
+          }}
         >
           {t("diagram.rolesInTeams", { roleCount: masterRoles.length, teamCount: teams?.length || 0, count: masterRoles.length })}
         </text>

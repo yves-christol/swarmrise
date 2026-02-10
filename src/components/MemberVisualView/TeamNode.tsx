@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { TeamNodePosition, RoleLinkPosition } from "./types";
+import type { TeamNodePosition } from "./types";
 
 type TeamNodeProps = {
   position: TeamNodePosition;
@@ -15,7 +15,7 @@ export const TeamNode = memo(function TeamNode({
 }: TeamNodeProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation("teams");
-  const { team, x, y, radius, roles } = position;
+  const { team, x, y, radius } = position;
 
   const handleClick = () => {
     onNavigate?.();
@@ -27,24 +27,6 @@ export const TeamNode = memo(function TeamNode({
       onNavigate?.();
     }
   };
-
-  // Calculate connection lines to roles in this team
-  const connectionLines = roles.map((rolePos: RoleLinkPosition) => {
-    // Calculate the point on the role circle's edge closest to team node
-    const dx = x - rolePos.x;
-    const dy = y - rolePos.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    // Point on role circle edge in direction of team node
-    const edgeX = rolePos.x + (dx / dist) * rolePos.radius;
-    const edgeY = rolePos.y + (dy / dist) * rolePos.radius;
-    // Check if this is a leader connection (gold):
-    // 1. Leader role connecting to its child team (master role leading child team)
-    // 2. Leader role directly in this team with no child team (root team leader)
-    const isLeaderToChildTeam = rolePos.role.roleType === "leader" && rolePos.childTeamId === team._id;
-    const isDirectLeaderOfTeam = rolePos.role.roleType === "leader" && rolePos.teamId === team._id && !rolePos.childTeamId;
-    const isGoldConnection = isLeaderToChildTeam || isDirectLeaderOfTeam;
-    return { x1: x, y1: y, x2: edgeX, y2: edgeY, roleId: rolePos.role._id, isGoldConnection };
-  });
 
   return (
     <g
@@ -64,24 +46,6 @@ export const TeamNode = memo(function TeamNode({
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
-      {/* Connection lines to roles */}
-      {connectionLines.map((line) => (
-        <line
-          key={`conn-${line.roleId}`}
-          x1={line.x1}
-          y1={line.y1}
-          x2={line.x2}
-          y2={line.y2}
-          stroke={line.isGoldConnection ? "var(--diagram-golden-bee)" : "var(--diagram-node-stroke)"}
-          strokeWidth={line.isGoldConnection ? 2 : 1.5}
-          style={{
-            transition: "opacity 150ms ease-out",
-            animation: `connectionReveal 300ms ease-out both`,
-            animationDelay: `${400 + index * 60}ms`,
-          }}
-        />
-      ))}
-
       {/* Hover glow */}
       {isHovered && (
         <circle

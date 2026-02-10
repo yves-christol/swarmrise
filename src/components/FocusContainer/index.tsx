@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useState, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useFocus, useViewMode } from "../../tools/orgaStore";
-import { useRouteSync } from "../../hooks/useRouteSync";
+import { useRouteSync, buildUrlFromFocus } from "../../hooks/useRouteSync";
 import type { ViewMode } from "../../tools/orgaStore/types";
 import "./animations.css";
 import { OrgaVisualView } from "../OrgaVisualView";
@@ -76,20 +76,14 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
   // Handle view mode toggle with immediate URL update
   const handleViewModeChange = useCallback(
     (newMode: ViewMode) => {
-      const currentPath = location.pathname;
-      const newPath =
-        newMode === "manage"
-          ? currentPath.endsWith("/manage")
-            ? currentPath
-            : `${currentPath}/manage`
-          : currentPath.replace(/\/manage$/, "");
+      const newPath = buildUrlFromFocus(orgaId, focus, newMode);
 
-      if (currentPath !== newPath) {
+      if (location.pathname !== newPath) {
         void navigate(newPath, { replace: true });
       }
       setViewMode(newMode);
     },
-    [location.pathname, navigate, setViewMode]
+    [orgaId, focus, location.pathname, navigate, setViewMode]
   );
 
   // --- Transition state ---

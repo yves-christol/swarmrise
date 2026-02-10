@@ -106,7 +106,7 @@ function parseRouteToFocus(
 /**
  * Builds a URL path from focus state and view mode.
  */
-function buildUrlFromFocus(
+export function buildUrlFromFocus(
   orgaId: Id<"orgas">,
   focus: FocusTarget,
   viewMode: ViewMode

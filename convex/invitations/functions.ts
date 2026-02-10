@@ -4,10 +4,12 @@ import { v } from "convex/values";
 import { invitationValidator, invitationStatusType } from ".";
 import {
   requireAuthAndMembership,
+  getAuthenticatedUser,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
 } from "../utils";
 import { buildInvitationNotification } from "../notifications/helpers";
+import { DEMO_ORGA_CONFIG } from "../dataTest/demoOrgaConfig";
 
 /**
  * Get an invitation by ID
@@ -364,6 +366,102 @@ export const deleteOldPendingInvitations = internalMutation({
     }
 
     return oldInvitations.length;
+  },
+});
+
+/**
+ * Request an invitation to the demo organization.
+ *
+ * Any authenticated user (even one with no organizations) can call this.
+ * The function finds the demo org by its configured name, resolves the org
+ * owner's member record as the invitation emitter, and creates a pending
+ * invitation for the calling user.
+ *
+ * Edge cases handled:
+ *  - User is already a member of the demo org
+ *  - A pending invitation already exists for the user
+ *  - The demo org does not exist (e.g. between nightly resets)
+ *  - The demo org owner has no member record (data integrity issue)
+ */
+export const requestDemoInvitation = mutation({
+  args: {},
+  returns: v.id("invitations"),
+  handler: async (ctx) => {
+    // 1. Authenticate the calling user (does NOT require org membership)
+    const user = await getAuthenticatedUser(ctx);
+
+    // 2. Find the demo organization by its configured name
+    const demoOrga = await ctx.db
+      .query("orgas")
+      .withIndex("by_name", (q) => q.eq("name", DEMO_ORGA_CONFIG.orgaName))
+      .unique();
+
+    if (!demoOrga) {
+      throw new Error(
+        "Demo organization is not available. Please try again later."
+      );
+    }
+
+    const orgaId = demoOrga._id;
+
+    // 3. Check if the user is already a member of the demo org
+    if (user.orgaIds.includes(orgaId)) {
+      throw new Error("You are already a member of the demo organization");
+    }
+
+    // 4. Check if a pending invitation already exists for this user
+    const existingPending = await ctx.db
+      .query("invitations")
+      .withIndex("by_email_and_status", (q) =>
+        q.eq("email", user.email).eq("status", "pending")
+      )
+      .filter((q) => q.eq(q.field("orgaId"), orgaId))
+      .first();
+
+    if (existingPending) {
+      throw new Error(
+        "You already have a pending invitation to the demo organization"
+      );
+    }
+
+    // 5. Find the demo org owner's member record to use as emitter
+    const ownerMember = await ctx.db
+      .query("members")
+      .withIndex("by_orga_and_person", (q) =>
+        q.eq("orgaId", orgaId).eq("personId", demoOrga.owner)
+      )
+      .unique();
+
+    if (!ownerMember) {
+      throw new Error(
+        "Demo organization owner member record not found. Please try again later."
+      );
+    }
+
+    // 6. Create the invitation
+    const invitationId = await ctx.db.insert("invitations", {
+      orgaId,
+      emitterMemberId: ownerMember._id,
+      email: user.email,
+      status: "pending",
+      sentDate: Date.now(),
+    });
+
+    // 7. Send an invitation notification to the requesting user
+    const inviterName = `${ownerMember.firstname} ${ownerMember.surname}`;
+    await ctx.scheduler.runAfter(
+      0,
+      internal.notifications.functions.create,
+      buildInvitationNotification({
+        userId: user._id,
+        orgaId,
+        invitationId,
+        orgaName: demoOrga.name,
+        inviterName,
+      })
+    );
+
+    return invitationId;
   },
 });
 

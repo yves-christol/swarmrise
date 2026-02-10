@@ -77,5 +77,10 @@
   "dangerZone": "危險區域",
   "deleteOrgWarning": "一旦刪除組織，就無法恢復。請確認您的決定。",
   "confirmDeleteOrg": "是的，刪除此組織",
-  "deleteOrganization": "刪除組織"
+  "deleteOrganization": "刪除組織",
+  "requestDemoInvitation": "試用示範組織",
+  "requestDemoInvitationDescription": "探索一個完整的組織，了解 swarmrise 的運作方式。",
+  "requestingDemoInvitation": "請求中...",
+  "demoInvitationSent": "邀請已發送！請查看上方的待處理邀請。",
+  "demoInvitationError": "無法請求示範邀請。請再試一次。"
 }

@@ -77,5 +77,10 @@
   "authorizedDomainsSaving": "Guardando...",
   "authorizedDomainsSaveSuccess": "Restricciones de dominio actualizadas",
   "authorizedDomainsSaveError": "Error al actualizar restricciones de dominio",
-  "authorizedDomainsOwnerOnly": "Solo el propietario de la organizacion puede gestionar las restricciones de dominio de correo."
+  "authorizedDomainsOwnerOnly": "Solo el propietario de la organizacion puede gestionar las restricciones de dominio de correo.",
+  "requestDemoInvitation": "Probar la organizacion de demo",
+  "requestDemoInvitationDescription": "Explora una organizacion completa para ver como funciona swarmrise.",
+  "requestingDemoInvitation": "Solicitando...",
+  "demoInvitationSent": "Invitacion enviada! Revisa tus invitaciones pendientes arriba.",
+  "demoInvitationError": "No se pudo solicitar una invitacion de demo. Intentalo de nuevo."
 }

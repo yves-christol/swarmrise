@@ -119,9 +119,28 @@ export const EmptyState = () => {
     api.users.functions.listMyPendingInvitationsWithOrga
   );
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [demoRequestState, setDemoRequestState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
+  const requestDemoInvitation = useMutation(
+    api.invitations.functions.requestDemoInvitation
+  );
 
   const isLoading = pendingInvitations === undefined;
   const hasInvitations = !isLoading && pendingInvitations.length > 0;
+
+  const handleRequestDemo = async () => {
+    setDemoRequestState("loading");
+    try {
+      await requestDemoInvitation();
+      setDemoRequestState("success");
+    } catch {
+      setDemoRequestState("error");
+      // Allow retry after a brief pause
+      setTimeout(() => setDemoRequestState("idle"), 3000);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center gap-8 max-w-md mx-auto py-8">
@@ -163,6 +182,7 @@ export const EmptyState = () => {
         </div>
       )}
 
+      {/* Primary CTA: Create organization */}
       <button
         onClick={() => setIsCreateModalOpen(true)}
         type="button"
@@ -173,6 +193,43 @@ export const EmptyState = () => {
           ? t("createNewOrganization")
           : t("createFirstOrganization")}
       </button>
+
+      {/* Divider between the two CTAs */}
+      <div className="flex items-center gap-4 w-full">
+        <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
+        <span className="text-gray-500 text-sm">{tCommon("or")}</span>
+        <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
+      </div>
+
+      {/* Secondary CTA: Request demo invitation */}
+      <div className="flex flex-col items-center gap-2 w-full">
+        <button
+          onClick={() => void handleRequestDemo()}
+          disabled={demoRequestState === "loading" || demoRequestState === "success"}
+          type="button"
+          className="px-6 py-3 w-full
+            border-2 border-[#a2dbed] dark:border-[#a2dbed]
+            hover:bg-[#e0f0f4] dark:hover:bg-[#a2dbed]/10
+            disabled:opacity-50 disabled:cursor-not-allowed
+            text-dark dark:text-light font-bold rounded-lg transition-colors"
+        >
+          {demoRequestState === "loading"
+            ? t("requestingDemoInvitation")
+            : demoRequestState === "success"
+              ? t("demoInvitationSent")
+              : t("requestDemoInvitation")}
+        </button>
+        {demoRequestState === "error" && (
+          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+            {t("demoInvitationError")}
+          </p>
+        )}
+        {demoRequestState !== "success" && demoRequestState !== "error" && (
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+            {t("requestDemoInvitationDescription")}
+          </p>
+        )}
+      </div>
 
       <CreateOrganizationModal
         isOpen={isCreateModalOpen}

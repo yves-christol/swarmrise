@@ -101,5 +101,10 @@
   "dangerZone": "Zone de danger",
   "deleteOrgWarning": "Une fois l'organisation supprimée, il n'y a pas de retour en arrière. Soyez certain.",
   "confirmDeleteOrg": "Oui, supprimer cette organisation",
-  "deleteOrganization": "Supprimer l'organisation"
+  "deleteOrganization": "Supprimer l'organisation",
+  "requestDemoInvitation": "Essayer l'organisation de demo",
+  "requestDemoInvitationDescription": "Explorez une organisation complete pour decouvrir le fonctionnement de swarmrise.",
+  "requestingDemoInvitation": "Envoi en cours...",
+  "demoInvitationSent": "Invitation envoyee ! Consultez vos invitations en attente ci-dessus.",
+  "demoInvitationError": "Impossible de demander une invitation demo. Veuillez reessayer."
 }

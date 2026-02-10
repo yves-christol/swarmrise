@@ -77,5 +77,10 @@
   "dangerZone": "Небезпечна зона",
   "deleteOrgWarning": "Після видалення організації повернення назад неможливе. Будьте впевнені.",
   "confirmDeleteOrg": "Так, видалити цю організацію",
-  "deleteOrganization": "Видалити організацію"
+  "deleteOrganization": "Видалити організацію",
+  "requestDemoInvitation": "Спробувати демо-організацію",
+  "requestDemoInvitationDescription": "Дослідіть повністю заповнену організацію, щоб побачити як працює swarmrise.",
+  "requestingDemoInvitation": "Запит...",
+  "demoInvitationSent": "Запрошення надіслано! Перевірте очікувані запрошення вище.",
+  "demoInvitationError": "Не вдалося запросити демо-запрошення. Спробуйте ще раз."
 }

@@ -425,6 +425,12 @@ export function MemberVisualView({
             opacity: 1 !important;
             transform: none !important;
           }
+          .connection-line {
+            animation: none !important;
+            opacity: 1 !important;
+            stroke-dasharray: none !important;
+            stroke-dashoffset: 0 !important;
+          }
         }
       `}</style>
 
@@ -499,6 +505,7 @@ export function MemberVisualView({
             const isGoldConnection = isLeaderToChildTeam || isDirectLeaderOfTeam;
             return (
               <line
+                className="connection-line"
                 key={`conn-${pos.team._id}-${rolePos.role._id}`}
                 x1={pos.x}
                 y1={pos.y}

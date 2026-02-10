@@ -183,10 +183,28 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
           }
         }
 
+        @keyframes connectionReveal {
+          from {
+            opacity: 0;
+            stroke-dashoffset: 100;
+          }
+          to {
+            opacity: 1;
+            stroke-dashoffset: 0;
+          }
+        }
+
         @media (prefers-reduced-motion: reduce) {
-          .role-node {
-            animation: none;
-            transition-duration: 0.01ms !important;
+          g[role="button"] {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+          }
+          .connection-line {
+            animation: none !important;
+            opacity: 1 !important;
+            stroke-dasharray: none !important;
+            stroke-dashoffset: 0 !important;
           }
         }
       `}</style>
@@ -244,9 +262,10 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
             toX={parentTeamPosition.leaderPosition.x}
             toY={parentTeamPosition.leaderPosition.y}
             targetRadius={36}
+            animationDelay={300}
           />
         )}
-        {daughterTeamPositions.map((pos) => (
+        {daughterTeamPositions.map((pos, index) => (
           <ConnectionLine
             key={`link-${pos.daughterTeam._id}`}
             fromX={pos.x}
@@ -254,6 +273,7 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
             toX={pos.sourceRolePosition.x}
             toY={pos.sourceRolePosition.y}
             targetRadius={36}
+            animationDelay={500 + index * 80}
           />
         ))}
 
@@ -903,12 +923,14 @@ function ConnectionLine({
   toX,
   toY,
   targetRadius,
+  animationDelay,
 }: {
   fromX: number;
   fromY: number;
   toX: number;
   toY: number;
   targetRadius: number;
+  animationDelay: number;
 }) {
   // Calculate the point on the target circle's edge closest to the source
   const dx = fromX - toX;
@@ -920,13 +942,18 @@ function ConnectionLine({
 
   return (
     <line
+      className="connection-line"
       x1={fromX}
       y1={fromY}
       x2={edgeX}
       y2={edgeY}
       stroke="var(--diagram-golden-bee)"
       strokeWidth={2}
-      style={{ pointerEvents: "none" }}
+      style={{
+        pointerEvents: "none",
+        animation: `connectionReveal 300ms ease-out both`,
+        animationDelay: `${animationDelay}ms`,
+      }}
     />
   );
 }

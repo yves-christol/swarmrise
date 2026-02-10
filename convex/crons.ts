@@ -11,4 +11,13 @@ crons.daily(
   internal.invitations.functions.deleteOldPendingInvitations
 );
 
+// Reset the "Infomax Demo" sandbox organization every night
+// Runs daily at 2:00 AM UTC (= 3:00 AM CET / 4:00 AM CEST)
+// Deletes the existing demo orga with all dependencies and recreates it fresh
+crons.daily(
+  "reset-demo-orga",
+  { hourUTC: 2, minuteUTC: 0 },
+  internal.dataTest.createDemoOrga.resetDemoOrga
+);
+
 export default crons;

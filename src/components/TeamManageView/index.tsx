@@ -77,30 +77,23 @@ function ZoomOutButton({ onClick }: { onClick: () => void }) {
 function StatCard({
   value,
   label,
-  color,
 }: {
   value: number;
   label: string;
-  color: "gold" | "purple" | "blue";
+  color?: string;
 }) {
-  const colorClasses = {
-    gold: "text-[#d4af37] dark:text-[#eac840]",
-    purple: "text-purple-600 dark:text-purple-400",
-    blue: "text-blue-600 dark:text-blue-400",
-  };
-
   return (
     <div
       className="
         flex flex-col items-center
-        p-4
+        p-2.5
         bg-white dark:bg-gray-800
         border border-gray-200 dark:border-gray-700
         rounded-lg
       "
     >
-      <span className={`text-3xl font-bold ${colorClasses[color]}`}>{value}</span>
-      <span className="text-sm text-gray-600 dark:text-gray-400 mt-1">{label}</span>
+      <span className="text-xl font-semibold text-gray-700 dark:text-gray-300">{value}</span>
+      <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</span>
     </div>
   );
 }
@@ -303,9 +296,6 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
           </p>
         </header>
 
-        {/* Mission reminder */}
-        <MissionReminder mission={teamMission} isLoading={teamMission === undefined} />
-
         {/* Save message */}
         {saveMessage && (
           <div
@@ -319,11 +309,13 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
           </div>
         )}
 
-        {/* Analytics section */}
+        {/* Overview section */}
         <section className="mb-8">
           <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
             Overview
           </h2>
+          {/* Mission reminder */}
+          <MissionReminder mission={teamMission} isLoading={teamMission === undefined} />
           <div className="grid grid-cols-2 gap-4">
             <StatCard value={roles?.length || 0} label="Roles" color="purple" />
             <StatCard value={uniqueMembers.length} label="Members" color="blue" />

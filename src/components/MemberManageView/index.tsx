@@ -209,29 +209,23 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function StatCard({
   value,
   label,
-  color,
 }: {
   value: number;
   label: string;
-  color: "purple" | "green";
+  color?: string;
 }) {
-  const colorClasses = {
-    purple: "text-purple-600 dark:text-purple-400",
-    green: "text-green-600 dark:text-green-400",
-  };
-
   return (
     <div
       className="
         flex flex-col items-center
-        p-4
+        p-2.5
         bg-white dark:bg-gray-800
         border border-gray-200 dark:border-gray-700
         rounded-lg
       "
     >
-      <span className={`text-3xl font-bold ${colorClasses[color]}`}>{value}</span>
-      <span className="text-sm text-gray-600 dark:text-gray-400 mt-1">{label}</span>
+      <span className="text-xl font-semibold text-gray-700 dark:text-gray-300">{value}</span>
+      <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</span>
     </div>
   );
 }

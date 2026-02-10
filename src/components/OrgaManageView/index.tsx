@@ -17,30 +17,23 @@ type OrgaManageViewProps = {
 function StatCard({
   value,
   label,
-  color,
 }: {
   value: number;
   label: string;
-  color: "green" | "purple" | "blue";
+  color?: string;
 }) {
-  const colorClasses = {
-    green: "text-green-600 dark:text-green-400",
-    purple: "text-purple-600 dark:text-purple-400",
-    blue: "text-blue-600 dark:text-blue-400",
-  };
-
   return (
     <div
       className="
         flex flex-col items-center
-        p-4
+        p-2.5
         bg-white dark:bg-gray-800
         border border-gray-200 dark:border-gray-700
         rounded-lg
       "
     >
-      <span className={`text-3xl font-bold ${colorClasses[color]}`}>{value}</span>
-      <span className="text-sm text-gray-600 dark:text-gray-400 mt-1">{label}</span>
+      <span className="text-xl font-semibold text-gray-700 dark:text-gray-300">{value}</span>
+      <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</span>
     </div>
   );
 }
@@ -222,14 +215,13 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
           </p>
         </header>
 
-        {/* Mission reminder */}
-        <MissionReminder mission={orgaMission} isLoading={orgaMission === undefined} />
-
-        {/* Analytics section */}
+        {/* Overview section */}
         <section className="mb-8">
           <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
             {tCommon("overview")}
           </h2>
+          {/* Mission reminder */}
+          <MissionReminder mission={orgaMission} isLoading={orgaMission === undefined} />
           <div className="grid grid-cols-3 gap-4">
             <StatCard value={counts.teams} label={t("metrics.teams")} color="green" />
             <StatCard value={counts.roles} label={t("metrics.roles")} color="purple" />

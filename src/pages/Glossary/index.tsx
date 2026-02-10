@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Header } from "../../components/Header";
 import { Logo } from "../../components/Logo";
 import { LegalFooter } from "../../components/LegalFooter";
+import { renderBrandText } from "../../components/shared/BrandText";
 import { GlossaryCard } from "./GlossaryCard";
 import { useGlossary } from "./glossary";
 
@@ -18,7 +19,7 @@ export const GlossaryPage = () => {
           <Logo size={64} begin={0} repeatCount={2} />
           <h1 className="font-swarm text-4xl font-bold">{t("title")}</h1>
           <p className="text-lg max-w-xl opacity-80">
-            {t("subtitle")}
+            {renderBrandText(t("subtitle"))}
           </p>
         </section>
 

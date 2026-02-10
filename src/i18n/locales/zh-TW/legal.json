@@ -54,7 +54,7 @@
     "effectiveDateLabel": "sheng xiao ri qi",
     "lastUpdatedLabel": "zui hou geng xin",
     "intro": {
-      "welcome": "huan ying lai dao swarmrise. zhe xie fu wu tiao kuan (\"tiao kuan\") guan li nin dui Swarmrise ping tai de fang wen he shi yong, bao kuo wo men de wang zhan, ying yong cheng xu he fu wu (tong cheng \"fu wu\"). tong guo fang wen huo shi yong fu wu, nin tong yi shou zhe xie tiao kuan de yue shu.",
+      "welcome": "huan ying lai dao swarmrise. zhe xie fu wu tiao kuan (\"tiao kuan\") guan li nin dui swarmrise ping tai de fang wen he shi yong, bao kuo wo men de wang zhan, ying yong cheng xu he fu wu (tong cheng \"fu wu\"). tong guo fang wen huo shi yong fu wu, nin tong yi shou zhe xie tiao kuan de yue shu.",
       "readCarefully": "qing zai shi yong fu wu qian zi xi yue du zhe xie tiao kuan. ru guo nin bu tong yi zhe xie tiao kuan, nin bu neng fang wen huo shi yong fu wu."
     },
     "sections": {
@@ -65,7 +65,7 @@
       },
       "descriptionOfService": {
         "title": "fu wu miao shu",
-        "intro": "Swarmrise shi yi ge zhuan wei xie zuo zhi li she ji de duo zu hu zu zhi guan li ping tai. fu wu shi zu zhi neng gou:",
+        "intro": "swarmrise shi yi ge zhuan wei xie zuo zhi li she ji de duo zu hu zu zhi guan li ping tai. fu wu shi zu zhi neng gou:",
         "features": {
           "structureTeams": "jie gou hua tuan dui bing ding yi zu zhi ceng ci",
           "createRoles": "zai tuan dui nei chuang jian he guan li jiao se (bao kuo ling dao, mi shu he zhong cai zhi wei)",
@@ -131,7 +131,7 @@
       "intellectualProperty": {
         "title": "zhi shi chan quan",
         "license": "fu wu, bao kuo qi yuan dai ma, she ji, gong neng he wen dang, an Apache License 2.0 xu ke. ci xu ke yun xu nin zai te ding tiao jian xia shi yong, xiu gai he fen fa gai ruan jian.",
-        "brandElements": "Swarmrise ming cheng, biao zhi he pin pai yuan su shi zhuan you de, wei jing wo men ming que shu mian xu ke bu de shi yong, chu fei Apache License 2.0 yun xu de gui shu mu di.",
+        "brandElements": "swarmrise ming cheng, biao zhi he pin pai yuan su shi zhuan you de, wei jing wo men ming que shu mian xu ke bu de shi yong, chu fei Apache License 2.0 yun xu de gui shu mu di.",
         "thirdParty": "fu wu zhong bao han de di san fang zu jian shou qi ge zi xu ke de yue shu, zhe xie xu ke yi ji lu zai wo men de fa lv wen dang zhong."
       },
       "dataProtection": {
@@ -170,7 +170,7 @@
       },
       "indemnification": {
         "title": "pei chang",
-        "intro": "nin tong yi pei chang, bian hu bing shi Swarmrise ji qi guan lian gong si, gao guan, dong shi, yuan gong he dai li mian shou ren he suo pei, ze ren, sun hai, sun shi he fei yong (bao kuo he li de lv shi fei) de sun hai, zhe xie suo pei chan sheng yu huo yi ren he fang shi yu yi xia xiang guan:",
+        "intro": "nin tong yi pei chang, bian hu bing shi swarmrise ji qi guan lian gong si, gao guan, dong shi, yuan gong he dai li mian shou ren he suo pei, ze ren, sun hai, sun shi he fei yong (bao kuo he li de lv shi fei) de sun hai, zhe xie suo pei chan sheng yu huo yi ren he fang shi yu yi xia xiang guan:",
         "items": {
           "accessUse": "nin dui fu wu de fang wen huo shi yong",
           "violationTerms": "nin wei fan zhe xie tiao kuan",
@@ -201,7 +201,7 @@
       "generalProvisions": {
         "title": "yi ban tiao kuan",
         "entireAgreement": "wan zheng xie yi:",
-        "entireAgreementText": "zhe xie tiao kuan, lian tong wo men de yin si zheng ce he ci chu yin yong de ren he qi ta zheng ce, gou cheng nin yu Swarmrise zhi jian guan yu fu wu de wan zheng xie yi.",
+        "entireAgreementText": "zhe xie tiao kuan, lian tong wo men de yin si zheng ce he ci chu yin yong de ren he qi ta zheng ce, gou cheng nin yu swarmrise zhi jian guan yu fu wu de wan zheng xie yi.",
         "severability": "ke fen ge xing:",
         "severabilityText": "ru guo zhe xie tiao kuan de ren he tiao kuan bei ren ding wei bu ke zhi xing, qi yu tiao kuan jiang ji xu wan quan you xiao.",
         "waiver": "qi quan:",
@@ -219,7 +219,7 @@
     "privacyLink": "yin si zheng ce",
     "privacyDescription": "wo men ru he chu li nin de ge ren shu ju",
     "principlesLink": "wo men de yuan ze",
-    "principlesDescription": "le jie zhi yin Swarmrise de jia zhi guan",
+    "principlesDescription": "le jie zhi yin swarmrise de jia zhi guan",
     "footer": "swarmrise yi Apache License 2.0 xu ke"
   },
   "privacy": {
@@ -235,7 +235,7 @@
     "sections": {
       "dataController": {
         "title": "shu ju kong zhi zhe",
-        "p1": "jiu GDPR he qi ta shi yong de shu ju bao hu fa lv er yan, Swarmrise shi tong guo fu wu shou ji de ge ren shu ju de shu ju kong zhi zhe. zhe yi wei zhe wo men jue ding chu li nin ge ren shu ju de mu di he fang shi.",
+        "p1": "jiu GDPR he qi ta shi yong de shu ju bao hu fa lv er yan, swarmrise shi tong guo fu wu shou ji de ge ren shu ju de shu ju kong zhi zhe. zhe yi wei zhe wo men jue ding chu li nin ge ren shu ju de mu di he fang shi.",
         "p2": "ru guo nin dui wo men de shu ju zuo fa you yi wen huo xi wang xing shi nin de quan li, qing tong guo xia mian lian xi xin xi bu fen lie chu de qu dao lian xi wo men."
       },
       "informationWeCollect": {
@@ -490,9 +490,9 @@
     },
     "relatedDocuments": "xiang guan wen dang",
     "termsLink": "fu wu tiao kuan",
-    "termsDescription": "wo men shi yong Swarmrise de tiao kuan he tiao jian",
+    "termsDescription": "wo men shi yong swarmrise de tiao kuan he tiao jian",
     "principlesLink": "wo men de yuan ze",
-    "principlesDescription": "le jie zhi yin Swarmrise de jia zhi guan",
+    "principlesDescription": "le jie zhi yin swarmrise de jia zhi guan",
     "footer": "swarmrise yi Apache License 2.0 xu ke"
   }
 }

@@ -1,6 +1,7 @@
 import { Header } from "../../components/Header";
 import { Logo } from "../../components/Logo";
 import { LegalFooter } from "../../components/LegalFooter";
+import { renderBrandText } from "../../components/shared/BrandText";
 import { useTranslation } from "react-i18next";
 
 export const PrivacyPage = () => {
@@ -24,7 +25,7 @@ export const PrivacyPage = () => {
         {/* Introduction */}
         <section className="flex flex-col gap-4">
           <p className="text-base leading-relaxed ">
-            {t("privacy.intro.commitment")}
+            {renderBrandText(t("privacy.intro.commitment"))}
           </p>
           <p className="text-base leading-relaxed ">
             {t("privacy.intro.gdprCompliance")}
@@ -34,7 +35,7 @@ export const PrivacyPage = () => {
         {/* Privacy sections */}
         <div className="flex flex-col gap-10">
           <PrivacySection number={1} title={t("privacy.sections.dataController.title")}>
-            <p>{t("privacy.sections.dataController.p1")}</p>
+            <p>{renderBrandText(t("privacy.sections.dataController.p1"))}</p>
             <p>{t("privacy.sections.dataController.p2")}</p>
           </PrivacySection>
 

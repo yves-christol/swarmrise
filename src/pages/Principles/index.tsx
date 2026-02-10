@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Header } from "../../components/Header";
 import { Logo } from "../../components/Logo";
 import { LegalFooter } from "../../components/LegalFooter";
+import { renderBrandText } from "../../components/shared/BrandText";
 import { PrincipleCard } from "./PrincipleCard";
 import { usePrinciples } from "./principles";
 
@@ -18,7 +19,7 @@ export const PrinciplesPage = () => {
           <Logo size={64} begin={0} repeatCount={2} />
           <h1 className="font-swarm text-4xl font-bold">{t("principles.title")}</h1>
           <p className="text-lg max-w-xl opacity-80">
-            {t("principles.subtitle")}
+            {renderBrandText(t("principles.subtitle"))}
           </p>
         </section>
 

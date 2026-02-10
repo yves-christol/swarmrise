@@ -1,6 +1,7 @@
 import { Header } from "../../components/Header";
 import { Logo } from "../../components/Logo";
 import { LegalFooter } from "../../components/LegalFooter";
+import { renderBrandText } from "../../components/shared/BrandText";
 import { useTranslation } from "react-i18next";
 
 export const TermsPage = () => {
@@ -24,7 +25,7 @@ export const TermsPage = () => {
         {/* Introduction */}
         <section className="flex flex-col gap-4">
           <p className="text-base leading-relaxed ">
-            {t("terms.intro.welcome")}
+            {renderBrandText(t("terms.intro.welcome"))}
           </p>
           <p className="text-base leading-relaxed ">
             {t("terms.intro.readCarefully")}
@@ -39,7 +40,7 @@ export const TermsPage = () => {
           </TermsSection>
 
           <TermsSection number={2} title={t("terms.sections.descriptionOfService.title")}>
-            <p>{t("terms.sections.descriptionOfService.intro")}</p>
+            <p>{renderBrandText(t("terms.sections.descriptionOfService.intro"))}</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>{t("terms.sections.descriptionOfService.features.structureTeams")}</li>
               <li>{t("terms.sections.descriptionOfService.features.createRoles")}</li>
@@ -105,7 +106,7 @@ export const TermsPage = () => {
 
           <TermsSection number={7} title={t("terms.sections.intellectualProperty.title")}>
             <p>{t("terms.sections.intellectualProperty.license")}</p>
-            <p>{t("terms.sections.intellectualProperty.brandElements")}</p>
+            <p>{renderBrandText(t("terms.sections.intellectualProperty.brandElements"))}</p>
             <p>{t("terms.sections.intellectualProperty.thirdParty")}</p>
           </TermsSection>
 
@@ -144,7 +145,7 @@ export const TermsPage = () => {
           </TermsSection>
 
           <TermsSection number={11} title={t("terms.sections.indemnification.title")}>
-            <p>{t("terms.sections.indemnification.intro")}</p>
+            <p>{renderBrandText(t("terms.sections.indemnification.intro"))}</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>{t("terms.sections.indemnification.items.accessUse")}</li>
               <li>{t("terms.sections.indemnification.items.violationTerms")}</li>
@@ -175,7 +176,7 @@ export const TermsPage = () => {
 
           <TermsSection number={15} title={t("terms.sections.generalProvisions.title")}>
             <p>
-              <strong>{t("terms.sections.generalProvisions.entireAgreement")}</strong> {t("terms.sections.generalProvisions.entireAgreementText")}
+              <strong>{t("terms.sections.generalProvisions.entireAgreement")}</strong> {renderBrandText(t("terms.sections.generalProvisions.entireAgreementText"))}
             </p>
             <p>
               <strong>{t("terms.sections.generalProvisions.severability")}</strong> {t("terms.sections.generalProvisions.severabilityText")}

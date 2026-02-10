@@ -1,19 +1,8 @@
 import type { GlossaryEntry } from "./glossary";
+import { renderBrandText } from "../../components/shared/BrandText";
 
 type GlossaryCardProps = GlossaryEntry & {
   index: number;
-};
-
-const renderContent = (text: string) => {
-  const parts = text.split("swarmrise");
-  return parts.map((part, i) => (
-    <span key={i}>
-      {part}
-      {i < parts.length - 1 && (
-        <span className="font-swarm text-gold">swarmrise</span>
-      )}
-    </span>
-  ));
 };
 
 export const GlossaryCard = ({ title, description, example, index }: GlossaryCardProps) => {
@@ -32,12 +21,12 @@ export const GlossaryCard = ({ title, description, example, index }: GlossaryCar
       </div>
 
       <p className="text-base leading-relaxed pl-9">
-        {renderContent(description)}
+        {renderBrandText(description)}
       </p>
 
       {example && example.trim() !== "" && (
         <p className="text-sm leading-relaxed pl-9 opacity-70 italic border-l-2 border-gold/30 ml-9 pl-4">
-          {renderContent(example)}
+          {renderBrandText(example)}
         </p>
       )}
     </article>

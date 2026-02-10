@@ -1,19 +1,9 @@
+import { renderBrandText } from "../../components/shared/BrandText";
+
 type PrincipleCardProps = {
   title: string;
   content: string;
   index: number;
-};
-
-const renderContent = (text: string) => {
-  const parts = text.split("swarmrise");
-  return parts.map((part, i) => (
-    <span key={i}>
-      {part}
-      {i < parts.length - 1 && (
-        <span className="font-swarm text-gold">swarmrise</span>
-      )}
-    </span>
-  ));
 };
 
 export const PrincipleCard = ({ title, content, index }: PrincipleCardProps) => {
@@ -32,7 +22,7 @@ export const PrincipleCard = ({ title, content, index }: PrincipleCardProps) => 
       </div>
 
       <p className="text-base leading-relaxed pl-9">
-        {renderContent(content)}
+        {renderBrandText(content)}
       </p>
     </article>
   );

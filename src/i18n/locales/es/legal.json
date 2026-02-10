@@ -54,7 +54,7 @@
     "effectiveDateLabel": "Fecha de vigencia",
     "lastUpdatedLabel": "Ultima actualizacion",
     "intro": {
-      "welcome": "Bienvenido a swarmrise. Estos Terminos de Servicio (\"Terminos\") rigen tu acceso y uso de la plataforma Swarmrise, incluyendo nuestro sitio web, aplicaciones y servicios (colectivamente, el \"Servicio\"). Al acceder o usar el Servicio, aceptas estar sujeto a estos Terminos.",
+      "welcome": "Bienvenido a swarmrise. Estos Terminos de Servicio (\"Terminos\") rigen tu acceso y uso de la plataforma swarmrise, incluyendo nuestro sitio web, aplicaciones y servicios (colectivamente, el \"Servicio\"). Al acceder o usar el Servicio, aceptas estar sujeto a estos Terminos.",
       "readCarefully": "Por favor, lee estos Terminos cuidadosamente antes de usar el Servicio. Si no aceptas estos Terminos, no puedes acceder ni usar el Servicio."
     },
     "sections": {
@@ -65,7 +65,7 @@
       },
       "descriptionOfService": {
         "title": "descripcion del servicio",
-        "intro": "Swarmrise es una plataforma multi-inquilino de gestion de organizaciones disenada para la gobernanza colaborativa. El Servicio permite a las organizaciones:",
+        "intro": "swarmrise es una plataforma multi-inquilino de gestion de organizaciones disenada para la gobernanza colaborativa. El Servicio permite a las organizaciones:",
         "features": {
           "structureTeams": "Estructurar equipos y definir jerarquias organizacionales",
           "createRoles": "Crear y gestionar roles dentro de los equipos (incluyendo posiciones de lider, secretario y arbitro)",
@@ -131,7 +131,7 @@
       "intellectualProperty": {
         "title": "propiedad intelectual",
         "license": "El Servicio, incluyendo su codigo fuente, diseno, caracteristicas y documentacion, esta licenciado bajo la Licencia Apache 2.0. Esta licencia te permite usar, modificar y distribuir el software bajo ciertas condiciones.",
-        "brandElements": "El nombre Swarmrise, el logo y los elementos de marca son propietarios y no pueden usarse sin nuestro permiso expreso por escrito, excepto segun lo permitido por la Licencia Apache 2.0 para propositos de atribucion.",
+        "brandElements": "El nombre swarmrise, el logo y los elementos de marca son propietarios y no pueden usarse sin nuestro permiso expreso por escrito, excepto segun lo permitido por la Licencia Apache 2.0 para propositos de atribucion.",
         "thirdParty": "Los componentes de terceros incluidos en el Servicio estan sujetos a sus respectivas licencias, que estan documentadas en nuestra documentacion legal."
       },
       "dataProtection": {
@@ -170,7 +170,7 @@
       },
       "indemnification": {
         "title": "indemnizacion",
-        "intro": "Aceptas indemnizar, defender y mantener indemne a Swarmrise y sus afiliados, funcionarios, directores, empleados y agentes de y contra cualquier reclamacion, responsabilidad, dano, perdida y gasto (incluyendo honorarios legales razonables) que surjan de o esten de alguna manera relacionados con:",
+        "intro": "Aceptas indemnizar, defender y mantener indemne a swarmrise y sus afiliados, funcionarios, directores, empleados y agentes de y contra cualquier reclamacion, responsabilidad, dano, perdida y gasto (incluyendo honorarios legales razonables) que surjan de o esten de alguna manera relacionados con:",
         "items": {
           "accessUse": "Tu acceso o uso del Servicio",
           "violationTerms": "Tu violacion de estos Terminos",
@@ -201,7 +201,7 @@
       "generalProvisions": {
         "title": "disposiciones generales",
         "entireAgreement": "Acuerdo completo:",
-        "entireAgreementText": "Estos Terminos, junto con nuestra Politica de Privacidad y cualquier otra politica referenciada aqui, constituyen el acuerdo completo entre tu y Swarmrise con respecto al Servicio.",
+        "entireAgreementText": "Estos Terminos, junto con nuestra Politica de Privacidad y cualquier otra politica referenciada aqui, constituyen el acuerdo completo entre tu y swarmrise con respecto al Servicio.",
         "severability": "Divisibilidad:",
         "severabilityText": "Si alguna disposicion de estos Terminos se considera inaplicable, las disposiciones restantes continuaran en pleno vigor y efecto.",
         "waiver": "Renuncia:",
@@ -219,7 +219,7 @@
     "privacyLink": "Politica de Privacidad",
     "privacyDescription": "Como manejamos tus datos personales",
     "principlesLink": "Nuestros Principios",
-    "principlesDescription": "Conoce los valores que guian Swarmrise",
+    "principlesDescription": "Conoce los valores que guian swarmrise",
     "footer": "swarmrise esta licenciado bajo Apache License 2.0"
   },
   "privacy": {
@@ -235,7 +235,7 @@
     "sections": {
       "dataController": {
         "title": "responsable del tratamiento",
-        "p1": "Para los propositos del RGPD y otras leyes de proteccion de datos aplicables, Swarmrise actua como responsable del tratamiento de los datos personales recopilados a traves del Servicio. Esto significa que determinamos los propositos y medios del procesamiento de tus datos personales.",
+        "p1": "Para los propositos del RGPD y otras leyes de proteccion de datos aplicables, swarmrise actua como responsable del tratamiento de los datos personales recopilados a traves del Servicio. Esto significa que determinamos los propositos y medios del procesamiento de tus datos personales.",
         "p2": "Si tienes preguntas sobre nuestras practicas de datos o deseas ejercer tus derechos, por favor contactanos a traves de los canales listados en la seccion de Informacion de Contacto a continuacion."
       },
       "informationWeCollect": {
@@ -490,9 +490,9 @@
     },
     "relatedDocuments": "documentos relacionados",
     "termsLink": "Terminos de Servicio",
-    "termsDescription": "Nuestros terminos y condiciones para usar Swarmrise",
+    "termsDescription": "Nuestros terminos y condiciones para usar swarmrise",
     "principlesLink": "Nuestros Principios",
-    "principlesDescription": "Conoce los valores que guian Swarmrise",
+    "principlesDescription": "Conoce los valores que guian swarmrise",
     "footer": "swarmrise esta licenciado bajo Apache License 2.0"
   }
 }

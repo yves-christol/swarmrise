@@ -54,7 +54,7 @@
     "effectiveDateLabel": "Data nabuttia chynnosti",
     "lastUpdatedLabel": "Ostannie onovlennia",
     "intro": {
-      "welcome": "Laskavo prosymo do swarmrise. Tsi Umovy nadannia posluh (\"Umovy\") rehuliuiut vash dostup ta vykorystannia platformy Swarmrise, vkliuchaiuchy nash veb-sayt, dodatky ta posluhy (razom - \"Servis\"). Otrymyiuchy dostup abo vykorystovuiuchy Servis, vy pohodzhuitesia buty zvyazanym tsymy Umovamy.",
+      "welcome": "Laskavo prosymo do swarmrise. Tsi Umovy nadannia posluh (\"Umovy\") rehuliuiut vash dostup ta vykorystannia platformy swarmrise, vkliuchaiuchy nash veb-sayt, dodatky ta posluhy (razom - \"Servis\"). Otrymyiuchy dostup abo vykorystovuiuchy Servis, vy pohodzhuitesia buty zvyazanym tsymy Umovamy.",
       "readCarefully": "Bud laska, uvazno prochytayte tsi Umovy pered vykorystanniam Servisu. Yakshcho vy ne pohodzhuitesia z tsymy Umovamy, vy ne mozhete otrymaty dostup abo vykorystovuvaty Servis."
     },
     "sections": {
@@ -65,7 +65,7 @@
       },
       "descriptionOfService": {
         "title": "opys servisu",
-        "intro": "Swarmrise - tse bahatoorhanizatsiyna platforma upravlinnia orhanizatsiiamy, rozroblena dlia spilnoho upravlinnia. Servis dozvoliaie orhanizatsiiam:",
+        "intro": "swarmrise - tse bahatoorhanizatsiyna platforma upravlinnia orhanizatsiiamy, rozroblena dlia spilnoho upravlinnia. Servis dozvoliaie orhanizatsiiam:",
         "features": {
           "structureTeams": "Strukturuvaty komandy ta vyznachaty orhanizatsiyni iierarkhii",
           "createRoles": "Stvoriuvaty ta kerovaty roliamy v komandakh (vkliuchaiuchy pozytsii lidera, sekretaria ta arbitra)",
@@ -131,7 +131,7 @@
       "intellectualProperty": {
         "title": "intelektualna vlasnist",
         "license": "Servis, vkliuchaiuchy yoho vykhidnyy kod, dyzayn, funktsii ta dokumentatsiiu, litsenziiuietsia za Litsenziieiu Apache 2.0. Tsia litsenziya dozvoliaie vam vykorystovuvaty, modyfikuvaty ta rozpovsiudzhuvaty prohramne zabezpechennia za pevnykh umov.",
-        "brandElements": "Nazva Swarmrise, lohotyp ta elementy brendu ie vlasnymy i ne mozhut vykorystovuvatysia bez nashoho pysmovoho dozvolu, za vyniatkom vypadkiv, dozvolenykh Litsenziieiu Apache 2.0 dlia tsiley atrybutsii.",
+        "brandElements": "Nazva swarmrise, lohotyp ta elementy brendu ie vlasnymy i ne mozhut vykorystovuvatysia bez nashoho pysmovoho dozvolu, za vyniatkom vypadkiv, dozvolenykh Litsenziieiu Apache 2.0 dlia tsiley atrybutsii.",
         "thirdParty": "Komponenty tretikh osib, vkliucheni do Servisu, pidliahaiut svoyim vidpovidnym litsenziam, yaki zadokumentovani v nashiy yuridychniy dokumentatsii."
       },
       "dataProtection": {
@@ -170,7 +170,7 @@
       },
       "indemnification": {
         "title": "vidshkoduvannia",
-        "intro": "Vy pohodzhuitesia vidshkoduvaty, zakhyshchaty ta triymaty Swarmrise ta yoho afilyovanykh osib, posadovykh osib, dyrektoriv, pratsivnykiv ta ahentiv vid ta proty bud-yakykh pretenziy, zobovyazan, zbytkiv, vtrat ta vytrat (vkliuchaiuchy rozumni yuridychni honorary), yaki vyplyvaiut z abo v bud-yakyy sposib povyazani z:",
+        "intro": "Vy pohodzhuitesia vidshkoduvaty, zakhyshchaty ta triymaty swarmrise ta yoho afilyovanykh osib, posadovykh osib, dyrektoriv, pratsivnykiv ta ahentiv vid ta proty bud-yakykh pretenziy, zobovyazan, zbytkiv, vtrat ta vytrat (vkliuchaiuchy rozumni yuridychni honorary), yaki vyplyvaiut z abo v bud-yakyy sposib povyazani z:",
         "items": {
           "accessUse": "Vashym dostupom abo vykorystanniam Servisu",
           "violationTerms": "Vashym porushenniam tsykh Umov",
@@ -201,7 +201,7 @@
       "generalProvisions": {
         "title": "zahalni polozhennia",
         "entireAgreement": "Povna uhoda:",
-        "entireAgreementText": "Tsi Umovy razom z nashoiu Politykoiu konfidentsiynosti ta bud-yakymy inshymy politykami, na yaki tutposylaiutsia, stanovliat povnu uhodu mizh vamy ta Swarmrise shchodo Servisu.",
+        "entireAgreementText": "Tsi Umovy razom z nashoiu Politykoiu konfidentsiynosti ta bud-yakymy inshymy politykami, na yaki tutposylaiutsia, stanovliat povnu uhodu mizh vamy ta swarmrise shchodo Servisu.",
         "severability": "Podilnist:",
         "severabilityText": "Yakshcho bud-yake polozhennia tsykh Umov budu vyzano nechynnym, solni polozhennia prodovzhuiut diiaty v povnomu obsyazi.",
         "waiver": "Vidmova:",
@@ -219,7 +219,7 @@
     "privacyLink": "Polityka konfidentsiynosti",
     "privacyDescription": "Yak my obrobliaiemo vashi personalni dani",
     "principlesLink": "Nashi Pryntsypy",
-    "principlesDescription": "Diznaytesia pro tsinnosti, yaki keruiut Swarmrise",
+    "principlesDescription": "Diznaytesia pro tsinnosti, yaki keruiut swarmrise",
     "footer": "swarmrise litsenzovano za Apache License 2.0"
   },
   "privacy": {
@@ -235,7 +235,7 @@
     "sections": {
       "dataController": {
         "title": "volodor danykh",
-        "p1": "Dlia tsiley GDPR ta inshykh zastosovnykh zakoniv pro zakhyst danykh, Swarmrise diye yak volodor danykh dlia personalnykh danykh, zibranykh cherez Servis. Tse oznachaie, shcho my vyznachaemo tsili ta zasoby obrobky vashykh personalnykh danykh.",
+        "p1": "Dlia tsiley GDPR ta inshykh zastosovnykh zakoniv pro zakhyst danykh, swarmrise diye yak volodor danykh dlia personalnykh danykh, zibranykh cherez Servis. Tse oznachaie, shcho my vyznachaemo tsili ta zasoby obrobky vashykh personalnykh danykh.",
         "p2": "Yakshcho u vas ie zapytannia shchodo nashykh praktyk z danymy abo vy bazhaete skorystatysia svoyimy pravamy, bud laska, zvyazhitsia z namy cherez kanaly, perelocheni v rozdili Kontaktna informatsiia nyzhche."
       },
       "informationWeCollect": {
@@ -490,9 +490,9 @@
     },
     "relatedDocuments": "poviazani dokumenty",
     "termsLink": "Umovy nadannia posluh",
-    "termsDescription": "Nashi umovy vykorystannia Swarmrise",
+    "termsDescription": "Nashi umovy vykorystannia swarmrise",
     "principlesLink": "Nashi Pryntsypy",
-    "principlesDescription": "Diznaytesia pro tsinnosti, yaki keruiut Swarmrise",
+    "principlesDescription": "Diznaytesia pro tsinnosti, yaki keruiut swarmrise",
     "footer": "swarmrise litsenzovano za Apache License 2.0"
   }
 }

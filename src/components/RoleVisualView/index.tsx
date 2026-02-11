@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
@@ -466,10 +467,10 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
         )}
       </svg>
 
-      {/* Duties Modal */}
-      {showDuties && role.duties && role.duties.length > 0 && (
+      {/* Duties Modal - rendered via portal to escape overflow-hidden ancestor */}
+      {showDuties && role.duties && role.duties.length > 0 && createPortal(
         <div
-          className="absolute inset-0 z-20 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center"
           style={{ animation: "modalFadeIn 200ms ease-out" }}
         >
           {/* Backdrop */}
@@ -479,11 +480,11 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           />
           {/* Modal content */}
           <div
-            className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-md mx-6 max-h-[70vh] flex flex-col"
-            style={{ animation: "modalSlideIn 250ms ease-out" }}
+            className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-md mx-6"
+            style={{ maxHeight: "70vh", overflowY: "auto", animation: "modalSlideIn 250ms ease-out" }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 z-10">
               <h3 className="font-swarm text-lg font-semibold text-dark dark:text-light">
                 {t("diagram.dutiesSection", { count: role.duties.length })}
               </h3>
@@ -498,7 +499,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
               </button>
             </div>
             {/* Duties list */}
-            <ul className="px-5 py-4 overflow-y-auto space-y-3 text-sm text-gray-700 dark:text-gray-300">
+            <ul className="px-5 py-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
               {role.duties.map((duty, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-gray-400 dark:text-gray-500 mt-0.5 shrink-0">-</span>
@@ -507,7 +508,8 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
               ))}
             </ul>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Accessibility: screen reader announcement */}

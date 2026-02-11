@@ -3,7 +3,6 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useMembers } from "../../tools/orgaStore";
-import { MissionReminder } from "../MissionReminder";
 import { NotFound } from "../NotFound";
 
 type RoleManageViewProps = {
@@ -317,10 +316,6 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
               )}
             </div>
           )}
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Role settings and configuration
-          </p>
-
           {/* Linked role warning */}
           {isLinkedRole && (
             <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
@@ -330,9 +325,6 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             </div>
           )}
         </header>
-
-        {/* Mission reminder */}
-        <MissionReminder mission={role.mission} />
 
         {/* Save message */}
         {saveMessage && (
@@ -346,71 +338,6 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             {saveMessage.text}
           </div>
         )}
-
-        {/* Assigned Member Section */}
-        <section className="mb-8">
-          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            Assigned Member
-          </h2>
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-            {/* Current member display */}
-            {currentMember && (
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
-                  {currentMember.pictureURL ? (
-                    <img
-                      src={currentMember.pictureURL}
-                      alt={`${currentMember.firstname} ${currentMember.surname}`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium">
-                      {currentMember.firstname.charAt(0)}
-                      {currentMember.surname.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="font-medium text-dark dark:text-light">
-                    {currentMember.firstname} {currentMember.surname}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {currentMember.email}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Member selector */}
-            {!isLinkedRole && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Reassign to another member
-                </label>
-                <select
-                  value={selectedMemberId || ""}
-                  onChange={(e) => void handleMemberChange(e.target.value as Id<"members">)}
-                  disabled={isSaving || isLinkedRole}
-                  className="
-                    w-full px-3 py-2
-                    border border-gray-300 dark:border-gray-600
-                    rounded-lg
-                    bg-white dark:bg-gray-800
-                    text-dark dark:text-light
-                    focus:outline-none focus:ring-2 focus:ring-[#eac840]
-                    disabled:opacity-50 disabled:cursor-not-allowed
-                  "
-                >
-                  {sortedMembers.map((member) => (
-                    <option key={member._id} value={member._id}>
-                      {member.firstname} {member.surname}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-          </div>
-        </section>
 
         {/* Mission Section */}
         <section className="mb-8">
@@ -602,6 +529,71 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
               </ul>
             ) : (
               <p className="text-gray-500 dark:text-gray-400">No duties defined</p>
+            )}
+          </div>
+        </section>
+
+        {/* Assigned Member Section */}
+        <section className="mb-8">
+          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+            Assigned Member
+          </h2>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            {/* Current member display */}
+            {currentMember && (
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                  {currentMember.pictureURL ? (
+                    <img
+                      src={currentMember.pictureURL}
+                      alt={`${currentMember.firstname} ${currentMember.surname}`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium">
+                      {currentMember.firstname.charAt(0)}
+                      {currentMember.surname.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium text-dark dark:text-light">
+                    {currentMember.firstname} {currentMember.surname}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {currentMember.email}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Member selector */}
+            {!isLinkedRole && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Reassign to another member
+                </label>
+                <select
+                  value={selectedMemberId || ""}
+                  onChange={(e) => void handleMemberChange(e.target.value as Id<"members">)}
+                  disabled={isSaving || isLinkedRole}
+                  className="
+                    w-full px-3 py-2
+                    border border-gray-300 dark:border-gray-600
+                    rounded-lg
+                    bg-white dark:bg-gray-800
+                    text-dark dark:text-light
+                    focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                  "
+                >
+                  {sortedMembers.map((member) => (
+                    <option key={member._id} value={member._id}>
+                      {member.firstname} {member.surname}
+                    </option>
+                  ))}
+                </select>
+              </div>
             )}
           </div>
         </section>

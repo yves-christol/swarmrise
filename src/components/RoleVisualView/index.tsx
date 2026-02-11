@@ -88,11 +88,15 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
 
       switch (e.key) {
         case "Escape":
-          onZoomOut();
+          if (showDuties) {
+            setShowDuties(false);
+          } else {
+            onZoomOut();
+          }
           break;
         case "d":
         case "D":
-          // Toggle duties section
+          // Toggle duties modal
           if (role?.duties && role.duties.length > 0) {
             setShowDuties((prev) => !prev);
           }
@@ -108,16 +112,16 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onZoomOut, role?.duties, linkedRole, onNavigateToRole]);
+  }, [onZoomOut, showDuties, role?.duties, linkedRole, onNavigateToRole]);
 
   // Calculate layout
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
-  const maxRadius = Math.min(dimensions.width, dimensions.height) / 2 - 40;
+  const maxRadius = (Math.min(dimensions.width, dimensions.height) / 2 - 70) * 0.85;
 
   // Calculate content dimensions
-  const contentWidth = maxRadius * 1.2;
-  const contentHeight = maxRadius * 0.9;
+  const contentWidth = maxRadius * 1.41;
+  const contentHeight = maxRadius * 1.06;
 
   // Role not found
   if (role === null) {
@@ -184,17 +188,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           }
         }
 
-        @keyframes innerCircleReveal {
-          from {
-            stroke-dashoffset: 1500;
-            opacity: 0;
-          }
-          to {
-            stroke-dashoffset: 0;
-            opacity: 0.15;
-          }
-        }
-
         @keyframes contentFadeIn {
           from {
             opacity: 0;
@@ -209,11 +202,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
         .role-outer-circle {
           stroke-dasharray: 2000;
           animation: circleReveal 600ms ease-out forwards;
-        }
-
-        .role-inner-circle {
-          animation: innerCircleReveal 500ms ease-out 100ms forwards;
-          opacity: 0;
         }
 
         .role-content-title {
@@ -232,36 +220,13 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           animation: contentFadeIn 300ms ease-out 400ms both;
         }
 
-        @keyframes expandDuties {
-          from {
-            max-height: 0;
-            opacity: 0;
-          }
-          to {
-            max-height: 200px;
-            opacity: 1;
-          }
+        @keyframes modalFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
-
-        @keyframes collapseDuties {
-          from {
-            max-height: 200px;
-            opacity: 1;
-          }
-          to {
-            max-height: 0;
-            opacity: 0;
-          }
-        }
-
-        .duties-expanded {
-          animation: expandDuties 300ms ease-out forwards;
-          overflow: hidden;
-        }
-
-        .duties-collapsed {
-          animation: collapseDuties 200ms ease-out forwards;
-          overflow: hidden;
+        @keyframes modalSlideIn {
+          from { opacity: 0; transform: translateY(16px) scale(0.96); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         @keyframes memberLinkReveal {
@@ -276,14 +241,12 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .role-outer-circle,
-          .role-inner-circle {
+          .role-outer-circle {
             animation: none !important;
             stroke-dasharray: none !important;
             stroke-dashoffset: 0 !important;
+            opacity: 0.3 !important;
           }
-          .role-outer-circle { opacity: 0.3 !important; }
-          .role-inner-circle { opacity: 0.15 !important; }
           .role-content-title,
           .role-content-badge,
           .role-content-divider,
@@ -292,12 +255,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             animation: none !important;
             opacity: 1 !important;
             transform: none !important;
-          }
-          .duties-expanded,
-          .duties-collapsed {
-            animation: none !important;
-            max-height: none !important;
-            opacity: 1 !important;
           }
           g[role="button"] {
             animation: none !important;
@@ -351,18 +308,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           strokeWidth={2}
         />
 
-        {/* Inner decorative ring */}
-        <circle
-          className="role-inner-circle"
-          cx={centerX}
-          cy={centerY}
-          r={maxRadius * 0.75}
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth={1}
-          strokeDasharray="2 4"
-        />
-
         {/* Role content (foreignObject for HTML rendering) */}
         <foreignObject
           x={centerX - contentWidth / 2}
@@ -383,65 +328,93 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
               {role.title}
             </h2>
 
-            {/* Role Type Badge (if special role) */}
+            {/* Role Type Badge + optional linked role icon (merged when both present) */}
             {role.roleType && (
-              <div
-                className="role-content-badge flex items-center gap-2 px-3 py-1 rounded-full"
-                style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) + "30" }}
-              >
-                {/* Icon */}
-                {role.roleType === "leader" && (
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
-                    <path d="M8,0 L9.8,5.5 L16,5.5 L11,9 L12.8,15 L8,11 L3.2,15 L5,9 L0,5.5 L6.2,5.5 Z" />
-                  </svg>
-                )}
-                {role.roleType === "secretary" && (
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
-                    <path d="M12,0 C12,0 2,8 3,14 L5,14 C5,14 9,6 12,0 M4,12 L2,14 L3,14 C3.5,13.5 4,13 4,12" />
-                  </svg>
-                )}
-                {role.roleType === "referee" && (
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
-                    <rect x="1" y="12" width="10" height="3" rx="1" />
-                    <rect x="4" y="2" width="8" height="4" rx="1" transform="rotate(-45 8 4)" />
-                  </svg>
-                )}
-                <span
-                  className="text-xs font-medium"
-                  style={{ color: getRoleTypeBadgeColor(role.roleType) }}
+              role.linkedRoleId ? (
+                <button
+                  className="role-content-badge flex items-center gap-2 px-3 py-1 rounded-full cursor-pointer border-none hover:brightness-110 transition-all"
+                  style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) + "30" }}
+                  onClick={() => linkedRole && onNavigateToRole?.(linkedRole._id, linkedRole.teamId)}
+                  title="Go to source role in parent team (L)"
                 >
-                  {t(`roleTypes.${role.roleType}`, { ns: "members" })}
-                </span>
-              </div>
+                  {role.roleType === "leader" && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
+                      <path d="M8,0 L9.8,5.5 L16,5.5 L11,9 L12.8,15 L8,11 L3.2,15 L5,9 L0,5.5 L6.2,5.5 Z" />
+                    </svg>
+                  )}
+                  {role.roleType === "secretary" && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
+                      <path d="M12,0 C12,0 2,8 3,14 L5,14 C5,14 9,6 12,0 M4,12 L2,14 L3,14 C3.5,13.5 4,13 4,12" />
+                    </svg>
+                  )}
+                  {role.roleType === "referee" && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
+                      <rect x="1" y="12" width="10" height="3" rx="1" />
+                      <rect x="4" y="2" width="8" height="4" rx="1" transform="rotate(-45 8 4)" />
+                    </svg>
+                  )}
+                  <span
+                    className="text-xs font-medium"
+                    style={{ color: getRoleTypeBadgeColor(role.roleType) }}
+                  >
+                    {t(`roleTypes.${role.roleType}`, { ns: "members" })}
+                  </span>
+                  {/* Link icon indicating synced from parent */}
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke={getRoleTypeBadgeColor(role.roleType)} strokeWidth="2" opacity="0.7">
+                    <path d="M6.5,9.5 L9.5,6.5 M5,11 L3.5,12.5 C2.5,13.5 2.5,15 3.5,15 L4,15 C5,15 5.5,14 4.5,13 M11,5 L12.5,3.5 C13.5,2.5 13.5,1 12.5,1 L12,1 C11,1 10.5,2 11.5,3" />
+                  </svg>
+                </button>
+              ) : (
+                <div
+                  className="role-content-badge flex items-center gap-2 px-3 py-1 rounded-full"
+                  style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) + "30" }}
+                >
+                  {role.roleType === "leader" && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
+                      <path d="M8,0 L9.8,5.5 L16,5.5 L11,9 L12.8,15 L8,11 L3.2,15 L5,9 L0,5.5 L6.2,5.5 Z" />
+                    </svg>
+                  )}
+                  {role.roleType === "secretary" && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
+                      <path d="M12,0 C12,0 2,8 3,14 L5,14 C5,14 9,6 12,0 M4,12 L2,14 L3,14 C3.5,13.5 4,13 4,12" />
+                    </svg>
+                  )}
+                  {role.roleType === "referee" && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
+                      <rect x="1" y="12" width="10" height="3" rx="1" />
+                      <rect x="4" y="2" width="8" height="4" rx="1" transform="rotate(-45 8 4)" />
+                    </svg>
+                  )}
+                  <span
+                    className="text-xs font-medium"
+                    style={{ color: getRoleTypeBadgeColor(role.roleType) }}
+                  >
+                    {t(`roleTypes.${role.roleType}`, { ns: "members" })}
+                  </span>
+                </div>
+              )
             )}
 
-            {/* Linked Role Badge (for double role pattern) - clickable to navigate */}
-            {role.linkedRoleId && linkedRole && (
+            {/* Standalone linked role badge (when no roleType) */}
+            {!role.roleType && role.linkedRoleId && linkedRole && (
               <button
                 className="role-content-badge flex items-center gap-1.5 px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors cursor-pointer border-none"
                 onClick={() => onNavigateToRole?.(linkedRole._id, linkedRole.teamId)}
                 title="Go to source role in parent team (L)"
               >
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500 dark:text-gray-400">
-                  <path d="M4,6 C4,3 6,1 9,1 L11,1 C14,1 16,3 16,6 L16,10 C16,13 14,15 11,15 L9,15 C6,15 4,13 4,10 M6,8 L10,8" />
+                  <path d="M6.5,9.5 L9.5,6.5 M5,11 L3.5,12.5 C2.5,13.5 2.5,15 3.5,15 L4,15 C5,15 5.5,14 4.5,13 M11,5 L12.5,3.5 C13.5,2.5 13.5,1 12.5,1 L12,1 C11,1 10.5,2 11.5,3" />
                 </svg>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {t("diagram.syncedFromParentShort")}
-                </span>
                 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-500">
                   <path d="M6 4l4 4-4 4" />
                 </svg>
               </button>
             )}
-            {/* Non-clickable badge when linked role data not loaded yet */}
-            {role.linkedRoleId && !linkedRole && (
+            {!role.roleType && role.linkedRoleId && !linkedRole && (
               <div className="role-content-badge flex items-center gap-1.5 px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500 dark:text-gray-400">
-                  <path d="M4,6 C4,3 6,1 9,1 L11,1 C14,1 16,3 16,6 L16,10 C16,13 14,15 11,15 L9,15 C6,15 4,13 4,10 M6,8 L10,8" />
+                  <path d="M6.5,9.5 L9.5,6.5 M5,11 L3.5,12.5 C2.5,13.5 2.5,15 3.5,15 L4,15 C5,15 5.5,14 4.5,13 M11,5 L12.5,3.5 C13.5,2.5 13.5,1 12.5,1 L12,1 C11,1 10.5,2 11.5,3" />
                 </svg>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {t("diagram.syncedFromParentShort")}
-                </span>
               </div>
             )}
 
@@ -458,42 +431,20 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
               </p>
             </div>
 
-            {/* Duties Section (expandable) */}
+            {/* Duties Button */}
             {role.duties && role.duties.length > 0 && (
-              <div className="role-content-duties flex flex-col items-center gap-1 max-w-xs">
-                <button
-                  onClick={() => setShowDuties((prev) => !prev)}
-                  className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer bg-transparent border-none"
-                  title={showDuties ? "Hide duties (D)" : "Show duties (D)"}
-                >
-                  <svg
-                    width="10"
-                    height="10"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className={`transition-transform duration-200 ${showDuties ? "rotate-90" : ""}`}
-                  >
-                    <path d="M6 4l4 4-4 4" />
-                  </svg>
-                  <span className="font-swarm font-semibold uppercase tracking-wide">
-                    {t("diagram.dutiesSection", { count: role.duties.length })}
-                  </span>
-                </button>
-                <div className={showDuties ? "duties-expanded" : "duties-collapsed"}>
-                  {showDuties && (
-                    <ul className="text-xs text-center text-gray-600 dark:text-gray-400 space-y-1 mt-1">
-                      {role.duties.map((duty, i) => (
-                        <li key={i} className="flex items-start gap-1">
-                          <span className="text-gray-400">-</span>
-                          <span>{duty}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
+              <button
+                onClick={() => setShowDuties(true)}
+                className="role-content-duties flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-700/60 hover:bg-gray-200 dark:hover:bg-gray-600/60 text-xs text-gray-600 dark:text-gray-300 transition-colors cursor-pointer border-none"
+                title={t("diagram.keyboardDuties") + " (D)"}
+              >
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M2 4h12M2 8h12M2 12h8" />
+                </svg>
+                <span className="font-swarm font-semibold uppercase tracking-wide">
+                  {t("diagram.dutiesSection", { count: role.duties.length })}
+                </span>
+              </button>
             )}
           </div>
         </foreignObject>
@@ -507,13 +458,57 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             maxRadius={maxRadius}
             onMemberClick={(memberId) => {
               // Calculate position for transition origin
-              const linkY = centerY + maxRadius + 50;
-              const linkRadius = 28;
+              const linkY = centerY + maxRadius + 30;
+              const linkRadius = 36;
               onNavigateToMember?.(memberId, { x: centerX, y: linkY, radius: linkRadius });
             }}
           />
         )}
       </svg>
+
+      {/* Duties Modal */}
+      {showDuties && role.duties && role.duties.length > 0 && (
+        <div
+          className="absolute inset-0 z-20 flex items-center justify-center"
+          style={{ animation: "modalFadeIn 200ms ease-out" }}
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40 dark:bg-black/60"
+            onClick={() => setShowDuties(false)}
+          />
+          {/* Modal content */}
+          <div
+            className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-md mx-6 max-h-[70vh] flex flex-col"
+            style={{ animation: "modalSlideIn 250ms ease-out" }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+                {t("diagram.dutiesSection", { count: role.duties.length })}
+              </h3>
+              <button
+                onClick={() => setShowDuties(false)}
+                className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer border-none bg-transparent text-gray-500 dark:text-gray-400"
+                title="Close (Esc/D)"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 4l8 8M12 4l-8 8" />
+                </svg>
+              </button>
+            </div>
+            {/* Duties list */}
+            <ul className="px-5 py-4 overflow-y-auto space-y-3 text-sm text-gray-700 dark:text-gray-300">
+              {role.duties.map((duty, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span className="text-gray-400 dark:text-gray-500 mt-0.5 shrink-0">-</span>
+                  <span className="leading-relaxed">{duty}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* Accessibility: screen reader announcement */}
       <div role="status" aria-live="polite" className="sr-only">

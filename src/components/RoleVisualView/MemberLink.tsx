@@ -25,10 +25,10 @@ export function MemberLink({
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation("teams");
 
-  // Position at bottom of circle, outside the main boundary
+  // Position at bottom of circle, close to the outer boundary
   const linkX = centerX;
-  const linkY = centerY + maxRadius + 50;
-  const linkRadius = 28;
+  const linkY = centerY + maxRadius + 30;
+  const linkRadius = 36;
 
   // Calculate connection line from circle edge to member link
   const circleEdgeY = centerY + maxRadius;
@@ -132,7 +132,7 @@ export function MemberLink({
           textAnchor="middle"
           dominantBaseline="central"
           fill="var(--diagram-node-text)"
-          fontSize={12}
+          fontSize={14}
           fontWeight={600}
           fontFamily="'Montserrat Alternates', sans-serif"
           style={{ pointerEvents: "none", userSelect: "none" }}
@@ -153,22 +153,6 @@ export function MemberLink({
         {member.firstname} {member.surname}
       </text>
 
-      {/* "Assigned to" label above the line */}
-      <text
-        x={linkX}
-        y={circleEdgeY + 12}
-        textAnchor="middle"
-        fill="var(--diagram-muted-text)"
-        fontSize={9}
-        opacity={isHovered ? 1 : 0.6}
-        style={{
-          pointerEvents: "none",
-          userSelect: "none",
-          transition: "opacity 150ms ease-out",
-        }}
-      >
-        {t("diagram.assignedTo")}
-      </text>
     </g>
   );
 }

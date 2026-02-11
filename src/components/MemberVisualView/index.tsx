@@ -354,17 +354,6 @@ export function MemberVisualView({
           }
         }
 
-        @keyframes innerRingReveal {
-          from {
-            stroke-dashoffset: 1500;
-            opacity: 0;
-          }
-          to {
-            stroke-dashoffset: 0;
-            opacity: 0.15;
-          }
-        }
-
         @keyframes contactFadeIn {
           from {
             opacity: 0;
@@ -390,11 +379,6 @@ export function MemberVisualView({
           animation: outerRingReveal 600ms ease-out forwards;
         }
 
-        .member-inner-ring {
-          animation: innerRingReveal 500ms ease-out 100ms forwards;
-          opacity: 0;
-        }
-
         .member-circle {
           stroke-dasharray: 400;
           animation: memberCircleReveal 400ms ease-out 150ms forwards;
@@ -407,14 +391,12 @@ export function MemberVisualView({
 
         @media (prefers-reduced-motion: reduce) {
           .member-outer-ring,
-          .member-inner-ring,
           .member-circle {
             animation: none !important;
             stroke-dasharray: none !important;
             stroke-dashoffset: 0 !important;
           }
           .member-outer-ring { opacity: 0.3 !important; }
-          .member-inner-ring { opacity: 0.15 !important; }
           .member-circle { opacity: 1 !important; }
           .member-content {
             animation: none !important;
@@ -464,27 +446,15 @@ export function MemberVisualView({
       >
         <title>{t("diagram.memberDetailsTitle", { name: `${member.firstname} ${member.surname}` })}</title>
 
-        {/* Outer boundary circle */}
+        {/* Outer boundary circle - encompasses roles but not teams */}
         <circle
           className="member-outer-ring"
           cx={centerX}
           cy={centerY}
-          r={maxRadius}
+          r={maxRadius * 0.80}
           fill="none"
           stroke="#a2dbed"
           strokeWidth={2}
-        />
-
-        {/* Inner decorative ring - role ring guide */}
-        <circle
-          className="member-inner-ring"
-          cx={centerX}
-          cy={centerY}
-          r={maxRadius * 0.65}
-          fill="none"
-          stroke="#a2dbed"
-          strokeWidth={1}
-          strokeDasharray="2 4"
         />
 
         {/* Connection lines (render first, below nodes) */}

@@ -8,9 +8,40 @@ type RoleLinkProps = {
   onClick?: () => void;
 };
 
-function truncateTitle(title: string, maxLength: number = 10): string {
-  if (title.length <= maxLength) return title;
-  return title.slice(0, maxLength - 1) + "...";
+function splitTitle(title: string, maxCharsPerLine: number): string[] {
+  if (title.length <= maxCharsPerLine) return [title];
+
+  const words = title.split(" ");
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length <= maxCharsPerLine) {
+      current = candidate;
+    } else {
+      if (current) lines.push(current);
+      current = word;
+    }
+    if (lines.length === 2) {
+      // Last line: join remaining words
+      const remaining = words.slice(words.indexOf(word)).join(" ");
+      if (remaining.length > maxCharsPerLine) {
+        return [...lines, remaining.slice(0, maxCharsPerLine - 1) + "\u2026"];
+      }
+      return [...lines, remaining];
+    }
+  }
+  if (current) lines.push(current);
+
+  // Truncate any line that's still too long (single long word)
+  return lines.map((line, i) =>
+    line.length > maxCharsPerLine && i === lines.length - 1
+      ? line.slice(0, maxCharsPerLine - 1) + "\u2026"
+      : line.length > maxCharsPerLine
+        ? line.slice(0, maxCharsPerLine)
+        : line
+  );
 }
 
 function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
@@ -134,23 +165,38 @@ export const RoleLink = memo(function RoleLink({
         </g>
       )}
 
-      {/* Role title */}
-      <text
-        x={x}
-        y={y}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill="var(--diagram-node-text)"
-        fontSize={10}
-        fontFamily="'Montserrat Alternates', sans-serif"
-        fontWeight={500}
-        style={{
-          pointerEvents: "none",
-          userSelect: "none",
-        }}
-      >
-        {truncateTitle(role.title, Math.floor(radius / 3.5))}
-      </text>
+      {/* Role title (up to 3 lines) */}
+      {(() => {
+        const maxChars = Math.floor(radius / 3);
+        const lines = splitTitle(role.title, maxChars);
+        const lineHeight = 12;
+        const startY = y - ((lines.length - 1) * lineHeight) / 2;
+        return (
+          <text
+            x={x}
+            textAnchor="middle"
+            fill="var(--diagram-node-text)"
+            fontSize={10}
+            fontFamily="'Montserrat Alternates', sans-serif"
+            fontWeight={500}
+            style={{
+              pointerEvents: "none",
+              userSelect: "none",
+            }}
+          >
+            {lines.map((line, i) => (
+              <tspan
+                key={i}
+                x={x}
+                y={startY + i * lineHeight}
+                dominantBaseline="central"
+              >
+                {line}
+              </tspan>
+            ))}
+          </text>
+        );
+      })()}
     </g>
   );
 });

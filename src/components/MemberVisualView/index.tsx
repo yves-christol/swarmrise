@@ -134,7 +134,7 @@ export function MemberVisualView({
     const memberR = 52;
     const roleRingRadius = mR * 0.65;
     const teamRingRadius = mR * 0.95;
-    const roleR = 28;
+    const roleR = 36;
     const teamR = 32;
 
     if (rolesByTeam.length === 0) {

@@ -531,6 +531,56 @@ export const getLinkedLeaderRolesForTeam = query({
 });
 
 /**
+ * Get the daughter linked role for a given source role (reverse lookup).
+ * If this role is a source in the double role pattern, returns the linked role and its team.
+ */
+export const getDaughterLinkedRole = query({
+  args: {
+    roleId: v.id("roles"),
+  },
+  returns: v.union(
+    v.object({
+      linkedRole: v.object({
+        _id: v.id("roles"),
+        teamId: v.id("teams"),
+        title: v.string(),
+      }),
+      daughterTeam: v.object({
+        _id: v.id("teams"),
+        name: v.string(),
+      }),
+    }),
+    v.null()
+  ),
+  handler: async (ctx, args) => {
+    const orgaId = await getOrgaFromRole(ctx, args.roleId);
+    await requireAuthAndMembership(ctx, orgaId);
+
+    const linkedRole = await ctx.db
+      .query("roles")
+      .withIndex("by_linked_role", (q) => q.eq("linkedRoleId", args.roleId))
+      .first();
+
+    if (!linkedRole) return null;
+
+    const daughterTeam = await ctx.db.get(linkedRole.teamId);
+    if (!daughterTeam) return null;
+
+    return {
+      linkedRole: {
+        _id: linkedRole._id,
+        teamId: linkedRole.teamId,
+        title: linkedRole.title,
+      },
+      daughterTeam: {
+        _id: daughterTeam._id,
+        name: daughterTeam.name,
+      },
+    };
+  },
+});
+
+/**
  * Delete a role
  */
 export const deleteRole = mutation({

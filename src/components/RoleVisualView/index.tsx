@@ -59,6 +59,12 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
     role ? { memberId: role.memberId } : "skip"
   );
 
+  // Fetch daughter linked role (if this role is a source in the double role pattern)
+  const daughterLink = useQuery(
+    api.roles.functions.getDaughterLinkedRole,
+    role ? { roleId: role._id } : "skip"
+  );
+
   // Handle container resize
   useEffect(() => {
     const container = containerRef.current;
@@ -103,16 +109,18 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           break;
         case "l":
         case "L":
-          // Navigate to linked role (source role in parent team)
+          // Navigate to linked role (parent or daughter)
           if (linkedRole && onNavigateToRole) {
             onNavigateToRole(linkedRole._id, linkedRole.teamId);
+          } else if (daughterLink && onNavigateToRole) {
+            onNavigateToRole(daughterLink.linkedRole._id, daughterLink.linkedRole.teamId);
           }
           break;
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onZoomOut, showDuties, role?.duties, linkedRole, onNavigateToRole]);
+  }, [onZoomOut, showDuties, role?.duties, linkedRole, daughterLink, onNavigateToRole]);
 
   // Calculate layout
   const centerX = dimensions.width / 2;
@@ -285,6 +293,12 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             <span>{t("diagram.keyboardSource")}</span>
           </span>
         )}
+        {!role.linkedRoleId && daughterLink && (
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">L</kbd>
+            <span>{daughterLink.daughterTeam.name}</span>
+          </span>
+        )}
       </div>
 
       {/* SVG Diagram */}
@@ -360,6 +374,40 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
                     {t(`roleTypes.${role.roleType}`, { ns: "members" })}
                   </span>
                   {/* Link icon indicating synced from parent */}
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke={getRoleTypeBadgeColor(role.roleType)} strokeWidth="2" opacity="0.7">
+                    <path d="M6.5,9.5 L9.5,6.5 M5,11 L3.5,12.5 C2.5,13.5 2.5,15 3.5,15 L4,15 C5,15 5.5,14 4.5,13 M11,5 L12.5,3.5 C13.5,2.5 13.5,1 12.5,1 L12,1 C11,1 10.5,2 11.5,3" />
+                  </svg>
+                </button>
+              ) : daughterLink ? (
+                <button
+                  className="role-content-badge flex items-center gap-2 px-3 py-1 rounded-full cursor-pointer border-none hover:brightness-110 transition-all"
+                  style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) + "30" }}
+                  onClick={() => onNavigateToRole?.(daughterLink.linkedRole._id, daughterLink.linkedRole.teamId)}
+                  title={`Go to role in ${daughterLink.daughterTeam.name} (L)`}
+                >
+                  {role.roleType === "leader" && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
+                      <path d="M8,0 L9.8,5.5 L16,5.5 L11,9 L12.8,15 L8,11 L3.2,15 L5,9 L0,5.5 L6.2,5.5 Z" />
+                    </svg>
+                  )}
+                  {role.roleType === "secretary" && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
+                      <path d="M12,0 C12,0 2,8 3,14 L5,14 C5,14 9,6 12,0 M4,12 L2,14 L3,14 C3.5,13.5 4,13 4,12" />
+                    </svg>
+                  )}
+                  {role.roleType === "referee" && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
+                      <rect x="1" y="12" width="10" height="3" rx="1" />
+                      <rect x="4" y="2" width="8" height="4" rx="1" transform="rotate(-45 8 4)" />
+                    </svg>
+                  )}
+                  <span
+                    className="text-xs font-medium"
+                    style={{ color: getRoleTypeBadgeColor(role.roleType) }}
+                  >
+                    {t(`roleTypes.${role.roleType}`, { ns: "members" })}
+                  </span>
+                  {/* Link icon indicating synced to daughter team */}
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke={getRoleTypeBadgeColor(role.roleType)} strokeWidth="2" opacity="0.7">
                     <path d="M6.5,9.5 L9.5,6.5 M5,11 L3.5,12.5 C2.5,13.5 2.5,15 3.5,15 L4,15 C5,15 5.5,14 4.5,13 M11,5 L12.5,3.5 C13.5,2.5 13.5,1 12.5,1 L12,1 C11,1 10.5,2 11.5,3" />
                   </svg>

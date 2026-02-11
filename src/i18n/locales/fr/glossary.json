@@ -40,6 +40,11 @@
       "title": "Mission",
       "description": "L'objectif ou le but qui guide une équipe ou un rôle. Les missions répondent à la question de pourquoi quelque chose existe et ce qu'il vise à accomplir.",
       "example": "La mission d'une équipe Support pourrait être de s'assurer que les clients reçoivent une assistance rapide et utile."
+    },
+    "duty": {
+      "title": "Devoir",
+      "description": "Une responsabilité spécifique et actionnable attribuée à un rôle. Alors qu'une mission définit l'objectif global, les devoirs la décomposent en tâches ou obligations concrètes que le titulaire du rôle est censé remplir. Un rôle peut avoir plusieurs devoirs.",
+      "example": "Un rôle de Responsable du contenu pourrait avoir des devoirs comme 'Rédiger des articles de blog hebdomadaires', 'Examiner les contributions de la communauté' et 'Maintenir le calendrier éditorial'."
     }
   }
 }

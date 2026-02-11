@@ -40,6 +40,11 @@
       "title": "Misiia",
       "description": "Meta abo tsil, yaka keruie komandoiu abo rolliu. Misii vidpovidaiut na pytannia, chomu shchos isnuie i choho vono prahnue dosiahty.",
       "example": "Misiieiu komandy pidtrymky mozhe buty zabezpechennia togo, shchob klienty otrymuvaly svoiechasnu ta korysnu dopomohu."
+    },
+    "duty": {
+      "title": "Oboviazok",
+      "description": "Konkretna, diievna vidpovidalnist, pryznachena roli. U toi chas yak misiia vyznachaie zahalnu metu, oboviazky rozkladaiut yii na konkretni zavdannia abo zobov'iazannia, yaki vykonavets roli povynen vykonuvaty. Rol mozhe maty kilka oboviaz'kiv.",
+      "example": "Rol Kerivnyka kontentu mozhe maty oboviazky, taki yak 'Pysaty shchotyzhevi statti dlia blohu', 'Perehliady vnesok spilnoty' ta 'Pidtrymuvaty redaktsiinyi kalendar'."
     }
   }
 }

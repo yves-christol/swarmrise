@@ -40,6 +40,11 @@
       "title": "Missione",
       "description": "Lo scopo o l'obiettivo che guida un team o un ruolo. Le missioni rispondono alla domanda del perche qualcosa esiste e cosa mira a raggiungere.",
       "example": "La missione di un team di Supporto potrebbe essere garantire che i clienti ricevano assistenza tempestiva e utile."
+    },
+    "duty": {
+      "title": "Dovere",
+      "description": "Una responsabilita specifica e attuabile assegnata a un ruolo. Mentre una missione definisce lo scopo generale, i doveri la scompongono in compiti o obblighi concreti che il titolare del ruolo e tenuto a svolgere. Un ruolo puo avere piu doveri.",
+      "example": "Un ruolo di Responsabile contenuti potrebbe avere doveri come 'Scrivere articoli settimanali per il blog', 'Esaminare i contributi della comunita' e 'Mantenere il calendario editoriale'."
     }
   }
 }

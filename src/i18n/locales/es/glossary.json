@@ -40,6 +40,11 @@
       "title": "Mision",
       "description": "El proposito u objetivo que guia a un equipo o rol. Las misiones responden a la pregunta de por que algo existe y que pretende lograr.",
       "example": "La mision de un equipo de Soporte podria ser asegurar que los clientes reciban asistencia oportuna y util."
+    },
+    "duty": {
+      "title": "Deber",
+      "description": "Una responsabilidad especifica y accionable asignada a un rol. Mientras que una mision define el proposito general, los deberes la descomponen en tareas u obligaciones concretas que se espera que el titular del rol cumpla. Un rol puede tener multiples deberes.",
+      "example": "Un rol de Lider de contenido podria tener deberes como 'Escribir publicaciones semanales en el blog', 'Revisar las contribuciones de la comunidad' y 'Mantener el calendario editorial'."
     }
   }
 }

@@ -40,6 +40,11 @@
       "title": "shi ming",
       "description": "zhi dao tuan dui huo jiao se de mu di huo mu biao. shi ming hui da le mou shi wu wei he cun zai yi ji ta xi wang da cheng shen me de wen ti.",
       "example": "zhi yuan tuan dui de shi ming ke neng shi que bao ke hu huo de ji shi he you yong de bang zhu."
+    },
+    "duty": {
+      "title": "zhi ze",
+      "description": "fen pei gei jiao se de ju ti, ke zhi xing de ze ren. sui ran shi ming ding yi le zong ti mu de, dan zhi ze jiang qi fen jie wei jiao se chi you ren ying dang lv xing de ju ti ren wu huo yi wu. yi ge jiao se ke yi you duo ge zhi ze.",
+      "example": "nei rong fu ze ren jiao se ke neng you zhi ze ru 'mei zhou zhuan xie bo ke wen zhang', 'shen he she qu gong gao' he 'wei hu bian ji ri li'."
     }
   }
 }

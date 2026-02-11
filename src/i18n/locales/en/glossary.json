@@ -40,6 +40,11 @@
       "title": "Mission",
       "description": "The purpose or goal that guides a team or role. Missions answer the question of why something exists and what it aims to achieve.",
       "example": "A Support team's mission might be to ensure customers receive timely and helpful assistance."
+    },
+    "duty": {
+      "title": "Duty",
+      "description": "A specific, actionable responsibility assigned to a role. While a mission defines the overarching purpose, duties break it down into concrete tasks or obligations that the role holder is expected to fulfill. A role can have multiple duties.",
+      "example": "A Content Lead role might have duties like 'Write weekly blog posts', 'Review community submissions', and 'Maintain the editorial calendar'."
     }
   }
 }

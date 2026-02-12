@@ -166,6 +166,7 @@ export const createRole = mutation({
       authorEmail: email,
       roleName,
       teamName,
+      targetTeamId: args.teamId,
       targetId: roleId,
       targetType: "roles",
       diff: {
@@ -409,6 +410,7 @@ export const updateRole = mutation({
       authorEmail: email,
       roleName,
       teamName,
+      targetTeamId: role.teamId,
       targetId: args.roleId,
       targetType: "roles",
       diff: {
@@ -590,6 +592,7 @@ export const deleteRole = mutation({
       authorEmail: email,
       roleName,
       teamName,
+      targetTeamId: role.teamId,
       targetId: args.roleId,
       targetType: "roles",
       diff: {

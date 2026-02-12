@@ -510,7 +510,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
         </section>
 
         {/* Decision journal */}
-        <DecisionJournal scope="team" orgaId={team.orgaId} teamName={team.name} />
+        <DecisionJournal scope="team" orgaId={team.orgaId} teamId={team._id} />
       </div>
     </div>
   );

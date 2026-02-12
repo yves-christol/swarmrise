@@ -154,6 +154,7 @@ export const createPolicy = mutation({
       authorEmail: email,
       roleName,
       teamName,
+      targetTeamId: args.teamId,
       targetId: policyId,
       targetType: "policies",
       diff: {
@@ -313,6 +314,7 @@ export const updatePolicy = mutation({
       authorEmail: email,
       roleName,
       teamName,
+      targetTeamId: policy.teamId,
       targetId: args.policyId,
       targetType: "policies",
       diff: {
@@ -366,6 +368,7 @@ export const deletePolicy = mutation({
       authorEmail: email,
       roleName,
       teamName,
+      targetTeamId: policy.teamId,
       targetId: args.policyId,
       targetType: "policies",
       diff: {

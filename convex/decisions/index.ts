@@ -130,6 +130,7 @@ export const decisionType = v.object({
   authorEmail: v.string(),
   roleName: v.string(),
   teamName: v.string(),
+  targetTeamId: v.optional(v.id('teams')),
   targetId: targetIdType,
   targetType: targetType,
   diff: diffType

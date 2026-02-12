@@ -9,7 +9,7 @@ import { type Decision, getDateGroup } from "./formatters";
 
 type DecisionJournalProps =
   | { scope: "orga"; orgaId: Id<"orgas"> }
-  | { scope: "team"; orgaId: Id<"orgas">; teamName: string };
+  | { scope: "team"; orgaId: Id<"orgas">; teamId: Id<"teams"> };
 
 export function DecisionJournal(props: DecisionJournalProps) {
   const { t } = useTranslation("decisions");
@@ -34,7 +34,7 @@ export function DecisionJournal(props: DecisionJournalProps) {
       : // eslint-disable-next-line react-hooks/rules-of-hooks
         useQuery(api.decisions.functions.listDecisionsForTeam, {
           orgaId: props.orgaId,
-          teamName: props.teamName,
+          teamId: props.teamId,
           cursor,
           targetType: targetTypeArg,
         });

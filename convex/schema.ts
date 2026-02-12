@@ -61,7 +61,8 @@ export default defineSchema({
   decisions: defineTable({ ...decisionType.fields })
     .index("by_orga", ["orgaId"])
     .index("by_orga_and_author", ["orgaId", "authorEmail"])
-    .index("by_orga_and_target", ["orgaId", "targetType"]),
+    .index("by_orga_and_target", ["orgaId", "targetType"])
+    .index("by_orga_and_team", ["orgaId", "targetTeamId"]),
 
   // Topics collection - Discussion topics within Teams
   topics: defineTable({ ...topicType.fields})

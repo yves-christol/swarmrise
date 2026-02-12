@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { DecisionJournal } from "../DecisionJournal";
+import { CreateRoleModal } from "../CreateRoleModal";
 import { MemberListItem, MemberListItemMember } from "../MemberListItem";
 import { MissionReminder } from "../MissionReminder";
 import { NotFound } from "../NotFound";
@@ -132,6 +133,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
   const [isEditingName, setIsEditingName] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState(false);
 
   // Initialize local state when team loads
   useEffect(() => {
@@ -360,9 +362,27 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
 
         {/* Roles Section */}
         <section className="mb-8">
-          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            {t("manage.roles")}
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+              {t("manage.roles")}
+            </h2>
+            <button
+              onClick={() => setIsCreateRoleModalOpen(true)}
+              className="
+                flex items-center gap-1.5
+                px-3 py-1.5 text-sm
+                bg-[#eac840] hover:bg-[#d4af37]
+                text-dark
+                rounded-lg
+                transition-colors duration-75
+              "
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M7 1v12M1 7h12" />
+              </svg>
+              {t("manage.createRole")}
+            </button>
+          </div>
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
             {!roles || roles.length === 0 ? (
               <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
@@ -506,6 +526,12 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
         {/* Decision journal */}
         <DecisionJournal scope="team" orgaId={team.orgaId} teamId={team._id} />
       </div>
+
+      <CreateRoleModal
+        isOpen={isCreateRoleModalOpen}
+        onClose={() => setIsCreateRoleModalOpen(false)}
+        teamId={teamId}
+      />
     </div>
   );
 }

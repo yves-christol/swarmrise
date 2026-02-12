@@ -25,7 +25,30 @@
     "synced": "Синхронізовано",
     "viewRoleDetails": "{{title}}{{type}}. Переглянути деталі ролі.",
     "teamMembers": "Учасники команди",
-    "noMembersInTeam": "У цій команді немає учасників"
+    "noMembersInTeam": "У цій команді немає учасників",
+    "createRole": "Створити роль"
+  },
+  "createRole": {
+    "title": "Створити нову роль",
+    "nameLabel": "Назва ролі",
+    "namePlaceholder": "Введіть назву ролі",
+    "assignToLabel": "Призначити",
+    "defaultToLeader": "За замовчуванням (лідер команди)",
+    "assignHint": "Якщо не вказано, роль буде призначена лідеру команди",
+    "missionLabel": "Місія",
+    "missionPlaceholder": "За що відповідає ця роль?",
+    "submitButton": "Створити",
+    "creating": "Створення...",
+    "nameRequired": "Назва ролі обов'язкова",
+    "errorCreating": "Не вдалося створити роль"
+  },
+  "roleManage": {
+    "dangerZone": "Небезпечна зона",
+    "deleteRoleWarning": "Видалення цієї ролі прибере її з команди та відкріпить поточного учасника. Ця дія буде записана в журнал рішень і не може бути скасована.",
+    "deleteRole": "Видалити роль",
+    "confirmDeleteRole": "Підтвердити видалення",
+    "deleting": "Видалення...",
+    "failedToDelete": "Не вдалося видалити роль"
   },
   "diagram": {
     "loadingTeam": "Завантаження команди...",

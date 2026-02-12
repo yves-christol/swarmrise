@@ -25,7 +25,30 @@
     "synced": "Synced",
     "viewRoleDetails": "{{title}}{{type}}. View role details.",
     "teamMembers": "Team Members",
-    "noMembersInTeam": "No members in this team"
+    "noMembersInTeam": "No members in this team",
+    "createRole": "Create role"
+  },
+  "createRole": {
+    "title": "Create a new role",
+    "nameLabel": "Role name",
+    "namePlaceholder": "Enter role name",
+    "assignToLabel": "Assign to",
+    "defaultToLeader": "Default (team leader)",
+    "assignHint": "If not specified, the role will be assigned to the team leader",
+    "missionLabel": "Mission",
+    "missionPlaceholder": "What is this role responsible for?",
+    "submitButton": "Create",
+    "creating": "Creating...",
+    "nameRequired": "Role name is required",
+    "errorCreating": "Failed to create role"
+  },
+  "roleManage": {
+    "dangerZone": "Danger Zone",
+    "deleteRoleWarning": "Deleting this role will remove it from the team and unassign the current member. This action will be recorded in the decision journal and cannot be undone.",
+    "deleteRole": "Delete role",
+    "confirmDeleteRole": "Confirm delete",
+    "deleting": "Deleting...",
+    "failedToDelete": "Failed to delete role"
   },
   "diagram": {
     "loadingTeam": "Loading team...",

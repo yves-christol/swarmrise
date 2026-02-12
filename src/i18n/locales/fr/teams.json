@@ -25,7 +25,30 @@
     "synced": "Synchronisé",
     "viewRoleDetails": "{{title}}{{type}}. Voir les détails du rôle.",
     "teamMembers": "Membres de l'équipe",
-    "noMembersInTeam": "Aucun membre dans cette équipe"
+    "noMembersInTeam": "Aucun membre dans cette équipe",
+    "createRole": "Créer un rôle"
+  },
+  "createRole": {
+    "title": "Créer un nouveau rôle",
+    "nameLabel": "Nom du rôle",
+    "namePlaceholder": "Entrez le nom du rôle",
+    "assignToLabel": "Assigner à",
+    "defaultToLeader": "Par défaut (leader de l'équipe)",
+    "assignHint": "Si non spécifié, le rôle sera assigné au leader de l'équipe",
+    "missionLabel": "Mission",
+    "missionPlaceholder": "De quoi ce rôle est-il responsable ?",
+    "submitButton": "Créer",
+    "creating": "Création...",
+    "nameRequired": "Le nom du rôle est requis",
+    "errorCreating": "Échec de la création du rôle"
+  },
+  "roleManage": {
+    "dangerZone": "Zone de danger",
+    "deleteRoleWarning": "La suppression de ce rôle le retirera de l'équipe et désassignera le membre actuel. Cette action sera enregistrée dans le journal des décisions et ne peut pas être annulée.",
+    "deleteRole": "Supprimer le rôle",
+    "confirmDeleteRole": "Confirmer la suppression",
+    "deleting": "Suppression...",
+    "failedToDelete": "Échec de la suppression du rôle"
   },
   "diagram": {
     "loadingTeam": "Chargement de l'équipe...",

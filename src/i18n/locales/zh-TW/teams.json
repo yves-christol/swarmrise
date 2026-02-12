@@ -25,7 +25,30 @@
     "synced": "已同步",
     "viewRoleDetails": "{{title}}{{type}}。檢視角色詳情。",
     "teamMembers": "團隊成員",
-    "noMembersInTeam": "此團隊中沒有成員"
+    "noMembersInTeam": "此團隊中沒有成員",
+    "createRole": "建立角色"
+  },
+  "createRole": {
+    "title": "建立新角色",
+    "nameLabel": "角色名稱",
+    "namePlaceholder": "輸入角色名稱",
+    "assignToLabel": "指派給",
+    "defaultToLeader": "預設（團隊領導人）",
+    "assignHint": "若未指定，角色將指派給團隊領導人",
+    "missionLabel": "使命",
+    "missionPlaceholder": "此角色負責什麼？",
+    "submitButton": "建立",
+    "creating": "建立中...",
+    "nameRequired": "角色名稱為必填",
+    "errorCreating": "建立角色失敗"
+  },
+  "roleManage": {
+    "dangerZone": "危險區域",
+    "deleteRoleWarning": "刪除此角色會將其從團隊中移除並取消指派目前的成員。此操作將記錄在決策日誌中且無法撤銷。",
+    "deleteRole": "刪除角色",
+    "confirmDeleteRole": "確認刪除",
+    "deleting": "刪除中...",
+    "failedToDelete": "刪除角色失敗"
   },
   "diagram": {
     "loadingTeam": "載入團隊中...",

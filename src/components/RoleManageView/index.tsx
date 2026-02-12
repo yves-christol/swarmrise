@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useMembers } from "../../tools/orgaStore";
@@ -70,6 +71,9 @@ function BackToTeamButton({ teamName, onClick }: { teamName: string; onClick: ()
 }
 
 export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
+  const { t } = useTranslation("teams");
+  const { t: tCommon } = useTranslation("common");
+
   // Fetch role data
   const role = useQuery(api.roles.functions.getRoleById, { roleId });
 
@@ -90,6 +94,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
 
   // Update role mutation
   const updateRole = useMutation(api.roles.functions.updateRole);
+  const deleteRoleMutation = useMutation(api.roles.functions.deleteRole);
 
   // Local state for editing
   const [selectedMemberId, setSelectedMemberId] = useState<Id<"members"> | null>(null);
@@ -102,6 +107,8 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
   const [isEditingDuties, setIsEditingDuties] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Initialize local state when role loads
   useEffect(() => {
@@ -215,6 +222,20 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
     const newDuties = [...duties];
     newDuties[index] = value;
     setDuties(newDuties);
+  };
+
+  const handleDeleteRole = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteRoleMutation({ roleId });
+      onZoomOut();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t("roleManage.failedToDelete");
+      setSaveMessage({ type: "error", text: message });
+      setShowDeleteConfirm(false);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   // Loading state
@@ -597,6 +618,85 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             )}
           </div>
         </section>
+
+        {/* Danger Zone - only for non-mandatory, non-linked roles */}
+        {!role.roleType && !isLinkedRole && (
+          <section className="mb-8 pt-6 border-t border-red-200 dark:border-red-900/50">
+            <h2 className="font-swarm text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
+              {t("roleManage.dangerZone")}
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              {t("roleManage.deleteRoleWarning")}
+            </p>
+            {showDeleteConfirm ? (
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => void handleDeleteRole()}
+                  disabled={isDeleting}
+                  className="
+                    px-4 py-2 text-sm font-medium
+                    bg-red-600 hover:bg-red-700
+                    text-white
+                    rounded-lg
+                    transition-colors
+                    disabled:opacity-50
+                    flex items-center gap-2
+                  "
+                >
+                  {isDeleting ? (
+                    <>
+                      <svg
+                        className="animate-spin w-4 h-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      {t("roleManage.deleting")}
+                    </>
+                  ) : (
+                    t("roleManage.confirmDeleteRole")
+                  )}
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                  className="
+                    px-4 py-2 text-sm
+                    bg-gray-200 dark:bg-gray-700
+                    hover:bg-gray-300 dark:hover:bg-gray-600
+                    text-gray-700 dark:text-gray-300
+                    rounded-lg
+                    transition-colors
+                    disabled:opacity-50
+                  "
+                >
+                  {tCommon("cancel")}
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="
+                  px-4 py-2 text-sm
+                  border border-red-600 dark:border-red-400
+                  text-red-600 dark:text-red-400
+                  hover:bg-red-50 dark:hover:bg-red-900/20
+                  rounded-lg
+                  transition-colors
+                "
+              >
+                {t("roleManage.deleteRole")}
+              </button>
+            )}
+          </section>
+        )}
       </div>
     </div>
   );

@@ -48,7 +48,19 @@
     "deleteRole": "Supprimer le rôle",
     "confirmDeleteRole": "Confirmer la suppression",
     "deleting": "Suppression...",
-    "failedToDelete": "Échec de la suppression du rôle"
+    "failedToDelete": "Échec de la suppression du rôle",
+    "actions": "Actions",
+    "createTeam": "Créer une équipe à partir de ce rôle",
+    "createTeamDescription": "Transformez ce rôle en leader d'une nouvelle équipe. L'équipe héritera du nom du rôle.",
+    "createTeamConfirmTitle": "Créer une équipe à partir de « {{roleName}} »",
+    "createTeamBullet1": "Créer une nouvelle équipe nommée « {{roleName}} »",
+    "createTeamBullet2": "Convertir ce rôle en leader de l'équipe",
+    "createTeamBullet3": "Vous assigner comme secrétaire et référent de l'équipe",
+    "createTeamDecisionNote": "Cette action sera enregistrée dans le journal des décisions.",
+    "createTeamSubmit": "Créer l'équipe",
+    "creatingTeam": "Création...",
+    "teamCreated": "Équipe créée avec succès",
+    "createTeamFailed": "Échec de la création de l'équipe"
   },
   "diagram": {
     "loadingTeam": "Chargement de l'équipe...",

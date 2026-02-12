@@ -48,7 +48,19 @@
     "deleteRole": "Eliminar rol",
     "confirmDeleteRole": "Confirmar eliminación",
     "deleting": "Eliminando...",
-    "failedToDelete": "Error al eliminar el rol"
+    "failedToDelete": "Error al eliminar el rol",
+    "actions": "Acciones",
+    "createTeam": "Crear un equipo a partir de este rol",
+    "createTeamDescription": "Transforma este rol en el líder de un nuevo equipo. El equipo heredará el nombre del rol.",
+    "createTeamConfirmTitle": "Crear un equipo a partir de \"{{roleName}}\"",
+    "createTeamBullet1": "Crear un nuevo equipo llamado \"{{roleName}}\"",
+    "createTeamBullet2": "Convertir este rol en el líder del equipo",
+    "createTeamBullet3": "Asignarte como secretario y árbitro del equipo",
+    "createTeamDecisionNote": "Esta acción se registrará en el diario de decisiones.",
+    "createTeamSubmit": "Crear equipo",
+    "creatingTeam": "Creando...",
+    "teamCreated": "Equipo creado con éxito",
+    "createTeamFailed": "Error al crear el equipo"
   },
   "diagram": {
     "loadingTeam": "Cargando equipo...",

@@ -48,7 +48,19 @@
     "deleteRole": "刪除角色",
     "confirmDeleteRole": "確認刪除",
     "deleting": "刪除中...",
-    "failedToDelete": "刪除角色失敗"
+    "failedToDelete": "刪除角色失敗",
+    "actions": "操作",
+    "createTeam": "從此角色建立團隊",
+    "createTeamDescription": "將此角色轉換為新團隊的領導人。團隊將繼承角色的名稱。",
+    "createTeamConfirmTitle": "從「{{roleName}}」建立團隊",
+    "createTeamBullet1": "建立名為「{{roleName}}」的新團隊",
+    "createTeamBullet2": "將此角色轉換為團隊領導人",
+    "createTeamBullet3": "將您指派為團隊的秘書和裁判",
+    "createTeamDecisionNote": "此操作將記錄在決策日誌中。",
+    "createTeamSubmit": "建立團隊",
+    "creatingTeam": "建立中...",
+    "teamCreated": "團隊建立成功",
+    "createTeamFailed": "建立團隊失敗"
   },
   "diagram": {
     "loadingTeam": "載入團隊中...",

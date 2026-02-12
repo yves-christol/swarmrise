@@ -48,7 +48,19 @@
     "deleteRole": "Видалити роль",
     "confirmDeleteRole": "Підтвердити видалення",
     "deleting": "Видалення...",
-    "failedToDelete": "Не вдалося видалити роль"
+    "failedToDelete": "Не вдалося видалити роль",
+    "actions": "Дії",
+    "createTeam": "Створити команду з цієї ролі",
+    "createTeamDescription": "Перетворіть цю роль на лідера нової команди. Команда успадкує назву ролі.",
+    "createTeamConfirmTitle": "Створити команду з \"{{roleName}}\"",
+    "createTeamBullet1": "Створити нову команду з назвою \"{{roleName}}\"",
+    "createTeamBullet2": "Перетворити цю роль на лідера команди",
+    "createTeamBullet3": "Призначити вас секретарем та рефері команди",
+    "createTeamDecisionNote": "Ця дія буде записана в журнал рішень.",
+    "createTeamSubmit": "Створити команду",
+    "creatingTeam": "Створення...",
+    "teamCreated": "Команду успішно створено",
+    "createTeamFailed": "Не вдалося створити команду"
   },
   "diagram": {
     "loadingTeam": "Завантаження команди...",

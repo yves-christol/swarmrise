@@ -169,14 +169,36 @@ export const createTeam = mutation({
       memberId: role.memberId,
     });
     
-    // Update member's roleIds to include the new leader role
+    // Create secretary role assigned to the leader's member
+    const secretaryRoleId = await ctx.db.insert("roles", {
+      orgaId: args.orgaId,
+      teamId: teamId,
+      title: "Secretary",
+      roleType: "secretary",
+      mission: "",
+      duties: [],
+      memberId: role.memberId,
+    });
+
+    // Create referee role assigned to the leader's member
+    const refereeRoleId = await ctx.db.insert("roles", {
+      orgaId: args.orgaId,
+      teamId: teamId,
+      title: "Referee",
+      roleType: "referee",
+      mission: "",
+      duties: [],
+      memberId: role.memberId,
+    });
+
+    // Update member's roleIds to include the new leader, secretary, and referee roles
     const roleMember = await ctx.db.get(role.memberId);
     if (roleMember) {
       await ctx.db.patch(role.memberId, {
-        roleIds: [...roleMember.roleIds, leaderRoleId],
+        roleIds: [...roleMember.roleIds, leaderRoleId, secretaryRoleId, refereeRoleId],
       });
     }
-    
+
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
     const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, args.orgaId);

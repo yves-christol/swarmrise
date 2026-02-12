@@ -533,6 +533,27 @@ export const getLinkedLeaderRolesForTeam = query({
 });
 
 /**
+ * Check if a role has a linked child team (i.e., a team was created from this role)
+ */
+export const hasLinkedChildRole = query({
+  args: {
+    roleId: v.id("roles"),
+  },
+  returns: v.boolean(),
+  handler: async (ctx, args) => {
+    const orgaId = await getOrgaFromRole(ctx, args.roleId);
+    await requireAuthAndMembership(ctx, orgaId);
+
+    const linked = await ctx.db
+      .query("roles")
+      .withIndex("by_linked_role", (q) => q.eq("linkedRoleId", args.roleId))
+      .first();
+
+    return linked !== null;
+  },
+});
+
+/**
  * Delete a role
  */
 export const deleteRole = mutation({

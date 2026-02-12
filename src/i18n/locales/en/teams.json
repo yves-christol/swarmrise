@@ -48,7 +48,19 @@
     "deleteRole": "Delete role",
     "confirmDeleteRole": "Confirm delete",
     "deleting": "Deleting...",
-    "failedToDelete": "Failed to delete role"
+    "failedToDelete": "Failed to delete role",
+    "actions": "Actions",
+    "createTeam": "Create a team from this role",
+    "createTeamDescription": "Transform this role into the leader of a new team. The team will inherit the role's name.",
+    "createTeamConfirmTitle": "Create a team from \"{{roleName}}\"",
+    "createTeamBullet1": "Create a new team named \"{{roleName}}\"",
+    "createTeamBullet2": "Convert this role into the team's leader",
+    "createTeamBullet3": "Assign you as the team's secretary and referee",
+    "createTeamDecisionNote": "This action will be recorded in the decision journal.",
+    "createTeamSubmit": "Create team",
+    "creatingTeam": "Creating...",
+    "teamCreated": "Team created successfully",
+    "createTeamFailed": "Failed to create team"
   },
   "diagram": {
     "loadingTeam": "Loading team...",

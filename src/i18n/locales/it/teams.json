@@ -48,7 +48,19 @@
     "deleteRole": "Elimina ruolo",
     "confirmDeleteRole": "Conferma eliminazione",
     "deleting": "Eliminazione...",
-    "failedToDelete": "Impossibile eliminare il ruolo"
+    "failedToDelete": "Impossibile eliminare il ruolo",
+    "actions": "Azioni",
+    "createTeam": "Crea una squadra da questo ruolo",
+    "createTeamDescription": "Trasforma questo ruolo nel leader di una nuova squadra. La squadra erediterà il nome del ruolo.",
+    "createTeamConfirmTitle": "Crea una squadra da \"{{roleName}}\"",
+    "createTeamBullet1": "Creare una nuova squadra chiamata \"{{roleName}}\"",
+    "createTeamBullet2": "Convertire questo ruolo nel leader della squadra",
+    "createTeamBullet3": "Assegnarti come segretario e arbitro della squadra",
+    "createTeamDecisionNote": "Questa azione verrà registrata nel diario delle decisioni.",
+    "createTeamSubmit": "Crea squadra",
+    "creatingTeam": "Creazione...",
+    "teamCreated": "Squadra creata con successo",
+    "createTeamFailed": "Impossibile creare la squadra"
   },
   "diagram": {
     "loadingTeam": "Caricamento squadra...",

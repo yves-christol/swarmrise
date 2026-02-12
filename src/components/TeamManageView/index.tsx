@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { DecisionJournal } from "../DecisionJournal";
@@ -25,18 +26,7 @@ function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): st
   }
 }
 
-function getRoleTypeLabel(roleType: "leader" | "secretary" | "referee"): string {
-  switch (roleType) {
-    case "leader":
-      return "Leader";
-    case "secretary":
-      return "Secretary";
-    case "referee":
-      return "Referee";
-  }
-}
-
-function ZoomOutButton({ onClick }: { onClick: () => void }) {
+function ZoomOutButton({ onClick, ariaLabel, label }: { onClick: () => void; ariaLabel: string; label: string }) {
   return (
     <button
       onClick={onClick}
@@ -53,7 +43,7 @@ function ZoomOutButton({ onClick }: { onClick: () => void }) {
         hover:text-dark dark:hover:text-light
         focus:outline-none focus:ring-2 focus:ring-[#eac840]
       "
-      aria-label="Return to organization overview"
+      aria-label={ariaLabel}
     >
       <svg
         width="20"
@@ -69,7 +59,7 @@ function ZoomOutButton({ onClick }: { onClick: () => void }) {
         <line x1="9" y1="8" x2="11" y2="7" />
         <line x1="9" y1="12" x2="11" y2="13" />
       </svg>
-      <span className="text-sm font-medium">Overview</span>
+      <span className="text-sm font-medium">{label}</span>
     </button>
   );
 }
@@ -99,6 +89,10 @@ function StatCard({
 }
 
 export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
+  const { t } = useTranslation("teams");
+  const { t: tMembers } = useTranslation("members");
+  const { t: tCommon } = useTranslation("common");
+
   // Fetch team data
   const team = useQuery(api.teams.functions.getTeamById, { teamId });
 
@@ -196,9 +190,9 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
     try {
       await updateTeam({ teamId, name: teamName.trim() });
       setIsEditingName(false);
-      setSaveMessage({ type: "success", text: "Team name updated" });
+      setSaveMessage({ type: "success", text: t("manage.teamNameUpdated") });
     } catch (error) {
-      setSaveMessage({ type: "error", text: error instanceof Error ? error.message : "Failed to update" });
+      setSaveMessage({ type: "error", text: error instanceof Error ? error.message : t("manage.failedToUpdate") });
       setTeamName(team.name);
     } finally {
       setIsSaving(false);
@@ -210,7 +204,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
   if (team === undefined) {
     return (
       <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
-        <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+        <div className="text-gray-500 dark:text-gray-400">{tCommon("loading")}</div>
       </div>
     );
   }
@@ -223,7 +217,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
   return (
     <div className="absolute inset-0 bg-light dark:bg-dark overflow-auto">
       {/* Back button */}
-      <ZoomOutButton onClick={onZoomOut} />
+      <ZoomOutButton onClick={onZoomOut} ariaLabel={t("manage.returnToOrgOverview")} label={t("manage.overview")} />
 
       {/* Content */}
       <div className="pt-20 px-8 pb-8 max-w-2xl mx-auto">
@@ -266,7 +260,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                   disabled:opacity-50
                 "
               >
-                {isSaving ? "..." : "Save"}
+                {isSaving ? "..." : t("manage.save")}
               </button>
               <button
                 onClick={() => {
@@ -275,7 +269,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                 }}
                 className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
               >
-                Cancel
+                {t("manage.cancel")}
               </button>
             </div>
           ) : (
@@ -287,12 +281,12 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                 onClick={() => setIsEditingName(true)}
                 className="text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
               >
-                Edit
+                {t("manage.edit")}
               </button>
             </div>
           )}
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Team settings and structure
+            {t("manage.teamSettingsAndStructure")}
           </p>
         </header>
 
@@ -312,13 +306,13 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
         {/* Overview section */}
         <section className="mb-8">
           <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            Overview
+            {t("manage.overview")}
           </h2>
           {/* Mission reminder */}
           <MissionReminder mission={teamMission} isLoading={teamMission === undefined} />
           <div className="grid grid-cols-2 gap-4">
-            <StatCard value={roles?.length || 0} label="Roles" color="purple" />
-            <StatCard value={uniqueMembers.length} label="Members" color="blue" />
+            <StatCard value={roles?.length || 0} label={t("manage.rolesCount")} color="purple" />
+            <StatCard value={uniqueMembers.length} label={t("manage.membersCount")} color="blue" />
           </div>
         </section>
 
@@ -326,14 +320,14 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
         {(parentTeam || (linkedLeaderRoles && linkedLeaderRoles.length > 0)) && (
           <section className="mb-8">
             <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-              Team Connections
+              {t("manage.teamConnections")}
             </h2>
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4">
               {/* Parent team */}
               {parentTeam && (
                 <div>
                   <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                    Parent Team
+                    {t("manage.parentTeam")}
                   </span>
                   <div className="flex items-center gap-2 mt-1">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-400">
@@ -348,7 +342,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
               {linkedLeaderRoles && linkedLeaderRoles.length > 0 && (
                 <div>
                   <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                    Child Teams ({linkedLeaderRoles.length})
+                    {t("manage.childTeams", { count: linkedLeaderRoles.length })}
                   </span>
                   <p className="mt-1 text-dark dark:text-light">
                     {linkedLeaderRoles.map((link, index) => (
@@ -367,12 +361,12 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
         {/* Roles Section */}
         <section className="mb-8">
           <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            Roles
+            {t("manage.roles")}
           </h2>
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
             {!roles || roles.length === 0 ? (
               <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                No roles in this team
+                {t("manage.noRolesInTeam")}
               </div>
             ) : (
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -391,7 +385,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                         focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
                         text-left
                       "
-                      aria-label={`${role.title}${role.roleType ? `, ${getRoleTypeLabel(role.roleType)}` : ""}. View role details.`}
+                      aria-label={t("manage.viewRoleDetails", { title: role.title, type: role.roleType ? `, ${tMembers(`roleTypes.${role.roleType}`)}` : "" })}
                     >
                       <div className="flex items-center gap-3">
                         {/* Role type badge */}
@@ -399,7 +393,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                           <span
                             className="w-2 h-2 rounded-full"
                             style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
-                            title={getRoleTypeLabel(role.roleType)}
+                            title={tMembers(`roleTypes.${role.roleType}`)}
                           />
                         )}
                         <div>
@@ -415,12 +409,12 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                                   color: getRoleTypeBadgeColor(role.roleType),
                                 }}
                               >
-                                {getRoleTypeLabel(role.roleType)}
+                                {tMembers(`roleTypes.${role.roleType}`)}
                               </span>
                             )}
                             {role.linkedRoleId && (
                               <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
-                                Synced
+                                {t("manage.synced")}
                               </span>
                             )}
                           </div>
@@ -487,12 +481,12 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
         {/* Team Members Section */}
         <section className="mb-8">
           <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
-            Team Members
+            {t("manage.teamMembers")}
           </h2>
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
             {uniqueMembers.length === 0 ? (
               <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                No members in this team
+                {t("manage.noMembersInTeam")}
               </div>
             ) : (
               <div className="divide-y divide-gray-200 dark:divide-gray-700">

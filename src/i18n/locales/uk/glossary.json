@@ -1,50 +1,50 @@
 {
-  "title": "hlosarii",
-  "subtitle": "Kliuchovi kontseptsii ta terminolohiia, yaki vykorystovuiutsia u swarmrise.",
-  "relatedDocuments": "poviazani dokumenty",
-  "principlesLink": "Nashi pryntsypy",
-  "principlesDescription": "idei, yaki keruiut robotoiu swarmrise",
-  "footer": "swarmrise - tse robota v prohresi.",
+  "title": "глосарій",
+  "subtitle": "Ключові концепції та термінологія, що використовуються у swarmrise.",
+  "relatedDocuments": "пов'язані документи",
+  "principlesLink": "Наші принципи",
+  "principlesDescription": "ідеї, які керують роботою swarmrise",
+  "footer": "swarmrise - це робота в процесі.",
   "items": {
     "user": {
-      "title": "Korystuvach",
-      "description": "Liudyna, yaka stvoryly oblikovyi zapys u swarmrise. Korystuvachi mozhut pryiednyuvatysia do kilkokh orhanizatsii ta braty uchast u kerivnytstvi kozhnoi z nykh.",
-      "example": "Koly vy reiiestruietesia u swarmrise, vy staiete korystuvachem. Potim vy mozhete stvoriuvaty abo pryiednuvatisia do orhanizatsii."
+      "title": "Користувач",
+      "description": "Людина, яка створила обліковий запис у swarmrise. Користувачі можуть приєднуватися до кількох організацій та брати участь у керівництві кожної з них.",
+      "example": "Коли ви реєструєтеся у swarmrise, ви стаєте користувачем. Потім ви можете створювати або приєднуватися до організацій."
     },
     "orga": {
-      "title": "Orhanizatsiia",
-      "description": "Avtonomnyi prostir upravlinnia, de keruiutsia komandy, roli ta rishennia. Kozhna orhanizatsiia maie vlasnykh chleniv, strukturu ta polityky, povnistiu izoliovani vid inshykh orhanizatsii.",
-      "example": "Kompaniia, nekomertsiina orhanizatsiia abo hromadska hrupa mozhut buty nalashtoavni yak orhanizatsiia u swarmrise."
+      "title": "Організація",
+      "description": "Автономний простір управління, де керуються команди, ролі та рішення. Кожна організація має власних членів, структуру та політики, повністю ізольовані від інших організацій.",
+      "example": "Компанія, некомерційна організація або громадська група можуть бути налаштовані як організація у swarmrise."
     },
     "member": {
-      "title": "Chlen",
-      "description": "Prysutnist korystuvacha v konkretnii orhanizatsii. Pevnyi chlen mozhe maty kilka rolei v odnii komandi abo v kilkokh komandakh orhanizatsii. Tse znachna vidminnist vid tradytsiinykh orhanizatsii.",
-      "example": "Vy mozhete buty chlenom orhanizatsii vashoii kompanii, a takozh chlenom orhanizatsii volonterskoi hrupy."
+      "title": "Член",
+      "description": "Присутність користувача в конкретній організації. Певний член може мати кілька ролей в одній команді або в кількох командах організації. Це значна відмінність від традиційних організацій.",
+      "example": "Ви можете бути членом організації вашої компанії, а також членом організації волонтерської групи."
     },
     "team": {
-      "title": "Komanda",
-      "description": "Hrupa v mezhakh orhanizatsii, yaka pratsiuie nad spilnoiu metoiu. Komandy mistyat roli, yaki vyznachaiut konkretni oboviazky ta vidpovidalnist.",
-      "example": "Komanda marketynhu mozhe mistit roli, taki yak Kerivnyk kontentu, Menedzher sotsialnykh merezh ta Strateh brendu."
+      "title": "Команда",
+      "description": "Група в межах організації, яка працює над спільною метою. Команди містять ролі, які визначають конкретні обов'язки та відповідальність.",
+      "example": "Команда маркетингу може містити ролі, такі як Керівник контенту, Менеджер соціальних мереж та Стратег бренду."
     },
     "role": {
-      "title": "Rol",
-      "description": "Konkretna pozytsiia v komandi, yaka vyznachaie, za shcho khtos vidpovidaie. Roli mozhut maty spetsialni typy: lider (keruie komandoiu), sekretar (vedie dokumentatsiiu) abo arbiter (vyrishuie superechky).",
-      "example": "Rol Product Owner mozhe maty misiiu vyznachaty priorytety produktu ta pidtrymuvaty bekioh."
+      "title": "Роль",
+      "description": "Конкретна позиція в команді, яка визначає, за що хтось відповідає. Ролі можуть мати спеціальні типи: лідер (керує командою), секретар (веде документацію) або арбітр (вирішує суперечки).",
+      "example": "Роль Product Owner може мати місію визначати пріоритети продукту та підтримувати беклог."
     },
     "decision": {
-      "title": "Rishennia",
-      "description": "Bud-yaka vidstezhuvana zmina abo diia v mezhakh orhanizatsii. Rishennia zberihaiut povnyi audyt, shcho pokazuie, khto zrobyv yaku zminu i koly, zi stanamy do ta pislia.",
-      "example": "Koly khtos onovliuie misiiu komandy abo pryznachaie rol, tse zapisuietsia yak rishennia z povnoiu istoriieiu."
+      "title": "Рішення",
+      "description": "Будь-яка відстежувана зміна або дія в межах організації. Рішення зберігають повний аудит, що показує, хто зробив яку зміну і коли, зі станами до та після.",
+      "example": "Коли хтось оновлює місію команди або призначає роль, це записується як рішення з повною історією."
     },
     "mission": {
-      "title": "Misiia",
-      "description": "Meta abo tsil, yaka keruie komandoiu abo rolliu. Misii vidpovidaiut na pytannia, chomu shchos isnuie i choho vono prahnue dosiahty.",
-      "example": "Misiieiu komandy pidtrymky mozhe buty zabezpechennia togo, shchob klienty otrymuvaly svoiechasnu ta korysnu dopomohu."
+      "title": "Місія",
+      "description": "Мета або ціль, яка керує командою або роллю. Місії відповідають на питання, чому щось існує і чого воно прагне досягти.",
+      "example": "Місією команди підтримки може бути забезпечення того, щоб клієнти отримували своєчасну та корисну допомогу."
     },
     "duty": {
-      "title": "Oboviazok",
-      "description": "Konkretna, diievna vidpovidalnist, pryznachena roli. U toi chas yak misiia vyznachaie zahalnu metu, oboviazky rozkladaiut yii na konkretni zavdannia abo zobov'iazannia, yaki vykonavets roli povynen vykonuvaty. Rol mozhe maty kilka oboviaz'kiv.",
-      "example": "Rol Kerivnyka kontentu mozhe maty oboviazky, taki yak 'Pysaty shchotyzhevi statti dlia blohu', 'Perehliady vnesok spilnoty' ta 'Pidtrymuvaty redaktsiinyi kalendar'."
+      "title": "Обов'язок",
+      "description": "Конкретна, дієва відповідальність, призначена ролі. У той час як місія визначає загальну мету, обов'язки розкладають її на конкретні завдання або зобов'язання, які виконавець ролі повинен виконувати. Роль може мати кілька обов'язків.",
+      "example": "Роль Керівника контенту може мати обов'язки, такі як 'Писати щотижневі статті для блогу', 'Переглядати внески спільноти' та 'Підтримувати редакційний календар'."
     }
   }
 }

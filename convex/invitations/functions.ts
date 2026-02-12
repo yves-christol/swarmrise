@@ -196,9 +196,10 @@ export const createInvitation = mutation({
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .unique();
 
+    const inviterName = `${member.firstname} ${member.surname}`;
+
     if (inviteeUser) {
-      // Use the orga we already fetched earlier for domain validation
-      const inviterName = `${member.firstname} ${member.surname}`;
+      // Existing user: send in-app notification
       await ctx.scheduler.runAfter(
         0,
         internal.notifications.functions.create,
@@ -209,6 +210,17 @@ export const createInvitation = mutation({
           orgaName: orga.name,
           inviterName: inviterName,
         })
+      );
+    } else {
+      // New user: send email invitation via Resend
+      await ctx.scheduler.runAfter(
+        0,
+        internal.emails.sendInvitationEmail.send,
+        {
+          recipientEmail: args.email,
+          orgaName: orga.name,
+          inviterName: inviterName,
+        }
       );
     }
 

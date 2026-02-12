@@ -17,6 +17,7 @@ import type * as dataTest_orga from "../dataTest/orga.js";
 import type * as dataTest_users from "../dataTest/users.js";
 import type * as decisions_functions from "../decisions/functions.js";
 import type * as decisions_index from "../decisions/index.js";
+import type * as emails_sendInvitationEmail from "../emails/sendInvitationEmail.js";
 import type * as http from "../http.js";
 import type * as invitations_functions from "../invitations/functions.js";
 import type * as invitations_index from "../invitations/index.js";
@@ -61,6 +62,7 @@ declare const fullApi: ApiFromModules<{
   "dataTest/users": typeof dataTest_users;
   "decisions/functions": typeof decisions_functions;
   "decisions/index": typeof decisions_index;
+  "emails/sendInvitationEmail": typeof emails_sendInvitationEmail;
   http: typeof http;
   "invitations/functions": typeof invitations_functions;
   "invitations/index": typeof invitations_index;

@@ -6,5 +6,20 @@
   "decline": "Decline",
   "invitedBy": "Invited by {{name}}",
   "noPendingSent": "There's no pending sent invitation",
-  "noPendingReceived": "You have no pending invitation to join an organization"
+  "noPendingReceived": "You have no pending invitation to join an organization",
+  "sendInvitation": "Send invitation",
+  "emailPlaceholder": "colleague@example.com",
+  "send": "Send",
+  "sending": "Sending...",
+  "invitationSent": "Invitation sent",
+  "cancelInvitation": "Cancel",
+  "cancelling": "Cancelling...",
+  "sentOn": "Sent {{date}}",
+  "noEmail": "Please enter an email address",
+  "invalidEmail": "Please enter a valid email address",
+  "emailDomainNotAllowed": "This email domain is not allowed for this organization",
+  "alreadyMember": "This person is already a member",
+  "alreadyInvited": "An invitation is already pending for this email",
+  "rateLimitExceeded": "You have reached the daily invitation limit",
+  "errorSending": "Failed to send invitation"
 }

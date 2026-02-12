@@ -6,5 +6,20 @@
   "decline": "Rifiuta",
   "invitedBy": "Invitato da {{name}}",
   "noPendingSent": "Non c'è nessun invito inviato in sospeso",
-  "noPendingReceived": "Non hai inviti in sospeso per entrare a far parte di un'organizzazione"
+  "noPendingReceived": "Non hai inviti in sospeso per entrare a far parte di un'organizzazione",
+  "sendInvitation": "Invia invito",
+  "emailPlaceholder": "collega@esempio.com",
+  "send": "Invia",
+  "sending": "Invio in corso...",
+  "invitationSent": "Invito inviato",
+  "cancelInvitation": "Annulla",
+  "cancelling": "Annullamento...",
+  "sentOn": "Inviato {{date}}",
+  "noEmail": "Inserisci un indirizzo email",
+  "invalidEmail": "Inserisci un indirizzo email valido",
+  "emailDomainNotAllowed": "Questo dominio email non è consentito per questa organizzazione",
+  "alreadyMember": "Questa persona è già un membro",
+  "alreadyInvited": "Un invito è già in sospeso per questa email",
+  "rateLimitExceeded": "Hai raggiunto il limite giornaliero di inviti",
+  "errorSending": "Invio dell'invito non riuscito"
 }

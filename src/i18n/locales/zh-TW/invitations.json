@@ -6,5 +6,20 @@
   "decline": "拒絕",
   "invitedBy": "由 {{name}} 邀請",
   "noPendingSent": "沒有待發送的邀請",
-  "noPendingReceived": "您沒有待處理的加入組織的邀請"
+  "noPendingReceived": "您沒有待處理的加入組織的邀請",
+  "sendInvitation": "發送邀請",
+  "emailPlaceholder": "同事@範例.com",
+  "send": "發送",
+  "sending": "發送中...",
+  "invitationSent": "邀請已發送",
+  "cancelInvitation": "取消",
+  "cancelling": "取消中...",
+  "sentOn": "已於 {{date}} 發送",
+  "noEmail": "請輸入電子郵件地址",
+  "invalidEmail": "請輸入有效的電子郵件地址",
+  "emailDomainNotAllowed": "此電子郵件網域不允許用於此組織",
+  "alreadyMember": "此人已是成員",
+  "alreadyInvited": "此電子郵件已有待處理的邀請",
+  "rateLimitExceeded": "您已達到每日邀請上限",
+  "errorSending": "邀請發送失敗"
 }

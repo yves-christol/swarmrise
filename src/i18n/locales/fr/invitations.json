@@ -6,5 +6,20 @@
   "decline": "Refuser",
   "invitedBy": "Invité par {{name}}",
   "noPendingSent": "Il n'y a aucune invitation envoyée en attente",
-  "noPendingReceived": "Vous n'avez aucune invitation en attente pour rejoindre une organisation"
+  "noPendingReceived": "Vous n'avez aucune invitation en attente pour rejoindre une organisation",
+  "sendInvitation": "Envoyer une invitation",
+  "emailPlaceholder": "collegue@exemple.com",
+  "send": "Envoyer",
+  "sending": "Envoi en cours...",
+  "invitationSent": "Invitation envoyée",
+  "cancelInvitation": "Annuler",
+  "cancelling": "Annulation...",
+  "sentOn": "Envoyé {{date}}",
+  "noEmail": "Veuillez saisir une adresse e-mail",
+  "invalidEmail": "Veuillez saisir une adresse e-mail valide",
+  "emailDomainNotAllowed": "Ce domaine d'e-mail n'est pas autorisé pour cette organisation",
+  "alreadyMember": "Cette personne est déjà membre",
+  "alreadyInvited": "Une invitation est déjà en attente pour cet e-mail",
+  "rateLimitExceeded": "Vous avez atteint la limite quotidienne d'invitations",
+  "errorSending": "Échec de l'envoi de l'invitation"
 }

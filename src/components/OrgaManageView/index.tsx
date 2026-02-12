@@ -5,6 +5,7 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useSelectedOrga, useMembers, useTeams, useRoles, useFocus } from "../../tools/orgaStore";
 import { DecisionJournal } from "../DecisionJournal";
+import { InvitationModal } from "../InvitationModal";
 import { MemberListItem } from "../MemberListItem";
 import { TeamListItem, TeamListItemTeam } from "../TeamListItem";
 import { MissionReminder } from "../MissionReminder";
@@ -45,11 +46,13 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
   const { t } = useTranslation("orgs");
   const { t: tCommon } = useTranslation("common");
   const { t: tMembers } = useTranslation("members");
+  const { t: tInvitations } = useTranslation("invitations");
   const [memberSearchQuery, setMemberSearchQuery] = useState("");
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
   const [displayedMemberCount, setDisplayedMemberCount] = useState(MEMBERS_PAGE_SIZE);
   const [displayedTeamCount, setDisplayedTeamCount] = useState(TEAMS_PAGE_SIZE);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showInvitationModal, setShowInvitationModal] = useState(false);
 
   // Get organization data
   const orga = useQuery(api.orgas.functions.getOrgaById, { orgaId });
@@ -235,21 +238,44 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
             <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
               {tMembers("memberDirectory")}
             </h2>
-            <input
-              type="search"
-              placeholder={tMembers("searchMembers")}
-              value={memberSearchQuery}
-              onChange={(e) => setMemberSearchQuery(e.target.value)}
-              className="
-                px-3 py-1.5 text-sm
-                border border-gray-300 dark:border-gray-600
-                rounded-lg
-                bg-white dark:bg-gray-800
-                text-dark dark:text-light
-                placeholder:text-gray-400
-                focus:outline-none focus:ring-2 focus:ring-[#eac840]
-              "
-            />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowInvitationModal(true)}
+                className="
+                  flex items-center gap-1.5
+                  px-3 py-1.5
+                  text-sm
+                  text-gray-600 dark:text-gray-400
+                  hover:text-dark dark:hover:text-light
+                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  rounded-md
+                  transition-colors duration-75
+                  focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                "
+                aria-label={tInvitations("sendInvitation")}
+              >
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
+                  <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
+                </svg>
+                <span>{tInvitations("invitations")}</span>
+              </button>
+              <input
+                type="search"
+                placeholder={tMembers("searchMembers")}
+                value={memberSearchQuery}
+                onChange={(e) => setMemberSearchQuery(e.target.value)}
+                className="
+                  px-3 py-1.5 text-sm
+                  border border-gray-300 dark:border-gray-600
+                  rounded-lg
+                  bg-white dark:bg-gray-800
+                  text-dark dark:text-light
+                  placeholder:text-gray-400
+                  focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                "
+              />
+            </div>
           </div>
 
           {/* Member list */}
@@ -397,6 +423,13 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
           canDelete={canDelete}
         />
       )}
+
+      {/* Invitation modal */}
+      <InvitationModal
+        isOpen={showInvitationModal}
+        onClose={() => setShowInvitationModal(false)}
+        orgaId={orgaId}
+      />
     </div>
   );
 }

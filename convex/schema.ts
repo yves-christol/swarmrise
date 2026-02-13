@@ -13,6 +13,7 @@ import { notificationPreferencesType } from "./notificationPreferences"
 import { channelType } from "./chat"
 import { messageType } from "./chat"
 import { channelReadPositionType } from "./chat"
+import { topicClarificationType, topicAnswerType, topicResponseType } from "./chat"
 /**
  * Swarmrise Data Model Schema
  *
@@ -112,4 +113,17 @@ export default defineSchema({
   channelReadPositions: defineTable({ ...channelReadPositionType.fields })
     .index("by_channel_and_member", ["channelId", "memberId"])
     .index("by_member", ["memberId"]),
+
+  topicClarifications: defineTable({ ...topicClarificationType.fields })
+    .index("by_message", ["messageId"])
+    .index("by_orga", ["orgaId"]),
+
+  topicAnswers: defineTable({ ...topicAnswerType.fields })
+    .index("by_clarification", ["clarificationId"])
+    .index("by_orga", ["orgaId"]),
+
+  topicResponses: defineTable({ ...topicResponseType.fields })
+    .index("by_message", ["messageId"])
+    .index("by_message_and_member", ["messageId", "memberId"])
+    .index("by_orga", ["orgaId"]),
 });

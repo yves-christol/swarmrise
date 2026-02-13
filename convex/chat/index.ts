@@ -120,3 +120,55 @@ export const channelReadPositionValidator = v.object({
 });
 
 export type ChannelReadPosition = Infer<typeof channelReadPositionValidator>;
+
+// --- Topic Participation ---
+
+export const topicClarificationType = v.object({
+  messageId: v.id("messages"),
+  orgaId: v.id("orgas"),
+  authorId: v.id("members"),
+  question: v.string(),
+});
+
+export const topicClarificationValidator = v.object({
+  _id: v.id("topicClarifications"),
+  _creationTime: v.number(),
+  ...topicClarificationType.fields,
+});
+
+export type TopicClarification = Infer<typeof topicClarificationValidator>;
+
+export const topicAnswerType = v.object({
+  clarificationId: v.id("topicClarifications"),
+  orgaId: v.id("orgas"),
+  authorId: v.id("members"),
+  answer: v.string(),
+});
+
+export const topicAnswerValidator = v.object({
+  _id: v.id("topicAnswers"),
+  _creationTime: v.number(),
+  ...topicAnswerType.fields,
+});
+
+export type TopicAnswer = Infer<typeof topicAnswerValidator>;
+
+export const topicResponseType = v.object({
+  messageId: v.id("messages"),
+  orgaId: v.id("orgas"),
+  memberId: v.id("members"),
+  response: v.union(
+    v.literal("consent"),
+    v.literal("objection"),
+    v.literal("stand_aside"),
+  ),
+  reason: v.optional(v.string()),
+});
+
+export const topicResponseValidator = v.object({
+  _id: v.id("topicResponses"),
+  _creationTime: v.number(),
+  ...topicResponseType.fields,
+});
+
+export type TopicResponse = Infer<typeof topicResponseValidator>;

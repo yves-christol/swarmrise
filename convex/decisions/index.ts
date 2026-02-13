@@ -4,12 +4,13 @@ import { policyVisibilityType } from "../policies";
 import { invitationStatusType } from "../invitations";
 
 export const targetType = v.union(
-  v.literal('orgas'), 
-  v.literal('teams'), 
-  v.literal('roles'), 
+  v.literal('orgas'),
+  v.literal('teams'),
+  v.literal('roles'),
   v.literal('members'),
   v.literal('policies'),
-  v.literal('invitations')
+  v.literal('invitations'),
+  v.literal('topics')
 )
 
 export const targetIdType = v.union(
@@ -19,6 +20,7 @@ export const targetIdType = v.union(
   v.id('members'),
   v.id('policies'),
   v.id('invitations'),
+  v.id('messages'),
 )
 
 // Organization diff
@@ -131,6 +133,23 @@ const memberDiff = v.object({
   })),
 });
 
+// Topic diff
+const topicDiff = v.object({
+  type: v.literal("Topic"),
+  before: v.optional(v.object({
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+    phase: v.optional(v.string()),
+    outcome: v.optional(v.string()),
+  })),
+  after: v.optional(v.object({
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+    phase: v.optional(v.string()),
+    outcome: v.optional(v.string()),
+  })),
+});
+
 // Decision diff validator - discriminated union ensuring type safety
 export const diffType = v.union(
   organizationDiff,
@@ -138,7 +157,8 @@ export const diffType = v.union(
   roleDiff,
   invitationDiff,
   policyDiff,
-  memberDiff
+  memberDiff,
+  topicDiff
 );
 
 export const decisionType = v.object({

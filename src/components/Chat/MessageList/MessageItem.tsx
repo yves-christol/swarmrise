@@ -1,5 +1,18 @@
 import { useTranslation } from "react-i18next";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { TopicTool } from "../TopicTool";
+
+type EmbeddedTool = {
+  type: "topic";
+  title: string;
+  description: string;
+  phase: "proposition" | "clarification" | "consent" | "resolved";
+  outcome?: "accepted" | "modified" | "withdrawn";
+  decisionId?: Id<"decisions">;
+} | {
+  type: "voting" | "election";
+  [key: string]: unknown;
+};
 
 type MessageItemProps = {
   message: {
@@ -8,6 +21,7 @@ type MessageItemProps = {
     authorId: Id<"members">;
     text: string;
     isEdited: boolean;
+    embeddedTool?: EmbeddedTool;
     author: {
       firstname: string;
       surname: string;
@@ -50,6 +64,8 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
     </div>
   );
 
+  const topicTool = message.embeddedTool?.type === "topic" ? message.embeddedTool : null;
+
   if (isCompact) {
     return (
       <div className="group flex items-start gap-3 px-3 py-0.5 hover:bg-slate-50 dark:hover:bg-slate-800/50">
@@ -59,9 +75,12 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
           </span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
-            {message.text}
-          </p>
+          {!topicTool && (
+            <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
+              {message.text}
+            </p>
+          )}
+          {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
           {threadIndicator}
         </div>
       </div>
@@ -95,9 +114,12 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
             <span className="text-xs text-gray-400 dark:text-gray-500 italic">(edited)</span>
           )}
         </div>
-        <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
-          {message.text}
-        </p>
+        {!topicTool && (
+          <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
+            {message.text}
+          </p>
+        )}
+        {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
         {threadIndicator}
       </div>
     </div>

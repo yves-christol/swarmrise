@@ -14,6 +14,7 @@ import type * as chat_access from "../chat/access.js";
 import type * as chat_functions from "../chat/functions.js";
 import type * as chat_index from "../chat/index.js";
 import type * as chat_topicHelpers from "../chat/topicHelpers.js";
+import type * as chat_votingHelpers from "../chat/votingHelpers.js";
 import type * as crons from "../crons.js";
 import type * as dataTest_createDemoOrga from "../dataTest/createDemoOrga.js";
 import type * as dataTest_demoOrgaConfig from "../dataTest/demoOrgaConfig.js";
@@ -63,6 +64,7 @@ declare const fullApi: ApiFromModules<{
   "chat/functions": typeof chat_functions;
   "chat/index": typeof chat_index;
   "chat/topicHelpers": typeof chat_topicHelpers;
+  "chat/votingHelpers": typeof chat_votingHelpers;
   crons: typeof crons;
   "dataTest/createDemoOrga": typeof dataTest_createDemoOrga;
   "dataTest/demoOrgaConfig": typeof dataTest_demoOrgaConfig;

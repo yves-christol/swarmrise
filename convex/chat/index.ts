@@ -172,3 +172,20 @@ export const topicResponseValidator = v.object({
 });
 
 export type TopicResponse = Infer<typeof topicResponseValidator>;
+
+// --- Vote ---
+
+export const voteType = v.object({
+  messageId: v.id("messages"),
+  orgaId: v.id("orgas"),
+  memberId: v.id("members"),
+  choices: v.array(v.string()),
+});
+
+export const voteValidator = v.object({
+  _id: v.id("votes"),
+  _creationTime: v.number(),
+  ...voteType.fields,
+});
+
+export type Vote = Infer<typeof voteValidator>;

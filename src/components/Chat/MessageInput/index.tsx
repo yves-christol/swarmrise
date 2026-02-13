@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { CreateTopicModal } from "./CreateTopicModal";
+import { CreateVotingModal } from "./CreateVotingModal";
 
 type MessageInputProps = {
   channelId: Id<"channels">;
@@ -15,6 +16,7 @@ export const MessageInput = ({ channelId, isArchived }: MessageInputProps) => {
   const [text, setText] = useState("");
   const [showToolMenu, setShowToolMenu] = useState(false);
   const [showTopicModal, setShowTopicModal] = useState(false);
+  const [showVotingModal, setShowVotingModal] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const toolMenuRef = useRef<HTMLDivElement>(null);
   const sendMessage = useMutation(api.chat.functions.sendMessage);
@@ -106,6 +108,19 @@ export const MessageInput = ({ channelId, isArchived }: MessageInputProps) => {
                   </svg>
                   {t("consentDecision")}
                 </button>
+                <button
+                  onClick={() => {
+                    setShowToolMenu(false);
+                    setShowVotingModal(true);
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4 text-[#eac840] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="3" width="20" height="18" rx="2" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                  {t("votingTool")}
+                </button>
               </div>
             )}
           </div>
@@ -147,6 +162,13 @@ export const MessageInput = ({ channelId, isArchived }: MessageInputProps) => {
         <CreateTopicModal
           channelId={channelId}
           onClose={() => setShowTopicModal(false)}
+        />
+      )}
+
+      {showVotingModal && (
+        <CreateVotingModal
+          channelId={channelId}
+          onClose={() => setShowVotingModal(false)}
         />
       )}
     </>

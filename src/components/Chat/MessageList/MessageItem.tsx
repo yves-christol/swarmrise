@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { TopicTool } from "../TopicTool";
+import { VotingTool } from "../VotingTool";
+import type { EmbeddedVoting } from "../VotingTool";
 
 type EmbeddedTool = {
   type: "topic";
@@ -10,7 +12,15 @@ type EmbeddedTool = {
   outcome?: "accepted" | "modified" | "withdrawn";
   decisionId?: Id<"decisions">;
 } | {
-  type: "voting" | "election";
+  type: "voting";
+  question: string;
+  options: { id: string; label: string }[];
+  mode: "single" | "approval" | "ranked";
+  isAnonymous: boolean;
+  deadline?: number;
+  isClosed: boolean;
+} | {
+  type: "election";
   [key: string]: unknown;
 };
 
@@ -65,6 +75,8 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
   );
 
   const topicTool = message.embeddedTool?.type === "topic" ? message.embeddedTool : null;
+  const votingTool = message.embeddedTool?.type === "voting" ? (message.embeddedTool as EmbeddedVoting) : null;
+  const hasEmbeddedTool = topicTool || votingTool;
 
   if (isCompact) {
     return (
@@ -75,12 +87,13 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
           </span>
         </div>
         <div className="flex-1 min-w-0">
-          {!topicTool && (
+          {!hasEmbeddedTool && (
             <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
               {message.text}
             </p>
           )}
           {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
+          {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
           {threadIndicator}
         </div>
       </div>
@@ -114,12 +127,13 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
             <span className="text-xs text-gray-400 dark:text-gray-500 italic">(edited)</span>
           )}
         </div>
-        {!topicTool && (
+        {!hasEmbeddedTool && (
           <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
             {message.text}
           </p>
         )}
         {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
+        {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
         {threadIndicator}
       </div>
     </div>

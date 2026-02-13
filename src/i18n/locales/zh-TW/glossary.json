@@ -1,50 +1,50 @@
 {
-  "title": "shu yu biao",
-  "subtitle": "swarmrise zhong shi yong de guan jian gai nian he shu yu.",
-  "relatedDocuments": "xiang guan wen jian",
-  "principlesLink": "wo men de yuan ze",
-  "principlesDescription": "zhi dao swarmrise yun zuo de li nian",
-  "footer": "swarmrise shi yi ge jin xing zhong de zuo pin.",
+  "title": "術語表",
+  "subtitle": "swarmrise 中使用的關鍵概念和術語。",
+  "relatedDocuments": "相關文件",
+  "principlesLink": "我們的原則",
+  "principlesDescription": "指導 swarmrise 運作的理念",
+  "footer": "swarmrise 是一個持續進行中的作品。",
   "items": {
     "user": {
-      "title": "yong hu",
-      "description": "zai swarmrise shang chuang jian le zhang hu de ren. yong hu ke yi jia ru duo ge zu zhi bing can yu mei ge zu zhi de zhi li.",
-      "example": "dang nin zhu ce swarmrise shi, nin jiu cheng wei yong hu. ran hou nin ke yi chuang jian huo jia ru zu zhi."
+      "title": "用戶",
+      "description": "在 swarmrise 上建立帳戶的人。用戶可以加入多個組織，並參與每個組織的治理。",
+      "example": "當您註冊 swarmrise 時，您就成為用戶。然後您可以建立或加入組織。"
     },
     "orga": {
-      "title": "zu zhi",
-      "description": "yi ge zi zhu de zhi li kong jian, zai zhe li guan li tuan dui, jiao se he jue ce. mei ge zu zhi dou you zi ji de cheng yuan, jie gou he zheng ce, yu qi ta zu zhi wan quan ge li.",
-      "example": "gong si, fei ying li zu zhi huo she qu tuan ti dou ke yi zai swarmrise zhong she zhi wei zu zhi."
+      "title": "組織",
+      "description": "一個自主的治理空間，在這裡管理團隊、角色和決策。每個組織都有自己的成員、結構和政策，與其他組織完全隔離。",
+      "example": "公司、非營利組織或社區團體都可以在 swarmrise 中設置為組織。"
     },
     "member": {
-      "title": "cheng yuan",
-      "description": "yong hu zai te ding zu zhi zhong de cun zai. yi ge cheng yuan ke yi zai tong yi ge tuan dui huo zu zhi de duo ge tuan dui zhong dan ren duo ge jiao se. zhe shi yu chuan tong zu zhi de zhong da cha yi.",
-      "example": "nin ke neng shi nin gong si zu zhi de cheng yuan, ye shi zhi yuan zhe tuan ti zu zhi de cheng yuan."
+      "title": "成員",
+      "description": "用戶在特定組織中的存在。一個成員可以在同一個團隊或組織的多個團隊中擔任多個角色。這是與傳統組織的重大差異。",
+      "example": "您可能是您公司組織的成員，也是志願者團體組織的成員。"
     },
     "team": {
-      "title": "tuan dui",
-      "description": "zu zhi nei wei gong tong mu biao gong zuo de qun ti. tuan dui bao han ding yi ju ti ze ren he yi wu de jiao se.",
-      "example": "ying xiao tuan dui ke neng bao han nei rong fu ze ren, she jiao mei ti jing li he pin pai ce lue shi deng jiao se."
+      "title": "團隊",
+      "description": "組織內為共同目標工作的群體。團隊包含定義具體責任和義務的角色。",
+      "example": "行銷團隊可能包含內容負責人、社群媒體經理和品牌策略師等角色。"
     },
     "role": {
-      "title": "jiao se",
-      "description": "tuan dui zhong de te ding zhi wei, ding yi mou ren fu ze de nei rong. jiao se ke yi you te shu lei xing: ling dao (zhi dao tuan dui), mi shu (chu li wen dang) huo zhong cai (jie jue zheng yi).",
-      "example": "chan pin fu ze ren jiao se ke neng you ding yi chan pin you xian ji bing wei hu dai ban shi xiang de shi ming."
+      "title": "角色",
+      "description": "團隊中的特定職位，定義某人負責的內容。角色可以有特殊類型：領導（指導團隊）、秘書（處理文檔）或仲裁（解決爭議）。",
+      "example": "產品負責人角色可能有定義產品優先級並維護待辦事項的使命。"
     },
     "decision": {
-      "title": "jue ce",
-      "description": "zu zhi nei ren he bei zhui zong de geng gai huo xing dong. jue ce bao chi wan zheng de shen ji gen zong, xian shi shui zai he shi zuo le shen me geng gai, bao kuo qian hou zhuang tai.",
-      "example": "dang you ren geng xin tuan dui de shi ming huo fen pei jiao se shi, ta hui bei ji lu wei yi ge jue ce, bao han wan zheng de li shi."
+      "title": "決策",
+      "description": "組織內任何被追蹤的變更或行動。決策保持完整的稽核追蹤，顯示誰在何時做了什麼變更，包括前後狀態。",
+      "example": "當有人更新團隊的使命或分配角色時，它會被記錄為一個決策，包含完整的歷史。"
     },
     "mission": {
-      "title": "shi ming",
-      "description": "zhi dao tuan dui huo jiao se de mu di huo mu biao. shi ming hui da le mou shi wu wei he cun zai yi ji ta xi wang da cheng shen me de wen ti.",
-      "example": "zhi yuan tuan dui de shi ming ke neng shi que bao ke hu huo de ji shi he you yong de bang zhu."
+      "title": "使命",
+      "description": "指導團隊或角色的目的或目標。使命回答了某事物為何存在以及它希望達成什麼的問題。",
+      "example": "支援團隊的使命可能是確保客戶獲得及時和有用的幫助。"
     },
     "duty": {
-      "title": "zhi ze",
-      "description": "fen pei gei jiao se de ju ti, ke zhi xing de ze ren. sui ran shi ming ding yi le zong ti mu de, dan zhi ze jiang qi fen jie wei jiao se chi you ren ying dang lv xing de ju ti ren wu huo yi wu. yi ge jiao se ke yi you duo ge zhi ze.",
-      "example": "nei rong fu ze ren jiao se ke neng you zhi ze ru 'mei zhou zhuan xie bo ke wen zhang', 'shen he she qu gong gao' he 'wei hu bian ji ri li'."
+      "title": "職責",
+      "description": "分配給角色的具體、可執行的責任。雖然使命定義了總體目的，但職責將其分解為角色持有人應當履行的具體任務或義務。一個角色可以有多個職責。",
+      "example": "內容負責人角色可能有職責如「每週撰寫部落格文章」、「審核社群公告」和「維護編輯日曆」。"
     }
   }
 }

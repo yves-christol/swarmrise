@@ -1,498 +1,498 @@
 {
   "principles": {
-    "title": "our principles",
-    "subtitle": "Simple ideas that guide how swarmrise works.",
-    "legal": "fa lv wen jian",
-    "termsLink": "fu wu tiao kuan",
-    "termsDescription": "shi yong swarmrise de tiao jian",
-    "privacyLink": "yin si zheng ce",
-    "privacyDescription": "wo men ru he chu li nin de ge ren shu ju",
-    "footer": "swarmrise shi yi ge jin xing zhong de zuo pin.",
+    "title": "我們的原則",
+    "subtitle": "指導 swarmrise 運作的簡單理念。",
+    "legal": "法律文件",
+    "termsLink": "服務條款",
+    "termsDescription": "使用 swarmrise 的條件",
+    "privacyLink": "隱私政策",
+    "privacyDescription": "我們如何處理您的個人資料",
+    "footer": "swarmrise 是一個持續進行中的作品。",
     "items": {
       "noFunnyHats": {
-        "title": "bu xu yao qi guai de mao zi",
-        "content": "swarmrise shi yong jian dan de ci hui he gai nian. mei you shen mi de ci hui huo xin zao ci, mei you yi shi, mei you quan zi, mei you ge ren fa zhan de fei hua. zhe shi yi ge gong ju, bu shi yi ge zong jiao."
+        "title": "不需要奇怪的帽子",
+        "content": "swarmrise 使用簡單的詞彙和概念。沒有神秘的詞彙或新造詞，沒有儀式，沒有圈子，沒有個人發展的廢話。這是一個工具，不是一個宗教。"
       },
       "youComeFirst": {
-        "title": "nin you xian",
-        "content": "miao hui zu zhi de da tu jing bu zu yi rang ren you xin xin he fang xiang. swarmrise yi nin zuo wei gai zu zhi cheng yuan wei zhong xin, tu chu nin de jiao se, nin de tuan dui, nin de guan xi he nin de jue ce. zai ri chang sheng huo zhong, nin zhi xiang zhi dao bie ren dui nin you shen me qi wang, yi ji nin ru he ke yi bang zhu he xing dong."
+        "title": "您優先",
+        "content": "描繪組織的大圖景不足以讓人有信心和方向。swarmrise 以您作為該組織成員為中心，突出您的角色、您的團隊、您的關係和您的決策。在日常生活中，您只想知道別人對您有什麼期望，以及您如何可以幫助和行動。"
       },
       "alwaysTellWhy": {
-        "title": "yong yuan shuo ming yuan yin",
-        "content": "swarmrise you mu di qu dong. zu zhi bi xu you yi ge zheng ti mu biao, dan mei ge tuan dui he mei ge jiao se dou ying gai cong ming que de mu biao kai shi. ren men hen cong ming, dang ta men zhi dao wei shen me zhe yang zuo shi, ta men ke yi xiang chu zuo shen me he ru he zuo."
+        "title": "永遠說明原因",
+        "content": "swarmrise 由目的驅動。組織必須有一個整體目標，但每個團隊和每個角色都應該從明確的目標開始。人們很聰明，當他們知道為什麼這樣做時，他們可以想出做什麼和如何做。"
       },
       "doersAreKings": {
-        "title": "shi zhe wei wang",
-        "content": "yu ceng ji zhi du de yi ge zhong da cha yi shi ke yi bai tuo quan zhi jue ce zhe. mei ge ren dou shi ke zai zuo jue ce, suo yi zhe ge cai neng bing bu na me han jian. tong guo wei mei ge jiao se qi yong zi wo guan li de jue ce/cheng nuo/zhi xing fang an, nin tu chu le geng xi han de liang hao zhi xing neng li. neng gou zhen zheng zuo shi de ren ying gai gan dao geng you quan li he bei zhong shi."
+        "title": "實踐者為王",
+        "content": "與層級制度的一個重大差異是可以擺脫全職決策者。每個人都在做決策，所以這個才能並不那麼罕見。透過為每個角色啟用自我管理的決策/承諾/執行方案，您突出了更稀罕的良好執行能力。能夠真正做事的人應該感到更有權力和被重視。"
       },
       "ethicalBehaviors": {
-        "title": "cu jin dao de xing wei",
-        "content": "dang nin bu zhi dao huo wu fa dui ci cai qu xing dong shi, bu liang xing wei jiu hui fan lan. dang ran, zhi li mo shi ben shen bu neng bao zheng dao de xing wei, dan ta ke yi tong guo rang cheng yuan le jie zheng zai fa sheng shen me, bing rang ta men xiang ying di zuo chu jue ce lai gu li zhe zhong xing wei. swarmrise jiang tou ming du, ke zhui su xing he xin xi ji yi zuo wei mo ren mo shi (dang zhe bu yu ge ren shu ju quan li huo min gan qing bao xiang mao dun shi), bing ti chu yi ge dui ren he jiao se kai fang de jue ce mo shi."
+        "title": "促進道德行為",
+        "content": "當您不知道或無法對此採取行動時，不良行為就會氾濫。當然，治理模式本身不能保證道德行為，但它可以透過讓成員了解正在發生什麼，並讓他們相應地做出決策來鼓勵這種行為。swarmrise 將透明度、可追溯性和資訊記憶作為預設模式（當這不與個人資料權利或敏感情報相矛盾時），並提出一個對任何角色開放的決策模式。"
       },
       "frictionless": {
-        "title": "wu mo ca",
-        "content": "zu zhi jie gou tu he zhi wei miao shu jing chang guo shi, bu fen yuan yin shi xiu gai ta men hen ma fan. swarmrise yun xu mei ge cheng yuan qing song xiu gai zu zhi de mei ge bu fen. zhe bing bu wei xian, yin wei tong guo rang mei ge ren zhi dao shui zuo le shen me, swarmrise po shi cheng yuan zai xing dong qian xian si kao. shun bian shuo yi xia, ru guo nin bu xin ren ren men, nin shou xian jiu bu ying gai gu yong ta men."
+        "title": "無摩擦",
+        "content": "組織結構圖和職位描述經常過時，部分原因是修改它們很麻煩。swarmrise 允許每個成員輕鬆修改組織的每個部分。這並不危險，因為透過讓每個人知道誰做了什麼，swarmrise 迫使成員在行動前先思考。順便說一下，如果您不信任人們，您首先就不應該僱用他們。"
       },
       "sharingIsGood": {
-        "title": "fen xiang shi hao de",
-        "content": "swarmrise ti gong yi ge gong gong copyleft mo ban ku, yong yu tuan dui, jiao se he zheng ce, yi bian mou xie ren de chuang xin ke yi bei qi ta ren zi you zhong fu shi yong. tong guo chuang jian he wei hu gong gong mo ban, nin ke yi bang zhu qi ta zu zhi bing wei zi ji huo de you yong de fan kui, yi shi er niao."
+        "title": "分享是好的",
+        "content": "swarmrise 提供一個公共 copyleft 模板庫，用於團隊、角色和政策，以便某些人的創新可以被其他人自由重複使用。透過建立和維護公共模板，您可以幫助其他組織並為自己獲得有用的回饋，一石二鳥。"
       },
       "lowComplexity": {
-        "title": "di fu za du",
-        "content": "ceng ji zhi du shi yi ge fei chang jian dan de gai nian. zhe jiu shi wei shen me jin guan ta bu shi zui gao xiao de xi tong, dan ta reng ran zhan zhu dao di wei. swarmrise nu li jin ke neng shao di zeng jia fu za xing, bing bao chi shi wu yi yu jie shi he cao zuo. you yi zu you xian de gai nian he gui ze, nin ke yi cong zhong fa zhan nin de zhi li yi shi ying nin de zu zhi."
+        "title": "低複雜度",
+        "content": "層級制度是一個非常簡單的概念。這就是為什麼儘管它不是最高效的系統，但它仍然佔主導地位。swarmrise 努力盡可能少地增加複雜性，並保持事物易於解釋和操作。有一組有限的概念和規則，您可以從中發展您的治理以適應您的組織。"
       },
       "workInProgress": {
-        "title": "jin xing zhong de zuo pin",
-        "content": "swarmrise shi bing jiang ji xu shi yi ge jin xing zhong de zuo pin. fei chang huan ying fan kui he gong xian. zhe xie yuan ze zhi shi yi ge gu jia, rang wo men kan kan zheng ge shi qing hui zou xiang he fang."
+        "title": "進行中的作品",
+        "content": "swarmrise 是並將繼續是一個進行中的作品。非常歡迎回饋和貢獻。這些原則只是一個骨架，讓我們看看整個事情會走向何方。"
       }
     }
   },
   "terms": {
-    "title": "fu wu tiao kuan",
-    "effectiveDate": "sheng xiao ri qi: {{date}}",
-    "lastUpdated": "zui hou geng xin: {{date}}",
-    "effectiveDateLabel": "sheng xiao ri qi",
-    "lastUpdatedLabel": "zui hou geng xin",
+    "title": "服務條款",
+    "effectiveDate": "生效日期：{{date}}",
+    "lastUpdated": "最後更新：{{date}}",
+    "effectiveDateLabel": "生效日期",
+    "lastUpdatedLabel": "最後更新",
     "intro": {
-      "welcome": "huan ying lai dao swarmrise. zhe xie fu wu tiao kuan (\"tiao kuan\") guan li nin dui swarmrise ping tai de fang wen he shi yong, bao kuo wo men de wang zhan, ying yong cheng xu he fu wu (tong cheng \"fu wu\"). tong guo fang wen huo shi yong fu wu, nin tong yi shou zhe xie tiao kuan de yue shu.",
-      "readCarefully": "qing zai shi yong fu wu qian zi xi yue du zhe xie tiao kuan. ru guo nin bu tong yi zhe xie tiao kuan, nin bu neng fang wen huo shi yong fu wu."
+      "welcome": "歡迎來到 swarmrise。這些服務條款（「條款」）管理您對 swarmrise 平台的訪問和使用，包括我們的網站、應用程式和服務（統稱「服務」）。透過訪問或使用服務，您同意受這些條款的約束。",
+      "readCarefully": "請在使用服務前仔細閱讀這些條款。如果您不同意這些條款，您不能訪問或使用服務。"
     },
     "sections": {
       "acceptanceOfTerms": {
-        "title": "jie shou tiao kuan",
-        "p1": "tong guo chuang jian zhang hu huo shi yong fu wu, nin sheng ming nin nian man 18 sui bing you fa lv neng li ding li zhe xie tiao kuan. ru guo nin dai biao zu zhi shi yong fu wu, nin sheng ming bing bao zheng nin you quan jiang gai zu zhi yue shu yu zhe xie tiao kuan.",
-        "p2": "wo men bao liu sui shi xiu gai zhe xie tiao kuan de quan li. wo men jiang tong guo zai fu wu shang fa bu geng xin de tiao kuan bing geng xin \"zui hou geng xin\" ri qi lai tong zhi nin zhong da bian geng. nin zai ci lei bian geng hou ji xu shi yong fu wu ji gou cheng nin dui xiu gai hou tiao kuan de jie shou."
+        "title": "接受條款",
+        "p1": "透過建立帳戶或使用服務，您聲明您年滿 18 歲並有法律能力訂立這些條款。如果您代表組織使用服務，您聲明並保證您有權將該組織約束於這些條款。",
+        "p2": "我們保留隨時修改這些條款的權利。我們將透過在服務上發布更新的條款並更新「最後更新」日期來通知您重大變更。您在此類變更後繼續使用服務即構成您對修改後條款的接受。"
       },
       "descriptionOfService": {
-        "title": "fu wu miao shu",
-        "intro": "swarmrise shi yi ge zhuan wei xie zuo zhi li she ji de duo zu hu zu zhi guan li ping tai. fu wu shi zu zhi neng gou:",
+        "title": "服務描述",
+        "intro": "swarmrise 是一個專為協作治理設計的多租戶組織管理平台。服務使組織能夠：",
         "features": {
-          "structureTeams": "jie gou hua tuan dui bing ding yi zu zhi ceng ci",
-          "createRoles": "zai tuan dui nei chuang jian he guan li jiao se (bao kuo ling dao, mi shu he zhong cai zhi wei)",
-          "trackDecisions": "gen zong jue ce bing ti gong wan zheng de shen ji gen zong",
-          "manageMembers": "guan li zu zhi cheng yuan zi ge he yao qing",
-          "establishPolicies": "jian li he wei hu zu zhi zheng ce"
+          "structureTeams": "結構化團隊並定義組織層次",
+          "createRoles": "在團隊內建立和管理角色（包括領導、秘書和仲裁職位）",
+          "trackDecisions": "追蹤決策並提供完整的稽核追蹤",
+          "manageMembers": "管理組織成員資格和邀請",
+          "establishPolicies": "建立和維護組織政策"
         },
-        "reserveRight": "wo men bao liu sui shi xiu gai, zan ting huo zhong zhi fu wu de ren he fang mian de quan li, bu lun shi fou tong zhi."
+        "reserveRight": "我們保留隨時修改、暫停或終止服務的任何方面的權利，不論是否通知。"
       },
       "accountRegistration": {
-        "title": "zhang hu zhu ce he an quan",
-        "intro": "yao fang wen fu wu de mou xie gong neng, nin bi xu chuang jian yi ge zhang hu. chuang jian zhang hu shi, nin tong yi:",
+        "title": "帳戶註冊和安全",
+        "intro": "要訪問服務的某些功能，您必須建立一個帳戶。建立帳戶時，您同意：",
         "requirements": {
-          "provideAccurate": "ti gong zhun que, zui xin he wan zheng de xin xi",
-          "maintainInfo": "wei hu bing ji shi geng xin nin de zhang hu xin xi",
-          "keepSecure": "bao chi nin de shen fen yan zheng ping zheng an quan he bao mi",
-          "notifyUnauthorized": "li ji tong zhi wo men ren he wei jing shou quan fang wen nin zhang hu de qing kuang",
-          "acceptResponsibility": "jie shou dui nin zhang hu xia fa sheng de suo you huo dong de ze ren"
+          "provideAccurate": "提供準確、最新和完整的資訊",
+          "maintainInfo": "維護並及時更新您的帳戶資訊",
+          "keepSecure": "保持您的身份驗證憑證安全和保密",
+          "notifyUnauthorized": "立即通知我們任何未經授權訪問您帳戶的情況",
+          "acceptResponsibility": "接受對您帳戶下發生的所有活動的責任"
         },
-        "clerkNote": "wo men shi yong Clerk ti gong shen fen yan zheng fu wu. tong guo shi yong fu wu, nin ye tong yi Clerk de fu wu tiao kuan he yin si zheng ce."
+        "clerkNote": "我們使用 Clerk 提供身份驗證服務。透過使用服務，您也同意 Clerk 的服務條款和隱私政策。"
       },
       "organizationsAndMembership": {
-        "title": "zu zhi he cheng yuan zi ge",
-        "ownerIntro": "fu wu yun xu yong hu chuang jian he jia ru zu zhi. dang nin chuang jian zu zhi shi, nin cheng wei qi suo you zhe bing fu ze:",
+        "title": "組織和成員資格",
+        "ownerIntro": "服務允許用戶建立和加入組織。當您建立組織時，您成為其擁有者並負責：",
         "ownerResponsibilities": {
-          "manageSettings": "guan li zu zhi she zhi he cheng yuan zi ge",
-          "ensureCompliance": "que bao cheng yuan zun shou zhe xie tiao kuan",
-          "contentActivities": "nin zu zhi nei de nei rong he huo dong",
-          "handleInvitations": "zheng que chu li yao qing he fang wen kong zhi"
+          "manageSettings": "管理組織設定和成員資格",
+          "ensureCompliance": "確保成員遵守這些條款",
+          "contentActivities": "您組織內的內容和活動",
+          "handleInvitations": "正確處理邀請和訪問控制"
         },
-        "memberIntro": "zuo wei zu zhi cheng yuan, nin tong yi:",
+        "memberIntro": "作為組織成員，您同意：",
         "memberResponsibilities": {
-          "respectGovernance": "zun zhong zu zhi jian li de zhi li jie gou",
-          "useAccordingly": "an zhao nin bei fen pei de jiao se shi yong fu wu",
-          "noCircumvent": "bu rao guo fang wen kong zhi huo quan xian xi tong"
+          "respectGovernance": "尊重組織建立的治理結構",
+          "useAccordingly": "按照您被分配的角色使用服務",
+          "noCircumvent": "不繞過訪問控制或權限系統"
         }
       },
       "acceptableUse": {
-        "title": "ke jie shou de shi yong",
-        "intro": "nin tong yi jin jiang fu wu yong yu he fa mu de bing fu he zhe xie tiao kuan. nin tong yi bu:",
+        "title": "可接受的使用",
+        "intro": "您同意僅將服務用於合法目的並符合這些條款。您同意不：",
         "prohibitions": {
-          "violateLaws": "wei fan ren he shi yong de fa lv, fa gui huo di san fang quan li",
-          "harassOthers": "shi yong fu wu sao rao, lan yong huo shang hai ta ren",
-          "uploadMalicious": "shang chuan huo chuan shu e yi dai ma, bing du huo you hai nei rong",
-          "unauthorizedAccess": "shi tu wei jing shou quan fang wen fu wu huo qi xi tong",
-          "interfereService": "gan rao huo po huai fu wu huo qi ji chu she shi",
-          "scrapeService": "wei jing xu ke shi yong zhua qu, pa chong huo zi dong hua fang shi fang wen fu wu",
-          "impersonate": "mao chong ta ren huo shi ti",
-          "fraudulent": "jiang fu wu yong yu ren he qi zha huo qi pian xing mu di",
-          "circumventSecurity": "rao guo ren he an quan cuo shi huo fang wen xian zhi"
+          "violateLaws": "違反任何適用的法律、法規或第三方權利",
+          "harassOthers": "使用服務騷擾、濫用或傷害他人",
+          "uploadMalicious": "上傳或傳輸惡意代碼、病毒或有害內容",
+          "unauthorizedAccess": "試圖未經授權訪問服務或其系統",
+          "interfereService": "干擾或破壞服務或其基礎設施",
+          "scrapeService": "未經許可使用抓取、爬蟲或自動化方式訪問服務",
+          "impersonate": "冒充他人或實體",
+          "fraudulent": "將服務用於任何欺詐或欺騙性目的",
+          "circumventSecurity": "繞過任何安全措施或訪問限制"
         }
       },
       "userContent": {
-        "title": "yong hu nei rong",
-        "ownership": "nin bao liu nin ti jiao gei fu wu de ren he nei rong (\"yong hu nei rong\") de suo you quan, bao kuo zu zhi shu ju, tuan dui jie gou, jiao se ding yi he jue ce. tong guo ti jiao yong hu nei rong, nin shou yu wo men yi xiang quan qiu xing, fei du jia, mian fei de xu ke, jin wei ti gong fu wu de mu di shi yong, cun chu he chu li nin de yong hu nei rong.",
-        "warrantyIntro": "nin sheng ming bing bao zheng:",
+        "title": "用戶內容",
+        "ownership": "您保留您提交給服務的任何內容（「用戶內容」）的所有權，包括組織資料、團隊結構、角色定義和決策。透過提交用戶內容，您授予我們一項全球性、非獨占、免費的許可，僅為提供服務的目的使用、存儲和處理您的用戶內容。",
+        "warrantyIntro": "您聲明並保證：",
         "warranties": {
-          "ownRights": "nin yong you huo ju you dui nin yong hu nei rong de bi yao quan li",
-          "noViolation": "nin de yong hu nei rong bu wei fan ren he di san fang quan li",
-          "compliesTerms": "nin de yong hu nei rong fu he zhe xie tiao kuan he shi yong fa lv"
+          "ownRights": "您擁有或具有對您用戶內容的必要權利",
+          "noViolation": "您的用戶內容不違反任何第三方權利",
+          "compliesTerms": "您的用戶內容符合這些條款和適用法律"
         }
       },
       "intellectualProperty": {
-        "title": "zhi shi chan quan",
-        "license": "fu wu, bao kuo qi yuan dai ma, she ji, gong neng he wen dang, an Apache License 2.0 xu ke. ci xu ke yun xu nin zai te ding tiao jian xia shi yong, xiu gai he fen fa gai ruan jian.",
-        "brandElements": "swarmrise ming cheng, biao zhi he pin pai yuan su shi zhuan you de, wei jing wo men ming que shu mian xu ke bu de shi yong, chu fei Apache License 2.0 yun xu de gui shu mu di.",
-        "thirdParty": "fu wu zhong bao han de di san fang zu jian shou qi ge zi xu ke de yue shu, zhe xie xu ke yi ji lu zai wo men de fa lv wen dang zhong."
+        "title": "智慧財產權",
+        "license": "服務，包括其原始碼、設計、功能和文檔，按 Apache License 2.0 許可。此許可允許您在特定條件下使用、修改和分發該軟體。",
+        "brandElements": "swarmrise 名稱、標誌和品牌元素是專有的，未經我們明確書面許可不得使用，除非 Apache License 2.0 允許的歸屬目的。",
+        "thirdParty": "服務中包含的第三方組件受其各自許可的約束，這些許可已記錄在我們的法律文檔中。"
       },
       "dataProtection": {
-        "title": "shu ju bao hu he yin si",
-        "commitment": "wo men zhi li yu bao hu nin de yin si he ge ren shu ju. wo men dui ge ren shu ju de shou ji, shi yong he chu li shou wo men yin si zheng ce de yue shu, gai zheng ce tong guo yin yong na ru zhe xie tiao kuan.",
-        "keyAspectsIntro": "wo men shu ju chu li de guan jian fang mian:",
+        "title": "資料保護和隱私",
+        "commitment": "我們致力於保護您的隱私和個人資料。我們對個人資料的收集、使用和處理受我們隱私政策的約束，該政策透過引用納入這些條款。",
+        "keyAspectsIntro": "我們資料處理的關鍵方面：",
         "keyAspects": {
-          "collectNecessary": "wo men jin shou ji ti gong fu wu suo xu de shu ju",
-          "dataIsolated": "nin de zu zhi shu ju zai duo zu hu jia gou zhong ge li",
-          "convexStorage": "wo men shi yong Convex jin xing an quan de shu ju cun chu he chu li",
-          "clerkAuth": "shen fen yan zheng shu ju you Clerk guan li",
-          "auditTrails": "wo men wei tou ming du he ze ren wei hu shen ji gen zong"
+          "collectNecessary": "我們僅收集提供服務所需的資料",
+          "dataIsolated": "您的組織資料在多租戶架構中隔離",
+          "convexStorage": "我們使用 Convex 進行安全的資料存儲和處理",
+          "clerkAuth": "身份驗證資料由 Clerk 管理",
+          "auditTrails": "我們為透明度和責任維護稽核追蹤"
         },
-        "gdprNote": "dui yu ou zhou jing ji qu de yong hu, wo men zun shou tong yong shu ju bao hu tiao li (GDPR) bing ti gong xing shi nin shu ju zhu ti quan li de ji zhi."
+        "gdprNote": "對於歐洲經濟區的用戶，我們遵守通用資料保護條例（GDPR）並提供行使您資料主體權利的機制。"
       },
       "serviceAvailability": {
-        "title": "fu wu ke yong xing he zhi chi",
-        "intro": "wo men nu li wei hu fu wu de ke yong xing, dan bu bao zheng bu jian duan fang wen. fu wu ke neng yin yi xia yuan yin zan shi bu ke yong:",
+        "title": "服務可用性和支援",
+        "intro": "我們努力維護服務的可用性，但不保證不間斷訪問。服務可能因以下原因暫時不可用：",
         "reasons": {
-          "maintenance": "ji hua de wei hu he geng xin",
-          "outages": "ji hua wai de zhong duan huo ji shu wen ti",
-          "beyondControl": "chao chu wo men he li kong zhi fan wei de yin su"
+          "maintenance": "計劃的維護和更新",
+          "outages": "計劃外的中斷或技術問題",
+          "beyondControl": "超出我們合理控制範圍的因素"
         },
-        "asIs": "wo men an \"yuan yang\" he \"ke yong\" de ji chu ti gong fu wu, chu fei ling you shu mian xie yi, fou ze wu ren he fu wu ji bie xie yi."
+        "asIs": "我們按「原樣」和「可用」的基礎提供服務，除非另有書面協議，否則無任何服務級別協議。"
       },
       "limitationOfLiability": {
-        "title": "ze ren xian zhi",
-        "intro": "zai shi yong fa lv yun xu de zui da fan wei nei, SWARMRISE ji qi guan lian gong si, gao guan, yuan gong, dai li he xu ke fang bu dui ren he jian jie, fu dai, te shu, hou guo xing huo cheng fa xing sun hai fu ze, bao kuo dan bu xian yu:",
+        "title": "責任限制",
+        "intro": "在適用法律允許的最大範圍內，SWARMRISE 及其關聯公司、高管、員工、代理和許可方不對任何間接、附帶、特殊、後果性或懲罰性損害負責，包括但不限於：",
         "damages": {
-          "lostProfits": "li run, shu ju huo shang ye ji hui de sun shi",
-          "interruptions": "fu wu zhong duan huo shu ju diu shi",
-          "unauthorizedAccess": "dui nin shu ju de wei shou quan fang wen",
-          "thirdPartyConduct": "fu wu shang di san fang de ren he xing wei huo nei rong"
+          "lostProfits": "利潤、資料或商業機會的損失",
+          "interruptions": "服務中斷或資料丟失",
+          "unauthorizedAccess": "對您資料的未授權訪問",
+          "thirdPartyConduct": "服務上第三方的任何行為或內容"
         },
-        "totalLiability": "wo men dui yu fu wu de ren he suo pei de zong ze ren bu chao guo nin zai suo pei qian shi er (12) ge yue nei xiang wo men zhi fu de jin e (ru guo you de hua)."
+        "totalLiability": "我們對於服務的任何索賠的總責任不超過您在索賠前十二（12）個月內向我們支付的金額（如果有的話）。"
       },
       "indemnification": {
-        "title": "pei chang",
-        "intro": "nin tong yi pei chang, bian hu bing shi swarmrise ji qi guan lian gong si, gao guan, dong shi, yuan gong he dai li mian shou ren he suo pei, ze ren, sun hai, sun shi he fei yong (bao kuo he li de lv shi fei) de sun hai, zhe xie suo pei chan sheng yu huo yi ren he fang shi yu yi xia xiang guan:",
+        "title": "賠償",
+        "intro": "您同意賠償、辯護並使 swarmrise 及其關聯公司、高管、董事、員工和代理免受任何索賠、責任、損害、損失和費用（包括合理的律師費）的損害，這些索賠產生於或以任何方式與以下相關：",
         "items": {
-          "accessUse": "nin dui fu wu de fang wen huo shi yong",
-          "violationTerms": "nin wei fan zhe xie tiao kuan",
-          "userContent": "nin de yong hu nei rong",
-          "violationRights": "nin wei fan ren he di san fang quan li"
+          "accessUse": "您對服務的訪問或使用",
+          "violationTerms": "您違反這些條款",
+          "userContent": "您的用戶內容",
+          "violationRights": "您違反任何第三方權利"
         }
       },
       "termination": {
-        "title": "zhong zhi",
-        "intro": "nin ke yi sui shi tong guo lian xi wo men huo shi yong zhang hu shan chu gong neng (ke yong shi) zhong zhi nin de zhang hu. wo men ke yi li ji zhong zhi huo zan ting nin dui fu wu de fang wen, wu xu shi xian tong zhi, ru guo:",
+        "title": "終止",
+        "intro": "您可以隨時透過聯繫我們或使用帳戶刪除功能（可用時）終止您的帳戶。我們可以立即終止或暫停您對服務的訪問，無需事先通知，如果：",
         "reasons": {
-          "breachTerms": "nin wei fan zhe xie tiao kuan",
-          "requiredByLaw": "wo men bei fa lv yao qiu zhe yang zuo",
-          "discontinueService": "wo men jue ding ting zhi fu wu"
+          "breachTerms": "您違反這些條款",
+          "requiredByLaw": "我們被法律要求這樣做",
+          "discontinueService": "我們決定停止服務"
         },
-        "uponTermination": "zhong zhi hou, nin shi yong fu wu de quan li jiang li ji zhong zhi. zhe xie tiao kuan zhong an qi xing zhi ying zai zhong zhi hou cun xu de tiao kuan jiang ji xu you xiao, bao kuo suo you quan, bao zheng mian ze sheng ming, pei chang he ze ren xian zhi."
+        "uponTermination": "終止後，您使用服務的權利將立即終止。這些條款中按其性質應在終止後存續的條款將繼續有效，包括所有權、保證免責聲明、賠償和責任限制。"
       },
       "disputeResolution": {
-        "title": "zheng yi jie jue",
-        "informal": "wo men gu li nin shou xian lian xi wo men yi fei zheng shi fang shi jie jue ren he zheng yi. ru guo zheng yi wu fa fei zheng shi jie jue, nin tong yi ren he fa lv xing dong huo cheng xu jiang zhuan men zai you guan xia quan fa yuan ti qi.",
-        "euNote": "dui yu ou meng yong hu, ci tiao kuan bu ying xiang nin gen ju xiao fei zhe bao hu fa xiang you de quan li huo nin zai nin ju zhu guo fa yuan ti chu su song de quan li."
+        "title": "爭議解決",
+        "informal": "我們鼓勵您首先聯繫我們以非正式方式解決任何爭議。如果爭議無法非正式解決，您同意任何法律行動或程序將專門在有管轄權法院提起。",
+        "euNote": "對於歐盟用戶，此條款不影響您根據消費者保護法享有的權利或您在您居住國法院提出訴訟的權利。"
       },
       "governingLaw": {
-        "title": "guan xia fa lv",
-        "law": "zhe xie tiao kuan ying shou fu wu yun ying shang suo zai si fa guan xia qu de fa lv guan xia bing gen ju qi jie shi, bu kao lv fa lv chong tu yuan ze.",
-        "eeaNote": "dui yu ou zhou jing ji qu yong hu, zhe xie tiao kuan zhong de ren he nei rong jun bu ying xiang nin zuo wei xiao fei zhe gen ju shi yong de ou meng xiao fei zhe bao hu fa xiang you de quan li."
+        "title": "管轄法律",
+        "law": "這些條款應受服務營運商所在司法管轄區的法律管轄並根據其解釋，不考慮法律衝突原則。",
+        "eeaNote": "對於歐洲經濟區用戶，這些條款中的任何內容均不影響您作為消費者根據適用的歐盟消費者保護法享有的權利。"
       },
       "generalProvisions": {
-        "title": "yi ban tiao kuan",
-        "entireAgreement": "wan zheng xie yi:",
-        "entireAgreementText": "zhe xie tiao kuan, lian tong wo men de yin si zheng ce he ci chu yin yong de ren he qi ta zheng ce, gou cheng nin yu swarmrise zhi jian guan yu fu wu de wan zheng xie yi.",
-        "severability": "ke fen ge xing:",
-        "severabilityText": "ru guo zhe xie tiao kuan de ren he tiao kuan bei ren ding wei bu ke zhi xing, qi yu tiao kuan jiang ji xu wan quan you xiao.",
-        "waiver": "qi quan:",
-        "waiverText": "wo men wei neng zhi xing zhe xie tiao kuan de ren he quan li huo tiao kuan bu jiang bei shi wei fang qi zhe xie quan li.",
-        "assignment": "zhuan rang:",
-        "assignmentText": "wei jing wo men shi xian shu mian tong yi, nin bu de zhuan rang huo zhuan yi nin zai zhe xie tiao kuan xia de quan li. wo men ke yi wu xian zhi di zhuan rang wo men de quan li he yi wu."
+        "title": "一般條款",
+        "entireAgreement": "完整協議：",
+        "entireAgreementText": "這些條款，連同我們的隱私政策和此處引用的任何其他政策，構成您與 swarmrise 之間關於服務的完整協議。",
+        "severability": "可分割性：",
+        "severabilityText": "如果這些條款的任何條款被認定為不可執行，其餘條款將繼續完全有效。",
+        "waiver": "棄權：",
+        "waiverText": "我們未能執行這些條款的任何權利或條款不將被視為放棄這些權利。",
+        "assignment": "轉讓：",
+        "assignmentText": "未經我們事先書面同意，您不得轉讓或轉移您在這些條款下的權利。我們可以無限制地轉讓我們的權利和義務。"
       },
       "contactInformation": {
-        "title": "lian xi xin xi",
-        "intro": "ru guo nin dui zhe xie tiao kuan you ren he yi wen, qing lian xi wo men:",
-        "github": "GitHub:"
+        "title": "聯繫資訊",
+        "intro": "如果您對這些條款有任何疑問，請聯繫我們：",
+        "github": "GitHub："
       }
     },
-    "relatedDocuments": "xiang guan wen dang",
-    "privacyLink": "yin si zheng ce",
-    "privacyDescription": "wo men ru he chu li nin de ge ren shu ju",
-    "principlesLink": "wo men de yuan ze",
-    "principlesDescription": "le jie zhi yin swarmrise de jia zhi guan",
-    "footer": "swarmrise yi Apache License 2.0 xu ke"
+    "relatedDocuments": "相關文件",
+    "privacyLink": "隱私政策",
+    "privacyDescription": "我們如何處理您的個人資料",
+    "principlesLink": "我們的原則",
+    "principlesDescription": "了解指引 swarmrise 的價值觀",
+    "footer": "swarmrise 以 Apache License 2.0 許可"
   },
   "privacy": {
-    "title": "yin si zheng ce",
-    "effectiveDate": "sheng xiao ri qi: {{date}}",
-    "lastUpdated": "zui hou geng xin: {{date}}",
-    "effectiveDateLabel": "sheng xiao ri qi",
-    "lastUpdatedLabel": "zui hou geng xin",
+    "title": "隱私政策",
+    "effectiveDate": "生效日期：{{date}}",
+    "lastUpdated": "最後更新：{{date}}",
+    "effectiveDateLabel": "生效日期",
+    "lastUpdatedLabel": "最後更新",
     "intro": {
-      "commitment": "zai swarmrise, wo men zhi li yu bao hu nin de yin si he ge ren shu ju. ci yin si zheng ce jie shi le dang nin shi yong wo men de duo zu hu zu zhi guan li ping tai (\"fu wu\") shi, wo men ru he shou ji, shi yong, pi lu he bao hu nin de xin xi.",
-      "gdprCompliance": "wo men an zhao tong yong shu ju bao hu tiao li (GDPR) he qi ta shi yong de shu ju bao hu fa lv chu li ge ren shu ju. qing zi xi yue du ci yin si zheng ce yi le jie wo men guan yu nin ge ren shu ju de zuo fa."
+      "commitment": "在 swarmrise，我們致力於保護您的隱私和個人資料。此隱私政策解釋了當您使用我們的多租戶組織管理平台（「服務」）時，我們如何收集、使用、披露和保護您的資訊。",
+      "gdprCompliance": "我們按照通用資料保護條例（GDPR）和其他適用的資料保護法律處理個人資料。請仔細閱讀此隱私政策以了解我們關於您個人資料的做法。"
     },
     "sections": {
       "dataController": {
-        "title": "shu ju kong zhi zhe",
-        "p1": "jiu GDPR he qi ta shi yong de shu ju bao hu fa lv er yan, swarmrise shi tong guo fu wu shou ji de ge ren shu ju de shu ju kong zhi zhe. zhe yi wei zhe wo men jue ding chu li nin ge ren shu ju de mu di he fang shi.",
-        "p2": "ru guo nin dui wo men de shu ju zuo fa you yi wen huo xi wang xing shi nin de quan li, qing tong guo xia mian lian xi xin xi bu fen lie chu de qu dao lian xi wo men."
+        "title": "資料控制者",
+        "p1": "就 GDPR 和其他適用的資料保護法律而言，swarmrise 是透過服務收集的個人資料的資料控制者。這意味著我們決定處理您個人資料的目的和方式。",
+        "p2": "如果您對我們的資料做法有疑問或希望行使您的權利，請透過下面聯繫資訊部分列出的渠道聯繫我們。"
       },
       "informationWeCollect": {
-        "title": "wo men shou ji de xin xi",
-        "intro": "wo men shou ji nin zhi jie ti gong gei wo men de xin xi, yi ji nin shi yong fu wu shi zi dong shou ji de xin xi.",
+        "title": "我們收集的資訊",
+        "intro": "我們收集您直接提供給我們的資訊，以及您使用服務時自動收集的資訊。",
         "accountInfo": {
-          "title": "2.1 zhang hu xin xi",
-          "intro": "dang nin chuang jian zhang hu shi, wo men shou ji:",
+          "title": "2.1 帳戶資訊",
+          "intro": "當您建立帳戶時，我們收集：",
           "items": {
-            "name": "ming zi he xing shi",
-            "email": "dian zi you jian di zhi",
-            "profilePicture": "ge ren zi liao zhao pian (ke xuan, ru guo tong guo shen fen yan zheng ti gong)"
+            "name": "名字和姓氏",
+            "email": "電子郵件地址",
+            "profilePicture": "個人資料照片（可選，如果透過身份驗證提供）"
           }
         },
         "organizationData": {
-          "title": "2.2 zu zhi shu ju",
-          "intro": "dang nin chuang jian huo jia ru zu zhi shi, wo men shou ji he chu li:",
+          "title": "2.2 組織資料",
+          "intro": "當您建立或加入組織時，我們收集和處理：",
           "items": {
-            "orgNames": "zu zhi ming cheng he she zhi",
-            "teamStructures": "tuan dui jie gou he ceng ci",
-            "roleAssignments": "jiao se fen pei (ling dao, mi shu, zhong cai)",
-            "membershipInfo": "cheng yuan zi ge xin xi",
-            "invitationData": "yao qing shu ju (bei yao qing ren de dian zi you jian di zhi)"
+            "orgNames": "組織名稱和設定",
+            "teamStructures": "團隊結構和層次",
+            "roleAssignments": "角色分配（領導、秘書、仲裁）",
+            "membershipInfo": "成員資格資訊",
+            "invitationData": "邀請資料（被邀請人的電子郵件地址）"
           }
         },
         "optionalContact": {
-          "title": "2.3 ke xuan lian xi xin xi",
-          "intro": "nin ke yi xuan ze ti gong e wai de lian xi xin xi, bao kuo:",
+          "title": "2.3 可選聯繫資訊",
+          "intro": "您可以選擇提供額外的聯繫資訊，包括：",
           "items": {
-            "mobile": "shou ji hao ma",
-            "address": "shi ji di zhi",
-            "socialMedia": "she jiao mei ti ge ren zi liao (LinkedIn, Facebook, Instagram, WhatsApp)"
+            "mobile": "手機號碼",
+            "address": "實際地址",
+            "socialMedia": "社群媒體個人資料（LinkedIn、Facebook、Instagram、WhatsApp）"
           },
-          "note": "ci xin xi wan quan shi ke xuan de, jin zai nin ming que tong yi de qing kuang xia shou ji."
+          "note": "此資訊完全是可選的，僅在您明確同意的情況下收集。"
         },
         "usageData": {
-          "title": "2.4 shi yong shu ju",
-          "intro": "dang nin shi yong fu wu shi, wo men zi dong shou ji mou xie xin xi:",
+          "title": "2.4 使用資料",
+          "intro": "當您使用服務時，我們自動收集某些資訊：",
           "items": {
-            "browser": "liu lan qi lei xing he ban ben",
-            "device": "she bei xin xi",
-            "ipAddress": "IP di zhi",
-            "pagesVisited": "fang wen de ye mian he shi yong de gong neng",
-            "dateTime": "fang wen ri qi he shi jian"
+            "browser": "瀏覽器類型和版本",
+            "device": "設備資訊",
+            "ipAddress": "IP 地址",
+            "pagesVisited": "訪問的頁面和使用的功能",
+            "dateTime": "訪問日期和時間"
           }
         },
         "decisionAudit": {
-          "title": "2.5 jue ce shen ji gen zong",
-          "intro": "wei que bao tou ming du he ze ren, wo men wei hu zu zhi nei zhong da xing dong de shen ji gen zong, bao kuo:",
+          "title": "2.5 決策稽核追蹤",
+          "intro": "為確保透明度和責任，我們維護組織內重大行動的稽核追蹤，包括：",
           "items": {
-            "authorEmail": "geng gai zuo zhe de dian zi you jian",
-            "timestamps": "xing dong de shi jian chuo",
-            "beforeAfter": "xiu gai shu ju de qian hou zhuang tai"
+            "authorEmail": "變更作者的電子郵件",
+            "timestamps": "行動的時間戳",
+            "beforeAfter": "修改資料的前後狀態"
           }
         }
       },
       "howWeUse": {
-        "title": "wo men ru he shi yong nin de xin xi",
-        "intro": "wo men jiang shou ji de xin xi yong yu yi xia mu di, mei ge mu di dou you GDPR xia de te ding fa lv yi ju:",
+        "title": "我們如何使用您的資訊",
+        "intro": "我們將收集的資訊用於以下目的，每個目的都有 GDPR 下的特定法律依據：",
         "serviceProvision": {
-          "title": "3.1 fu wu ti gong (he tong - di 6(1)(b) tiao)",
+          "title": "3.1 服務提供（合約 - 第 6(1)(b) 條）",
           "items": {
-            "createAccount": "chuang jian he guan li nin de yong hu zhang hu",
-            "provideAccess": "ti gong zu zhi guan li gong neng de fang wen quan xian",
-            "processMembers": "chu li zu zhi cheng yuan zi ge he yao qing",
-            "enableTeamMgmt": "qi yong tuan dui he jiao se guan li gong neng",
-            "authenticate": "yan zheng nin de shen fen"
+            "createAccount": "建立和管理您的用戶帳戶",
+            "provideAccess": "提供組織管理功能的訪問權限",
+            "processMembers": "處理組織成員資格和邀請",
+            "enableTeamMgmt": "啟用團隊和角色管理功能",
+            "authenticate": "驗證您的身份"
           }
         },
         "legitimateInterests": {
-          "title": "3.2 he fa li yi (di 6(1)(f) tiao)",
+          "title": "3.2 合法利益（第 6(1)(f) 條）",
           "items": {
-            "auditTrails": "wei ze ren wei hu jue ce shen ji gen zong",
-            "improveService": "gai jin he you hua fu wu",
-            "preventFraud": "fang zhi qi zha bing que bao an quan",
-            "respondSupport": "xiang ying zhi chi qing qiu"
+            "auditTrails": "為責任維護決策稽核追蹤",
+            "improveService": "改進和優化服務",
+            "preventFraud": "防止欺詐並確保安全",
+            "respondSupport": "回應支援請求"
           }
         },
         "consent": {
-          "title": "3.3 tong yi (di 6(1)(a) tiao)",
+          "title": "3.3 同意（第 6(1)(a) 條）",
           "items": {
-            "storeOptional": "cun chu nin xuan ze ti gong de ke xuan lian xi xin xi",
-            "displayProfile": "xian shi nin de ge ren zi liao zhao pian"
+            "storeOptional": "存儲您選擇提供的可選聯繫資訊",
+            "displayProfile": "顯示您的個人資料照片"
           },
-          "withdrawNote": "nin ke yi sui shi tong guo geng xin ge ren zi liao she zhi huo lian xi wo men che xiao tong yi."
+          "withdrawNote": "您可以隨時透過更新個人資料設定或聯繫我們撤銷同意。"
         }
       },
       "thirdPartyServices": {
-        "title": "di san fang fu wu",
-        "intro": "wo men shi yong yi xia di san fang fu wu lai yun ying fu wu. mei ge fu wu dou dai biao wo men chu li nin de shu ju:",
+        "title": "第三方服務",
+        "intro": "我們使用以下第三方服務來營運服務。每個服務都代表我們處理您的資料：",
         "clerk": {
-          "title": "4.1 Clerk (shen fen yan zheng)",
-          "purpose": "mu di:",
-          "purposeText": "yong hu shen fen yan zheng he shen fen guan li",
-          "dataProcessed": "chu li de shu ju:",
-          "dataProcessedText": "dian zi you jian, xing ming, ge ren zi liao zhao pian, shen fen yan zheng ping zheng",
-          "location": "wei zhi:",
-          "locationText": "mei guo",
-          "privacyPolicy": "yin si zheng ce:"
+          "title": "4.1 Clerk（身份驗證）",
+          "purpose": "目的：",
+          "purposeText": "用戶身份驗證和身份管理",
+          "dataProcessed": "處理的資料：",
+          "dataProcessedText": "電子郵件、姓名、個人資料照片、身份驗證憑證",
+          "location": "位置：",
+          "locationText": "美國",
+          "privacyPolicy": "隱私政策："
         },
         "convex": {
-          "title": "4.2 Convex (shu ju ku he hou duan)",
-          "purpose": "mu di:",
-          "purposeText": "shi shi shu ju ku cun chu he wu fu wu qi hou duan gong neng",
-          "dataProcessed": "chu li de shu ju:",
-          "dataProcessedText": "suo you ying yong cheng xu shu ju, bao kuo yong hu ge ren zi liao, zu zhi shu ju he shen ji gen zong",
-          "location": "wei zhi:",
-          "locationText": "mei guo",
-          "privacyPolicy": "yin si zheng ce:"
+          "title": "4.2 Convex（資料庫和後端）",
+          "purpose": "目的：",
+          "purposeText": "即時資料庫存儲和無伺服器後端功能",
+          "dataProcessed": "處理的資料：",
+          "dataProcessedText": "所有應用程式資料，包括用戶個人資料、組織資料和稽核追蹤",
+          "location": "位置：",
+          "locationText": "美國",
+          "privacyPolicy": "隱私政策："
         },
         "googleFonts": {
           "title": "4.3 Google Fonts",
-          "purpose": "mu di:",
-          "purposeText": "zi ti jiao fu (Montserrat Alternates)",
-          "dataProcessed": "chu li de shu ju:",
-          "dataProcessedText": "IP di zhi (zui xiao)",
-          "privacyPolicy": "yin si zheng ce:"
+          "purpose": "目的：",
+          "purposeText": "字體交付（Montserrat Alternates）",
+          "dataProcessed": "處理的資料：",
+          "dataProcessedText": "IP 地址（最小）",
+          "privacyPolicy": "隱私政策："
         }
       },
       "dataRetention": {
-        "title": "shu ju bao liu",
-        "intro": "wo men jin zai shi xian shou ji mu di suo xu de shi jian nei bao liu nin de ge ren shu ju:",
+        "title": "資料保留",
+        "intro": "我們僅在實現收集目的所需的時間內保留您的個人資料：",
         "items": {
-          "accountData": "zhang hu shu ju:",
-          "accountDataText": "zai nin zhang hu cun xu qi jian bao liu. dang nin shan chu zhang hu shi, wo men jiang zai 30 tian nei shan chu nin de ge ren shu ju, chu fei fa lv yao qiu bao liu.",
-          "orgData": "zu zhi shu ju:",
-          "orgDataText": "zai nin de zu zhi cheng yuan zi ge qi jian bao liu. dang nin li kai zu zhi shi, nin de cheng yuan ji lu jiang bei shan chu, dan shen ji ji lu ke neng yin ze ren mu di er bei bao liu.",
-          "invitationData": "yao qing shu ju:",
-          "invitationDataText": "bao liu zhi yao qing bei jie shou, ju jue huo guo qi.",
-          "auditTrails": "shen ji gen zong:",
-          "auditTrailsText": "zai zu zhi cun xu qi jian bao liu, yi yong yu ze ren he he gui mu di."
+          "accountData": "帳戶資料：",
+          "accountDataText": "在您帳戶存續期間保留。當您刪除帳戶時，我們將在 30 天內刪除您的個人資料，除非法律要求保留。",
+          "orgData": "組織資料：",
+          "orgDataText": "在您的組織成員資格期間保留。當您離開組織時，您的成員記錄將被刪除，但稽核記錄可能因責任目的而被保留。",
+          "invitationData": "邀請資料：",
+          "invitationDataText": "保留至邀請被接受、拒絕或過期。",
+          "auditTrails": "稽核追蹤：",
+          "auditTrailsText": "在組織存續期間保留，以用於責任和合規目的。"
         }
       },
       "yourRightsGdpr": {
-        "title": "nin zai GDPR xia de quan li",
-        "intro": "ru guo nin wei yu ou zhou jing ji qu (EEA), ying guo huo rui shi, nin dui nin de ge ren shu ju you yi xia quan li:",
+        "title": "您在 GDPR 下的權利",
+        "intro": "如果您位於歐洲經濟區（EEA）、英國或瑞士，您對您的個人資料有以下權利：",
         "rightOfAccess": {
-          "title": "6.1 fang wen quan (di 15 tiao)",
-          "text": "nin you quan huo de wo men shi fou chu li nin ge ren shu ju de que ren, bing huo de gai shu ju de fu ben."
+          "title": "6.1 訪問權（第 15 條）",
+          "text": "您有權獲得我們是否處理您個人資料的確認，並獲得該資料的副本。"
         },
         "rightToRectification": {
-          "title": "6.2 geng zheng quan (di 16 tiao)",
-          "text": "nin you quan geng zheng bu zhun que de ge ren shu ju bing bu chong bu wan zheng de shu ju. nin ke yi tong guo zhang hu she zhi zhi jie geng xin da bu fen xin xi."
+          "title": "6.2 更正權（第 16 條）",
+          "text": "您有權更正不準確的個人資料並補充不完整的資料。您可以透過帳戶設定直接更新大部分資訊。"
         },
         "rightToErasure": {
-          "title": "6.3 shan chu quan (di 17 tiao)",
-          "text": "nin you quan zai mou xie qing kuang xia yao qiu shan chu nin de ge ren shu ju, bao kuo dang shu ju bu zai shi shou ji mu di suo bi xu shi."
+          "title": "6.3 刪除權（第 17 條）",
+          "text": "您有權在某些情況下要求刪除您的個人資料，包括當資料不再是收集目的所必需時。"
         },
         "rightToRestriction": {
-          "title": "6.4 xian zhi quan (di 18 tiao)",
-          "text": "nin you quan zai mou xie qing kuang xia yao qiu xian zhi dui nin ge ren shu ju de chu li."
+          "title": "6.4 限制權（第 18 條）",
+          "text": "您有權在某些情況下要求限制對您個人資料的處理。"
         },
         "rightToPortability": {
-          "title": "6.5 shu ju ke yi zhi xing quan (di 20 tiao)",
-          "text": "nin you quan yi jie gou hua, chang yong, ji qi ke du de ge shi jie shou nin de ge ren shu ju, bing jiang qi chuan shu gei ling yi ge kong zhi zhe."
+          "title": "6.5 資料可攜權（第 20 條）",
+          "text": "您有權以結構化、常用、機器可讀的格式接收您的個人資料，並將其傳輸給另一個控制者。"
         },
         "rightToObject": {
-          "title": "6.6 fan dui quan (di 21 tiao)",
-          "text": "nin you quan fan dui ji yu he fa li yi de ge ren shu ju chu li, bao kuo fen xi."
+          "title": "6.6 反對權（第 21 條）",
+          "text": "您有權反對基於合法利益的個人資料處理，包括分析。"
         },
         "rightToWithdraw": {
-          "title": "6.7 che xiao tong yi quan",
-          "text": "dang chu li ji yu tong yi shi, nin you quan sui shi che xiao tong yi, er bu ying xiang che xiao qian ji yu tong yi de chu li de he fa xing."
+          "title": "6.7 撤銷同意權",
+          "text": "當處理基於同意時，您有權隨時撤銷同意，而不影響撤銷前基於同意的處理的合法性。"
         },
         "rightToComplaint": {
-          "title": "6.8 tou su quan",
-          "text": "ru guo nin ren wei wo men dui nin ge ren shu ju de chu li wei fan shi yong de shu ju bao hu fa, nin you quan xiang jian du ji gou ti chu tou su."
+          "title": "6.8 投訴權",
+          "text": "如果您認為我們對您個人資料的處理違反適用的資料保護法，您有權向監督機構提出投訴。"
         },
-        "exerciseRights": "yao xing shi zhe xie quan li, qing shi yong xia mian lian xi bu fen de xin xi lian xi wo men. wo men jiang zai 30 tian nei hui fu nin de qing qiu."
+        "exerciseRights": "要行使這些權利，請使用下面聯繫部分的資訊聯繫我們。我們將在 30 天內回覆您的請求。"
       },
       "cookiesLocalStorage": {
-        "title": "cookie he ben di cun chu",
-        "intro": "wo men shi yong liu lan qi cun chu ji shu lai ti gong he gai jin fu wu. wo men de shi yong jin xian yu yan ge bi yao de gong neng:",
+        "title": "Cookie 和本地存儲",
+        "intro": "我們使用瀏覽器存儲技術來提供和改進服務。我們的使用僅限於嚴格必要的功能：",
         "localStorage": {
-          "title": "7.1 ben di cun chu",
+          "title": "7.1 本地存儲",
           "tableHeaders": {
-            "storageKey": "cun chu jian",
-            "purpose": "mu di",
-            "duration": "chi xu shi jian"
+            "storageKey": "存儲鍵",
+            "purpose": "目的",
+            "duration": "持續時間"
           },
           "items": {
             "locale": {
               "key": "swarmrise_locale",
-              "purpose": "yu yan pian hao",
-              "duration": "yong jiu"
+              "purpose": "語言偏好",
+              "duration": "永久"
             },
             "selectedOrga": {
               "key": "swarmrise_selected_orga",
-              "purpose": "yi xuan zu zhi",
-              "duration": "yong jiu"
+              "purpose": "已選組織",
+              "duration": "永久"
             }
           }
         },
         "authCookies": {
-          "title": "7.2 shen fen yan zheng cookie",
-          "text": "Clerk (wo men de shen fen yan zheng ti gong shang) shi yong hui hua cookie jin xing shen fen yan zheng zhuang tai guan li. zhe xie shi fu wu zheng chang yun xing yan ge bi yao de, gen ju ePrivacy zhi ling bu xu yao tong yi."
+          "title": "7.2 身份驗證 Cookie",
+          "text": "Clerk（我們的身份驗證提供商）使用會話 Cookie 進行身份驗證狀態管理。這些是服務正常運行嚴格必要的，根據 ePrivacy 指令不需要同意。"
         },
         "noTracking": {
-          "title": "7.3 wu gen zong cookie",
-          "text": "wo men bu shi yong fen xi, guang gao huo gen zong cookie. wo men bu cong shi xing wei gen zong huo ding xiang guang gao."
+          "title": "7.3 無追蹤 Cookie",
+          "text": "我們不使用分析、廣告或追蹤 Cookie。我們不從事行為追蹤或定向廣告。"
         }
       },
       "dataSecurity": {
-        "title": "shu ju an quan",
-        "intro": "wo men shi shi shi dang de ji shu he zu zhi cuo shi lai bao hu nin de ge ren shu ju mian shou wei shou quan fang wen, geng gai, pi lu huo xiao hui:",
+        "title": "資料安全",
+        "intro": "我們實施適當的技術和組織措施來保護您的個人資料免受未授權訪問、更改、披露或銷毀：",
         "measures": {
-          "encryption": "chuan shu zhong jia mi:",
-          "encryptionText": "nin de liu lan qi yu wo men fu wu qi zhi jian chuan shu de suo you shu ju dou shi yong TLS/SSL jia mi.",
-          "secureAuth": "an quan shen fen yan zheng:",
-          "secureAuthText": "wo men shi yong Clerk, yi ge zhuan ye de shen fen yan zheng ti gong shang, cai yong hang ye biao zhun an quan zuo fa.",
-          "multiTenant": "duo zu hu ge li:",
-          "multiTenantText": "zu zhi shu ju zai luo ji shang shi ge li de, yi fang zhi wei shou quan de kua zu zhi fang wen.",
-          "accessControls": "fang wen kong zhi:",
-          "accessControlsText": "ji yu jiao se de fang wen kong zhi que bao yong hu zhi neng fang wen ta men bei shou quan cha kan de shu ju.",
-          "securityReviews": "ding qi an quan shen cha:",
-          "securityReviewsText": "wo men ding qi dui dai ma ku he ji chu she shi jin xing an quan ping gu."
+          "encryption": "傳輸中加密：",
+          "encryptionText": "您的瀏覽器與我們伺服器之間傳輸的所有資料都使用 TLS/SSL 加密。",
+          "secureAuth": "安全身份驗證：",
+          "secureAuthText": "我們使用 Clerk，一個專業的身份驗證提供商，採用行業標準安全做法。",
+          "multiTenant": "多租戶隔離：",
+          "multiTenantText": "組織資料在邏輯上是隔離的，以防止未授權的跨組織訪問。",
+          "accessControls": "訪問控制：",
+          "accessControlsText": "基於角色的訪問控制確保用戶只能訪問他們被授權查看的資料。",
+          "securityReviews": "定期安全審查：",
+          "securityReviewsText": "我們定期對程式碼庫和基礎設施進行安全評估。"
         },
-        "disclaimer": "sui ran wo men nu li bao hu nin de ge ren shu ju, dan tong guo hu lian wang chuan shu huo dian zi cun chu de ren he fang fa dou bu shi 100% an quan de. wo men wu fa bao zheng jue dui an quan."
+        "disclaimer": "雖然我們努力保護您的個人資料，但透過互聯網傳輸或電子存儲的任何方法都不是 100% 安全的。我們無法保證絕對安全。"
       },
       "internationalTransfers": {
-        "title": "guo ji shu ju chuan shu",
-        "intro": "nin de ge ren shu ju ke neng bei chuan shu dao nin ju zhu guo yi wai de guo jia bing zai na li chu li, bao kuo mei guo, wo men de di san fang fu wu ti gong shang (Clerk he Convex) suo zai di.",
-        "safeguardsIntro": "dui yu cong EEA, ying guo huo rui shi xiang wei bei ren ding ti gong chong fen shu ju bao hu shui ping de guo jia chuan shu ge ren shu ju, wo men yi lai shi dang de bao zhang cuo shi, bao kuo:",
+        "title": "國際資料傳輸",
+        "intro": "您的個人資料可能被傳輸到您居住國以外的國家並在那裡處理，包括美國，我們的第三方服務提供商（Clerk 和 Convex）所在地。",
+        "safeguardsIntro": "對於從 EEA、英國或瑞士向未被認定提供充分資料保護水平的國家傳輸個人資料，我們依賴適當的保障措施，包括：",
         "safeguards": {
-          "sccs": "ou zhou wei yuan hui pi zhun de biao zhun he tong tiao kuan (SCC)",
-          "dpas": "yu wo men de fu wu ti gong shang de shu ju chu li xie yi",
-          "supplementary": "bi yao shi ying dui te ding feng xian de bu chong cuo shi"
+          "sccs": "歐洲委員會批准的標準合約條款（SCC）",
+          "dpas": "與我們的服務提供商的資料處理協議",
+          "supplementary": "必要時應對特定風險的補充措施"
         },
-        "requestCopy": "nin ke yi tong guo lian xi wo men suo qu wo men yi you bao zhang cuo shi de fu ben."
+        "requestCopy": "您可以透過聯繫我們索取我們已有保障措施的副本。"
       },
       "childrensPrivacy": {
-        "title": "er tong yin si",
-        "p1": "fu wu bu mian xiang 16 sui yi xia de er tong. wo men bu hui gu yi shou ji 16 sui yi xia er tong de ge ren shu ju. ru guo nin shi fu mu huo jian hu ren bing ren wei nin de hai zi yi xiang wo men ti gong le ge ren shu ju, qing li ji lian xi wo men.",
-        "p2": "ru guo wo men fa xian wo men zai wei jing fu mu tong yi yan zheng de qing kuang xia shou ji le 16 sui yi xia er tong de ge ren shu ju, wo men jiang cai qu cuo shi ji shi shan chu gai xin xi."
+        "title": "兒童隱私",
+        "p1": "服務不面向 16 歲以下的兒童。我們不會故意收集 16 歲以下兒童的個人資料。如果您是父母或監護人並認為您的孩子已向我們提供了個人資料，請立即聯繫我們。",
+        "p2": "如果我們發現我們在未經父母同意驗證的情況下收集了 16 歲以下兒童的個人資料，我們將採取措施及時刪除該資訊。"
       },
       "changesToPolicy": {
-        "title": "ben zheng ce de bian geng",
-        "intro": "wo men ke neng hui bu shi geng xin ci yin si zheng ce yi fan ying wo men zuo fa huo shi yong fa lv de bian hua. dang wo men zuo chu zhong da bian geng shi:",
+        "title": "本政策的變更",
+        "intro": "我們可能會不時更新此隱私政策以反映我們做法或適用法律的變化。當我們做出重大變更時：",
         "items": {
-          "updateDate": "wo men jiang geng xin ben zheng ce ding bu de \"zui hou geng xin\" ri qi",
-          "notifyEmail": "wo men jiang tong guo dian zi you jian huo fu wu shang de xian zhu tong zhi tong zhi nin",
-          "renewConsent": "dui yu ying xiang nin quan li de zhong da bian geng, wo men ke neng hui yao qiu geng xin tong yi"
+          "updateDate": "我們將更新本政策頂部的「最後更新」日期",
+          "notifyEmail": "我們將透過電子郵件或服務上的顯著通知通知您",
+          "renewConsent": "對於影響您權利的重大變更，我們可能會要求更新同意"
         },
-        "reviewPeriodically": "wo men gu li nin ding qi cha kan ci yin si zheng ce, yi le jie wo men ru he bao hu nin de xin xi."
+        "reviewPeriodically": "我們鼓勵您定期查看此隱私政策，以了解我們如何保護您的資訊。"
       },
       "contactInformation": {
-        "title": "lian xi xin xi",
-        "intro": "ru guo nin dui ci yin si zheng ce you yi wen, xi wang xing shi nin de shu ju bao hu quan li, huo dui wo men de shu ju zuo fa you yi lv, qing lian xi wo men:",
-        "github": "GitHub:",
-        "responseTime": "wo men jiang zai 30 tian nei hui fu suo you he fa qing qiu. zai mou xie qing kuang xia, wo men ke neng xu yao zai chu li nin de qing qiu qian yan zheng nin de shen fen."
+        "title": "聯繫資訊",
+        "intro": "如果您對此隱私政策有疑問、希望行使您的資料保護權利，或對我們的資料做法有疑慮，請聯繫我們：",
+        "github": "GitHub：",
+        "responseTime": "我們將在 30 天內回覆所有合法請求。在某些情況下，我們可能需要在處理您的請求前驗證您的身份。"
       }
     },
-    "relatedDocuments": "xiang guan wen dang",
-    "termsLink": "fu wu tiao kuan",
-    "termsDescription": "wo men shi yong swarmrise de tiao kuan he tiao jian",
-    "principlesLink": "wo men de yuan ze",
-    "principlesDescription": "le jie zhi yin swarmrise de jia zhi guan",
-    "footer": "swarmrise yi Apache License 2.0 xu ke"
+    "relatedDocuments": "相關文件",
+    "termsLink": "服務條款",
+    "termsDescription": "我們使用 swarmrise 的條款和條件",
+    "principlesLink": "我們的原則",
+    "principlesDescription": "了解指引 swarmrise 的價值觀",
+    "footer": "swarmrise 以 Apache License 2.0 許可"
   }
 }

@@ -45,6 +45,105 @@
         "title": "Trabajo en progreso",
         "content": "swarmrise es y seguira siendo un trabajo en progreso. Los comentarios y contribuciones son mas que bienvenidos. Estos principios son solo una columna vertebral, veamos a donde nos lleva todo esto."
       }
+    },
+    "sections": {
+      "governanceModel": {
+        "title": "el modelo de gobernanza",
+        "subtitle": "swarmrise es a la vez un modelo de gobernanza y una herramienta.",
+        "intro": "Manteniendo un solo rol por miembro, puedes usarlo como un simple organigrama. Adoptando la membresía multi-rol, la autonomía de los equipos y la toma de decisiones por consentimiento, entras en una forma genuinamente diferente de organizarse. La transición es progresiva -- adopta a tu propio ritmo.",
+        "multiRole": {
+          "title": "El modelo multi-rol",
+          "content": "En las organizaciones tradicionales, una persona tiene un solo título de trabajo. En swarmrise, un miembro puede tener múltiples roles en múltiples equipos. Una persona podría ser el Líder de Producto en el equipo de Producto, el Secretario en el equipo de Operaciones y un Analista de Datos en el equipo de Finanzas -- simultáneamente. Esto refleja cómo las personas realmente contribuyen: cruzando fronteras, usando diferentes sombreros según el contexto."
+        }
+      },
+      "roleTriad": {
+        "title": "la tríada de roles",
+        "subtitle": "Contrapesos dentro de cada equipo.",
+        "intro": "Cada equipo comienza con tres tipos de roles especiales como marco. Estos tres existen por diseño para crear contrapesos. Ninguna persona sola acumula autoridad sin control dentro de un equipo.",
+        "leader": {
+          "title": "Líder",
+          "content": "Proporciona dirección y facilita el trabajo del equipo. El líder coordina pero no manda. Representa al equipo en el equipo padre, creando una conexión natural entre niveles de la organización sin crear jerarquía."
+        },
+        "secretary": {
+          "title": "Secretario",
+          "content": "Asegura la documentación, la integridad procedimental y la memoria organizacional. El secretario mantiene la honestidad y la trazabilidad."
+        },
+        "referee": {
+          "title": "Árbitro",
+          "content": "Media en conflictos, asegura un proceso justo y protege las voces minoritarias. El árbitro previene la concentración de poder."
+        },
+        "footer": "La tríada es un punto de partida, no una restricción rígida. Las organizaciones eventualmente podrán definir sus propios tipos de roles predeterminados. Pero el principio de autoridad distribuida dentro de los equipos es innegociable."
+      },
+      "consentDecisions": {
+        "title": "decisiones por consentimiento",
+        "subtitle": "No es consenso. Es consentimiento.",
+        "intro": "El modelo de decisión sigue un proceso de tres pasos. Esto no es consenso, donde todos deben estar de acuerdo. Es consentimiento, donde nadie tiene una objeción fundamentada. El silencio es consentimiento.",
+        "proposition": {
+          "title": "Proposición",
+          "content": "Cualquier titular de un rol puede proponer un cambio."
+        },
+        "clarification": {
+          "title": "Clarificación",
+          "content": "Los miembros hacen preguntas para entender la propuesta."
+        },
+        "consent": {
+          "title": "Consentimiento",
+          "content": "La propuesta es aceptada a menos que haya objeciones válidas y razonadas."
+        },
+        "footer": "El diario de decisiones existente, que registra todos los cambios con comparaciones antes/después, es la base sobre la cual se construirá el proceso de consentimiento."
+      },
+      "teamConnections": {
+        "title": "conexiones de equipos, no jerarquía",
+        "subtitle": "Un mapa de conexiones, no una pirámide descendente.",
+        "content": "Los equipos se conectan con otros equipos a través de sus roles de líder. El líder de un equipo tiene un rol correspondiente en el equipo padre, creando un vínculo natural. Pero esto es una conexión, no una cadena de mando. El equipo padre no dicta al equipo hijo. El líder representa los intereses del equipo hijo hacia arriba y lleva el contexto hacia abajo."
+      },
+      "communication": {
+        "title": "la comunicación como gobernanza",
+        "subtitle": "Mensajería donde la gobernanza es nativa, no un complemento.",
+        "intro": "swarmrise incluirá una capa de comunicación estrechamente integrada con la estructura organizacional. Esto no es una herramienta de chat genérica añadida -- es comunicación que entiende los equipos, los roles y la gobernanza.",
+        "items": {
+          "teamContext": "Las conversaciones ocurren dentro del contexto del equipo.",
+          "firstClass": "Las proposiciones, clarificaciones y rondas de consentimiento son patrones de comunicación de primera clase.",
+          "policyFlow": "Los anuncios de políticas fluyen a través de la estructura que gobiernan.",
+          "threaded": "Las decisiones y votos están enlazados en la discusión que los produjo."
+        }
+      },
+      "topicsPoliciesTemplates": {
+        "title": "temas, políticas y plantillas",
+        "subtitle": "Los componentes de una gobernanza viva.",
+        "topics": {
+          "title": "Temas",
+          "content": "Elementos de discusión que pueden abordarse sincrónicamente en reuniones o asincrónicamente en línea. Un tema puede convertirse en una proposición, pasar por clarificación y alcanzar consentimiento -- todo sin requerir que todos estén en la misma sala al mismo tiempo. Esto es esencial para organizaciones distribuidas y remotas."
+        },
+        "policies": {
+          "title": "Políticas",
+          "content": "Las reglas permanentes que un equipo u organización se da a sí mismo. Redactadas por los titulares de roles, delimitadas a equipos, versionadas y visibles. A diferencia de las decisiones que registran un único cambio, las políticas codifican expectativas continuas. Responden a la pregunta: ¿cómo operamos aquí?"
+        },
+        "templates": {
+          "title": "La biblioteca de plantillas",
+          "content": "Una biblioteca pública donde las organizaciones pueden explorar plantillas para estructuras de equipos, misiones de roles, responsabilidades y políticas. Cópialas, adáptalas, publica las tuyas. Para los nuevos, las plantillas reducen la barrera de adopción. Para los veteranos, las plantillas son una forma de compartir lo que funciona."
+        }
+      },
+      "whatItIsNot": {
+        "title": "lo que swarmrise no es",
+        "subtitle": "Límites deliberados y defendidos.",
+        "notProjectManagement": {
+          "title": "No es una herramienta de gestión de proyectos",
+          "content": "Sin tareas, sin tableros kanban, sin sprints, sin diagramas de Gantt. swarmrise define quién es responsable de qué y por qué. Cómo esas personas rastrean su trabajo es su elección. swarmrise gobierna; no microgestiona."
+        },
+        "notHierarchyEnabler": {
+          "title": "No es un facilitador de jerarquía",
+          "content": "Si una funcionalidad facilita la concentración de poder, no tiene lugar en swarmrise. El sistema está diseñado para que la autoridad siempre esté distribuida y sea responsable."
+        },
+        "notReligion": {
+          "title": "No es una religión",
+          "content": "Sin vocabulario esotérico. Sin programas de certificación. Sin ceremonias obligatorias. swarmrise usa lenguaje simple y conceptos simples. Si alguien necesita un curso de formación para entender la herramienta, hemos fallado."
+        },
+        "notFinished": {
+          "title": "No es un producto terminado",
+          "content": "swarmrise es abiertamente, orgullosamente un trabajo en progreso. El compromiso es con los principios, no con el conjunto actual de funcionalidades."
+        }
+      }
     }
   },
   "terms": {

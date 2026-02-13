@@ -45,6 +45,105 @@
         "title": "Work in progress",
         "content": "swarmrise is and will stay a work in progress. Feedback and contributions are more than welcome. These principles are just a backbone, let's see where the whole thing will go."
       }
+    },
+    "sections": {
+      "governanceModel": {
+        "title": "the governance model",
+        "subtitle": "swarmrise is both a governance model and a tool.",
+        "intro": "By keeping one role per member, you can use it as a simple org-chart tool. By embracing multi-role membership, team autonomy, and consent-based decision-making, you move into a genuinely different way of organizing. The transition is progressive -- adopt at your own pace.",
+        "multiRole": {
+          "title": "The multi-role model",
+          "content": "In traditional organizations, one person has one job title. In swarmrise, a member can hold multiple roles across multiple teams. A person might be the Product Lead in the Product team, the Secretary in the Operations team, and a Data Analyst in the Finance team -- simultaneously. This reflects how people actually contribute: across boundaries, wearing different hats depending on context."
+        }
+      },
+      "roleTriad": {
+        "title": "the role triad",
+        "subtitle": "Checks and balances within every team.",
+        "intro": "Every team starts with three special role types as a framework. These three exist by design to create checks and balances. No single person accumulates unchecked authority within a team.",
+        "leader": {
+          "title": "Leader",
+          "content": "Provides direction and facilitates the team's work. The leader coordinates but does not command. They represent the team in the parent team, creating a natural connection between levels of the organization without creating hierarchy."
+        },
+        "secretary": {
+          "title": "Secretary",
+          "content": "Ensures documentation, procedural integrity, and organizational memory. The secretary keeps things honest and traceable."
+        },
+        "referee": {
+          "title": "Referee",
+          "content": "Mediates conflicts, ensures fair process, and protects minority voices. The referee prevents power grabs."
+        },
+        "footer": "The triad is a starting point, not a rigid constraint. Organizations may eventually define their own default role types. But the principle of distributed authority within teams is non-negotiable."
+      },
+      "consentDecisions": {
+        "title": "consent-based decisions",
+        "subtitle": "Not consensus. Consent.",
+        "intro": "The decision model follows a three-step process. This is not consensus, where everyone must agree. It is consent, where no one has a principled objection. Silence is consent.",
+        "proposition": {
+          "title": "Proposition",
+          "content": "Any role holder can propose a change."
+        },
+        "clarification": {
+          "title": "Clarification",
+          "content": "Members ask questions to understand the proposal."
+        },
+        "consent": {
+          "title": "Consent",
+          "content": "The proposal is accepted unless there are valid, reasoned objections."
+        },
+        "footer": "The existing decision journal, which records all changes with before-and-after diffs, is the foundation on which the consent process will be built."
+      },
+      "teamConnections": {
+        "title": "team connections, not hierarchy",
+        "subtitle": "A map of connections, not a top-down pyramid.",
+        "content": "Teams connect to other teams through their leader roles. A team's leader holds a corresponding role in the parent team, creating a natural link. But this is a connection, not a command chain. The parent team does not dictate to the child team. The leader represents the child team's interests upward and carries context downward."
+      },
+      "communication": {
+        "title": "communication as governance",
+        "subtitle": "Messaging where governance is native, not an afterthought.",
+        "intro": "swarmrise will include a communication layer tightly integrated with the organizational structure. This is not a generic chat tool bolted on -- it is communication that understands teams, roles, and governance.",
+        "items": {
+          "teamContext": "Conversations happen within team context.",
+          "firstClass": "Propositions, clarifications, and consent rounds are first-class communication patterns.",
+          "policyFlow": "Policy announcements flow through the structure they govern.",
+          "threaded": "Decisions and votes are threaded into the discussion that produced them."
+        }
+      },
+      "topicsPoliciesTemplates": {
+        "title": "topics, policies, and templates",
+        "subtitle": "The building blocks of living governance.",
+        "topics": {
+          "title": "Topics",
+          "content": "Discussion items that can be addressed synchronously in meetings or asynchronously online. A topic can become a proposition, go through clarification, and reach consent -- all without requiring everyone to be in the same room at the same time. This is essential for distributed and remote organizations."
+        },
+        "policies": {
+          "title": "Policies",
+          "content": "The permanent rules a team or organization gives itself. Authored by role holders, scoped to teams, versioned, and visible. Unlike decisions which record a single change, policies codify ongoing expectations. They answer: how do we operate here?"
+        },
+        "templates": {
+          "title": "The template library",
+          "content": "A public library where organizations can browse templates for team structures, role missions, duties, and policies. Copy them, adapt them, publish your own. For newcomers, templates lower the barrier to adoption. For veterans, templates are a way to share what works."
+        }
+      },
+      "whatItIsNot": {
+        "title": "what swarmrise is not",
+        "subtitle": "Boundaries that are deliberate and defended.",
+        "notProjectManagement": {
+          "title": "Not a project management tool",
+          "content": "No tasks, no kanban boards, no sprints, no Gantt charts. swarmrise defines who is responsible for what and why. How those people track their work is their choice. swarmrise governs; it does not micromanage."
+        },
+        "notHierarchyEnabler": {
+          "title": "Not a hierarchy enabler",
+          "content": "If a feature makes it easier to concentrate power, it does not belong in swarmrise. The system is designed so that authority is always distributed and accountable."
+        },
+        "notReligion": {
+          "title": "Not a religion",
+          "content": "No esoteric vocabulary. No certification programs. No mandatory ceremonies. swarmrise uses plain language and simple concepts. If someone needs a training course to understand the tool, we have failed."
+        },
+        "notFinished": {
+          "title": "Not a finished product",
+          "content": "swarmrise is openly, proudly a work in progress. The commitment is to the principles, not to the current feature set."
+        }
+      }
     }
   },
   "terms": {

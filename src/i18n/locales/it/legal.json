@@ -45,6 +45,105 @@
         "title": "Lavoro in corso",
         "content": "swarmrise e e rimarra un lavoro in corso. Feedback e contributi sono piu che benvenuti. Questi principi sono solo una spina dorsale, vediamo dove andra a finire tutto questo."
       }
+    },
+    "sections": {
+      "governanceModel": {
+        "title": "il modello di governance",
+        "subtitle": "swarmrise è sia un modello di governance che uno strumento.",
+        "intro": "Mantenendo un solo ruolo per membro, puoi usarlo come un semplice organigramma. Adottando l'appartenenza multi-ruolo, l'autonomia dei team e il processo decisionale per consenso, entri in un modo genuinamente diverso di organizzarsi. La transizione è progressiva -- adotta al tuo ritmo.",
+        "multiRole": {
+          "title": "Il modello multi-ruolo",
+          "content": "Nelle organizzazioni tradizionali, una persona ha un solo titolo lavorativo. In swarmrise, un membro può detenere più ruoli in più team. Una persona potrebbe essere il Responsabile Prodotto nel team Prodotto, il Segretario nel team Operazioni e un Analista Dati nel team Finanza -- simultaneamente. Questo riflette come le persone contribuiscono realmente: attraverso i confini, indossando cappelli diversi a seconda del contesto."
+        }
+      },
+      "roleTriad": {
+        "title": "la triade dei ruoli",
+        "subtitle": "Contrappesi all'interno di ogni team.",
+        "intro": "Ogni team inizia con tre tipi di ruoli speciali come struttura. Questi tre esistono per progettazione per creare contrappesi. Nessuna singola persona accumula autorità incontrollata all'interno di un team.",
+        "leader": {
+          "title": "Leader",
+          "content": "Fornisce direzione e facilita il lavoro del team. Il leader coordina ma non comanda. Rappresenta il team nel team genitore, creando una connessione naturale tra i livelli dell'organizzazione senza creare gerarchia."
+        },
+        "secretary": {
+          "title": "Segretario",
+          "content": "Garantisce la documentazione, l'integrità procedurale e la memoria organizzativa. Il segretario mantiene le cose oneste e tracciabili."
+        },
+        "referee": {
+          "title": "Arbitro",
+          "content": "Media i conflitti, garantisce un processo equo e protegge le voci minoritarie. L'arbitro previene le prese di potere."
+        },
+        "footer": "La triade è un punto di partenza, non un vincolo rigido. Le organizzazioni potranno eventualmente definire i propri tipi di ruoli predefiniti. Ma il principio dell'autorità distribuita all'interno dei team non è negoziabile."
+      },
+      "consentDecisions": {
+        "title": "decisioni per consenso",
+        "subtitle": "Non unanimità. Consenso.",
+        "intro": "Il modello decisionale segue un processo in tre fasi. Questo non è unanimità, dove tutti devono essere d'accordo. È consenso, dove nessuno ha un'obiezione fondata. Il silenzio è consenso.",
+        "proposition": {
+          "title": "Proposta",
+          "content": "Qualsiasi detentore di ruolo può proporre un cambiamento."
+        },
+        "clarification": {
+          "title": "Chiarimento",
+          "content": "I membri pongono domande per comprendere la proposta."
+        },
+        "consent": {
+          "title": "Consenso",
+          "content": "La proposta viene accettata a meno che non ci siano obiezioni valide e motivate."
+        },
+        "footer": "Il diario delle decisioni esistente, che registra tutti i cambiamenti con confronti prima/dopo, è la base su cui verrà costruito il processo di consenso."
+      },
+      "teamConnections": {
+        "title": "connessioni tra team, non gerarchia",
+        "subtitle": "Una mappa di connessioni, non una piramide dall'alto verso il basso.",
+        "content": "I team si connettono ad altri team attraverso i ruoli di leader. Il leader di un team detiene un ruolo corrispondente nel team genitore, creando un collegamento naturale. Ma questa è una connessione, non una catena di comando. Il team genitore non detta al team figlio. Il leader rappresenta gli interessi del team figlio verso l'alto e porta il contesto verso il basso."
+      },
+      "communication": {
+        "title": "la comunicazione come governance",
+        "subtitle": "Messaggistica dove la governance è nativa, non un ripensamento.",
+        "intro": "swarmrise includerà un livello di comunicazione strettamente integrato con la struttura organizzativa. Questo non è uno strumento di chat generico aggiunto -- è comunicazione che comprende i team, i ruoli e la governance.",
+        "items": {
+          "teamContext": "Le conversazioni avvengono nel contesto del team.",
+          "firstClass": "Le proposte, i chiarimenti e i turni di consenso sono pattern di comunicazione di prima classe.",
+          "policyFlow": "Gli annunci sulle politiche fluiscono attraverso la struttura che governano.",
+          "threaded": "Le decisioni e i voti sono collegati alla discussione che li ha prodotti."
+        }
+      },
+      "topicsPoliciesTemplates": {
+        "title": "argomenti, politiche e template",
+        "subtitle": "I mattoni di una governance vivente.",
+        "topics": {
+          "title": "Argomenti",
+          "content": "Elementi di discussione che possono essere affrontati in modo sincrono nelle riunioni o in modo asincrono online. Un argomento può diventare una proposta, passare attraverso il chiarimento e raggiungere il consenso -- il tutto senza richiedere che tutti siano nella stessa stanza allo stesso tempo. Questo è essenziale per le organizzazioni distribuite e remote."
+        },
+        "policies": {
+          "title": "Politiche",
+          "content": "Le regole permanenti che un team o un'organizzazione si dà. Redatte dai detentori di ruoli, delimitate ai team, versionate e visibili. A differenza delle decisioni che registrano un singolo cambiamento, le politiche codificano aspettative continue. Rispondono alla domanda: come operiamo qui?"
+        },
+        "templates": {
+          "title": "La libreria dei template",
+          "content": "Una libreria pubblica dove le organizzazioni possono sfogliare template per strutture di team, missioni di ruoli, doveri e politiche. Copiali, adattali, pubblica i tuoi. Per i nuovi arrivati, i template abbassano la barriera all'adozione. Per i veterani, i template sono un modo per condividere ciò che funziona."
+        }
+      },
+      "whatItIsNot": {
+        "title": "cosa swarmrise non è",
+        "subtitle": "Confini deliberati e difesi.",
+        "notProjectManagement": {
+          "title": "Non è uno strumento di gestione progetti",
+          "content": "Nessun compito, nessuna board kanban, nessuno sprint, nessun diagramma di Gantt. swarmrise definisce chi è responsabile di cosa e perché. Come queste persone tracciano il loro lavoro è una loro scelta. swarmrise governa; non micro-gestisce."
+        },
+        "notHierarchyEnabler": {
+          "title": "Non è un facilitatore di gerarchia",
+          "content": "Se una funzionalità rende più facile concentrare il potere, non ha posto in swarmrise. Il sistema è progettato affinché l'autorità sia sempre distribuita e responsabile."
+        },
+        "notReligion": {
+          "title": "Non è una religione",
+          "content": "Nessun vocabolario esoterico. Nessun programma di certificazione. Nessuna cerimonia obbligatoria. swarmrise usa un linguaggio semplice e concetti semplici. Se qualcuno ha bisogno di un corso di formazione per capire lo strumento, abbiamo fallito."
+        },
+        "notFinished": {
+          "title": "Non è un prodotto finito",
+          "content": "swarmrise è apertamente, orgogliosamente un lavoro in corso. L'impegno è verso i principi, non verso l'insieme attuale di funzionalità."
+        }
+      }
     }
   },
   "terms": {

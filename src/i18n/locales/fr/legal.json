@@ -45,6 +45,105 @@
         "title": "Travail en cours",
         "content": "swarmrise est et restera un travail en cours. Les commentaires et contributions sont plus que bienvenus. Ces principes ne sont qu'une colonne vertébrale, voyons où tout cela va nous mener."
       }
+    },
+    "sections": {
+      "governanceModel": {
+        "title": "le modèle de gouvernance",
+        "subtitle": "swarmrise est à la fois un modèle de gouvernance et un outil.",
+        "intro": "En gardant un seul rôle par membre, vous pouvez l'utiliser comme un simple organigramme. En adoptant l'adhésion multi-rôle, l'autonomie des équipes et la prise de décision par consentement, vous entrez dans une façon véritablement différente de s'organiser. La transition est progressive -- adoptez à votre rythme.",
+        "multiRole": {
+          "title": "Le modèle multi-rôle",
+          "content": "Dans les organisations traditionnelles, une personne a un seul titre de poste. Dans swarmrise, un membre peut détenir plusieurs rôles dans plusieurs équipes. Une personne peut être le Responsable Produit dans l'équipe Produit, le Secrétaire dans l'équipe Opérations et un Analyste de Données dans l'équipe Finance -- simultanément. Cela reflète la façon dont les gens contribuent réellement : au-delà des frontières, portant différentes casquettes selon le contexte."
+        }
+      },
+      "roleTriad": {
+        "title": "la triade des rôles",
+        "subtitle": "Des contre-pouvoirs au sein de chaque équipe.",
+        "intro": "Chaque équipe commence avec trois types de rôles spéciaux comme cadre. Ces trois existent par conception pour créer des contre-pouvoirs. Aucune personne seule n'accumule d'autorité non contrôlée au sein d'une équipe.",
+        "leader": {
+          "title": "Leader",
+          "content": "Donne la direction et facilite le travail de l'équipe. Le leader coordonne mais ne commande pas. Il représente l'équipe dans l'équipe parente, créant une connexion naturelle entre les niveaux de l'organisation sans créer de hiérarchie."
+        },
+        "secretary": {
+          "title": "Secrétaire",
+          "content": "Assure la documentation, l'intégrité procédurale et la mémoire organisationnelle. Le secrétaire maintient l'honnêteté et la traçabilité."
+        },
+        "referee": {
+          "title": "Arbitre",
+          "content": "Médie les conflits, assure un processus équitable et protège les voix minoritaires. L'arbitre empêche les prises de pouvoir."
+        },
+        "footer": "La triade est un point de départ, pas une contrainte rigide. Les organisations pourront éventuellement définir leurs propres types de rôles par défaut. Mais le principe d'autorité distribuée au sein des équipes est non négociable."
+      },
+      "consentDecisions": {
+        "title": "décisions par consentement",
+        "subtitle": "Pas un consensus. Un consentement.",
+        "intro": "Le modèle de décision suit un processus en trois étapes. Ce n'est pas un consensus, où tout le monde doit être d'accord. C'est un consentement, où personne n'a d'objection fondée. Le silence vaut consentement.",
+        "proposition": {
+          "title": "Proposition",
+          "content": "Tout détenteur de rôle peut proposer un changement."
+        },
+        "clarification": {
+          "title": "Clarification",
+          "content": "Les membres posent des questions pour comprendre la proposition."
+        },
+        "consent": {
+          "title": "Consentement",
+          "content": "La proposition est acceptée sauf s'il y a des objections valides et argumentées."
+        },
+        "footer": "Le journal de décisions existant, qui enregistre tous les changements avec des comparaisons avant/après, est la base sur laquelle le processus de consentement sera construit."
+      },
+      "teamConnections": {
+        "title": "connexions d'équipes, pas hiérarchie",
+        "subtitle": "Une carte de connexions, pas une pyramide descendante.",
+        "content": "Les équipes se connectent aux autres équipes via leurs rôles de leader. Le leader d'une équipe détient un rôle correspondant dans l'équipe parente, créant un lien naturel. Mais c'est une connexion, pas une chaîne de commandement. L'équipe parente ne dicte pas à l'équipe enfant. Le leader représente les intérêts de l'équipe enfant vers le haut et porte le contexte vers le bas."
+      },
+      "communication": {
+        "title": "la communication comme gouvernance",
+        "subtitle": "La messagerie où la gouvernance est native, pas une réflexion après coup.",
+        "intro": "swarmrise inclura une couche de communication étroitement intégrée à la structure organisationnelle. Ce n'est pas un outil de chat générique ajouté -- c'est une communication qui comprend les équipes, les rôles et la gouvernance.",
+        "items": {
+          "teamContext": "Les conversations se déroulent dans le contexte de l'équipe.",
+          "firstClass": "Les propositions, clarifications et tours de consentement sont des modèles de communication de première classe.",
+          "policyFlow": "Les annonces de politiques circulent à travers la structure qu'elles gouvernent.",
+          "threaded": "Les décisions et votes sont liés à la discussion qui les a produits."
+        }
+      },
+      "topicsPoliciesTemplates": {
+        "title": "sujets, politiques et modèles",
+        "subtitle": "Les composants d'une gouvernance vivante.",
+        "topics": {
+          "title": "Sujets",
+          "content": "Des éléments de discussion qui peuvent être abordés de manière synchrone en réunions ou asynchrone en ligne. Un sujet peut devenir une proposition, passer par la clarification et atteindre le consentement -- le tout sans exiger que tout le monde soit dans la même pièce en même temps. C'est essentiel pour les organisations distribuées et distantes."
+        },
+        "policies": {
+          "title": "Politiques",
+          "content": "Les règles permanentes qu'une équipe ou une organisation se donne. Rédigées par les détenteurs de rôles, délimitées aux équipes, versionnées et visibles. Contrairement aux décisions qui enregistrent un seul changement, les politiques codifient des attentes continues. Elles répondent à la question : comment fonctionnons-nous ici ?"
+        },
+        "templates": {
+          "title": "La bibliothèque de modèles",
+          "content": "Une bibliothèque publique où les organisations peuvent parcourir des modèles pour les structures d'équipes, les missions de rôles, les responsabilités et les politiques. Copiez-les, adaptez-les, publiez les vôtres. Pour les nouveaux, les modèles abaissent la barrière à l'adoption. Pour les vétérans, les modèles sont un moyen de partager ce qui fonctionne."
+        }
+      },
+      "whatItIsNot": {
+        "title": "ce que swarmrise n'est pas",
+        "subtitle": "Des frontières délibérées et défendues.",
+        "notProjectManagement": {
+          "title": "Pas un outil de gestion de projet",
+          "content": "Pas de tâches, pas de tableaux kanban, pas de sprints, pas de diagrammes de Gantt. swarmrise définit qui est responsable de quoi et pourquoi. Comment ces personnes suivent leur travail est leur choix. swarmrise gouverne ; il ne micro-gère pas."
+        },
+        "notHierarchyEnabler": {
+          "title": "Pas un facilitateur de hiérarchie",
+          "content": "Si une fonctionnalité facilite la concentration du pouvoir, elle n'a pas sa place dans swarmrise. Le système est conçu pour que l'autorité soit toujours distribuée et responsable."
+        },
+        "notReligion": {
+          "title": "Pas une religion",
+          "content": "Pas de vocabulaire ésotérique. Pas de programmes de certification. Pas de cérémonies obligatoires. swarmrise utilise un langage simple et des concepts simples. Si quelqu'un a besoin d'une formation pour comprendre l'outil, nous avons échoué."
+        },
+        "notFinished": {
+          "title": "Pas un produit fini",
+          "content": "swarmrise est ouvertement, fièrement un travail en cours. L'engagement est envers les principes, pas envers l'ensemble actuel de fonctionnalités."
+        }
+      }
     }
   },
   "terms": {

@@ -60,7 +60,14 @@
     "createTeamSubmit": "Створити команду",
     "creatingTeam": "Створення...",
     "teamCreated": "Команду успішно створено",
-    "createTeamFailed": "Не вдалося створити команду"
+    "createTeamFailed": "Не вдалося створити команду",
+    "reassignConfirmTitle": "Переназначити \"{{roleName}}\"?",
+    "reassignConfirmDescription": "Ви збираєтеся змінити, хто виконує цю роль. Цю дію не можна скасувати безпосередньо.",
+    "reassignBullet1": "{{currentMember}} буде знятий з цієї ролі",
+    "reassignBullet2": "{{newMember}} візьме на себе роль та її обов'язки",
+    "reassignBullet3": "Ця зміна буде записана в журнал рішень",
+    "reassignSubmit": "Переназначити роль",
+    "reassigning": "Переназначення..."
   },
   "diagram": {
     "loadingTeam": "Завантаження команди...",

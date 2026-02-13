@@ -60,7 +60,14 @@
     "createTeamSubmit": "Create team",
     "creatingTeam": "Creating...",
     "teamCreated": "Team created successfully",
-    "createTeamFailed": "Failed to create team"
+    "createTeamFailed": "Failed to create team",
+    "reassignConfirmTitle": "Reassign \"{{roleName}}\"?",
+    "reassignConfirmDescription": "You are about to change who holds this role. This cannot be undone directly.",
+    "reassignBullet1": "{{currentMember}} will be unassigned from this role",
+    "reassignBullet2": "{{newMember}} will take over the role and its responsibilities",
+    "reassignBullet3": "This change will be recorded in the decision journal",
+    "reassignSubmit": "Reassign role",
+    "reassigning": "Reassigning..."
   },
   "diagram": {
     "loadingTeam": "Loading team...",

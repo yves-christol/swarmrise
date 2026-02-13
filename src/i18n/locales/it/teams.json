@@ -60,7 +60,14 @@
     "createTeamSubmit": "Crea squadra",
     "creatingTeam": "Creazione...",
     "teamCreated": "Squadra creata con successo",
-    "createTeamFailed": "Impossibile creare la squadra"
+    "createTeamFailed": "Impossibile creare la squadra",
+    "reassignConfirmTitle": "Riassegnare \"{{roleName}}\"?",
+    "reassignConfirmDescription": "Stai per cambiare chi ricopre questo ruolo. Questa azione non può essere annullata direttamente.",
+    "reassignBullet1": "{{currentMember}} verrà rimosso da questo ruolo",
+    "reassignBullet2": "{{newMember}} assumerà il ruolo e le sue responsabilità",
+    "reassignBullet3": "Questa modifica verrà registrata nel diario delle decisioni",
+    "reassignSubmit": "Riassegna ruolo",
+    "reassigning": "Riassegnazione..."
   },
   "diagram": {
     "loadingTeam": "Caricamento squadra...",

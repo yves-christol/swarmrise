@@ -60,7 +60,14 @@
     "createTeamSubmit": "建立團隊",
     "creatingTeam": "建立中...",
     "teamCreated": "團隊建立成功",
-    "createTeamFailed": "建立團隊失敗"
+    "createTeamFailed": "建立團隊失敗",
+    "reassignConfirmTitle": "重新指派「{{roleName}}」？",
+    "reassignConfirmDescription": "您即將變更此角色的負責人。此操作無法直接撤銷。",
+    "reassignBullet1": "{{currentMember}} 將從此角色中移除",
+    "reassignBullet2": "{{newMember}} 將接管此角色及其職責",
+    "reassignBullet3": "此變更將記錄在決策日誌中",
+    "reassignSubmit": "重新指派角色",
+    "reassigning": "重新指派中..."
   },
   "diagram": {
     "loadingTeam": "載入團隊中...",

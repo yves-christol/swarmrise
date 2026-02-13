@@ -6,6 +6,11 @@
   "principlesDescription": "指導 swarmrise 運作的理念",
   "footer": "swarmrise 是一個持續進行中的作品。",
   "items": {
+    "swarmrise": {
+      "title": "swarmrise",
+      "description": "一個開源治理平台，幫助組織分散權力、做出透明決策，並順暢地調整結構。swarmrise 不採用由一人發號施令的僵化層級制度，而是為每位成員賦予目標明確的角色，透過每個團隊中的領導-秘書-仲裁三角體制來平衡權力，並記錄每一項變更，使問責機制從根本上融入運作，而非事後附加。",
+      "example": "一個合作社使用 swarmrise 來定義其團隊、分配附有使命和職責的角色，並進行基於同意的決策，這一切都無需傳統的管理層級。"
+    },
     "user": {
       "title": "用戶",
       "description": "在 swarmrise 上建立帳戶的人。用戶可以加入多個組織，並參與每個組織的治理。",

@@ -6,6 +6,11 @@
   "principlesDescription": "the ideas that guide how swarmrise works",
   "footer": "swarmrise is a work in progress.",
   "items": {
+    "swarmrise": {
+      "title": "swarmrise",
+      "description": "An open-source governance platform that helps organizations distribute authority, make transparent decisions, and adapt their structure without friction. Instead of rigid hierarchies where one person commands, swarmrise gives every member clearly defined roles with purpose, balances power through a leader-secretary-referee triad in each team, and records every change so accountability is built in, not bolted on.",
+      "example": "A cooperative uses swarmrise to define its teams, assign roles with missions and duties, and run consent-based decisions, all without a traditional management hierarchy."
+    },
     "user": {
       "title": "User",
       "description": "A person who has created an account on swarmrise. Users can join multiple organizations and participate in governance across all of them.",

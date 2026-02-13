@@ -6,6 +6,11 @@
   "principlesDescription": "le idee che guidano il funzionamento di swarmrise",
   "footer": "swarmrise e un lavoro in corso.",
   "items": {
+    "swarmrise": {
+      "title": "swarmrise",
+      "description": "Una piattaforma di governance open source che aiuta le organizzazioni a distribuire l'autorita, prendere decisioni trasparenti e adattare la propria struttura senza attriti. Invece di gerarchie rigide in cui una sola persona comanda, swarmrise assegna a ogni membro ruoli chiaramente definiti con uno scopo, bilancia il potere attraverso una triade leader-segretario-arbitro in ogni team, e registra ogni cambiamento in modo che la responsabilita sia integrata, non aggiunta in seguito.",
+      "example": "Una cooperativa utilizza swarmrise per definire i propri team, assegnare ruoli con missioni e doveri, e condurre decisioni basate sul consenso, il tutto senza una gerarchia gestionale tradizionale."
+    },
     "user": {
       "title": "Utente",
       "description": "Una persona che ha creato un account su swarmrise. Gli utenti possono unirsi a piu organizzazioni e partecipare alla governance di ciascuna di esse.",

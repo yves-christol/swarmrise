@@ -6,6 +6,11 @@
   "principlesDescription": "les idées qui guident le fonctionnement de swarmrise",
   "footer": "swarmrise est un projet en cours.",
   "items": {
+    "swarmrise": {
+      "title": "swarmrise",
+      "description": "Une plateforme de gouvernance open source qui aide les organisations à distribuer l'autorité, à prendre des décisions transparentes et à adapter leur structure sans friction. Au lieu de hiérarchies rigides où une seule personne commande, swarmrise donne à chaque membre des rôles clairement définis avec un objectif, équilibre le pouvoir grâce à une triade leader-secrétaire-arbitre dans chaque équipe, et enregistre chaque changement pour que la responsabilité soit intégrée, pas ajoutée après coup.",
+      "example": "Une coopérative utilise swarmrise pour définir ses équipes, attribuer des rôles avec des missions et des devoirs, et mener des décisions par consentement, le tout sans hiérarchie de gestion traditionnelle."
+    },
     "user": {
       "title": "Utilisateur",
       "description": "Une personne qui a créé un compte sur swarmrise. Les utilisateurs peuvent rejoindre plusieurs organisations et participer à la gouvernance de chacune d'elles.",
@@ -18,7 +23,7 @@
     },
     "member": {
       "title": "Membre",
-      "description": "La presence d'un utilisateur au sein d'une organisation specifique. Un membre donne peut detenir plusieurs roles dans la meme equipe ou dans plusieurs equipes de l'organisation. C'est une difference significative avec les organisations traditionnelles.",
+      "description": "La présence d'un utilisateur au sein d'une organisation spécifique. Un membre donné peut détenir plusieurs rôles dans la même équipe ou dans plusieurs équipes de l'organisation. C'est une différence significative avec les organisations traditionnelles.",
       "example": "Vous pourriez être membre de l'organisation de votre entreprise et également membre de l'organisation d'un groupe de bénévoles."
     },
     "team": {

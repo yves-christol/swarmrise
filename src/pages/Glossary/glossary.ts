@@ -11,6 +11,11 @@ export const useGlossary = (): GlossaryEntry[] => {
 
   return [
     {
+      title: t("items.swarmrise.title"),
+      description: t("items.swarmrise.description"),
+      example: t("items.swarmrise.example", { defaultValue: "" }),
+    },
+    {
       title: t("items.user.title"),
       description: t("items.user.description"),
       example: t("items.user.example", { defaultValue: "" }),

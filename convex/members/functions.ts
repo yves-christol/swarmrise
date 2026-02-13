@@ -7,6 +7,7 @@ import { teamValidator } from "../teams";
 import { Id } from "../_generated/dataModel";
 import {
   requireAuthAndMembership,
+  getAuthenticatedUser,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getTeamLeaderMemberId,
@@ -159,6 +160,45 @@ export const listMemberDecisions = query({
 });
 
 /**
+ * Check if the current user can leave an organization.
+ * Returns canLeave=false if member is the owner or the leader of the first (root) team.
+ */
+export const canLeaveOrganization = query({
+  args: { orgaId: v.id("orgas") },
+  returns: v.object({
+    canLeave: v.boolean(),
+    reason: v.optional(v.union(v.literal("owner"), v.literal("leader_of_first_team"))),
+  }),
+  handler: async (ctx, args) => {
+    const member = await getMemberInOrga(ctx, args.orgaId);
+    const orga = await ctx.db.get(args.orgaId);
+    if (!orga) {
+      return { canLeave: false, reason: "owner" as const };
+    }
+
+    // Check 1: Is owner?
+    const user = await getAuthenticatedUser(ctx);
+    if (orga.owner === user._id) {
+      return { canLeave: false, reason: "owner" as const };
+    }
+
+    // Check 2: Is leader of first (root) team?
+    const memberRoles = await ctx.db
+      .query("roles")
+      .withIndex("by_member", (q) => q.eq("memberId", member._id))
+      .collect();
+
+    for (const role of memberRoles) {
+      if (role.roleType === "leader" && !role.parentTeamId) {
+        return { canLeave: false, reason: "leader_of_first_team" as const };
+      }
+    }
+
+    return { canLeave: true };
+  },
+});
+
+/**
  * Leave an organization
  */
 export const leaveOrganization = mutation({
@@ -167,13 +207,13 @@ export const leaveOrganization = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    const user = await import("../utils").then((m) => m.getAuthenticatedUser(ctx));
+    const user = await getAuthenticatedUser(ctx);
     const member = await requireAuthAndMembership(ctx, args.orgaId);
     const orga = await ctx.db.get(args.orgaId);
     if (!orga) {
       throw new Error("Organization not found");
     }
-    
+
     // Check if the leaving member is the owner
     if (orga.owner && orga.owner === user._id) {
       // Owner can only leave if they are the last member
@@ -181,19 +221,17 @@ export const leaveOrganization = mutation({
         .query("members")
         .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
         .collect();
-      
+
       if (allMembers.length > 1) {
         throw new Error("Owner cannot leave the organization unless they are the last member. Please transfer ownership first.");
       }
-      
+
       // Owner is the last member - delete the organization and all related data
-      // First, get all related entities
       const teams = await ctx.db
         .query("teams")
         .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
         .collect();
-      
-      // Delete all roles and topics (need to query before deleting teams)
+
       for (const team of teams) {
         const roles = await ctx.db
           .query("roles")
@@ -202,8 +240,7 @@ export const leaveOrganization = mutation({
         for (const role of roles) {
           await ctx.db.delete(role._id);
         }
-        
-        // Delete all topics for this team
+
         const topics = await ctx.db
           .query("topics")
           .withIndex("by_team", (q) => q.eq("teamId", team._id))
@@ -212,13 +249,11 @@ export const leaveOrganization = mutation({
           await ctx.db.delete(topic._id);
         }
       }
-      
-      // Delete all teams
+
       for (const team of teams) {
         await ctx.db.delete(team._id);
       }
-      
-      // Delete all invitations
+
       const invitations = await ctx.db
         .query("invitations")
         .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
@@ -226,8 +261,7 @@ export const leaveOrganization = mutation({
       for (const invitation of invitations) {
         await ctx.db.delete(invitation._id);
       }
-      
-      // Delete all decisions
+
       const decisions = await ctx.db
         .query("decisions")
         .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
@@ -235,8 +269,7 @@ export const leaveOrganization = mutation({
       for (const decision of decisions) {
         await ctx.db.delete(decision._id);
       }
-      
-      // Delete all policies
+
       const policies = await ctx.db
         .query("policies")
         .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
@@ -244,94 +277,111 @@ export const leaveOrganization = mutation({
       for (const policy of policies) {
         await ctx.db.delete(policy._id);
       }
-      
-      // Delete the member
+
       await ctx.db.delete(member._id);
-      
-      // Delete the organization
       await ctx.db.delete(args.orgaId);
-      
-      // Remove organization from user's orgaIds
+
       await ctx.db.patch(user._id, {
         orgaIds: user.orgaIds.filter((id) => id !== args.orgaId),
       });
-      
+
       return null;
     }
-    
-    // Non-owner: proceed with normal leave process
-    // Reassign all roles assigned to this member to their respective team leaders
-    const roles = await ctx.db
+
+    // Server-side guard: block if leader of root team
+    const memberRoles = await ctx.db
       .query("roles")
       .withIndex("by_member", (q) => q.eq("memberId", member._id))
       .collect();
-    
-    for (const role of roles) {
-      try {
-        // Get the team leader for this role's team
-        const teamLeaderId = await getTeamLeaderMemberId(ctx, role.teamId);
-        
-        // Reassign the role to the team leader
-        await ctx.db.patch(role._id, {
-          memberId: teamLeaderId,
-        });
-        
-        // Update team leader's roleIds
-        const teamLeader = await ctx.db.get(teamLeaderId);
-        if (teamLeader && !teamLeader.roleIds.includes(role._id)) {
-          await ctx.db.patch(teamLeaderId, {
-            roleIds: [...teamLeader.roleIds, role._id],
-          });
-        }
-        
-        // Remove role from leaving member's roleIds (if still present)
-        if (member.roleIds.includes(role._id)) {
-          await ctx.db.patch(member._id, {
-            roleIds: member.roleIds.filter((id) => id !== role._id),
-          });
-        }
-      } catch {
-        // If we can't get the team leader (e.g., team doesn't exist),
-        // we can't reassign the role, so we skip it
-        // This shouldn't happen in normal operation, but we handle it gracefully
-        console.error("Failed to reassign role during leave operation");
+
+    for (const role of memberRoles) {
+      if (role.roleType === "leader" && !role.parentTeamId) {
+        throw new Error("Cannot leave: you are the leader of the founding team. Reassign the leader role first.");
       }
     }
-    
+
+    // Collect role and team info for the decision BEFORE modifying anything
+    const email = await getAuthenticatedUserEmail(ctx);
+    const roleAndTeamInfo = await getRoleAndTeamInfo(ctx, member._id, args.orgaId);
+
+    // Reassign all roles to appropriate leaders
+    for (const role of memberRoles) {
+      let transferTargetId: Id<"members">;
+
+      if (role.roleType === "leader") {
+        // Leader role: transfer to parent team's leader
+        if (!role.parentTeamId) {
+          // Root team leader - should be blocked above, but safety check
+          throw new Error("Cannot reassign root team leader role");
+        }
+        transferTargetId = await getTeamLeaderMemberId(ctx, role.parentTeamId);
+      } else {
+        // Non-leader role: transfer to same team's leader
+        transferTargetId = await getTeamLeaderMemberId(ctx, role.teamId);
+      }
+
+      // Reassign the role
+      await ctx.db.patch(role._id, { memberId: transferTargetId });
+
+      // Add role to new holder's roleIds (re-read to avoid stale data)
+      const targetMember = await ctx.db.get(transferTargetId);
+      if (targetMember && !targetMember.roleIds.includes(role._id)) {
+        await ctx.db.patch(transferTargetId, {
+          roleIds: [...targetMember.roleIds, role._id],
+        });
+      }
+
+      // Propagate to linked roles (double role pattern)
+      const linkedRoles = await ctx.db
+        .query("roles")
+        .withIndex("by_linked_role", (q) => q.eq("linkedRoleId", role._id))
+        .collect();
+
+      for (const linked of linkedRoles) {
+        // Remove linked role from leaving member
+        const oldLinkedHolder = await ctx.db.get(linked.memberId);
+        if (oldLinkedHolder && oldLinkedHolder._id === member._id) {
+          // The leaving member also holds the linked role - reassign it
+          await ctx.db.patch(linked._id, { memberId: transferTargetId });
+
+          // Add linked role to target's roleIds
+          const refreshedTarget = await ctx.db.get(transferTargetId);
+          if (refreshedTarget && !refreshedTarget.roleIds.includes(linked._id)) {
+            await ctx.db.patch(transferTargetId, {
+              roleIds: [...refreshedTarget.roleIds, linked._id],
+            });
+          }
+        }
+      }
+    }
+
     // Delete the member document
     await ctx.db.delete(member._id);
-    
+
     // Remove organization from user's orgaIds
     await ctx.db.patch(user._id, {
       orgaIds: user.orgaIds.filter((id) => id !== args.orgaId),
     });
-    
-    // Create decision record
-    const email = await getAuthenticatedUserEmail(ctx);
-    const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, args.orgaId);
-    
+
+    // Create decision record with proper Member diff
     await ctx.db.insert("decisions", {
       orgaId: args.orgaId,
       authorEmail: email,
-      roleName,
-      teamName,
+      roleName: roleAndTeamInfo.roleName,
+      teamName: roleAndTeamInfo.teamName,
       targetId: member._id,
       targetType: "members",
       diff: {
-        type: "Organization", // Using Organization as placeholder since Member diff not in schema
+        type: "Member",
         before: {
-          name: `${member.firstname} ${member.surname}`,
-          logoUrl: member.pictureURL,
-          colorScheme: { primary: { r: 0, g: 0, b: 0 }, secondary: { r: 0, g: 0, b: 0 } },
+          firstname: member.firstname,
+          surname: member.surname,
+          email: member.email,
         },
-        after: {
-          name: "",
-          logoUrl: undefined,
-          colorScheme: { primary: { r: 0, g: 0, b: 0 }, secondary: { r: 0, g: 0, b: 0 } },
-        },
+        after: undefined,
       },
     });
-    
+
     return null;
   },
 });

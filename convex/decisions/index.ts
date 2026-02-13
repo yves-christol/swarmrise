@@ -116,13 +116,29 @@ const policyDiff = v.object({
   })),
 });
 
+// Member diff
+const memberDiff = v.object({
+  type: v.literal("Member"),
+  before: v.optional(v.object({
+    firstname: v.optional(v.string()),
+    surname: v.optional(v.string()),
+    email: v.optional(v.string()),
+  })),
+  after: v.optional(v.object({
+    firstname: v.optional(v.string()),
+    surname: v.optional(v.string()),
+    email: v.optional(v.string()),
+  })),
+});
+
 // Decision diff validator - discriminated union ensuring type safety
 export const diffType = v.union(
   organizationDiff,
   teamDiff,
   roleDiff,
   invitationDiff,
-  policyDiff
+  policyDiff,
+  memberDiff
 );
 
 export const decisionType = v.object({

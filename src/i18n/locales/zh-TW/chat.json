@@ -16,5 +16,18 @@
   "chatNotifications": "{{count}} 則未讀訊息",
   "noChatNotifications": "沒有未讀訊息",
   "openChat": "開啟聊天",
-  "closeChat": "關閉聊天"
+  "closeChat": "關閉聊天",
+  "thread": "討論串",
+  "replies_one": "{{count}} 則回覆",
+  "replies_other": "{{count}} 則回覆",
+  "reply": "回覆",
+  "lastReply": "最後回覆 {{time}}",
+  "newConversation": "新對話",
+  "selectMember": "選擇成員",
+  "dmWith": "{{name}}",
+  "inThread": "在討論串中",
+  "directMessages": "私訊",
+  "closeThread": "關閉討論串",
+  "noReplies": "還沒有回覆",
+  "searchMembers": "搜尋成員..."
 }

@@ -16,5 +16,18 @@
   "chatNotifications": "{{count}} mensajes sin leer",
   "noChatNotifications": "Sin mensajes sin leer",
   "openChat": "Abrir chat",
-  "closeChat": "Cerrar chat"
+  "closeChat": "Cerrar chat",
+  "thread": "Hilo",
+  "replies_one": "{{count}} respuesta",
+  "replies_other": "{{count}} respuestas",
+  "reply": "Responder",
+  "lastReply": "Ultima respuesta {{time}}",
+  "newConversation": "Nueva conversacion",
+  "selectMember": "Seleccionar un miembro",
+  "dmWith": "{{name}}",
+  "inThread": "En el hilo",
+  "directMessages": "Mensajes directos",
+  "closeThread": "Cerrar hilo",
+  "noReplies": "Aun no hay respuestas",
+  "searchMembers": "Buscar miembros..."
 }

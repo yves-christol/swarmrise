@@ -16,5 +16,18 @@
   "chatNotifications": "{{count}} messages non lus",
   "noChatNotifications": "Aucun message non lu",
   "openChat": "Ouvrir la discussion",
-  "closeChat": "Fermer la discussion"
+  "closeChat": "Fermer la discussion",
+  "thread": "Fil",
+  "replies_one": "{{count}} reponse",
+  "replies_other": "{{count}} reponses",
+  "reply": "Repondre",
+  "lastReply": "Derniere reponse {{time}}",
+  "newConversation": "Nouvelle conversation",
+  "selectMember": "Selectionner un membre",
+  "dmWith": "{{name}}",
+  "inThread": "Dans le fil",
+  "directMessages": "Messages prives",
+  "closeThread": "Fermer le fil",
+  "noReplies": "Pas encore de reponses",
+  "searchMembers": "Rechercher des membres..."
 }

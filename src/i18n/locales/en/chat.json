@@ -16,5 +16,18 @@
   "chatNotifications": "{{count}} unread messages",
   "noChatNotifications": "No unread messages",
   "openChat": "Open chat",
-  "closeChat": "Close chat"
+  "closeChat": "Close chat",
+  "thread": "Thread",
+  "replies_one": "{{count}} reply",
+  "replies_other": "{{count}} replies",
+  "reply": "Reply",
+  "lastReply": "Last reply {{time}}",
+  "newConversation": "New conversation",
+  "selectMember": "Select a member",
+  "dmWith": "{{name}}",
+  "inThread": "In thread",
+  "directMessages": "Direct Messages",
+  "closeThread": "Close thread",
+  "noReplies": "No replies yet",
+  "searchMembers": "Search members..."
 }

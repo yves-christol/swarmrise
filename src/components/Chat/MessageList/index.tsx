@@ -1,8 +1,9 @@
 import { useRef, useEffect, useCallback, useState } from "react";
-import { usePaginatedQuery, useMutation } from "convex/react";
+import { usePaginatedQuery, useMutation, useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useChatStore } from "../../../tools/chatStore/hooks";
 import { MessageItem } from "./MessageItem";
 
 type MessageListProps = {
@@ -35,6 +36,7 @@ function isSameDay(a: number, b: number): boolean {
 
 export const MessageList = ({ channelId }: MessageListProps) => {
   const { t } = useTranslation("chat");
+  const { openThread } = useChatStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -51,6 +53,17 @@ export const MessageList = ({ channelId }: MessageListProps) => {
 
   // Messages come newest-first from Convex, reverse for chronological display
   const messages = [...(results ?? [])].reverse();
+
+  // Get thread reply counts for visible messages
+  const messageIds = messages.map((m) => m._id);
+  const threadCounts = useQuery(
+    api.chat.functions.getThreadCounts,
+    messageIds.length > 0 ? { channelId, messageIds } : "skip"
+  );
+
+  const getReplyCount = (messageId: Id<"messages">) => {
+    return threadCounts?.find((tc) => tc.messageId === messageId)?.replyCount ?? 0;
+  };
 
   // Mark channel as read when viewing it
   useEffect(() => {
@@ -149,7 +162,12 @@ export const MessageList = ({ channelId }: MessageListProps) => {
                   <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
                 </div>
               )}
-              <MessageItem message={msg} isCompact={isCompact} />
+              <MessageItem
+                message={msg}
+                isCompact={isCompact}
+                replyCount={getReplyCount(msg._id)}
+                onReply={openThread}
+              />
             </div>
           );
         })}

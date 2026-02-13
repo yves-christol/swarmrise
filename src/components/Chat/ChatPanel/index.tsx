@@ -9,26 +9,31 @@ import { useOrgaStore } from "../../../tools/orgaStore/hooks";
 import { ChannelList } from "../ChannelList";
 import { MessageList } from "../MessageList";
 import { MessageInput } from "../MessageInput";
+import { ThreadPanel } from "../ThreadPanel";
 
 export const ChatPanel = () => {
   const { t } = useTranslation("chat");
   const { isSignedIn } = useAuth();
   const { selectedOrgaId, selectedOrga } = useOrgaStore();
-  const { isChatOpen, closeChat, selectedChannelId } = useChatStore();
+  const { isChatOpen, closeChat, selectedChannelId, activeThreadMessageId, closeThread } = useChatStore();
 
   const channels = useQuery(
     api.chat.functions.getChannelsForMember,
     isSignedIn && selectedOrga ? { orgaId: selectedOrgaId! } : "skip"
   );
 
-  // Handle Escape key to close
+  // Handle Escape key: close thread first, then close chat
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        closeChat();
+        if (activeThreadMessageId) {
+          closeThread();
+        } else {
+          closeChat();
+        }
       }
     },
-    [closeChat]
+    [activeThreadMessageId, closeThread, closeChat]
   );
 
   useEffect(() => {
@@ -59,7 +64,7 @@ export const ChatPanel = () => {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700 shrink-0">
         <h2 className="text-sm font-semibold text-dark dark:text-light truncate">
-          {selectedChannelId ? channelName : t("chat")}
+          {activeThreadMessageId ? t("inThread") : selectedChannelId ? channelName : t("chat")}
         </h2>
         <button
           onClick={closeChat}
@@ -90,7 +95,13 @@ export const ChatPanel = () => {
 
         {/* Message area */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0">
-          {selectedChannelId ? (
+          {selectedChannelId && activeThreadMessageId ? (
+            <ThreadPanel
+              messageId={activeThreadMessageId}
+              channelId={selectedChannelId}
+              onClose={closeThread}
+            />
+          ) : selectedChannelId ? (
             <>
               <MessageList channelId={selectedChannelId} />
               <MessageInput

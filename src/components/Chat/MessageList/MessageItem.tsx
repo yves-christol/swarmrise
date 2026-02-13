@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Id } from "../../../../convex/_generated/dataModel";
 
 type MessageItemProps = {
@@ -14,6 +15,8 @@ type MessageItemProps = {
     };
   };
   isCompact: boolean;
+  replyCount?: number;
+  onReply?: (messageId: Id<"messages">) => void;
 };
 
 function formatTime(timestamp: number): string {
@@ -24,8 +27,28 @@ function formatTime(timestamp: number): string {
   });
 }
 
-export const MessageItem = ({ message, isCompact }: MessageItemProps) => {
+export const MessageItem = ({ message, isCompact, replyCount, onReply }: MessageItemProps) => {
+  const { t } = useTranslation("chat");
   const initials = `${message.author.firstname[0] ?? ""}${message.author.surname[0] ?? ""}`.toUpperCase();
+
+  const threadIndicator = onReply && (
+    <div className="flex items-center gap-2 mt-1">
+      {replyCount !== undefined && replyCount > 0 && (
+        <button
+          onClick={() => onReply(message._id)}
+          className="text-xs text-[#996800] dark:text-[#eac840] hover:underline"
+        >
+          {t("replies", { count: replyCount })}
+        </button>
+      )}
+      <button
+        onClick={() => onReply(message._id)}
+        className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        {t("reply")}
+      </button>
+    </div>
+  );
 
   if (isCompact) {
     return (
@@ -39,6 +62,7 @@ export const MessageItem = ({ message, isCompact }: MessageItemProps) => {
           <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
             {message.text}
           </p>
+          {threadIndicator}
         </div>
       </div>
     );
@@ -74,6 +98,7 @@ export const MessageItem = ({ message, isCompact }: MessageItemProps) => {
         <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
           {message.text}
         </p>
+        {threadIndicator}
       </div>
     </div>
   );

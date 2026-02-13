@@ -16,5 +16,18 @@
   "chatNotifications": "{{count}} непрочитаних повідомлень",
   "noChatNotifications": "Немає непрочитаних повідомлень",
   "openChat": "Відкрити чат",
-  "closeChat": "Закрити чат"
+  "closeChat": "Закрити чат",
+  "thread": "Гілка",
+  "replies_one": "{{count}} відповідь",
+  "replies_other": "{{count}} відповідей",
+  "reply": "Відповісти",
+  "lastReply": "Остання відповідь {{time}}",
+  "newConversation": "Нова розмова",
+  "selectMember": "Оберіть учасника",
+  "dmWith": "{{name}}",
+  "inThread": "В гілці",
+  "directMessages": "Приватні повідомлення",
+  "closeThread": "Закрити гілку",
+  "noReplies": "Ще немає відповідей",
+  "searchMembers": "Пошук учасників..."
 }

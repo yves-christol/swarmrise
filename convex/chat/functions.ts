@@ -8,8 +8,8 @@ import { requireChannelAccess, requireNotArchived } from "./access";
 
 /**
  * Get all channels the authenticated member can access in an organization.
- * Always includes the orga channel. Includes team channels for teams where the member has roles.
- * Excludes DMs (Phase 2). Returns channels sorted: orga first, then team channels by team name.
+ * Includes the orga channel, team channels where member has roles, and DM channels.
+ * Returns channels sorted: orga first, team channels alphabetically, then DMs.
  */
 export const getChannelsForMember = query({
   args: {
@@ -72,6 +72,30 @@ export const getChannelsForMember = query({
     teamChannels.sort((a, b) => a.name.localeCompare(b.name));
     result.push(...teamChannels);
 
+    // 3. Find DM channels where member is a participant
+    const dmChannels = await ctx.db
+      .query("channels")
+      .withIndex("by_orga_and_kind", (q) => q.eq("orgaId", args.orgaId).eq("kind", "dm"))
+      .collect();
+
+    const dmResults: ChannelWithName[] = [];
+    for (const dm of dmChannels) {
+      if (dm.dmMemberA === member._id || dm.dmMemberB === member._id) {
+        const otherMemberId = dm.dmMemberA === member._id ? dm.dmMemberB : dm.dmMemberA;
+        if (otherMemberId) {
+          const otherMember = await ctx.db.get(otherMemberId);
+          const name = otherMember
+            ? `${otherMember.firstname} ${otherMember.surname}`
+            : "Unknown";
+          dmResults.push({ ...dm, name });
+        }
+      }
+    }
+
+    // Sort DMs alphabetically by name
+    dmResults.sort((a, b) => a.name.localeCompare(b.name));
+    result.push(...dmResults);
+
     return result;
   },
 });
@@ -108,9 +132,11 @@ export const getMessages = query({
   handler: async (ctx, args) => {
     await requireChannelAccess(ctx, args.channelId);
 
+    // Only return top-level messages (not thread replies)
     const paginatedMessages = await ctx.db
       .query("messages")
       .withIndex("by_channel", (q) => q.eq("channelId", args.channelId))
+      .filter((q) => q.eq(q.field("threadParentId"), undefined))
       .order("desc")
       .paginate(args.paginationOpts);
 
@@ -187,6 +213,17 @@ export const getUnreadCounts = query({
         .withIndex("by_team", (q) => q.eq("teamId", teamId))
         .unique();
       if (channel && !channel.isArchived) channelIds.push(channel._id);
+    }
+
+    // DM channels
+    const dmChannels = await ctx.db
+      .query("channels")
+      .withIndex("by_orga_and_kind", (q) => q.eq("orgaId", args.orgaId).eq("kind", "dm"))
+      .collect();
+    for (const dm of dmChannels) {
+      if (dm.dmMemberA === member._id || dm.dmMemberB === member._id) {
+        channelIds.push(dm._id);
+      }
     }
 
     // Get unread counts for each channel
@@ -287,5 +324,250 @@ export const markAsRead = mutation({
     }
 
     return null;
+  },
+});
+
+// ---- Phase 2: Threads ----
+
+/**
+ * Get a single message by ID with denormalized author data.
+ * Used by ThreadPanel to fetch the parent message.
+ */
+export const getMessageById = query({
+  args: {
+    messageId: v.id("messages"),
+  },
+  returns: v.union(
+    v.object({
+      _id: v.id("messages"),
+      _creationTime: v.number(),
+      channelId: v.id("channels"),
+      orgaId: v.id("orgas"),
+      authorId: v.id("members"),
+      text: v.string(),
+      isEdited: v.boolean(),
+      editedAt: v.optional(v.number()),
+      threadParentId: v.optional(v.id("messages")),
+      author: v.object({
+        firstname: v.string(),
+        surname: v.string(),
+        pictureURL: v.optional(v.string()),
+      }),
+    }),
+    v.null()
+  ),
+  handler: async (ctx, args) => {
+    const msg = await ctx.db.get(args.messageId);
+    if (!msg) return null;
+
+    await requireChannelAccess(ctx, msg.channelId);
+
+    const memberDoc = await ctx.db.get(msg.authorId);
+    const author = memberDoc
+      ? { firstname: memberDoc.firstname, surname: memberDoc.surname, pictureURL: memberDoc.pictureURL }
+      : { firstname: "Unknown", surname: "User" };
+
+    return {
+      _id: msg._id,
+      _creationTime: msg._creationTime,
+      channelId: msg.channelId,
+      orgaId: msg.orgaId,
+      authorId: msg.authorId,
+      text: msg.text,
+      isEdited: msg.isEdited,
+      editedAt: msg.editedAt,
+      threadParentId: msg.threadParentId,
+      author,
+    };
+  },
+});
+
+/**
+ * Get all replies to a message (thread), ordered chronologically.
+ * No pagination (threads expected <100 replies).
+ */
+export const getThreadReplies = query({
+  args: {
+    messageId: v.id("messages"),
+  },
+  returns: v.array(v.object({
+    _id: v.id("messages"),
+    _creationTime: v.number(),
+    channelId: v.id("channels"),
+    orgaId: v.id("orgas"),
+    authorId: v.id("members"),
+    text: v.string(),
+    isEdited: v.boolean(),
+    editedAt: v.optional(v.number()),
+    threadParentId: v.optional(v.id("messages")),
+    author: v.object({
+      firstname: v.string(),
+      surname: v.string(),
+      pictureURL: v.optional(v.string()),
+    }),
+  })),
+  handler: async (ctx, args) => {
+    // Get the parent message to verify access
+    const parentMsg = await ctx.db.get(args.messageId);
+    if (!parentMsg) throw new Error("Message not found");
+    await requireChannelAccess(ctx, parentMsg.channelId);
+
+    const replies = await ctx.db
+      .query("messages")
+      .withIndex("by_thread_parent", (q) => q.eq("threadParentId", args.messageId))
+      .order("asc")
+      .collect();
+
+    const authorCache = new Map<string, { firstname: string; surname: string; pictureURL?: string }>();
+
+    return Promise.all(
+      replies.map(async (msg) => {
+        let author = authorCache.get(msg.authorId);
+        if (!author) {
+          const memberDoc = await ctx.db.get(msg.authorId);
+          author = memberDoc
+            ? { firstname: memberDoc.firstname, surname: memberDoc.surname, pictureURL: memberDoc.pictureURL }
+            : { firstname: "Unknown", surname: "User" };
+          authorCache.set(msg.authorId, author);
+        }
+        return {
+          _id: msg._id,
+          _creationTime: msg._creationTime,
+          channelId: msg.channelId,
+          orgaId: msg.orgaId,
+          authorId: msg.authorId,
+          text: msg.text,
+          isEdited: msg.isEdited,
+          editedAt: msg.editedAt,
+          threadParentId: msg.threadParentId,
+          author,
+        };
+      })
+    );
+  },
+});
+
+/**
+ * Send a reply to a thread.
+ */
+export const sendThreadReply = mutation({
+  args: {
+    channelId: v.id("channels"),
+    threadParentId: v.id("messages"),
+    text: v.string(),
+  },
+  returns: v.id("messages"),
+  handler: async (ctx, args) => {
+    const { channel, member } = await requireChannelAccess(ctx, args.channelId);
+    requireNotArchived(channel);
+
+    // Verify parent message exists and belongs to this channel
+    const parentMsg = await ctx.db.get(args.threadParentId);
+    if (!parentMsg) throw new Error("Parent message not found");
+    if (parentMsg.channelId !== args.channelId) throw new Error("Parent message does not belong to this channel");
+
+    const trimmed = args.text.trim();
+    if (trimmed.length === 0) {
+      throw new Error("Message cannot be empty");
+    }
+
+    const messageId = await ctx.db.insert("messages", {
+      channelId: args.channelId,
+      orgaId: channel.orgaId,
+      authorId: member._id,
+      text: trimmed,
+      threadParentId: args.threadParentId,
+      isEdited: false,
+    });
+
+    return messageId;
+  },
+});
+
+/**
+ * Get thread reply counts for a batch of message IDs.
+ * Returns count and last reply timestamp for each message.
+ */
+export const getThreadCounts = query({
+  args: {
+    channelId: v.id("channels"),
+    messageIds: v.array(v.id("messages")),
+  },
+  returns: v.array(v.object({
+    messageId: v.id("messages"),
+    replyCount: v.number(),
+    lastReplyTimestamp: v.optional(v.number()),
+  })),
+  handler: async (ctx, args) => {
+    await requireChannelAccess(ctx, args.channelId);
+
+    return Promise.all(
+      args.messageIds.map(async (messageId) => {
+        const replies = await ctx.db
+          .query("messages")
+          .withIndex("by_thread_parent", (q) => q.eq("threadParentId", messageId))
+          .collect();
+
+        return {
+          messageId,
+          replyCount: replies.length,
+          lastReplyTimestamp: replies.length > 0
+            ? replies[replies.length - 1]._creationTime
+            : undefined,
+        };
+      })
+    );
+  },
+});
+
+// ---- Phase 2: Direct Messages ----
+
+/**
+ * Get or create a DM channel between the authenticated member and another member.
+ * Always stores the lexicographically smaller member ID in dmMemberA for consistent lookups.
+ */
+export const getOrCreateDMChannel = mutation({
+  args: {
+    orgaId: v.id("orgas"),
+    otherMemberId: v.id("members"),
+  },
+  returns: v.id("channels"),
+  handler: async (ctx, args) => {
+    const member = await requireAuthAndMembership(ctx, args.orgaId);
+
+    if (member._id === args.otherMemberId) {
+      throw new Error("Cannot create a DM with yourself");
+    }
+
+    // Verify other member exists and is in the same orga
+    const otherMember = await ctx.db.get(args.otherMemberId);
+    if (!otherMember) throw new Error("Member not found");
+    if (otherMember.orgaId !== args.orgaId) throw new Error("Member not in this organization");
+
+    // Canonical ordering: smaller ID in dmMemberA
+    const [dmMemberA, dmMemberB] = member._id < args.otherMemberId
+      ? [member._id, args.otherMemberId]
+      : [args.otherMemberId, member._id];
+
+    // Check if DM channel already exists
+    const existing = await ctx.db
+      .query("channels")
+      .withIndex("by_dm_members", (q) =>
+        q.eq("orgaId", args.orgaId).eq("dmMemberA", dmMemberA).eq("dmMemberB", dmMemberB)
+      )
+      .unique();
+
+    if (existing) return existing._id;
+
+    // Create new DM channel
+    const channelId = await ctx.db.insert("channels", {
+      orgaId: args.orgaId,
+      kind: "dm",
+      dmMemberA,
+      dmMemberB,
+      isArchived: false,
+    });
+
+    return channelId;
   },
 });

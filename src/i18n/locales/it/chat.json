@@ -16,5 +16,18 @@
   "chatNotifications": "{{count}} messaggi non letti",
   "noChatNotifications": "Nessun messaggio non letto",
   "openChat": "Apri chat",
-  "closeChat": "Chiudi chat"
+  "closeChat": "Chiudi chat",
+  "thread": "Thread",
+  "replies_one": "{{count}} risposta",
+  "replies_other": "{{count}} risposte",
+  "reply": "Rispondi",
+  "lastReply": "Ultima risposta {{time}}",
+  "newConversation": "Nuova conversazione",
+  "selectMember": "Seleziona un membro",
+  "dmWith": "{{name}}",
+  "inThread": "Nel thread",
+  "directMessages": "Messaggi diretti",
+  "closeThread": "Chiudi thread",
+  "noReplies": "Ancora nessuna risposta",
+  "searchMembers": "Cerca membri..."
 }

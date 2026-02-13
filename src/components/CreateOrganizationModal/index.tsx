@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -386,7 +387,7 @@ export const CreateOrganizationModal = ({
 
   const currentColors = getColorScheme();
 
-  return (
+  return createPortal(
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-colors duration-150
         ${isVisible ? "bg-black/50" : "bg-black/0"}`}
@@ -722,6 +723,7 @@ export const CreateOrganizationModal = ({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

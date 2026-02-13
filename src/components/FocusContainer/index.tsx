@@ -465,7 +465,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
   const isSpatial = isSpatialTransition(transitionType);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden z-0">
       {/* View toggle -- visible only when idle */}
       {animationPhase === "idle" && !isFocusTransitioning && (
         <ViewToggle

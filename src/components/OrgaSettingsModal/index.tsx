@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -472,7 +473,7 @@ export const OrgaSettingsModal = ({
   const currentColors = getColorScheme();
   const displayLogoUrl = logoPreviewUrl ?? (logoRemoved ? null : logoUrl);
 
-  return (
+  return createPortal(
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-colors duration-150
         ${isVisible ? "bg-black/50" : "bg-black/0"}`}
@@ -880,6 +881,7 @@ export const OrgaSettingsModal = ({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

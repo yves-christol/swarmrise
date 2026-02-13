@@ -19,7 +19,7 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
   const { resolvedTheme } = useTheme();
 
   return (
-    <header className="flex-shrink-0 z-10 bg-light dark:bg-dark p-4 border-b-2 border-slate-300 dark:border-slate-800 flex flex-row justify-between items-center">
+    <header className="flex-shrink-0 z-30 bg-light dark:bg-dark p-4 border-b-2 border-slate-300 dark:border-slate-800 flex flex-row justify-between items-center">
       {/* Left side: Back button or Logo/brand */}
       {showBackButton ? (
         <Link

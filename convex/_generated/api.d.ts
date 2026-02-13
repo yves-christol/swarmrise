@@ -10,6 +10,9 @@
 
 import type * as admin from "../admin.js";
 import type * as aggregates from "../aggregates.js";
+import type * as chat_access from "../chat/access.js";
+import type * as chat_functions from "../chat/functions.js";
+import type * as chat_index from "../chat/index.js";
 import type * as crons from "../crons.js";
 import type * as dataTest_createDemoOrga from "../dataTest/createDemoOrga.js";
 import type * as dataTest_demoOrgaConfig from "../dataTest/demoOrgaConfig.js";
@@ -55,6 +58,9 @@ import type {
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   aggregates: typeof aggregates;
+  "chat/access": typeof chat_access;
+  "chat/functions": typeof chat_functions;
+  "chat/index": typeof chat_index;
   crons: typeof crons;
   "dataTest/createDemoOrga": typeof dataTest_createDemoOrga;
   "dataTest/demoOrgaConfig": typeof dataTest_demoOrgaConfig;

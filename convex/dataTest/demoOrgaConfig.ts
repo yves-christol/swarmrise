@@ -14,6 +14,13 @@
  * - Each team gets a Leader, Secretary, and Referee automatically
  * - Additional roles are defined per team in the config
  * - Users are randomly assigned to roles across teams
+ *
+ * Role naming conventions:
+ * - Role names describe the core mission, not a job title
+ *   (e.g. "Hiring" not "Hiring Manager", "Code Quality" not "QA Engineer")
+ * - Leader roles carry the same name as their daughter team
+ * - Leader missions describe the team's purpose, not "lead the team..."
+ * - Secretary and Referee roles use standardized missions (see createDemoOrga.ts)
  */
 
 // ---------------------------------------------------------------------------
@@ -53,148 +60,148 @@ export interface DemoOrgaConfig {
 // ---------------------------------------------------------------------------
 
 export const EXECUTIVE_ROLES: RoleTemplate[] = [
-  { title: "Chief of Staff", mission: "Coordinate executive operations and strategic initiatives", duties: ["Manage executive calendar", "Coordinate cross-functional projects", "Prepare board materials"] },
-  { title: "Executive Assistant", mission: "Provide high-level administrative support to executives", duties: ["Schedule management", "Travel coordination", "Meeting preparation"] },
-  { title: "Strategy Analyst", mission: "Analyze market trends and support strategic decision-making", duties: ["Market research", "Competitive analysis", "Strategic recommendations"] },
+  { title: "Executive Coordination", mission: "Coordinate executive operations and strategic initiatives across the organization", duties: ["Manage executive calendar and cross-functional projects", "Prepare board materials and strategic briefings", "Track progress on company-wide initiatives"] },
+  { title: "Executive Support", mission: "Provide high-level administrative support to ensure executive productivity", duties: ["Schedule management and travel coordination", "Meeting preparation and follow-up tracking", "Confidential correspondence handling"] },
+  { title: "Strategic Analysis", mission: "Analyze market trends and competitive landscape to support strategic decision-making", duties: ["Conduct market research and competitive analysis", "Produce strategic recommendations with supporting data", "Model scenarios for key business decisions"] },
 ];
 
 export const ENGINEERING_ROLES: RoleTemplate[] = [
-  { title: "Software Engineer", mission: "Design and implement software solutions", duties: ["Write clean, maintainable code", "Participate in code reviews", "Debug and troubleshoot issues"] },
-  { title: "Senior Software Engineer", mission: "Lead technical initiatives and mentor junior developers", duties: ["Architect solutions", "Mentor team members", "Drive technical excellence"] },
-  { title: "Staff Engineer", mission: "Drive technical strategy across engineering teams", duties: ["Technical leadership", "Cross-team coordination", "Architecture decisions"] },
-  { title: "Engineering Manager", mission: "Lead and grow engineering teams", duties: ["Team management", "Project planning", "Performance reviews"] },
-  { title: "DevOps Engineer", mission: "Maintain and improve CI/CD infrastructure", duties: ["Pipeline maintenance", "Infrastructure automation", "Monitoring setup"] },
-  { title: "QA Engineer", mission: "Ensure software quality through comprehensive testing", duties: ["Test planning", "Automated testing", "Bug reporting"] },
-  { title: "Site Reliability Engineer", mission: "Ensure system reliability and performance", duties: ["Incident response", "Capacity planning", "Performance optimization"] },
-  { title: "Technical Writer", mission: "Create and maintain technical documentation", duties: ["API documentation", "User guides", "Internal documentation"] },
+  { title: "Software Development", mission: "Design and implement reliable software solutions that serve user needs", duties: ["Write clean, maintainable, and well-tested code", "Participate in code reviews and pair programming", "Debug, troubleshoot, and resolve production issues"] },
+  { title: "Technical Mentorship", mission: "Elevate engineering practices by mentoring developers and driving technical excellence", duties: ["Architect solutions and guide implementation", "Mentor junior and mid-level engineers", "Champion best practices and knowledge sharing"] },
+  { title: "Technical Strategy", mission: "Define and align technical direction across engineering teams", duties: ["Drive cross-team technical alignment and standards", "Evaluate and adopt new technologies", "Make and document architecture decisions"] },
+  { title: "Delivery Planning", mission: "Plan and track engineering delivery to ensure projects ship on time and within scope", duties: ["Project planning and resource allocation", "Sprint management and velocity tracking", "Cross-team dependency coordination"] },
+  { title: "Continuous Integration", mission: "Maintain and improve CI/CD pipelines to accelerate safe deployments", duties: ["Pipeline maintenance and optimization", "Infrastructure automation and provisioning", "Build and deploy monitoring"] },
+  { title: "Code Quality", mission: "Ensure software quality through comprehensive testing strategies", duties: ["Test planning and coverage analysis", "Automated test development and maintenance", "Bug triage, reporting, and regression tracking"] },
+  { title: "Reliability", mission: "Ensure system uptime, reliability, and performance under all conditions", duties: ["Incident response and post-mortem analysis", "Capacity planning and load testing", "Performance monitoring and optimization"] },
+  { title: "Technical Documentation", mission: "Create and maintain documentation that keeps engineering knowledge accessible", duties: ["API and architecture documentation", "User guides and onboarding materials", "Internal runbooks and decision records"] },
 ];
 
 export const FRONTEND_ROLES: RoleTemplate[] = [
-  { title: "Frontend Developer", mission: "Build responsive and accessible user interfaces", duties: ["Implement UI components", "Optimize performance", "Ensure accessibility"] },
-  { title: "Senior Frontend Developer", mission: "Lead frontend architecture and best practices", duties: ["Architecture decisions", "Code review leadership", "Mentoring"] },
-  { title: "UI Engineer", mission: "Create pixel-perfect implementations of designs", duties: ["Component development", "Design system maintenance", "Animation implementation"] },
-  { title: "React Specialist", mission: "Drive React best practices and patterns", duties: ["React architecture", "State management", "Performance optimization"] },
+  { title: "User Interface Development", mission: "Build responsive and accessible user interfaces that delight users", duties: ["Implement UI components with accessibility standards", "Optimize rendering performance and bundle size", "Ensure cross-browser and cross-device compatibility"] },
+  { title: "Frontend Architecture", mission: "Define and maintain frontend architecture for scalability and developer experience", duties: ["Make architecture decisions and document patterns", "Lead code reviews and enforce conventions", "Evaluate and integrate frontend tooling"] },
+  { title: "Visual Implementation", mission: "Create pixel-perfect implementations that faithfully translate design into code", duties: ["Component development from design specs", "Design system maintenance and token management", "Animation and interaction implementation"] },
+  { title: "React Patterns", mission: "Drive React best practices, patterns, and performance across the codebase", duties: ["Define React architecture and state management strategy", "Optimize component rendering and data flow", "Create reusable hooks and shared patterns"] },
 ];
 
 export const BACKEND_ROLES: RoleTemplate[] = [
-  { title: "Backend Developer", mission: "Build scalable server-side applications", duties: ["API development", "Database optimization", "Service integration"] },
-  { title: "Senior Backend Developer", mission: "Lead backend architecture and system design", duties: ["System design", "Technical leadership", "Performance tuning"] },
-  { title: "API Developer", mission: "Design and implement RESTful and GraphQL APIs", duties: ["API design", "Documentation", "Versioning strategy"] },
-  { title: "Database Engineer", mission: "Optimize database performance and architecture", duties: ["Query optimization", "Schema design", "Data migration"] },
+  { title: "Server-Side Development", mission: "Build scalable and resilient server-side applications and services", duties: ["API development and endpoint design", "Database query optimization", "Service integration and error handling"] },
+  { title: "Backend Architecture", mission: "Design robust backend systems that scale with business growth", duties: ["System design and capacity modeling", "Technical leadership on backend standards", "Performance tuning and bottleneck resolution"] },
+  { title: "API Design", mission: "Design and implement consistent, well-documented APIs for internal and external consumers", duties: ["API contract design and versioning strategy", "Endpoint documentation and developer portal", "Breaking change management and migration guides"] },
+  { title: "Data Storage", mission: "Optimize database performance and architect data storage solutions", duties: ["Query optimization and index management", "Schema design and evolution planning", "Data migration execution and validation"] },
 ];
 
 export const PLATFORM_ROLES: RoleTemplate[] = [
-  { title: "Platform Engineer", mission: "Build and maintain internal developer platforms", duties: ["Platform development", "Developer tooling", "Documentation"] },
-  { title: "Infrastructure Engineer", mission: "Manage cloud infrastructure and resources", duties: ["Cloud management", "Cost optimization", "Security compliance"] },
-  { title: "Cloud Architect", mission: "Design scalable cloud solutions", duties: ["Architecture design", "Cloud migration", "Best practices"] },
+  { title: "Developer Platform", mission: "Build and maintain internal platforms that accelerate developer productivity", duties: ["Platform feature development and maintenance", "Developer tooling and self-service capabilities", "Platform documentation and onboarding"] },
+  { title: "Cloud Infrastructure", mission: "Manage cloud infrastructure to ensure reliability, security, and cost efficiency", duties: ["Cloud resource provisioning and management", "Cost optimization and budget tracking", "Security compliance and access control"] },
+  { title: "Cloud Architecture", mission: "Design scalable cloud solutions that support the organization's growth", duties: ["Architecture design and reference implementations", "Cloud migration planning and execution", "Infrastructure best practices and standards"] },
 ];
 
 export const PRODUCT_ROLES: RoleTemplate[] = [
-  { title: "Product Manager", mission: "Define product strategy and roadmap", duties: ["Roadmap planning", "Stakeholder management", "Feature prioritization"] },
-  { title: "Senior Product Manager", mission: "Lead product initiatives and cross-functional teams", duties: ["Strategic planning", "Team leadership", "Market analysis"] },
-  { title: "Product Analyst", mission: "Analyze product metrics and user behavior", duties: ["Data analysis", "User research insights", "A/B test analysis"] },
-  { title: "Technical Product Manager", mission: "Bridge technical and product requirements", duties: ["Technical specifications", "API product management", "Developer experience"] },
-  { title: "Product Owner", mission: "Manage product backlog and sprint priorities", duties: ["Backlog management", "Sprint planning", "Stakeholder communication"] },
+  { title: "Product Strategy", mission: "Define product vision, strategy, and roadmap aligned with user needs and business goals", duties: ["Roadmap planning and feature prioritization", "Stakeholder alignment and communication", "Market analysis and opportunity assessment"] },
+  { title: "Product Leadership", mission: "Drive cross-functional product initiatives from discovery to delivery", duties: ["Strategic planning and goal setting", "Cross-functional coordination and alignment", "Market analysis and competitive positioning"] },
+  { title: "Product Analytics", mission: "Analyze product metrics and user behavior to inform product decisions", duties: ["Data analysis and insight generation", "User research synthesis and reporting", "A/B test design and result interpretation"] },
+  { title: "Technical Product Specification", mission: "Bridge technical capabilities and product requirements into actionable specs", duties: ["Technical specification writing", "API product management and developer experience", "Feasibility assessment and trade-off analysis"] },
+  { title: "Backlog Management", mission: "Manage product backlog to ensure the team always works on the highest-impact items", duties: ["Backlog grooming and prioritization", "Sprint planning and acceptance criteria definition", "Stakeholder communication and expectation management"] },
 ];
 
 export const DESIGN_ROLES: RoleTemplate[] = [
-  { title: "UX Designer", mission: "Create intuitive user experiences", duties: ["User research", "Wireframing", "Usability testing"] },
-  { title: "Senior UX Designer", mission: "Lead UX strategy and design systems", duties: ["Design system leadership", "UX strategy", "Mentoring"] },
-  { title: "UI Designer", mission: "Create visually appealing interfaces", duties: ["Visual design", "Icon design", "Brand consistency"] },
-  { title: "Product Designer", mission: "End-to-end product design from concept to launch", duties: ["Product design", "Prototyping", "Design handoff"] },
-  { title: "UX Researcher", mission: "Conduct user research and synthesize insights", duties: ["User interviews", "Usability studies", "Research synthesis"] },
-  { title: "Design Systems Lead", mission: "Maintain and evolve the design system", duties: ["Component library", "Design tokens", "Documentation"] },
+  { title: "User Experience Design", mission: "Create intuitive user experiences grounded in research and empathy", duties: ["User research and persona development", "Wireframing and interaction design", "Usability testing and iteration"] },
+  { title: "UX Strategy", mission: "Define and evolve the overall UX strategy and design system", duties: ["Design system governance and evolution", "UX strategy and vision articulation", "Mentoring and design critique facilitation"] },
+  { title: "Visual Design", mission: "Create visually compelling interfaces that reinforce brand identity", duties: ["Visual design and iconography", "Brand consistency enforcement", "Color, typography, and layout refinement"] },
+  { title: "End-to-End Product Design", mission: "Own product design from early concept through launch and iteration", duties: ["Concept exploration and prototyping", "Design-to-engineering handoff and QA", "Post-launch design evaluation and refinement"] },
+  { title: "User Research", mission: "Conduct rigorous user research to ground design and product decisions in evidence", duties: ["User interview planning and execution", "Usability study design and facilitation", "Research synthesis and actionable insight delivery"] },
+  { title: "Design System", mission: "Maintain and evolve the design system to ensure consistency and efficiency", duties: ["Component library curation and documentation", "Design token management and theming", "Adoption tracking and contributor guidelines"] },
 ];
 
 export const MARKETING_ROLES: RoleTemplate[] = [
-  { title: "Marketing Manager", mission: "Lead marketing campaigns and brand strategy", duties: ["Campaign management", "Brand strategy", "Budget management"] },
-  { title: "Content Marketing Specialist", mission: "Create compelling content that drives engagement", duties: ["Content creation", "SEO optimization", "Editorial calendar"] },
-  { title: "Digital Marketing Specialist", mission: "Manage digital advertising and campaigns", duties: ["PPC campaigns", "Social media ads", "Analytics reporting"] },
-  { title: "Brand Manager", mission: "Maintain and evolve brand identity", duties: ["Brand guidelines", "Creative direction", "Brand partnerships"] },
-  { title: "Marketing Analyst", mission: "Analyze marketing performance and ROI", duties: ["Campaign analytics", "Attribution modeling", "Report generation"] },
-  { title: "SEO Specialist", mission: "Optimize organic search visibility", duties: ["Keyword research", "Technical SEO", "Link building strategy"] },
+  { title: "Campaign Management", mission: "Plan and execute marketing campaigns that drive awareness and conversions", duties: ["Campaign planning, execution, and optimization", "Brand strategy and messaging alignment", "Budget allocation and ROI tracking"] },
+  { title: "Content Creation", mission: "Create compelling content that educates, engages, and converts the target audience", duties: ["Content creation across formats and channels", "SEO optimization and keyword strategy", "Editorial calendar management and publishing"] },
+  { title: "Digital Advertising", mission: "Manage digital advertising channels to maximize reach and return on ad spend", duties: ["PPC and social media ad campaign management", "Audience targeting and creative testing", "Analytics reporting and performance optimization"] },
+  { title: "Brand Stewardship", mission: "Protect and evolve the brand identity across all touchpoints", duties: ["Brand guidelines maintenance and enforcement", "Creative direction for campaigns and assets", "Brand partnership evaluation and management"] },
+  { title: "Marketing Performance Analysis", mission: "Measure marketing performance and attribution to optimize spend and strategy", duties: ["Campaign analytics and attribution modeling", "Report generation and executive summaries", "Benchmarking and competitive performance tracking"] },
+  { title: "Search Visibility", mission: "Optimize organic search visibility to drive sustainable inbound traffic", duties: ["Keyword research and content gap analysis", "Technical SEO audits and remediation", "Link building strategy and outreach"] },
 ];
 
 export const GROWTH_ROLES: RoleTemplate[] = [
-  { title: "Growth Manager", mission: "Drive user acquisition and retention", duties: ["Growth experiments", "Funnel optimization", "Retention strategies"] },
-  { title: "Growth Analyst", mission: "Analyze growth metrics and identify opportunities", duties: ["Data analysis", "Experimentation design", "Reporting"] },
-  { title: "Growth Engineer", mission: "Build tools and features to accelerate growth", duties: ["A/B testing infrastructure", "Analytics implementation", "Growth features"] },
+  { title: "Growth Experimentation", mission: "Design and run growth experiments to drive user acquisition and retention", duties: ["Hypothesis generation and experiment design", "Funnel analysis and conversion optimization", "Retention strategy development and testing"] },
+  { title: "Growth Analytics", mission: "Analyze growth metrics to identify opportunities and measure experiment impact", duties: ["Data analysis and cohort tracking", "Experimentation result interpretation", "Growth reporting and forecasting"] },
+  { title: "Growth Engineering", mission: "Build tools and features that accelerate user acquisition and activation", duties: ["A/B testing infrastructure development", "Analytics implementation and event tracking", "Growth feature prototyping and iteration"] },
 ];
 
 export const COMMUNICATIONS_ROLES: RoleTemplate[] = [
-  { title: "Communications Manager", mission: "Manage external and internal communications", duties: ["Press relations", "Internal communications", "Crisis management"] },
-  { title: "PR Specialist", mission: "Build media relationships and manage press coverage", duties: ["Media outreach", "Press releases", "Event coordination"] },
-  { title: "Social Media Manager", mission: "Manage social media presence and engagement", duties: ["Content scheduling", "Community engagement", "Social analytics"] },
+  { title: "External and Internal Communications", mission: "Manage communications to keep stakeholders informed and aligned", duties: ["Press relations and media monitoring", "Internal communications and town halls", "Crisis communication planning and response"] },
+  { title: "Public Relations", mission: "Build media relationships and earn positive press coverage", duties: ["Media outreach and journalist relationship management", "Press release writing and distribution", "Event coordination and speaking opportunities"] },
+  { title: "Social Media Engagement", mission: "Grow and engage the social media community to amplify brand reach", duties: ["Content scheduling and publishing", "Community engagement and conversation management", "Social analytics and trend monitoring"] },
 ];
 
 export const SALES_ROLES: RoleTemplate[] = [
-  { title: "Sales Manager", mission: "Lead sales team and drive revenue growth", duties: ["Team leadership", "Pipeline management", "Sales strategy"] },
-  { title: "Account Executive", mission: "Close deals and manage client relationships", duties: ["Prospecting", "Negotiations", "Contract management"] },
-  { title: "Sales Development Representative", mission: "Generate and qualify sales leads", duties: ["Lead generation", "Cold outreach", "Lead qualification"] },
-  { title: "Enterprise Account Manager", mission: "Manage strategic enterprise accounts", duties: ["Account strategy", "Relationship management", "Upselling"] },
-  { title: "Sales Engineer", mission: "Provide technical expertise during sales process", duties: ["Product demos", "Technical consultation", "Proof of concepts"] },
-  { title: "Sales Operations Analyst", mission: "Optimize sales processes and tools", duties: ["CRM management", "Sales analytics", "Process improvement"] },
+  { title: "Revenue Strategy", mission: "Drive revenue growth by defining and executing the sales strategy", duties: ["Sales strategy development and execution", "Pipeline management and forecasting", "Territory planning and quota setting"] },
+  { title: "Deal Closure", mission: "Close deals by understanding client needs and demonstrating product value", duties: ["Prospecting and opportunity qualification", "Negotiation and contract finalization", "Client relationship nurturing"] },
+  { title: "Lead Generation", mission: "Generate and qualify leads to keep the sales pipeline healthy", duties: ["Outbound lead generation and cold outreach", "Lead qualification and scoring", "Handoff coordination with account executives"] },
+  { title: "Enterprise Account Management", mission: "Grow and retain strategic enterprise accounts through trusted partnerships", duties: ["Account strategy and expansion planning", "Executive relationship management", "Upselling and cross-selling identification"] },
+  { title: "Technical Sales Support", mission: "Provide technical expertise during the sales process to build buyer confidence", duties: ["Product demonstrations and technical deep-dives", "Proof of concept design and execution", "Technical consultation and solution scoping"] },
+  { title: "Sales Process Optimization", mission: "Optimize sales processes, tools, and data to improve team efficiency", duties: ["CRM management and data hygiene", "Sales analytics and pipeline reporting", "Process improvement and automation"] },
 ];
 
 export const CUSTOMER_SUCCESS_ROLES: RoleTemplate[] = [
-  { title: "Customer Success Manager", mission: "Ensure customer satisfaction and retention", duties: ["Onboarding", "Health monitoring", "Renewal management"] },
-  { title: "Senior Customer Success Manager", mission: "Lead strategic customer relationships", duties: ["Strategic accounts", "Escalation management", "Best practices"] },
-  { title: "Customer Support Specialist", mission: "Resolve customer issues and inquiries", duties: ["Ticket resolution", "Product guidance", "Documentation"] },
-  { title: "Technical Support Engineer", mission: "Provide technical troubleshooting support", duties: ["Technical debugging", "Issue escalation", "Knowledge base"] },
-  { title: "Implementation Specialist", mission: "Guide customers through product implementation", duties: ["Implementation planning", "Configuration", "Training"] },
+  { title: "Customer Retention", mission: "Ensure customer satisfaction and long-term retention through proactive engagement", duties: ["Customer onboarding and adoption tracking", "Health monitoring and churn risk mitigation", "Renewal management and success planning"] },
+  { title: "Strategic Customer Partnerships", mission: "Build deep partnerships with strategic customers to maximize mutual value", duties: ["Strategic account planning and QBRs", "Escalation management and resolution", "Best practice sharing and advisory"] },
+  { title: "Customer Issue Resolution", mission: "Resolve customer issues quickly and thoroughly to maintain trust", duties: ["Ticket resolution within SLA targets", "Product guidance and workaround documentation", "Knowledge base contribution and maintenance"] },
+  { title: "Technical Troubleshooting", mission: "Provide technical troubleshooting to unblock customers and improve product quality", duties: ["Technical debugging and root cause analysis", "Issue escalation with engineering context", "Knowledge base and FAQ development"] },
+  { title: "Customer Onboarding", mission: "Guide customers through implementation to ensure fast time-to-value", duties: ["Implementation planning and configuration", "Data migration support and validation", "Training delivery and enablement"] },
 ];
 
 export const FINANCE_ROLES: RoleTemplate[] = [
-  { title: "Financial Analyst", mission: "Analyze financial performance and forecasts", duties: ["Financial modeling", "Variance analysis", "Budget forecasting"] },
-  { title: "Senior Financial Analyst", mission: "Lead financial planning and strategic analysis", duties: ["Strategic planning", "Investment analysis", "Board reporting"] },
-  { title: "Accountant", mission: "Manage accounting operations and compliance", duties: ["Bookkeeping", "Reconciliation", "Compliance"] },
-  { title: "Controller", mission: "Oversee accounting operations and financial controls", duties: ["Financial controls", "Audit management", "Policy compliance"] },
-  { title: "Treasury Analyst", mission: "Manage cash flow and banking relationships", duties: ["Cash management", "Banking relationships", "Liquidity planning"] },
+  { title: "Financial Analysis", mission: "Analyze financial performance and produce forecasts to guide business decisions", duties: ["Financial modeling and scenario analysis", "Variance analysis and commentary", "Budget forecasting and tracking"] },
+  { title: "Strategic Financial Planning", mission: "Lead financial planning to ensure the company allocates resources effectively", duties: ["Strategic planning and long-range forecasting", "Investment analysis and capital allocation", "Board reporting and financial narratives"] },
+  { title: "Accounting Operations", mission: "Manage day-to-day accounting operations with accuracy and compliance", duties: ["Bookkeeping and journal entry management", "Account reconciliation and close processes", "Regulatory compliance and audit preparation"] },
+  { title: "Financial Controls", mission: "Oversee accounting controls to safeguard assets and ensure reporting accuracy", duties: ["Internal control design and monitoring", "Audit management and remediation", "Policy compliance verification"] },
+  { title: "Treasury Management", mission: "Manage cash flow and banking relationships to ensure liquidity and financial stability", duties: ["Cash management and daily positioning", "Banking relationship management", "Liquidity planning and debt management"] },
 ];
 
 export const HR_ROLES: RoleTemplate[] = [
-  { title: "HR Manager", mission: "Lead human resources operations and strategy", duties: ["HR policy", "Employee relations", "Compliance"] },
-  { title: "Recruiter", mission: "Attract and hire top talent", duties: ["Sourcing", "Interviewing", "Offer management"] },
-  { title: "Senior Recruiter", mission: "Lead recruiting strategy and mentor team", duties: ["Recruiting strategy", "Employer branding", "Team mentorship"] },
-  { title: "HR Business Partner", mission: "Support business units with HR expertise", duties: ["Performance management", "Organizational development", "Employee engagement"] },
-  { title: "Compensation Analyst", mission: "Design and analyze compensation programs", duties: ["Market analysis", "Pay equity", "Benefits administration"] },
-  { title: "Learning & Development Specialist", mission: "Create training and development programs", duties: ["Training design", "Program delivery", "Impact measurement"] },
+  { title: "People Operations", mission: "Design and operate people processes that attract, develop, and retain talent", duties: ["HR policy development and enforcement", "Employee relations and conflict resolution", "Compliance monitoring and reporting"] },
+  { title: "Hiring", mission: "Attract and hire top talent to fuel the organization's growth", duties: ["Sourcing and candidate pipeline management", "Interview coordination and candidate experience", "Offer management and onboarding handoff"] },
+  { title: "Recruiting Strategy", mission: "Define and execute recruiting strategy to build a strong employer brand", duties: ["Recruiting strategy and channel optimization", "Employer branding and talent marketing", "Recruiting team mentorship and process improvement"] },
+  { title: "HR Business Partnership", mission: "Partner with business units to align people strategy with business objectives", duties: ["Performance management and calibration", "Organizational development and team effectiveness", "Employee engagement and retention programs"] },
+  { title: "Compensation Design", mission: "Design equitable compensation programs that attract and retain talent", duties: ["Market analysis and benchmarking", "Pay equity analysis and remediation", "Benefits program administration and evaluation"] },
+  { title: "Learning and Development", mission: "Create training and development programs that grow employee capabilities", duties: ["Training program design and curriculum development", "Program delivery and facilitation", "Impact measurement and continuous improvement"] },
 ];
 
 export const LEGAL_ROLES: RoleTemplate[] = [
-  { title: "Legal Counsel", mission: "Provide legal guidance and contract support", duties: ["Contract review", "Legal advice", "Compliance guidance"] },
-  { title: "Senior Legal Counsel", mission: "Lead legal strategy and complex matters", duties: ["Strategic legal advice", "Litigation management", "Policy development"] },
-  { title: "Paralegal", mission: "Support legal team with research and documentation", duties: ["Legal research", "Document preparation", "File management"] },
-  { title: "Compliance Officer", mission: "Ensure regulatory compliance across the organization", duties: ["Compliance monitoring", "Policy development", "Risk assessment"] },
+  { title: "Legal Advisory", mission: "Provide legal guidance to protect the organization and enable business growth", duties: ["Contract review and negotiation support", "Legal advice on business initiatives", "Compliance guidance and risk flagging"] },
+  { title: "Complex Legal Matters", mission: "Handle complex legal matters and shape the organization's legal strategy", duties: ["Strategic legal advice and risk assessment", "Litigation management and dispute resolution", "Policy development and regulatory strategy"] },
+  { title: "Legal Research and Support", mission: "Support the legal team with thorough research and document preparation", duties: ["Legal research and case analysis", "Document preparation and filing", "Contract database and file management"] },
+  { title: "Regulatory Compliance", mission: "Ensure the organization meets all regulatory requirements across jurisdictions", duties: ["Compliance monitoring and gap assessment", "Policy development and training delivery", "Risk assessment and mitigation planning"] },
 ];
 
 export const DATA_ROLES: RoleTemplate[] = [
-  { title: "Data Analyst", mission: "Analyze data to drive business decisions", duties: ["Data analysis", "Dashboard creation", "Stakeholder reporting"] },
-  { title: "Senior Data Analyst", mission: "Lead analytics initiatives and mentor analysts", duties: ["Analytics strategy", "Complex analysis", "Team mentorship"] },
-  { title: "Data Scientist", mission: "Build predictive models and extract insights", duties: ["Model development", "Statistical analysis", "Experimentation"] },
-  { title: "Data Engineer", mission: "Build and maintain data infrastructure", duties: ["ETL pipelines", "Data warehousing", "Data quality"] },
-  { title: "Machine Learning Engineer", mission: "Deploy and optimize ML models in production", duties: ["Model deployment", "MLOps", "Performance monitoring"] },
-  { title: "Analytics Engineer", mission: "Build data models and transform raw data", duties: ["Data modeling", "SQL development", "Documentation"] },
+  { title: "Business Data Analysis", mission: "Analyze data to surface insights that drive better business decisions", duties: ["Data analysis and pattern identification", "Dashboard creation and self-service enablement", "Stakeholder reporting and insight communication"] },
+  { title: "Analytics Leadership", mission: "Lead analytics initiatives and raise the bar on data-driven decision-making", duties: ["Analytics strategy and roadmap definition", "Complex cross-functional analysis", "Analyst mentorship and methodology standardization"] },
+  { title: "Predictive Modeling", mission: "Build predictive models that create competitive advantage through data science", duties: ["Model development and validation", "Statistical analysis and experimentation", "Insight communication and stakeholder education"] },
+  { title: "Data Pipeline Engineering", mission: "Build and maintain data infrastructure that makes data reliable and accessible", duties: ["ETL pipeline development and orchestration", "Data warehousing and lakehouse architecture", "Data quality monitoring and alerting"] },
+  { title: "Machine Learning Operations", mission: "Deploy, monitor, and optimize ML models in production environments", duties: ["Model deployment and serving infrastructure", "MLOps pipeline automation", "Performance monitoring and model retraining"] },
+  { title: "Data Modeling", mission: "Build semantic data models that transform raw data into trusted, reusable datasets", duties: ["Data modeling and transformation development", "SQL development and optimization", "Documentation and data catalog maintenance"] },
 ];
 
 export const SECURITY_ROLES: RoleTemplate[] = [
-  { title: "Security Engineer", mission: "Implement and maintain security controls", duties: ["Security implementation", "Vulnerability management", "Incident response"] },
-  { title: "Security Analyst", mission: "Monitor and analyze security threats", duties: ["Threat monitoring", "Security assessments", "Compliance audits"] },
-  { title: "Application Security Engineer", mission: "Secure applications throughout the SDLC", duties: ["Code review", "Security testing", "Developer training"] },
+  { title: "Security Implementation", mission: "Implement and maintain security controls that protect organizational assets", duties: ["Security control deployment and configuration", "Vulnerability management and patching", "Incident response and forensic analysis"] },
+  { title: "Threat Analysis", mission: "Monitor and analyze security threats to stay ahead of adversaries", duties: ["Threat monitoring and intelligence gathering", "Security assessments and penetration testing", "Compliance audits and remediation tracking"] },
+  { title: "Application Security", mission: "Secure applications throughout the development lifecycle", duties: ["Secure code review and static analysis", "Security testing and vulnerability remediation", "Developer security training and guidelines"] },
 ];
 
 export const IT_ROLES: RoleTemplate[] = [
-  { title: "IT Manager", mission: "Lead IT operations and infrastructure", duties: ["IT strategy", "Vendor management", "Team leadership"] },
-  { title: "Systems Administrator", mission: "Manage and maintain IT systems", duties: ["System maintenance", "User support", "Security patches"] },
-  { title: "IT Support Specialist", mission: "Provide technical support to employees", duties: ["Helpdesk support", "Equipment setup", "Troubleshooting"] },
-  { title: "Network Administrator", mission: "Manage network infrastructure and security", duties: ["Network management", "Firewall configuration", "VPN management"] },
+  { title: "IT Strategy", mission: "Define and execute IT strategy to support organizational productivity", duties: ["IT roadmap planning and prioritization", "Vendor management and contract negotiation", "IT budget management and cost optimization"] },
+  { title: "System Administration", mission: "Manage and maintain IT systems to ensure availability and security", duties: ["System maintenance and patch management", "User provisioning and access management", "Security hardening and compliance"] },
+  { title: "Employee Tech Support", mission: "Provide responsive technical support so employees stay productive", duties: ["Helpdesk ticket resolution and SLA management", "Equipment setup and provisioning", "Troubleshooting and root cause documentation"] },
+  { title: "Network Management", mission: "Manage network infrastructure to ensure fast, reliable, and secure connectivity", duties: ["Network monitoring and capacity management", "Firewall and access policy configuration", "VPN management and remote access support"] },
 ];
 
 export const OPERATIONS_ROLES: RoleTemplate[] = [
-  { title: "Operations Manager", mission: "Oversee daily operations and process efficiency", duties: ["Process management", "Resource allocation", "Performance monitoring"] },
-  { title: "Project Manager", mission: "Lead project planning and execution", duties: ["Project planning", "Stakeholder management", "Risk mitigation"] },
-  { title: "Business Analyst", mission: "Analyze business requirements and processes", duties: ["Requirements gathering", "Process analysis", "Solution design"] },
-  { title: "Program Manager", mission: "Coordinate multiple related projects", duties: ["Program coordination", "Strategic alignment", "Cross-project dependencies"] },
+  { title: "Operational Efficiency", mission: "Improve operational processes to increase efficiency and reduce waste", duties: ["Process analysis and optimization", "Resource allocation and utilization tracking", "Performance monitoring and KPI reporting"] },
+  { title: "Project Delivery", mission: "Plan and execute projects to deliver outcomes on time and within budget", duties: ["Project planning and milestone tracking", "Stakeholder management and status communication", "Risk identification and mitigation"] },
+  { title: "Business Requirements Analysis", mission: "Analyze business requirements and translate them into actionable solutions", duties: ["Requirements gathering and documentation", "Process mapping and gap analysis", "Solution design and acceptance criteria definition"] },
+  { title: "Program Coordination", mission: "Coordinate multiple related projects to achieve strategic program objectives", duties: ["Program-level planning and governance", "Strategic alignment and OKR tracking", "Cross-project dependency management and risk mitigation"] },
 ];
 
 // ---------------------------------------------------------------------------

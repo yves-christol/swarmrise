@@ -1,0 +1,20 @@
+{
+  "chat": "Чат",
+  "channels": "Канали",
+  "orgaChannel": "Загальний",
+  "teamChannel": "{{teamName}}",
+  "directMessage": "ПП з {{name}}",
+  "sendMessage": "Надіслати повідомлення",
+  "typeMessage": "Введіть повідомлення...",
+  "archivedChannel": "Цей канал архівовано",
+  "newMessages": "Нові повідомлення",
+  "unreadCount": "{{count}} непрочитаних",
+  "noMessages": "Ще немає повідомлень. Почніть розмову!",
+  "loadingMessages": "Завантаження повідомлень...",
+  "today": "Сьогодні",
+  "yesterday": "Вчора",
+  "chatNotifications": "{{count}} непрочитаних повідомлень",
+  "noChatNotifications": "Немає непрочитаних повідомлень",
+  "openChat": "Відкрити чат",
+  "closeChat": "Закрити чат"
+}

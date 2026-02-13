@@ -148,6 +148,29 @@ export const deleteDemoOrga = internalMutation({
     const orgaId = orga._id;
     console.log(`[deleteDemoOrga] Deleting orga "${orga.name}" (${orgaId})...`);
 
+    // 0. Chat data (channels, messages, read positions)
+    const channels = await ctx.db
+      .query("channels")
+      .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+      .collect();
+    for (const channel of channels) {
+      const msgs = await ctx.db
+        .query("messages")
+        .withIndex("by_channel", (q) => q.eq("channelId", channel._id))
+        .collect();
+      for (const msg of msgs) {
+        await ctx.db.delete(msg._id);
+      }
+      const readPositions = await ctx.db
+        .query("channelReadPositions")
+        .withIndex("by_channel_and_member", (q) => q.eq("channelId", channel._id))
+        .collect();
+      for (const rp of readPositions) {
+        await ctx.db.delete(rp._id);
+      }
+      await ctx.db.delete(channel._id);
+    }
+
     // 1. Topics (queried via teams since topics lack an orgaId index)
     const teams = await ctx.db
       .query("teams")
@@ -449,20 +472,22 @@ export const seedDemoOrga = internalMutation({
       teamIds.push(teamId);
 
       // Determine leader info
+      // Rule (b): leader role name = daughter team name
+      // Rule (c): leader mission describes the team's purpose, not "lead the team..."
       const leaderMemberId =
         parentTeamId === undefined ? adminMemberId : getRandomMember();
       const leaderTitle =
         parentTeamId === undefined
-          ? "Chief Executive Officer"
+          ? "Core Team"
           : template.name;
       const leaderMission =
         parentTeamId === undefined
-          ? "Lead the organization and set strategic direction"
-          : `Lead the ${template.name} team and drive departmental excellence`;
+          ? "Set the strategic direction and ensure the organization fulfills its mission"
+          : `Deliver on the ${template.name} mission and ensure the team's contributions create lasting value`;
       const leaderDuties =
         parentTeamId === undefined
-          ? ["Set company vision", "Lead executive team", "Stakeholder management"]
-          : [`Manage ${template.name} operations`, "Team leadership", "Strategic planning"];
+          ? ["Define and communicate company vision and strategy", "Align teams around shared goals and priorities", "Represent the organization to external stakeholders"]
+          : [`Define and pursue the ${template.name} objectives`, "Allocate resources and remove blockers for the team", "Ensure alignment with the broader organizational strategy"];
 
       // For non-root teams: create the SOURCE role in the PARENT team (double role pattern)
       let sourceRoleId: Id<"roles"> | undefined = undefined;
@@ -495,6 +520,7 @@ export const seedDemoOrga = internalMutation({
       await assignRoleToMember(leaderMemberId, leaderRoleId);
 
       // Secretary
+      // Rule (d): standardized secretary mission and duties
       let secretaryMemberId = getRandomMember();
       while (secretaryMemberId === leaderMemberId && memberIds.length > 1) {
         secretaryMemberId = getRandomMember();
@@ -504,14 +530,15 @@ export const seedDemoOrga = internalMutation({
         teamId,
         title: "Secretary",
         roleType: "secretary",
-        mission: `Coordinate administrative functions for ${template.name}`,
-        duties: ["Meeting coordination", "Documentation", "Communication management"],
+        mission: "Define and organize the rituals, meetings and documentation of the team",
+        duties: ["Plan and facilitate recurring team rituals and meetings", "Maintain and organize team documentation and decision records", "Ensure meeting outcomes are captured, shared, and followed up on"],
         memberId: secretaryMemberId,
       });
       totalRoleCount++;
       await assignRoleToMember(secretaryMemberId, secretaryRoleId);
 
       // Referee
+      // Rule (e): standardized referee mission and duties
       let refereeMemberId = getRandomMember();
       while (
         (refereeMemberId === leaderMemberId ||
@@ -525,8 +552,8 @@ export const seedDemoOrga = internalMutation({
         teamId,
         title: "Referee",
         roleType: "referee",
-        mission: `Ensure fair processes and resolve conflicts within ${template.name}`,
-        duties: ["Process facilitation", "Conflict resolution", "Decision support"],
+        mission: "Remind the governance rules, ensure every role can exert its duties and settle decisions when needed",
+        duties: ["Remind and uphold governance rules and processes during team interactions", "Ensure every role holder has the space and resources to exert their duties", "Settle decisions and mediate disagreements when the team cannot reach consensus"],
         memberId: refereeMemberId,
       });
       totalRoleCount++;
@@ -584,6 +611,53 @@ export const seedDemoOrga = internalMutation({
     };
 
     await createTeamFromTemplate(config.organizationTree, undefined);
+
+    // --- Create channels for the demo orga ---
+    // Orga channel
+    const orgaChannelId = await ctx.db.insert("channels", {
+      orgaId,
+      kind: "orga" as const,
+      isArchived: false,
+    });
+
+    // Team channels
+    for (const teamId of teamIds) {
+      await ctx.db.insert("channels", {
+        orgaId,
+        kind: "team" as const,
+        teamId,
+        isArchived: false,
+      });
+    }
+
+    // Seed a few messages in the orga channel
+    await ctx.db.insert("messages", {
+      channelId: orgaChannelId,
+      orgaId,
+      authorId: adminMemberId,
+      text: "Welcome to the organization channel! This is the place for org-wide announcements and discussions.",
+      isEdited: false,
+    });
+
+    if (memberIds.length > 1) {
+      await ctx.db.insert("messages", {
+        channelId: orgaChannelId,
+        orgaId,
+        authorId: memberIds[1],
+        text: "Thanks for setting this up! Looking forward to collaborating with everyone.",
+        isEdited: false,
+      });
+    }
+
+    if (memberIds.length > 2) {
+      await ctx.db.insert("messages", {
+        channelId: orgaChannelId,
+        orgaId,
+        authorId: memberIds[2],
+        text: "Great to be here. Let's make this organization thrive!",
+        isEdited: false,
+      });
+    }
 
     // --- Ensure every member has at least 1 role (assign extras to unassigned) ---
     // Collect all role templates for fallback assignment

@@ -1,0 +1,20 @@
+{
+  "chat": "Chat",
+  "channels": "Canales",
+  "orgaChannel": "General",
+  "teamChannel": "{{teamName}}",
+  "directMessage": "MD con {{name}}",
+  "sendMessage": "Enviar mensaje",
+  "typeMessage": "Escribe un mensaje...",
+  "archivedChannel": "Este canal esta archivado",
+  "newMessages": "Nuevos mensajes",
+  "unreadCount": "{{count}} sin leer",
+  "noMessages": "Aun no hay mensajes. Inicia la conversacion!",
+  "loadingMessages": "Cargando mensajes...",
+  "today": "Hoy",
+  "yesterday": "Ayer",
+  "chatNotifications": "{{count}} mensajes sin leer",
+  "noChatNotifications": "Sin mensajes sin leer",
+  "openChat": "Abrir chat",
+  "closeChat": "Cerrar chat"
+}

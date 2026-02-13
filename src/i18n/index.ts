@@ -14,6 +14,7 @@ import enLegal from './locales/en/legal.json'
 import enNotifications from './locales/en/notifications.json'
 import enDecisions from './locales/en/decisions.json'
 import enGlossary from './locales/en/glossary.json'
+import enChat from './locales/en/chat.json'
 
 // Import French translations
 import frCommon from './locales/fr/common.json'
@@ -27,6 +28,7 @@ import frLegal from './locales/fr/legal.json'
 import frNotifications from './locales/fr/notifications.json'
 import frDecisions from './locales/fr/decisions.json'
 import frGlossary from './locales/fr/glossary.json'
+import frChat from './locales/fr/chat.json'
 
 // Import Spanish translations
 import esCommon from './locales/es/common.json'
@@ -40,6 +42,7 @@ import esLegal from './locales/es/legal.json'
 import esNotifications from './locales/es/notifications.json'
 import esDecisions from './locales/es/decisions.json'
 import esGlossary from './locales/es/glossary.json'
+import esChat from './locales/es/chat.json'
 
 // Import Italian translations
 import itCommon from './locales/it/common.json'
@@ -53,6 +56,7 @@ import itLegal from './locales/it/legal.json'
 import itNotifications from './locales/it/notifications.json'
 import itDecisions from './locales/it/decisions.json'
 import itGlossary from './locales/it/glossary.json'
+import itChat from './locales/it/chat.json'
 
 // Import Ukrainian translations
 import ukCommon from './locales/uk/common.json'
@@ -66,6 +70,7 @@ import ukLegal from './locales/uk/legal.json'
 import ukNotifications from './locales/uk/notifications.json'
 import ukDecisions from './locales/uk/decisions.json'
 import ukGlossary from './locales/uk/glossary.json'
+import ukChat from './locales/uk/chat.json'
 
 // Import Traditional Chinese translations
 import zhTWCommon from './locales/zh-TW/common.json'
@@ -79,6 +84,7 @@ import zhTWLegal from './locales/zh-TW/legal.json'
 import zhTWNotifications from './locales/zh-TW/notifications.json'
 import zhTWDecisions from './locales/zh-TW/decisions.json'
 import zhTWGlossary from './locales/zh-TW/glossary.json'
+import zhTWChat from './locales/zh-TW/chat.json'
 
 export const supportedLanguages = ['en', 'fr', 'es', 'it', 'uk', 'zh-TW'] as const
 export type SupportedLanguage = typeof supportedLanguages[number]
@@ -104,7 +110,8 @@ const resources = {
     legal: enLegal,
     notifications: enNotifications,
     decisions: enDecisions,
-    glossary: enGlossary
+    glossary: enGlossary,
+    chat: enChat
   },
   fr: {
     common: frCommon,
@@ -117,7 +124,8 @@ const resources = {
     legal: frLegal,
     notifications: frNotifications,
     decisions: frDecisions,
-    glossary: frGlossary
+    glossary: frGlossary,
+    chat: frChat
   },
   es: {
     common: esCommon,
@@ -130,7 +138,8 @@ const resources = {
     legal: esLegal,
     notifications: esNotifications,
     decisions: esDecisions,
-    glossary: esGlossary
+    glossary: esGlossary,
+    chat: esChat
   },
   it: {
     common: itCommon,
@@ -143,7 +152,8 @@ const resources = {
     legal: itLegal,
     notifications: itNotifications,
     decisions: itDecisions,
-    glossary: itGlossary
+    glossary: itGlossary,
+    chat: itChat
   },
   uk: {
     common: ukCommon,
@@ -156,7 +166,8 @@ const resources = {
     legal: ukLegal,
     notifications: ukNotifications,
     decisions: ukDecisions,
-    glossary: ukGlossary
+    glossary: ukGlossary,
+    chat: ukChat
   },
   'zh-TW': {
     common: zhTWCommon,
@@ -169,7 +180,8 @@ const resources = {
     legal: zhTWLegal,
     notifications: zhTWNotifications,
     decisions: zhTWDecisions,
-    glossary: zhTWGlossary
+    glossary: zhTWGlossary,
+    chat: zhTWChat
   }
 }
 
@@ -180,7 +192,7 @@ void i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal', 'notifications', 'decisions', 'glossary'],
+    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal', 'notifications', 'decisions', 'glossary', 'chat'],
     interpolation: {
       escapeValue: false // React already escapes values
     },

@@ -10,6 +10,9 @@ import { decisionType } from "./decisions"
 import { topicType } from './topics'
 import { notificationType } from "./notifications"
 import { notificationPreferencesType } from "./notificationPreferences"
+import { channelType } from "./chat"
+import { messageType } from "./chat"
+import { channelReadPositionType } from "./chat"
 /**
  * Swarmrise Data Model Schema
  *
@@ -92,4 +95,21 @@ export default defineSchema({
   notificationPreferences: defineTable({ ...notificationPreferencesType.fields })
     .index("by_user", ["userId"])
     .index("by_user_and_orga", ["userId", "orgaId"]),
+
+  // Chat system tables
+  channels: defineTable({ ...channelType.fields })
+    .index("by_orga", ["orgaId"])
+    .index("by_orga_and_kind", ["orgaId", "kind"])
+    .index("by_team", ["teamId"])
+    .index("by_dm_members", ["orgaId", "dmMemberA", "dmMemberB"]),
+
+  messages: defineTable({ ...messageType.fields })
+    .index("by_channel", ["channelId"])
+    .index("by_thread_parent", ["threadParentId"])
+    .index("by_orga", ["orgaId"])
+    .index("by_author", ["authorId"]),
+
+  channelReadPositions: defineTable({ ...channelReadPositionType.fields })
+    .index("by_channel_and_member", ["channelId", "memberId"])
+    .index("by_member", ["memberId"]),
 });

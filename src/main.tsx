@@ -8,6 +8,8 @@ import { ConvexReactClient } from "convex/react";
 import { BrowserRouter, Routes, Route } from "react-router";
 import App from "./components/App/index.tsx";
 import { OrgaStoreProvider } from "./tools/orgaStore/index.tsx";
+import { ChatStoreProvider } from "./tools/chatStore/index.tsx";
+import { ChatPanel } from "./components/Chat/ChatPanel/index.tsx";
 import { ThemeProvider } from "./contexts/ThemeContext.tsx";
 import { RawDataPage } from "./pages/RawData/index.tsx";
 import { PrinciplesPage } from "./pages/Principles/index.tsx";
@@ -24,6 +26,7 @@ createRoot(document.getElementById("root")!).render(
       <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY} >
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
           <OrgaStoreProvider>
+            <ChatStoreProvider>
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<App />} />
@@ -45,7 +48,9 @@ createRoot(document.getElementById("root")!).render(
                   <Route path="members/:memberId/manage" element={<App />} />
                 </Route>
               </Routes>
+              <ChatPanel />
             </BrowserRouter>
+            </ChatStoreProvider>
           </OrgaStoreProvider>
         </ConvexProviderWithClerk>
       </ClerkProvider>

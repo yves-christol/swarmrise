@@ -180,6 +180,13 @@ export const createOrganization = mutation({
       roleIds: [leaderRoleId, secretaryRoleId, refereeRoleId],
     });
     
+    // Auto-create orga channel
+    await ctx.db.insert("channels", {
+      orgaId,
+      kind: "orga",
+      isArchived: false,
+    });
+
     // Add organization to user's orgaIds
     await ctx.db.patch(user._id, {
       orgaIds: [...user.orgaIds, orgaId],
@@ -488,6 +495,29 @@ export const deleteOrganization = mutation({
 
     // Get user to update their orgaIds
     const user = await getAuthenticatedUser(ctx);
+
+    // Delete all chat data for this organization
+    const orgChannels = await ctx.db
+      .query("channels")
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
+      .collect();
+    for (const channel of orgChannels) {
+      const channelMessages = await ctx.db
+        .query("messages")
+        .withIndex("by_channel", (q) => q.eq("channelId", channel._id))
+        .collect();
+      for (const msg of channelMessages) {
+        await ctx.db.delete(msg._id);
+      }
+      const readPositions = await ctx.db
+        .query("channelReadPositions")
+        .withIndex("by_channel_and_member", (q) => q.eq("channelId", channel._id))
+        .collect();
+      for (const rp of readPositions) {
+        await ctx.db.delete(rp._id);
+      }
+      await ctx.db.delete(channel._id);
+    }
 
     // Delete all roles in the organization
     const roles = await ctx.db

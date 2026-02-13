@@ -199,6 +199,14 @@ export const createTeam = mutation({
       });
     }
 
+    // Auto-create team channel
+    await ctx.db.insert("channels", {
+      orgaId: args.orgaId,
+      kind: "team",
+      teamId,
+      isArchived: false,
+    });
+
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
     const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, args.orgaId);
@@ -381,6 +389,18 @@ export const deleteTeam = mutation({
       orgaId: team.orgaId,
       name: team.name,
     };
+
+    // Archive team channel (messages remain readable)
+    const teamChannel = await ctx.db
+      .query("channels")
+      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
+      .unique();
+    if (teamChannel) {
+      await ctx.db.patch(teamChannel._id, {
+        isArchived: true,
+        archivedAt: Date.now(),
+      });
+    }
 
     // Clean up roles belonging to this team and remove from members' roleIds
     const teamRoles = await ctx.db

@@ -31,11 +31,28 @@
 - Embedded tools: topic (consent decision), voting, candidateless election
 - Tool participation data in separate tables to avoid write conflicts
 - Key file: `/Users/yc/dev/swarmrise/docs/CHAT.md`
+- **DM indexing decision**: use `dmMemberA`/`dmMemberB` separate fields (not array), canonical order (smaller _id in A)
+- **9 new tables total**: channels, messages, channelReadPositions, topicClarifications, topicAnswers, topicResponses, votes, electionNominations, electionResponses
+- **ChatStore context** follows OrgaStore pattern (`src/tools/chatStore/`)
+- **Chat panel**: right-side panel (default, pending Monica), ~400px, overlaps FocusContainer
+- **Chat toggle**: in Header, next to NotificationBell
+- **Message pagination**: Convex cursor-based via `usePaginatedQuery`, 30 initial, 20 per scroll
+- **Author grouping**: same author + <5min gap = compact display
+
+## Implementation Plan (7 phases, detailed in CHAT.md)
+- Phase 1: Foundation (schema, channels, messages, chat panel) -- no blockers besides Monica/Karl
+- Phase 2: Threads + DMs
+- Phase 3: Topic Tool (consent decisions) -- depends on Ivan for facilitator rules
+- Phase 4: Voting Tool
+- Phase 5: Election Tool -- depends on Ivan for nomination secrecy
+- Phase 6: Notifications integration
+- Phase 7: Polish, search, accessibility
+- Critical path: P1 -> P3 -> P5; P2/P4 can run in parallel after P1
 
 ## Open Questions (need collaborator input)
-- Karl: DM participant indexing strategy, tool table proliferation
-- Monica: chat panel placement, tool creation flow
-- Ivan: topic facilitator role, election nomination secrecy, topics entity overlap
+- Karl: DM participant indexing (defaulted to dmMemberA/dmMemberB), tool table count (9 new tables)
+- Monica: chat panel placement (defaulted to right-side), channel list behavior, tool creation flow
+- Ivan: topic facilitator role, election nomination secrecy, topics entity overlap, consent education UI
 
 ## Governance Model (from VISION.md)
 - Consent-based decisions: proposition -> clarification -> consent

@@ -1,0 +1,20 @@
+{
+  "chat": "聊天",
+  "channels": "頻道",
+  "orgaChannel": "一般",
+  "teamChannel": "{{teamName}}",
+  "directMessage": "與 {{name}} 的私訊",
+  "sendMessage": "發送訊息",
+  "typeMessage": "輸入訊息...",
+  "archivedChannel": "此頻道已封存",
+  "newMessages": "新訊息",
+  "unreadCount": "{{count}} 則未讀",
+  "noMessages": "還沒有訊息。開始對話吧！",
+  "loadingMessages": "載入訊息中...",
+  "today": "今天",
+  "yesterday": "昨天",
+  "chatNotifications": "{{count}} 則未讀訊息",
+  "noChatNotifications": "沒有未讀訊息",
+  "openChat": "開啟聊天",
+  "closeChat": "關閉聊天"
+}

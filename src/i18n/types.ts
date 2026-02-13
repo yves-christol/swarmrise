@@ -10,6 +10,7 @@ import type enLegal from './locales/en/legal.json'
 import type enNotifications from './locales/en/notifications.json'
 import type enDecisions from './locales/en/decisions.json'
 import type enGlossary from './locales/en/glossary.json'
+import type enChat from './locales/en/chat.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -26,6 +27,7 @@ declare module 'i18next' {
       notifications: typeof enNotifications
       decisions: typeof enDecisions
       glossary: typeof enGlossary
+      chat: typeof enChat
     }
   }
 }

@@ -17,6 +17,8 @@
   "noChatNotifications": "Nessun messaggio non letto",
   "openChat": "Apri chat",
   "closeChat": "Chiudi chat",
+  "expandChat": "Espandi chat",
+  "collapseChat": "Riduci chat",
   "thread": "Thread",
   "replies_one": "{{count}} risposta",
   "replies_other": "{{count}} risposte",

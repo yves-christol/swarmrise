@@ -17,6 +17,8 @@
   "noChatNotifications": "Sin mensajes sin leer",
   "openChat": "Abrir chat",
   "closeChat": "Cerrar chat",
+  "expandChat": "Expandir chat",
+  "collapseChat": "Contraer chat",
   "thread": "Hilo",
   "replies_one": "{{count}} respuesta",
   "replies_other": "{{count}} respuestas",

@@ -17,6 +17,8 @@
   "noChatNotifications": "沒有未讀訊息",
   "openChat": "開啟聊天",
   "closeChat": "關閉聊天",
+  "expandChat": "展開聊天",
+  "collapseChat": "收合聊天",
   "thread": "討論串",
   "replies_one": "{{count}} 則回覆",
   "replies_other": "{{count}} 則回覆",

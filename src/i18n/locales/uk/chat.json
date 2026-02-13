@@ -17,6 +17,8 @@
   "noChatNotifications": "Немає непрочитаних повідомлень",
   "openChat": "Відкрити чат",
   "closeChat": "Закрити чат",
+  "expandChat": "Розгорнути чат",
+  "collapseChat": "Згорнути чат",
   "thread": "Гілка",
   "replies_one": "{{count}} відповідь",
   "replies_other": "{{count}} відповідей",

@@ -17,6 +17,8 @@
   "noChatNotifications": "No unread messages",
   "openChat": "Open chat",
   "closeChat": "Close chat",
+  "expandChat": "Expand chat",
+  "collapseChat": "Collapse chat",
   "thread": "Thread",
   "replies_one": "{{count}} reply",
   "replies_other": "{{count}} replies",

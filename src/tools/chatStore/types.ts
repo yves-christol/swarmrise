@@ -7,6 +7,9 @@ export type ChatStoreContextType = {
   openChat: () => void;
   closeChat: () => void;
   toggleChat: () => void;
+  // Expanded (full-width) mode
+  isChatExpanded: boolean;
+  toggleChatExpand: () => void;
   // Thread panel state (Phase 2)
   activeThreadMessageId: Id<"messages"> | null;
   openThread: (messageId: Id<"messages">) => void;

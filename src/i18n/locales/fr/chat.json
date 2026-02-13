@@ -17,6 +17,8 @@
   "noChatNotifications": "Aucun message non lu",
   "openChat": "Ouvrir la discussion",
   "closeChat": "Fermer la discussion",
+  "expandChat": "Agrandir la discussion",
+  "collapseChat": "Reduire la discussion",
   "thread": "Fil",
   "replies_one": "{{count}} reponse",
   "replies_other": "{{count}} reponses",

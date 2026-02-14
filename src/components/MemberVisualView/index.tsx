@@ -1,8 +1,10 @@
 import { useRef, useState, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
+import { useClerk } from "@clerk/clerk-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
+import { useSelectedOrga } from "../../tools/orgaStore";
 import { RoleLink } from "./RoleLink";
 import { TeamNode } from "./TeamNode";
 import { ContactInfo } from "./ContactInfo";
@@ -18,7 +20,11 @@ export function MemberVisualView({
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [isAvatarHovered, setIsAvatarHovered] = useState(false);
   const { t } = useTranslation("members");
+  const { myMember } = useSelectedOrga();
+  const clerk = useClerk();
+  const isOwnPage = myMember?._id === memberId;
 
   // Fetch member data
   const member = useQuery(api.members.functions.getMemberById, { memberId });
@@ -513,51 +519,84 @@ export function MemberVisualView({
           />
         ))}
 
-        {/* Member circle at center */}
-        <circle
-          className="member-circle"
-          cx={centerX}
-          cy={centerY}
-          r={memberRadius}
-          fill="var(--diagram-node-fill)"
-          stroke="#a2dbed"
-          strokeWidth={3}
-        />
+        {/* Member circle at center - interactive when viewing own page */}
+        <g
+          role={isOwnPage ? "button" : undefined}
+          tabIndex={isOwnPage ? 0 : undefined}
+          aria-label={isOwnPage ? t("diagram.manageAccount") : undefined}
+          style={{ cursor: isOwnPage ? "pointer" : "default", outline: "none" }}
+          onClick={isOwnPage ? () => clerk.openUserProfile() : undefined}
+          onKeyDown={isOwnPage ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); clerk.openUserProfile(); } } : undefined}
+          onMouseEnter={isOwnPage ? () => setIsAvatarHovered(true) : undefined}
+          onMouseLeave={isOwnPage ? () => setIsAvatarHovered(false) : undefined}
+          onFocus={isOwnPage ? () => setIsAvatarHovered(true) : undefined}
+          onBlur={isOwnPage ? () => setIsAvatarHovered(false) : undefined}
+        >
+          {isOwnPage && <title>{t("diagram.manageAccount")}</title>}
 
-        {/* Member avatar or initials */}
-        <g className="member-content">
-          {member.pictureURL ? (
-            <>
-              <defs>
-                <clipPath id={`member-avatar-clip-${member._id}`}>
-                  <circle cx={centerX} cy={centerY} r={memberRadius - 4} />
-                </clipPath>
-              </defs>
-              <image
-                href={member.pictureURL}
-                x={centerX - memberRadius + 4}
-                y={centerY - memberRadius + 4}
-                width={(memberRadius - 4) * 2}
-                height={(memberRadius - 4) * 2}
-                clipPath={`url(#member-avatar-clip-${member._id})`}
-                preserveAspectRatio="xMidYMid slice"
-              />
-            </>
-          ) : (
-            <text
-              x={centerX}
-              y={centerY}
-              textAnchor="middle"
-              dominantBaseline="central"
-              fill="var(--diagram-node-text)"
-              fontSize={20}
-              fontWeight={600}
-              fontFamily="'Montserrat Alternates', sans-serif"
-              style={{ pointerEvents: "none", userSelect: "none" }}
-            >
-              {initials}
-            </text>
+          {/* Hover glow ring */}
+          {isAvatarHovered && (
+            <circle
+              cx={centerX}
+              cy={centerY}
+              r={memberRadius + 3}
+              fill="none"
+              stroke="#a2dbed"
+              strokeWidth={1}
+              opacity={0.5}
+              style={{ filter: "drop-shadow(0 0 6px rgba(162, 219, 237, 0.5))" }}
+            />
           )}
+
+          <circle
+            className="member-circle"
+            cx={centerX}
+            cy={centerY}
+            r={memberRadius}
+            fill="var(--diagram-node-fill)"
+            stroke="#a2dbed"
+            strokeWidth={3}
+            style={{
+              transition: "filter 150ms ease-out",
+              filter: isAvatarHovered ? "drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2))" : "none",
+            }}
+          />
+
+          {/* Member avatar or initials */}
+          <g className="member-content">
+            {member.pictureURL ? (
+              <>
+                <defs>
+                  <clipPath id={`member-avatar-clip-${member._id}`}>
+                    <circle cx={centerX} cy={centerY} r={memberRadius - 4} />
+                  </clipPath>
+                </defs>
+                <image
+                  href={member.pictureURL}
+                  x={centerX - memberRadius + 4}
+                  y={centerY - memberRadius + 4}
+                  width={(memberRadius - 4) * 2}
+                  height={(memberRadius - 4) * 2}
+                  clipPath={`url(#member-avatar-clip-${member._id})`}
+                  preserveAspectRatio="xMidYMid slice"
+                />
+              </>
+            ) : (
+              <text
+                x={centerX}
+                y={centerY}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fill="var(--diagram-node-text)"
+                fontSize={20}
+                fontWeight={600}
+                fontFamily="'Montserrat Alternates', sans-serif"
+                style={{ pointerEvents: "none", userSelect: "none" }}
+              >
+                {initials}
+              </text>
+            )}
+          </g>
         </g>
 
         {/* Member name below the circle */}

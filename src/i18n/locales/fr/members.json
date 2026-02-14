@@ -85,6 +85,7 @@
     "textEmail": "Email :",
     "textRoles": "Rôles :",
     "textTeams": "Équipes :",
-    "textRoleList": "Liste des rôles :"
+    "textRoleList": "Liste des rôles :",
+    "manageAccount": "Gérer le compte"
   }
 }

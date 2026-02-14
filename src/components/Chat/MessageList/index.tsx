@@ -8,6 +8,7 @@ import { MessageItem } from "./MessageItem";
 
 type MessageListProps = {
   channelId: Id<"channels">;
+  orgaId: Id<"orgas">;
 };
 
 const GROUPING_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -34,9 +35,12 @@ function isSameDay(a: number, b: number): boolean {
   return da.toDateString() === db.toDateString();
 }
 
-export const MessageList = ({ channelId }: MessageListProps) => {
+export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
   const { t } = useTranslation("chat");
   const { openThread } = useChatStore();
+
+  const myMember = useQuery(api.members.functions.getMyMember, { orgaId });
+  const currentMemberId = myMember?._id;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -167,6 +171,7 @@ export const MessageList = ({ channelId }: MessageListProps) => {
                 isCompact={isCompact}
                 replyCount={getReplyCount(msg._id)}
                 onReply={openThread}
+                currentMemberId={currentMemberId}
               />
             </div>
           );

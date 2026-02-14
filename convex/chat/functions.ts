@@ -1499,20 +1499,15 @@ export const advanceElectionPhase = mutation({
     const isFacilitator = await canFacilitateElection(ctx, args.messageId, member._id);
     if (!isFacilitator) throw new Error("Only facilitators can advance the election phase");
 
-    // When advancing to consent, a proposed candidate is required
+    // Pick up proposed candidate from args if provided, otherwise keep existing
     let proposedCandidateId = message.embeddedTool.proposedCandidateId;
-    if (args.newPhase === "consent") {
-      if (args.proposedCandidateId) {
-        proposedCandidateId = args.proposedCandidateId;
-      }
-      if (!proposedCandidateId) {
-        throw new Error("A proposed candidate is required to move to the consent phase");
-      }
+    if (args.proposedCandidateId) {
+      proposedCandidateId = args.proposedCandidateId;
     }
 
-    // When advancing to discussion from nomination, facilitator can optionally set proposed candidate
-    if (args.newPhase === "discussion" && currentPhase === "nomination" && args.proposedCandidateId) {
-      proposedCandidateId = args.proposedCandidateId;
+    // When advancing to consent, a proposed candidate is required
+    if (args.newPhase === "consent" && !proposedCandidateId) {
+      throw new Error("A proposed candidate is required to move to the consent phase");
     }
 
     // When going back to discussion from consent, clear election responses so members can re-vote
@@ -1707,6 +1702,45 @@ export const resolveElection = mutation({
         outcome: args.outcome,
         electedMemberId: args.electedMemberId,
         decisionId,
+      },
+    });
+
+    return null;
+  },
+});
+
+/**
+ * Cancel an election. Only the message author can cancel.
+ * Cannot cancel once the election is already resolved (elected) or already cancelled.
+ */
+export const cancelElection = mutation({
+  args: {
+    messageId: v.id("messages"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    await requireChannelAccess(ctx, message.channelId);
+
+    if (!message.embeddedTool || message.embeddedTool.type !== "election") {
+      throw new Error("Message is not an election");
+    }
+
+    if (message.embeddedTool.phase === "elected" || message.embeddedTool.phase === "cancelled") {
+      throw new Error("Cannot cancel an election that is already resolved or cancelled");
+    }
+
+    const member = await requireAuthAndMembership(ctx, message.orgaId);
+    if (message.authorId !== member._id) {
+      throw new Error("Only the election creator can cancel it");
+    }
+
+    await ctx.db.patch(args.messageId, {
+      embeddedTool: {
+        ...message.embeddedTool,
+        phase: "cancelled",
       },
     });
 

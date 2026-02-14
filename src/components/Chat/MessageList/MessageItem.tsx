@@ -26,7 +26,7 @@ type EmbeddedTool = {
   roleTitle: string;
   roleId?: Id<"roles">;
   teamId: Id<"teams">;
-  phase: "nomination" | "discussion" | "change_round" | "consent" | "elected";
+  phase: "nomination" | "discussion" | "change_round" | "consent" | "elected" | "cancelled";
   proposedCandidateId?: Id<"members">;
   electedMemberId?: Id<"members">;
   outcome?: "elected" | "no_election";
@@ -50,6 +50,7 @@ type MessageItemProps = {
   isCompact: boolean;
   replyCount?: number;
   onReply?: (messageId: Id<"messages">) => void;
+  currentMemberId?: Id<"members">;
 };
 
 function formatTime(timestamp: number): string {
@@ -60,7 +61,7 @@ function formatTime(timestamp: number): string {
   });
 }
 
-export const MessageItem = ({ message, isCompact, replyCount, onReply }: MessageItemProps) => {
+export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMemberId }: MessageItemProps) => {
   const { t } = useTranslation("chat");
   const initials = `${message.author.firstname[0] ?? ""}${message.author.surname[0] ?? ""}`.toUpperCase();
 
@@ -83,6 +84,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
     </div>
   );
 
+  const isAuthor = currentMemberId === message.authorId;
   const topicTool = message.embeddedTool?.type === "topic" ? message.embeddedTool : null;
   const votingTool = message.embeddedTool?.type === "voting" ? (message.embeddedTool as EmbeddedVoting) : null;
   const electionTool = message.embeddedTool?.type === "election" ? (message.embeddedTool as EmbeddedElection) : null;
@@ -104,7 +106,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
           )}
           {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
           {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
-          {electionTool && <ElectionTool messageId={message._id} tool={electionTool} />}
+          {electionTool && <ElectionTool messageId={message._id} tool={electionTool} isAuthor={isAuthor} />}
           {threadIndicator}
         </div>
       </div>
@@ -145,7 +147,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
         )}
         {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
         {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
-        {electionTool && <ElectionTool messageId={message._id} tool={electionTool} />}
+        {electionTool && <ElectionTool messageId={message._id} tool={electionTool} isAuthor={isAuthor} />}
         {threadIndicator}
       </div>
     </div>

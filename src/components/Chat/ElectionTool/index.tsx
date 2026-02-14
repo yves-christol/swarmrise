@@ -1,4 +1,7 @@
+import { useState, useCallback } from "react";
+import { useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
+import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { NominationPhase } from "./NominationPhase";
 import { DiscussionPhase } from "./DiscussionPhase";
@@ -11,7 +14,7 @@ export type EmbeddedElection = {
   roleTitle: string;
   roleId?: Id<"roles">;
   teamId: Id<"teams">;
-  phase: "nomination" | "discussion" | "change_round" | "consent" | "elected";
+  phase: "nomination" | "discussion" | "change_round" | "consent" | "elected" | "cancelled";
   proposedCandidateId?: Id<"members">;
   electedMemberId?: Id<"members">;
   outcome?: "elected" | "no_election";
@@ -21,6 +24,7 @@ export type EmbeddedElection = {
 type ElectionToolProps = {
   messageId: Id<"messages">;
   tool: EmbeddedElection;
+  isAuthor: boolean;
 };
 
 const phaseColors: Record<string, string> = {
@@ -29,6 +33,7 @@ const phaseColors: Record<string, string> = {
   change_round: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
   consent: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
   elected: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
+  cancelled: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
 };
 
 const phaseLabelKeys = {
@@ -37,10 +42,20 @@ const phaseLabelKeys = {
   change_round: "electionPhaseChangeRound",
   consent: "electionPhaseConsent",
   elected: "electionPhaseElected",
+  cancelled: "electionPhaseCancelled",
 } as const;
 
-export const ElectionTool = ({ messageId, tool }: ElectionToolProps) => {
+export const ElectionTool = ({ messageId, tool, isAuthor }: ElectionToolProps) => {
   const { t } = useTranslation("chat");
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const cancelElection = useMutation(api.chat.functions.cancelElection);
+
+  const canCancel = isAuthor && tool.phase !== "elected" && tool.phase !== "cancelled";
+
+  const handleCancel = useCallback(() => {
+    void cancelElection({ messageId }).then(() => setShowConfirm(false));
+  }, [messageId, cancelElection]);
 
   const phaseLabel = t(phaseLabelKeys[tool.phase]);
   const phaseColor = phaseColors[tool.phase];
@@ -56,10 +71,39 @@ export const ElectionTool = ({ messageId, tool }: ElectionToolProps) => {
         <span className="text-sm font-semibold text-dark dark:text-light truncate flex-1">
           {t("electionTool")}: {tool.roleTitle}
         </span>
+        {canCancel && !showConfirm && (
+          <button
+            onClick={() => setShowConfirm(true)}
+            className="text-xs px-2 py-0.5 rounded-md text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+          >
+            {t("electionCancel")}
+          </button>
+        )}
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${phaseColor}`}>
           {phaseLabel}
         </span>
       </div>
+
+      {/* Cancel confirmation */}
+      {showConfirm && (
+        <div className="px-3 py-2 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800 flex items-center gap-2">
+          <span className="text-xs text-red-700 dark:text-red-300 flex-1">
+            {t("electionCancelConfirm")}
+          </span>
+          <button
+            onClick={handleCancel}
+            className="text-xs px-3 py-1 rounded-md bg-red-600 text-white font-medium hover:bg-red-700 transition-colors"
+          >
+            {t("electionCancelYes")}
+          </button>
+          <button
+            onClick={() => setShowConfirm(false)}
+            className="text-xs px-3 py-1 rounded-md bg-slate-200 dark:bg-slate-600 text-dark dark:text-light font-medium hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"
+          >
+            {t("electionCancelNo")}
+          </button>
+        </div>
+      )}
 
       {/* Phase-specific content */}
       {tool.phase === "nomination" && (
@@ -76,6 +120,13 @@ export const ElectionTool = ({ messageId, tool }: ElectionToolProps) => {
       )}
       {tool.phase === "elected" && (
         <ElectedPhase messageId={messageId} tool={tool} />
+      )}
+      {tool.phase === "cancelled" && (
+        <div className="px-3 py-3 text-center">
+          <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+            {t("electionCancelled")}
+          </p>
+        </div>
       )}
     </div>
   );

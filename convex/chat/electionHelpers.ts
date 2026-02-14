@@ -8,7 +8,7 @@ import type { Message } from ".";
  */
 export function requireElectionPhase(
   message: Message,
-  ...allowedPhases: Array<"nomination" | "discussion" | "change_round" | "consent" | "elected">
+  ...allowedPhases: Array<"nomination" | "discussion" | "change_round" | "consent" | "elected" | "cancelled">
 ): void {
   if (!message.embeddedTool) {
     throw new Error("Message has no embedded tool");

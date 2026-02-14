@@ -71,6 +71,7 @@ export const embeddedToolType = v.union(
       v.literal("change_round"),
       v.literal("consent"),
       v.literal("elected"),
+      v.literal("cancelled"),
     ),
     proposedCandidateId: v.optional(v.id("members")),
     electedMemberId: v.optional(v.id("members")),

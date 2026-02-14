@@ -150,7 +150,7 @@ export const ChatPanel = () => {
             />
           ) : selectedChannelId ? (
             <>
-              <MessageList channelId={selectedChannelId} />
+              <MessageList channelId={selectedChannelId} orgaId={selectedOrgaId!} />
               <MessageInput
                 channelId={selectedChannelId}
                 orgaId={selectedOrgaId!}

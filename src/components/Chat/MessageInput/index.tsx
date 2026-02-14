@@ -5,18 +5,21 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { CreateTopicModal } from "./CreateTopicModal";
 import { CreateVotingModal } from "./CreateVotingModal";
+import { CreateElectionModal } from "./CreateElectionModal";
 
 type MessageInputProps = {
   channelId: Id<"channels">;
+  orgaId: Id<"orgas">;
   isArchived: boolean;
 };
 
-export const MessageInput = ({ channelId, isArchived }: MessageInputProps) => {
+export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProps) => {
   const { t } = useTranslation("chat");
   const [text, setText] = useState("");
   const [showToolMenu, setShowToolMenu] = useState(false);
   const [showTopicModal, setShowTopicModal] = useState(false);
   const [showVotingModal, setShowVotingModal] = useState(false);
+  const [showElectionModal, setShowElectionModal] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const toolMenuRef = useRef<HTMLDivElement>(null);
   const sendMessage = useMutation(api.chat.functions.sendMessage);
@@ -121,6 +124,19 @@ export const MessageInput = ({ channelId, isArchived }: MessageInputProps) => {
                   </svg>
                   {t("votingTool")}
                 </button>
+                <button
+                  onClick={() => {
+                    setShowToolMenu(false);
+                    setShowElectionModal(true);
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4 text-[#eac840] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  {t("electionTool")}
+                </button>
               </div>
             )}
           </div>
@@ -169,6 +185,14 @@ export const MessageInput = ({ channelId, isArchived }: MessageInputProps) => {
         <CreateVotingModal
           channelId={channelId}
           onClose={() => setShowVotingModal(false)}
+        />
+      )}
+
+      {showElectionModal && (
+        <CreateElectionModal
+          channelId={channelId}
+          orgaId={orgaId}
+          onClose={() => setShowElectionModal(false)}
         />
       )}
     </>

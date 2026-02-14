@@ -189,3 +189,43 @@ export const voteValidator = v.object({
 });
 
 export type Vote = Infer<typeof voteValidator>;
+
+// --- Election Nomination ---
+
+export const electionNominationType = v.object({
+  messageId: v.id("messages"),
+  orgaId: v.id("orgas"),
+  nominatorId: v.id("members"),
+  nomineeId: v.id("members"),
+  reason: v.string(),
+});
+
+export const electionNominationValidator = v.object({
+  _id: v.id("electionNominations"),
+  _creationTime: v.number(),
+  ...electionNominationType.fields,
+});
+
+export type ElectionNomination = Infer<typeof electionNominationValidator>;
+
+// --- Election Response (consent round) ---
+
+export const electionResponseType = v.object({
+  messageId: v.id("messages"),
+  orgaId: v.id("orgas"),
+  memberId: v.id("members"),
+  response: v.union(
+    v.literal("consent"),
+    v.literal("objection"),
+    v.literal("stand_aside"),
+  ),
+  reason: v.optional(v.string()),
+});
+
+export const electionResponseValidator = v.object({
+  _id: v.id("electionResponses"),
+  _creationTime: v.number(),
+  ...electionResponseType.fields,
+});
+
+export type ElectionResponse = Infer<typeof electionResponseValidator>;

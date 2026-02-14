@@ -10,7 +10,8 @@ export const targetType = v.union(
   v.literal('members'),
   v.literal('policies'),
   v.literal('invitations'),
-  v.literal('topics')
+  v.literal('topics'),
+  v.literal('elections')
 )
 
 export const targetIdType = v.union(
@@ -150,6 +151,25 @@ const topicDiff = v.object({
   })),
 });
 
+// Election diff
+const electionDiff = v.object({
+  type: v.literal("Election"),
+  before: v.optional(v.object({
+    roleTitle: v.optional(v.string()),
+    teamId: v.optional(v.id("teams")),
+    phase: v.optional(v.string()),
+    outcome: v.optional(v.string()),
+    electedMemberId: v.optional(v.id("members")),
+  })),
+  after: v.optional(v.object({
+    roleTitle: v.optional(v.string()),
+    teamId: v.optional(v.id("teams")),
+    phase: v.optional(v.string()),
+    outcome: v.optional(v.string()),
+    electedMemberId: v.optional(v.id("members")),
+  })),
+});
+
 // Decision diff validator - discriminated union ensuring type safety
 export const diffType = v.union(
   organizationDiff,
@@ -158,7 +178,8 @@ export const diffType = v.union(
   invitationDiff,
   policyDiff,
   memberDiff,
-  topicDiff
+  topicDiff,
+  electionDiff
 );
 
 export const decisionType = v.object({

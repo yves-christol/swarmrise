@@ -153,6 +153,7 @@ export const ChatPanel = () => {
               <MessageList channelId={selectedChannelId} />
               <MessageInput
                 channelId={selectedChannelId}
+                orgaId={selectedOrgaId!}
                 isArchived={selectedChannel?.isArchived ?? false}
               />
             </>

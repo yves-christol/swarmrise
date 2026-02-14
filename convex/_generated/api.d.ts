@@ -11,6 +11,7 @@
 import type * as admin from "../admin.js";
 import type * as aggregates from "../aggregates.js";
 import type * as chat_access from "../chat/access.js";
+import type * as chat_electionHelpers from "../chat/electionHelpers.js";
 import type * as chat_functions from "../chat/functions.js";
 import type * as chat_index from "../chat/index.js";
 import type * as chat_topicHelpers from "../chat/topicHelpers.js";
@@ -62,6 +63,7 @@ declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   aggregates: typeof aggregates;
   "chat/access": typeof chat_access;
+  "chat/electionHelpers": typeof chat_electionHelpers;
   "chat/functions": typeof chat_functions;
   "chat/index": typeof chat_index;
   "chat/topicHelpers": typeof chat_topicHelpers;

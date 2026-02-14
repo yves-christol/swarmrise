@@ -2,7 +2,9 @@ import { useTranslation } from "react-i18next";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { TopicTool } from "../TopicTool";
 import { VotingTool } from "../VotingTool";
+import { ElectionTool } from "../ElectionTool";
 import type { EmbeddedVoting } from "../VotingTool";
+import type { EmbeddedElection } from "../ElectionTool";
 
 type EmbeddedTool = {
   type: "topic";
@@ -21,7 +23,14 @@ type EmbeddedTool = {
   isClosed: boolean;
 } | {
   type: "election";
-  [key: string]: unknown;
+  roleTitle: string;
+  roleId?: Id<"roles">;
+  teamId: Id<"teams">;
+  phase: "nomination" | "discussion" | "change_round" | "consent" | "elected";
+  proposedCandidateId?: Id<"members">;
+  electedMemberId?: Id<"members">;
+  outcome?: "elected" | "no_election";
+  decisionId?: Id<"decisions">;
 };
 
 type MessageItemProps = {
@@ -76,7 +85,8 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
 
   const topicTool = message.embeddedTool?.type === "topic" ? message.embeddedTool : null;
   const votingTool = message.embeddedTool?.type === "voting" ? (message.embeddedTool as EmbeddedVoting) : null;
-  const hasEmbeddedTool = topicTool || votingTool;
+  const electionTool = message.embeddedTool?.type === "election" ? (message.embeddedTool as EmbeddedElection) : null;
+  const hasEmbeddedTool = topicTool || votingTool || electionTool;
 
   if (isCompact) {
     return (
@@ -94,6 +104,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
           )}
           {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
           {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
+          {electionTool && <ElectionTool messageId={message._id} tool={electionTool} />}
           {threadIndicator}
         </div>
       </div>
@@ -134,6 +145,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply }: Message
         )}
         {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
         {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
+        {electionTool && <ElectionTool messageId={message._id} tool={electionTool} />}
         {threadIndicator}
       </div>
     </div>

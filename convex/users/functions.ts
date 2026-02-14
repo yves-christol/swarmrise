@@ -7,6 +7,7 @@ import { invitationValidator } from "../invitations";
 import {
   getAuthenticatedUser,
   getAuthenticatedUserEmail,
+  ensureEmailInContactInfos,
 } from "../utils";
 
 /**
@@ -147,7 +148,10 @@ export const updateUser = mutation({
     if (args.firstname !== undefined) updates.firstname = args.firstname;
     if (args.surname !== undefined) updates.surname = args.surname;
     if (args.pictureURL !== undefined) updates.pictureURL = args.pictureURL ?? undefined;
-    if (args.contactInfos !== undefined) updates.contactInfos = args.contactInfos;
+    if (args.contactInfos !== undefined) {
+      // Ensure the user's own email is always present in contactInfos
+      updates.contactInfos = ensureEmailInContactInfos(args.contactInfos, user.email);
+    }
     
     await ctx.db.patch(args.userId, updates);
     
@@ -217,7 +221,7 @@ export const acceptInvitation = mutation({
       orgaIds: [...user.orgaIds, invitation.orgaId],
     });
     
-    // Create member document
+    // Create member document (ensure email is in contactInfos)
     const memberId = await ctx.db.insert("members", {
       orgaId: invitation.orgaId,
       personId: user._id,
@@ -225,7 +229,7 @@ export const acceptInvitation = mutation({
       surname: user.surname,
       email: user.email,
       pictureURL: user.pictureURL,
-      contactInfos: user.contactInfos,
+      contactInfos: ensureEmailInContactInfos(user.contactInfos, user.email),
       roleIds: [],
     });
     if (!memberId) {

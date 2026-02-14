@@ -1,5 +1,7 @@
 import { QueryCtx, MutationCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { Infer } from "convex/values";
+import { contactInfo } from "./users";
 
 /**
  * Get the authenticated user's email or throw an error
@@ -180,5 +182,23 @@ export async function getRoleAndTeamInfo(
   }
   
   throw new Error("Could not determine role and team information");
+}
+
+/**
+ * Ensure an Email contact info entry exists in a contactInfos array.
+ * If no Email entry matching the given address is present, prepends one.
+ * Returns the (possibly augmented) array -- never mutates the original.
+ */
+export function ensureEmailInContactInfos(
+  contactInfos: Infer<typeof contactInfo>[],
+  email: string
+): Infer<typeof contactInfo>[] {
+  const hasEmail = contactInfos.some(
+    (ci) => ci.type === "Email" && ci.value === email
+  );
+  if (hasEmail) {
+    return contactInfos;
+  }
+  return [{ type: "Email" as const, value: email }, ...contactInfos];
 }
 

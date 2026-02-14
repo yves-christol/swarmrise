@@ -47,13 +47,13 @@ export const createOrUpdateUser = internalMutation({
       return existingUser._id;
     }
 
-    // Create new user
+    // Create new user with their email pre-seeded in contactInfos
     const userId = await ctx.db.insert("users", {
       email: args.email,
       firstname: args.firstname,
       surname: args.surname,
       pictureURL: args.pictureURL,
-      contactInfos: [],
+      contactInfos: [{ type: "Email", value: args.email }],
       orgaIds: [],
     });
 

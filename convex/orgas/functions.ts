@@ -6,6 +6,7 @@ import {
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getAuthenticatedUser,
+  ensureEmailInContactInfos,
 } from "../utils";
 
 /**
@@ -125,7 +126,7 @@ export const createOrganization = mutation({
       ...(normalizedDomains && { authorizedEmailDomains: normalizedDomains }),
     });
 
-    // Create member document for the user
+    // Create member document for the user (ensure email is in contactInfos)
     const memberId = await ctx.db.insert("members", {
       orgaId,
       personId: user._id,
@@ -133,7 +134,7 @@ export const createOrganization = mutation({
       surname: user.surname,
       email: user.email,
       pictureURL: user.pictureURL,
-      contactInfos: user.contactInfos,
+      contactInfos: ensureEmailInContactInfos(user.contactInfos, user.email),
       roleIds: [], // Will be populated after roles are created
     });
     

@@ -12,6 +12,7 @@ import {
   getRoleAndTeamInfo,
   getTeamLeaderMemberId,
   getMemberInOrga,
+  ensureEmailInContactInfos,
 } from "../utils";
 import { contactInfo } from "../users";
 
@@ -400,9 +401,12 @@ export const updateMyContactInfos = mutation({
     // Get the current user's member in this organization
     const member = await getMemberInOrga(ctx, args.orgaId);
 
+    // Ensure the member's own email is always present in contactInfos
+    const safeContactInfos = ensureEmailInContactInfos(args.contactInfos, member.email);
+
     // Update the member's contact infos
     await ctx.db.patch(member._id, {
-      contactInfos: args.contactInfos,
+      contactInfos: safeContactInfos,
     });
 
     return null;

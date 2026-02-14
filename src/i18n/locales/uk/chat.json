@@ -136,6 +136,7 @@
   "electionAdvanceToChangeRound": "Відкрити раунд змін",
   "electionAdvanceToConsent": "Перейти до згоди",
   "electionBackToDiscussion": "Повернутися до обговорення",
+  "electionRestartElection": "Перезапустити вибори",
   "electionChangeRoundInfo": "Ви можете змінити свою номінацію після обговорення. Зміни необов'язкові.",
   "electionChangeNomination": "Змінити номінацію",
   "electionKeepNomination": "Залишити поточну номінацію",

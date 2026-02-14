@@ -136,6 +136,7 @@
   "electionAdvanceToChangeRound": "開啟修改回合",
   "electionAdvanceToConsent": "進入同意階段",
   "electionBackToDiscussion": "返回討論",
+  "electionRestartElection": "重新開始選舉",
   "electionChangeRoundInfo": "討論後您可以修改提名。修改為選填。",
   "electionChangeNomination": "修改提名",
   "electionKeepNomination": "保留目前提名",

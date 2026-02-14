@@ -136,6 +136,7 @@
   "electionAdvanceToChangeRound": "Apri turno di modifiche",
   "electionAdvanceToConsent": "Passa al consenso",
   "electionBackToDiscussion": "Torna alla discussione",
+  "electionRestartElection": "Ricominciare l'elezione",
   "electionChangeRoundInfo": "Puoi cambiare la tua nomina dopo aver ascoltato la discussione. I cambiamenti sono facoltativi.",
   "electionChangeNomination": "Cambia nomina",
   "electionKeepNomination": "Mantieni nomina attuale",

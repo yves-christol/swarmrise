@@ -46,8 +46,8 @@ export const ConsentPhase = ({ messageId, tool }: ConsentPhaseProps) => {
     });
   }, [messageId, objectionReason, submitResponse]);
 
-  const handleBack = useCallback(() => {
-    void advancePhase({ messageId, newPhase: "discussion" });
+  const handleRestart = useCallback(() => {
+    void advancePhase({ messageId, newPhase: "nomination" });
   }, [messageId, advancePhase]);
 
   const handleResolve = useCallback((outcome: "elected" | "no_election") => {
@@ -182,10 +182,10 @@ export const ConsentPhase = ({ messageId, tool }: ConsentPhaseProps) => {
       {isFacilitator && (
         <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex items-center gap-2 justify-end">
           <button
-            onClick={handleBack}
+            onClick={handleRestart}
             className="text-xs px-3 py-1.5 rounded-md bg-slate-200 dark:bg-slate-600 text-dark dark:text-light font-medium hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"
           >
-            {t("electionBackToDiscussion")}
+            {t("electionRestartElection")}
           </button>
 
           {!showResolve ? (

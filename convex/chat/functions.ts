@@ -1464,6 +1464,7 @@ export const advanceElectionPhase = mutation({
   args: {
     messageId: v.id("messages"),
     newPhase: v.union(
+      v.literal("nomination"),
       v.literal("discussion"),
       v.literal("change_round"),
       v.literal("consent"),
@@ -1488,7 +1489,7 @@ export const advanceElectionPhase = mutation({
       nomination: ["discussion"],
       discussion: ["change_round"],
       change_round: ["consent"],
-      consent: ["discussion"],
+      consent: ["nomination"],
     };
 
     if (!validTransitions[currentPhase]?.includes(args.newPhase)) {
@@ -1510,8 +1511,8 @@ export const advanceElectionPhase = mutation({
       throw new Error("A proposed candidate is required to move to the consent phase");
     }
 
-    // When going back to discussion from consent, clear election responses so members can re-vote
-    if (args.newPhase === "discussion" && currentPhase === "consent") {
+    // When restarting at nomination from consent, clear all nominations, responses, and proposed candidate
+    if (args.newPhase === "nomination" && currentPhase === "consent") {
       const responses = await ctx.db
         .query("electionResponses")
         .withIndex("by_message", (q) => q.eq("messageId", args.messageId))
@@ -1519,6 +1520,14 @@ export const advanceElectionPhase = mutation({
       for (const r of responses) {
         await ctx.db.delete(r._id);
       }
+      const nominations = await ctx.db
+        .query("electionNominations")
+        .withIndex("by_message", (q) => q.eq("messageId", args.messageId))
+        .collect();
+      for (const n of nominations) {
+        await ctx.db.delete(n._id);
+      }
+      proposedCandidateId = undefined;
     }
 
     await ctx.db.patch(args.messageId, {

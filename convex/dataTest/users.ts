@@ -311,11 +311,14 @@ export const getMembersForAvatars = internalQuery({
       .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
       .collect();
 
-    return members.map((m) => ({
-      memberId: m._id,
-      personId: m.personId,
-      email: m.email,
-    }));
+    // Only upload avatars for test users (emails ending with .test)
+    return members
+      .filter((m) => m.email.endsWith(".test"))
+      .map((m) => ({
+        memberId: m._id,
+        personId: m.personId,
+        email: m.email,
+      }));
   },
 });
 

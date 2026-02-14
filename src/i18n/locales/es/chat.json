@@ -162,5 +162,14 @@
   "reactedWith": "{{names}} reaccionaron con {{emoji}}",
   "andOthers_one": "y {{count}} otro",
   "andOthers_other": "y {{count}} otros",
-  "youReacted": "Reaccionaste con {{emoji}}"
+  "youReacted": "Reaccionaste con {{emoji}}",
+  "edited": "editado",
+  "editMessage": "Editar",
+  "deleteMessage": "Eliminar",
+  "editMessageSave": "Guardar",
+  "editMessageCancel": "Cancelar",
+  "editMessageHint": "Enter para guardar, Escape para cancelar",
+  "deleteMessageConfirm": "Seguro que quieres eliminar este mensaje? Esta accion no se puede deshacer.",
+  "deleteMessageYes": "Eliminar",
+  "deleteMessageCancel": "Cancelar"
 }

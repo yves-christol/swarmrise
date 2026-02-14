@@ -2235,3 +2235,110 @@ export const getReactionsForMessages = query({
     );
   },
 });
+
+// ---- Message Edit & Delete ----
+
+/**
+ * Edit a message's text content. Only the author can edit their own messages.
+ * Messages with embedded tools cannot be edited (they have their own lifecycle).
+ * Thread replies can also be edited by their author.
+ */
+export const editMessage = mutation({
+  args: {
+    messageId: v.id("messages"),
+    text: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const { member } = await requireChannelAccess(ctx, message.channelId);
+
+    // Only the author can edit
+    if (message.authorId !== member._id) {
+      throw new Error("Only the author can edit this message");
+    }
+
+    // Messages with embedded tools cannot be edited
+    if (message.embeddedTool) {
+      throw new Error("Messages with embedded tools cannot be edited");
+    }
+
+    const trimmed = args.text.trim();
+    if (trimmed.length === 0) {
+      throw new Error("Message cannot be empty");
+    }
+
+    await ctx.db.patch(args.messageId, {
+      text: trimmed,
+      isEdited: true,
+      editedAt: Date.now(),
+    });
+
+    return null;
+  },
+});
+
+/**
+ * Delete a message. Only the author can delete their own messages.
+ * Messages with embedded tools cannot be deleted (they have their own lifecycle).
+ * When a top-level message with thread replies is deleted, all replies and their
+ * reactions are also deleted.
+ */
+export const deleteMessage = mutation({
+  args: {
+    messageId: v.id("messages"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const { member } = await requireChannelAccess(ctx, message.channelId);
+
+    // Only the author can delete
+    if (message.authorId !== member._id) {
+      throw new Error("Only the author can delete this message");
+    }
+
+    // Messages with embedded tools cannot be deleted
+    if (message.embeddedTool) {
+      throw new Error("Messages with embedded tools cannot be deleted");
+    }
+
+    // Delete reactions on this message
+    const reactions = await ctx.db
+      .query("reactions")
+      .withIndex("by_message", (q) => q.eq("messageId", args.messageId))
+      .collect();
+    for (const r of reactions) {
+      await ctx.db.delete(r._id);
+    }
+
+    // If this is a top-level message, also delete thread replies and their reactions
+    if (!message.threadParentId) {
+      const replies = await ctx.db
+        .query("messages")
+        .withIndex("by_thread_parent", (q) => q.eq("threadParentId", args.messageId))
+        .collect();
+
+      for (const reply of replies) {
+        // Delete reactions on each reply
+        const replyReactions = await ctx.db
+          .query("reactions")
+          .withIndex("by_message", (q) => q.eq("messageId", reply._id))
+          .collect();
+        for (const r of replyReactions) {
+          await ctx.db.delete(r._id);
+        }
+        await ctx.db.delete(reply._id);
+      }
+    }
+
+    // Delete the message itself
+    await ctx.db.delete(args.messageId);
+
+    return null;
+  },
+});

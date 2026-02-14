@@ -72,6 +72,18 @@
 - Works on both main channel messages and thread replies
 - i18n keys added: react, addReaction, removeReaction, reactedWith, andOthers, youReacted
 
+## Message Edit & Delete (added 2026-02-14)
+- 2 mutations: `editMessage` (patches text, sets isEdited+editedAt), `deleteMessage` (cascading: reactions + thread replies + their reactions)
+- Author-only: both mutations verify `message.authorId === member._id`
+- Messages with embedded tools (topic/voting/election) cannot be edited or deleted
+- Schema already had `isEdited`/`editedAt` fields on messages from initial design
+- Frontend: inline edit textarea replaces message text, Enter to save, Escape to cancel
+- Delete uses portaled confirmation dialog (`createPortal` to body)
+- Action buttons (Edit/Delete) appear on hover in the message action row, author-only, no embedded tool
+- ThreadPanel updated to accept `orgaId` prop and pass `currentMemberId` to MessageItem
+- Compact messages show "(edited)" inline after text; full messages show it in header
+- i18n keys: edited, editMessage, deleteMessage, editMessageSave/Cancel/Hint, deleteMessageConfirm/Yes/Cancel
+
 ## Open Questions (need collaborator input)
 - Karl: DM participant indexing (defaulted to dmMemberA/dmMemberB), tool table count (12 tables total now including reactions)
 - Monica: chat panel placement (defaulted to right-side), channel list behavior, tool creation flow

@@ -162,5 +162,14 @@
   "reactedWith": "{{names}} reacted with {{emoji}}",
   "andOthers_one": "and {{count}} other",
   "andOthers_other": "and {{count}} others",
-  "youReacted": "You reacted with {{emoji}}"
+  "youReacted": "You reacted with {{emoji}}",
+  "edited": "edited",
+  "editMessage": "Edit",
+  "deleteMessage": "Delete",
+  "editMessageSave": "Save",
+  "editMessageCancel": "Cancel",
+  "editMessageHint": "Enter to save, Escape to cancel",
+  "deleteMessageConfirm": "Are you sure you want to delete this message? This cannot be undone.",
+  "deleteMessageYes": "Delete",
+  "deleteMessageCancel": "Cancel"
 }

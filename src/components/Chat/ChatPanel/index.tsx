@@ -146,6 +146,7 @@ export const ChatPanel = () => {
             <ThreadPanel
               messageId={activeThreadMessageId}
               channelId={selectedChannelId}
+              orgaId={selectedOrgaId!}
               onClose={closeThread}
             />
           ) : selectedChannelId ? (

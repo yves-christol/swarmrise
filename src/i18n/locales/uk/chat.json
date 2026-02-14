@@ -162,5 +162,14 @@
   "reactedWith": "{{names}} відреагували {{emoji}}",
   "andOthers_one": "та {{count}} інший",
   "andOthers_other": "та {{count}} інших",
-  "youReacted": "Ви відреагували {{emoji}}"
+  "youReacted": "Ви відреагували {{emoji}}",
+  "edited": "змінено",
+  "editMessage": "Редагувати",
+  "deleteMessage": "Видалити",
+  "editMessageSave": "Зберегти",
+  "editMessageCancel": "Скасувати",
+  "editMessageHint": "Enter для збереження, Escape для скасування",
+  "deleteMessageConfirm": "Ви впевнені, що хочете видалити це повідомлення? Цю дію неможливо скасувати.",
+  "deleteMessageYes": "Видалити",
+  "deleteMessageCancel": "Скасувати"
 }

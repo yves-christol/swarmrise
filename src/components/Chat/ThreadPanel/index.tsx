@@ -8,14 +8,18 @@ import { MessageItem } from "../MessageList/MessageItem";
 type ThreadPanelProps = {
   messageId: Id<"messages">;
   channelId: Id<"channels">;
+  orgaId: Id<"orgas">;
   onClose: () => void;
 };
 
-export const ThreadPanel = ({ messageId, channelId, onClose }: ThreadPanelProps) => {
+export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPanelProps) => {
   const { t } = useTranslation("chat");
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const myMember = useQuery(api.members.functions.getMyMember, { orgaId });
+  const currentMemberId = myMember?._id;
 
   const parentMessage = useQuery(api.chat.functions.getMessageById, { messageId });
   const replies = useQuery(api.chat.functions.getThreadReplies, { messageId });
@@ -94,7 +98,7 @@ export const ThreadPanel = ({ messageId, channelId, onClose }: ThreadPanelProps)
       {/* Parent message */}
       <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30">
         {parentMessage ? (
-          <MessageItem message={parentMessage} isCompact={false} reactions={getReactions(parentMessage._id)} />
+          <MessageItem message={parentMessage} isCompact={false} currentMemberId={currentMemberId} reactions={getReactions(parentMessage._id)} />
         ) : (
           <div className="p-3 text-sm text-gray-500 dark:text-gray-400 text-center">
             {t("loadingMessages")}
@@ -119,7 +123,7 @@ export const ThreadPanel = ({ messageId, channelId, onClose }: ThreadPanelProps)
               prevReply !== null &&
               prevReply.authorId === reply.authorId &&
               reply._creationTime - prevReply._creationTime < 5 * 60 * 1000;
-            return <MessageItem key={reply._id} message={reply} isCompact={isCompact} reactions={getReactions(reply._id)} />;
+            return <MessageItem key={reply._id} message={reply} isCompact={isCompact} currentMemberId={currentMemberId} reactions={getReactions(reply._id)} />;
           })
         )}
         <div ref={bottomRef} />

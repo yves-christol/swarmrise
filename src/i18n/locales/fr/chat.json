@@ -162,5 +162,14 @@
   "reactedWith": "{{names}} ont reagi avec {{emoji}}",
   "andOthers_one": "et {{count}} autre",
   "andOthers_other": "et {{count}} autres",
-  "youReacted": "Vous avez reagi avec {{emoji}}"
+  "youReacted": "Vous avez reagi avec {{emoji}}",
+  "edited": "modifie",
+  "editMessage": "Modifier",
+  "deleteMessage": "Supprimer",
+  "editMessageSave": "Enregistrer",
+  "editMessageCancel": "Annuler",
+  "editMessageHint": "Entree pour enregistrer, Echap pour annuler",
+  "deleteMessageConfirm": "Etes-vous sur de vouloir supprimer ce message ? Cette action est irreversible.",
+  "deleteMessageYes": "Supprimer",
+  "deleteMessageCancel": "Annuler"
 }

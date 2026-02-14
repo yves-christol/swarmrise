@@ -25,7 +25,7 @@ bun run lint
 
 ## Architecture
 
-**Stack:** React 19 + Vite frontend, Convex backend, Clerk authentication, Tailwind CSS v4
+**Stack:** React 19 + Vite frontend, Convex backend, Clerk authentication, Tailwind CSS v4, React Router 7, i18next
 
 ### Convex Backend Structure
 
@@ -34,6 +34,12 @@ Each domain entity has its own directory under `convex/`:
 - `functions.ts` - Queries and mutations for that domain
 
 **Domain directories:** `orgas/`, `users/`, `members/`, `teams/`, `roles/`, `decisions/`, `invitations/`, `policies/`, `topics/`
+
+**Chat system:** `chat/` - Channels (orga-wide, team, DM), messages with threads, reactions, and embedded governance tools (topic/consent, voting, candidateless election). Helper files: `topicHelpers.ts`, `votingHelpers.ts`, `electionHelpers.ts`, `access.ts`.
+
+**Notifications:** `notifications/` and `notificationPreferences/` - Real-time notification delivery with per-user category/priority preferences.
+
+**Infrastructure:** `emails/` (Resend), `webhooks/` (Clerk webhooks via Svix), `crons.ts` (scheduled tasks), `http.ts` (HTTP routes), `aggregates.ts`, `storage.ts`
 
 **Shared utilities:** `convex/utils.ts` contains auth helpers (`getAuthenticatedUser`, `requireAuthAndMembership`, `getMemberInOrga`) and cross-entity lookups.
 
@@ -74,14 +80,22 @@ Use `internalQuery`/`internalMutation`/`internalAction` for private functions, r
 - **Team** - Belongs to an orga
 - **Role** - Belongs to a team, optional `roleType` ("leader" | "secretary" | "referee"), assigned to a member
 - **Decision** - Audit trail with before/after diffs for all modifications
+- **Channel** - Chat channel, `kind`: "orga" | "team" | "dm". Team channels auto-created with teams
+- **Message** - Belongs to a channel, supports threads (`threadParentId`), embedded tools (`toolType`: "topic" | "voting" | "election"), and full-text search
+- **Notification** - Per-user notifications with category, priority, grouping, and expiration
+- **NotificationPreferences** - Per-user, per-orga notification settings by category
 
-All tables with organizational data are indexed by `by_orga` for efficient queries.
+All tables with organizational data are indexed by `by_orga` for efficient queries. Messages use a search index on `text` filtered by `orgaId` and `channelId`.
 
 ### Frontend
 
-- Entry: `src/main.tsx` sets up `ClerkProvider` → `ConvexProviderWithClerk` → `App`
+- Entry: `src/main.tsx` sets up `ThemeProvider` → `ClerkProvider` → `ConvexProviderWithClerk` → `OrgaStoreProvider` → `ChatStoreProvider` → `BrowserRouter`
 - Components use Convex hooks (`useQuery`, `useMutation`) directly
-- i18n: Custom React Context-based system in `src/tools/i18n/`
+- i18n: i18next + react-i18next, initialized in `src/i18n.ts`
+- State: `src/tools/orgaStore/` (org selection) and `src/tools/chatStore/` (chat UI state)
+- Routing: React Router 7 with org-scoped routes (`/o/:orgaId/...`)
+- Chat: `src/components/Chat/` - Panel with channels, messages, threads, search, reactions, and embedded tools (TopicTool, VotingTool, ElectionTool)
+- Visualizations: D3-force graph views in `OrgaVisualView/`, `TeamVisualView/`, `MemberVisualView/`, `RoleVisualView/`
 
 ## Convex Conventions
 

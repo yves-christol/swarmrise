@@ -32,27 +32,50 @@
 - Tool participation data in separate tables to avoid write conflicts
 - Key file: `/Users/yc/dev/swarmrise/docs/CHAT.md`
 - **DM indexing decision**: use `dmMemberA`/`dmMemberB` separate fields (not array), canonical order (smaller _id in A)
-- **9 new tables total**: channels, messages, channelReadPositions, topicClarifications, topicAnswers, topicResponses, votes, electionNominations, electionResponses
+- **10 new tables total**: channels, messages, channelReadPositions, topicClarifications, topicAnswers, topicResponses, votes, electionNominations, electionResponses, reactions
 - **ChatStore context** follows OrgaStore pattern (`src/tools/chatStore/`)
 - **Chat panel**: right-side panel (default, pending Monica), ~400px, overlaps FocusContainer
 - **Chat toggle**: in Header, next to NotificationBell
 - **Message pagination**: Convex cursor-based via `usePaginatedQuery`, 30 initial, 20 per scroll
 - **Author grouping**: same author + <5min gap = compact display
 
-## Implementation Plan (7 phases, detailed in CHAT.md)
-- Phase 1: Foundation (schema, channels, messages, chat panel) -- no blockers besides Monica/Karl
-- Phase 2: Threads + DMs
-- Phase 3: Topic Tool (consent decisions) -- depends on Ivan for facilitator rules
-- Phase 4: Voting Tool
-- Phase 5: Election Tool -- depends on Ivan for nomination secrecy
-- Phase 6: Notifications integration
-- Phase 7: Polish, search, accessibility
-- Critical path: P1 -> P3 -> P5; P2/P4 can run in parallel after P1
+## Implementation Status (7 phases, detailed in CHAT.md)
+- Phase 1: Foundation -- DONE (schema, channels, messages, chat panel)
+- Phase 2: Threads + DMs -- DONE
+- Phase 3: Topic Tool -- DONE (consent decisions with clarification/consent phases)
+- Phase 4: Voting Tool -- DONE (single/approval/ranked modes)
+- Phase 5: Election Tool -- DONE (2026-02-14, nomination secrecy resolved with option b)
+- Phase 6: Notifications integration -- PENDING
+- Phase 7: Polish, search, accessibility -- PENDING
+
+## Phase 5 Election Implementation Details
+- Tables: `electionNominations` (by_message, by_message_and_nominator, by_orga), `electionResponses` (by_message, by_message_and_member, by_orga)
+- Helper: `convex/chat/electionHelpers.ts` (requireElectionPhase, canFacilitateElection)
+- 6 mutations: createElectionMessage, submitNomination, advanceElectionPhase, changeNomination, submitElectionResponse, resolveElection
+- 5 queries: getElectionNominations (secret/revealed dual return), getElectionResponses, getMyElectionNomination, getMyElectionResponse, getEligibleNominees, canFacilitateElectionQuery
+- Nomination secrecy: during nomination phase, query returns only count + hasNominated; after nomination, full details with tally
+- Phase flow: nomination -> discussion -> change_round -> consent -> elected; consent can go back to discussion
+- Election diff type added to decisions/index.ts; "elections" added to targetType union
+- Frontend: `src/components/Chat/ElectionTool/` with 5 phase components + CreateElectionModal
+- MessageInput now accepts orgaId prop (passed from ChatPanel) for election team selection
+- All 6 locale files updated with election i18n keys (en, fr, es, it, uk, zh-TW)
+- Purple color theme for election phases (nomination badge = purple)
+
+## Emoji Reactions (added 2026-02-14)
+- Table: `reactions` (by_message, by_message_and_member_and_emoji, by_orga)
+- 1 mutation: `toggleReaction` (add/remove), 1 query: `getReactionsForMessages` (batch, aggregated by emoji)
+- 12 curated emojis (thumbs up/down, heart, smile, laugh, thinking, party, folded hands, clapping, eyes, check/cross)
+- Frontend: `src/components/Chat/Reactions/` with ReactionBar (badges + inline picker) and ReactionButton (text button for action row)
+- Batch fetch pattern: MessageList and ThreadPanel fetch reactions for all visible messages in one query
+- Reaction badges: gold highlight when user has reacted (`#eac840/15` bg, `#eac840/40` border)
+- Tooltip shows member names who reacted (capped at 5, shows "and N others")
+- Works on both main channel messages and thread replies
+- i18n keys added: react, addReaction, removeReaction, reactedWith, andOthers, youReacted
 
 ## Open Questions (need collaborator input)
-- Karl: DM participant indexing (defaulted to dmMemberA/dmMemberB), tool table count (9 new tables)
+- Karl: DM participant indexing (defaulted to dmMemberA/dmMemberB), tool table count (12 tables total now including reactions)
 - Monica: chat panel placement (defaulted to right-side), channel list behavior, tool creation flow
-- Ivan: topic facilitator role, election nomination secrecy, topics entity overlap, consent education UI
+- Ivan: topics entity overlap, consent education UI (election nomination secrecy resolved)
 
 ## Governance Model (from VISION.md)
 - Consent-based decisions: proposition -> clarification -> consent

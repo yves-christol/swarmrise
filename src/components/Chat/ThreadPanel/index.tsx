@@ -21,6 +21,20 @@ export const ThreadPanel = ({ messageId, channelId, onClose }: ThreadPanelProps)
   const replies = useQuery(api.chat.functions.getThreadReplies, { messageId });
   const sendThreadReply = useMutation(api.chat.functions.sendThreadReply);
 
+  // Collect all message IDs (parent + replies) for batch reaction query
+  const allMessageIds = [
+    messageId,
+    ...(replies ?? []).map((r) => r._id),
+  ];
+  const reactionsData = useQuery(
+    api.chat.functions.getReactionsForMessages,
+    allMessageIds.length > 0 ? { messageIds: allMessageIds } : "skip"
+  );
+
+  const getReactions = (msgId: Id<"messages">) => {
+    return reactionsData?.find((r) => r.messageId === msgId)?.reactions ?? [];
+  };
+
   // Scroll to bottom when new replies arrive
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "auto" });
@@ -80,7 +94,7 @@ export const ThreadPanel = ({ messageId, channelId, onClose }: ThreadPanelProps)
       {/* Parent message */}
       <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30">
         {parentMessage ? (
-          <MessageItem message={parentMessage} isCompact={false} />
+          <MessageItem message={parentMessage} isCompact={false} reactions={getReactions(parentMessage._id)} />
         ) : (
           <div className="p-3 text-sm text-gray-500 dark:text-gray-400 text-center">
             {t("loadingMessages")}
@@ -105,7 +119,7 @@ export const ThreadPanel = ({ messageId, channelId, onClose }: ThreadPanelProps)
               prevReply !== null &&
               prevReply.authorId === reply.authorId &&
               reply._creationTime - prevReply._creationTime < 5 * 60 * 1000;
-            return <MessageItem key={reply._id} message={reply} isCompact={isCompact} />;
+            return <MessageItem key={reply._id} message={reply} isCompact={isCompact} reactions={getReactions(reply._id)} />;
           })
         )}
         <div ref={bottomRef} />

@@ -155,5 +155,12 @@
   "electionElectedMember": "{{name}} 已被選為 {{role}}",
   "electionNoElectionResult": "未有候選人被選為 {{role}}",
   "electionNoNominations": "尚無提名。",
-  "electionSearchMembers": "搜尋成員..."
+  "electionSearchMembers": "搜尋成員...",
+  "react": "表情回應",
+  "addReaction": "新增表情回應",
+  "removeReaction": "移除表情回應",
+  "reactedWith": "{{names}} 以 {{emoji}} 回應",
+  "andOthers_one": "和其他 {{count}} 人",
+  "andOthers_other": "和其他 {{count}} 人",
+  "youReacted": "你以 {{emoji}} 回應了"
 }

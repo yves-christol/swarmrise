@@ -3,6 +3,7 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import { TopicTool } from "../TopicTool";
 import { VotingTool } from "../VotingTool";
 import { ElectionTool } from "../ElectionTool";
+import { ReactionBar, ReactionButton } from "../Reactions";
 import type { EmbeddedVoting } from "../VotingTool";
 import type { EmbeddedElection } from "../ElectionTool";
 
@@ -33,6 +34,13 @@ type EmbeddedTool = {
   decisionId?: Id<"decisions">;
 };
 
+type ReactionGroup = {
+  emoji: string;
+  count: number;
+  reacted: boolean;
+  memberNames: string[];
+};
+
 type MessageItemProps = {
   message: {
     _id: Id<"messages">;
@@ -51,6 +59,7 @@ type MessageItemProps = {
   replyCount?: number;
   onReply?: (messageId: Id<"messages">) => void;
   currentMemberId?: Id<"members">;
+  reactions?: ReactionGroup[];
 };
 
 function formatTime(timestamp: number): string {
@@ -61,9 +70,10 @@ function formatTime(timestamp: number): string {
   });
 }
 
-export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMemberId }: MessageItemProps) => {
+export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMemberId, reactions }: MessageItemProps) => {
   const { t } = useTranslation("chat");
   const initials = `${message.author.firstname[0] ?? ""}${message.author.surname[0] ?? ""}`.toUpperCase();
+  const messageReactions = reactions ?? [];
 
   const threadIndicator = onReply && (
     <div className="flex items-center gap-2 mt-1">
@@ -81,7 +91,18 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
       >
         {t("reply")}
       </button>
+      <ReactionButton messageId={message._id} />
     </div>
+  );
+
+  // Reaction bar shown below content when there are existing reactions,
+  // or on hover to allow adding a first reaction.
+  const reactionBar = (
+    <ReactionBar
+      messageId={message._id}
+      reactions={messageReactions}
+      showAddButton={!onReply}
+    />
   );
 
   const isAuthor = currentMemberId === message.authorId;
@@ -107,6 +128,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
           {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
           {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
           {electionTool && <ElectionTool messageId={message._id} tool={electionTool} isAuthor={isAuthor} />}
+          {reactionBar}
           {threadIndicator}
         </div>
       </div>
@@ -148,6 +170,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
         {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
         {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
         {electionTool && <ElectionTool messageId={message._id} tool={electionTool} isAuthor={isAuthor} />}
+        {reactionBar}
         {threadIndicator}
       </div>
     </div>

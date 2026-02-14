@@ -42,7 +42,7 @@ The Swarmrise communication system is not a generic chat bolted onto an org tool
 
 5. **Transparency.** Messages in organizational channels are visible to all members of that scope. There are no secret admin-only discussions within the organizational structure (DMs are separate and explicitly private). This mirrors the governance principle: transparency is the immune system.
 
-6. **Low complexity.** The set of concepts is small: channels, messages, threads, embedded tools. No reactions, no statuses, no stories, no bots marketplace. These can be considered later, but the initial system stays lean.
+6. **Low complexity.** The set of concepts is small: channels, messages, threads, embedded tools, and emoji reactions. No statuses, no stories, no bots marketplace. These can be considered later, but the initial system stays lean.
 
 ---
 
@@ -362,6 +362,45 @@ Future tools under consideration:
 - **Checklist tool** - Collaborative checklist within a message (for meeting agendas)
 - **Availability tool** - Find common availability for scheduling
 - **Retrospective tool** - Structured retrospective with keep/stop/start categories
+
+---
+
+## Emoji Reactions
+
+Emoji reactions allow members to respond to any message with a curated set of emojis. This provides lightweight feedback without cluttering the conversation with full messages.
+
+### Design
+
+- **Curated palette**: 12 commonly-used emojis (thumbs up/down, heart, smile, laugh, thinking, party, folded hands, clapping, eyes, check mark, cross mark). No full emoji picker -- keeps complexity low.
+- **Toggle behavior**: Clicking an emoji badge toggles the user's reaction (add if not present, remove if already reacted). Same-emoji from the same user is idempotent.
+- **Real-time**: Reactions are stored in a dedicated `reactions` table and fetched via Convex reactive queries. No polling.
+- **Batch fetching**: The `getReactionsForMessages` query accepts a batch of message IDs and returns aggregated reactions (grouped by emoji, with counts, "reacted" flag, and member name tooltips).
+- **Placement**: Reaction badges appear below the message text. A "React" text button appears next to the "Reply" button on hover. Existing reaction badges also have an inline "add" button (smiley icon) on hover.
+- **Thread support**: Reactions work on both top-level messages and thread replies.
+
+### Data Model
+
+```typescript
+// reactions table
+{
+  messageId: Id<"messages">,
+  orgaId: Id<"orgas">,
+  memberId: Id<"members">,
+  emoji: string, // Unicode emoji character
+}
+```
+
+**Indexes:**
+- `by_message` -- fetch all reactions for a message
+- `by_message_and_member_and_emoji` -- fast toggle (upsert/delete)
+- `by_orga` -- multi-tenant cleanup
+
+### API
+
+| Function | Type | Description |
+|----------|------|-------------|
+| `toggleReaction` | mutation | Toggle a reaction on a message (add/remove) |
+| `getReactionsForMessages` | query | Batch fetch aggregated reactions for multiple messages |
 
 ---
 

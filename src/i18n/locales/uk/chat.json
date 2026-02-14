@@ -155,5 +155,12 @@
   "electionElectedMember": "{{name}} обрано на роль {{role}}",
   "electionNoElectionResult": "Жодного кандидата не обрано на роль {{role}}",
   "electionNoNominations": "Ще немає поданих номінацій.",
-  "electionSearchMembers": "Пошук учасників..."
+  "electionSearchMembers": "Пошук учасників...",
+  "react": "Реакція",
+  "addReaction": "Додати реакцію",
+  "removeReaction": "Прибрати реакцію",
+  "reactedWith": "{{names}} відреагували {{emoji}}",
+  "andOthers_one": "та {{count}} інший",
+  "andOthers_other": "та {{count}} інших",
+  "youReacted": "Ви відреагували {{emoji}}"
 }

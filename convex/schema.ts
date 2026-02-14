@@ -13,7 +13,7 @@ import { notificationPreferencesType } from "./notificationPreferences"
 import { channelType } from "./chat"
 import { messageType } from "./chat"
 import { channelReadPositionType } from "./chat"
-import { topicClarificationType, topicAnswerType, topicResponseType, voteType, electionNominationType, electionResponseType } from "./chat"
+import { topicClarificationType, topicAnswerType, topicResponseType, voteType, electionNominationType, electionResponseType, reactionType } from "./chat"
 /**
  * Swarmrise Data Model Schema
  *
@@ -140,5 +140,10 @@ export default defineSchema({
   electionResponses: defineTable({ ...electionResponseType.fields })
     .index("by_message", ["messageId"])
     .index("by_message_and_member", ["messageId", "memberId"])
+    .index("by_orga", ["orgaId"]),
+
+  reactions: defineTable({ ...reactionType.fields })
+    .index("by_message", ["messageId"])
+    .index("by_message_and_member_and_emoji", ["messageId", "memberId", "emoji"])
     .index("by_orga", ["orgaId"]),
 });

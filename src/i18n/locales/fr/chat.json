@@ -155,5 +155,12 @@
   "electionElectedMember": "{{name}} a ete elu(e) au poste de {{role}}",
   "electionNoElectionResult": "Aucun candidat n'a ete elu pour {{role}}",
   "electionNoNominations": "Aucune nomination soumise pour le moment.",
-  "electionSearchMembers": "Rechercher des membres..."
+  "electionSearchMembers": "Rechercher des membres...",
+  "react": "Reagir",
+  "addReaction": "Ajouter une reaction",
+  "removeReaction": "Retirer la reaction",
+  "reactedWith": "{{names}} ont reagi avec {{emoji}}",
+  "andOthers_one": "et {{count}} autre",
+  "andOthers_other": "et {{count}} autres",
+  "youReacted": "Vous avez reagi avec {{emoji}}"
 }

@@ -65,8 +65,18 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
     messageIds.length > 0 ? { channelId, messageIds } : "skip"
   );
 
+  // Get reactions for visible messages
+  const reactionsData = useQuery(
+    api.chat.functions.getReactionsForMessages,
+    messageIds.length > 0 ? { messageIds } : "skip"
+  );
+
   const getReplyCount = (messageId: Id<"messages">) => {
     return threadCounts?.find((tc) => tc.messageId === messageId)?.replyCount ?? 0;
+  };
+
+  const getReactions = (messageId: Id<"messages">) => {
+    return reactionsData?.find((r) => r.messageId === messageId)?.reactions ?? [];
   };
 
   // Mark channel as read when viewing it
@@ -172,6 +182,7 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
                 replyCount={getReplyCount(msg._id)}
                 onReply={openThread}
                 currentMemberId={currentMemberId}
+                reactions={getReactions(msg._id)}
               />
             </div>
           );

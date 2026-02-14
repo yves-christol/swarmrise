@@ -230,3 +230,20 @@ export const electionResponseValidator = v.object({
 });
 
 export type ElectionResponse = Infer<typeof electionResponseValidator>;
+
+// --- Reaction ---
+
+export const reactionType = v.object({
+  messageId: v.id("messages"),
+  orgaId: v.id("orgas"),
+  memberId: v.id("members"),
+  emoji: v.string(),
+});
+
+export const reactionValidator = v.object({
+  _id: v.id("reactions"),
+  _creationTime: v.number(),
+  ...reactionType.fields,
+});
+
+export type Reaction = Infer<typeof reactionValidator>;

@@ -18,6 +18,7 @@ import type * as chat_votingHelpers from "../chat/votingHelpers.js";
 import type * as crons from "../crons.js";
 import type * as dataTest_createDemoOrga from "../dataTest/createDemoOrga.js";
 import type * as dataTest_demoOrgaConfig from "../dataTest/demoOrgaConfig.js";
+import type * as dataTest_infomaxLogo from "../dataTest/infomaxLogo.js";
 import type * as dataTest_orga from "../dataTest/orga.js";
 import type * as dataTest_users from "../dataTest/users.js";
 import type * as decisions_functions from "../decisions/functions.js";
@@ -68,6 +69,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   "dataTest/createDemoOrga": typeof dataTest_createDemoOrga;
   "dataTest/demoOrgaConfig": typeof dataTest_demoOrgaConfig;
+  "dataTest/infomaxLogo": typeof dataTest_infomaxLogo;
   "dataTest/orga": typeof dataTest_orga;
   "dataTest/users": typeof dataTest_users;
   "decisions/functions": typeof decisions_functions;

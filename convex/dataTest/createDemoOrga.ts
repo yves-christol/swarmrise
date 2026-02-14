@@ -4,7 +4,8 @@
  * This module provides:
  *  1. deleteDemoOrga   - Finds the demo orga by name and deletes it with ALL dependencies
  *  2. seedDemoOrga     - Creates a fresh demo orga from the JSON-like config
- *  3. resetDemoOrga    - Orchestrating action: delete then create (called by the cron)
+ *  3. uploadDemoLogo   - Uploads the Infomax logo to Convex storage and updates the orga
+ *  4. resetDemoOrga    - Orchestrating action: delete then create (called by the cron)
  *
  * Deletion order (respects referential dependencies):
  *   topics -> policies -> decisions -> invitations -> notifications ->
@@ -288,10 +289,23 @@ export const deleteDemoOrga = internalMutation({
       counts.teams++;
     }
 
-    // 9. Delete the orga itself
+    // 9. Delete the orga logo from storage if present
+    if (orga.logoUrl) {
+      const match = orga.logoUrl.match(/\/api\/storage\/([a-f0-9-]+)$/);
+      if (match) {
+        try {
+          await ctx.storage.delete(match[1] as Id<"_storage">);
+          counts.storageFiles++;
+        } catch {
+          // Storage file may already be deleted
+        }
+      }
+    }
+
+    // 10. Delete the orga itself
     await ctx.db.delete(orgaId);
 
-    // 10. Delete orphaned demo test users
+    // 11. Delete orphaned demo test users
     //     Use the personIds from members we already collected (no full table scan).
     const checkedUserIds = new Set<string>();
     for (const member of members) {
@@ -742,7 +756,68 @@ export const seedDemoOrga = internalMutation({
 });
 
 // ---------------------------------------------------------------------------
-// 3. ORCHESTRATING ACTION: delete + create (called by cron)
+// 3. UPLOAD the Infomax logo to Convex storage and update the orga
+// ---------------------------------------------------------------------------
+
+/**
+ * Internal mutation to update an orga's logoUrl field.
+ * Used by uploadDemoLogo after storing the logo in Convex storage.
+ */
+export const updateOrgaLogo = internalMutation({
+  args: {
+    orgaId: v.id("orgas"),
+    logoUrl: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.orgaId, { logoUrl: args.logoUrl });
+    return null;
+  },
+});
+
+/**
+ * Internal action that decodes the embedded Infomax logo from base64,
+ * uploads it to Convex file storage, and patches the orga with the resulting URL.
+ */
+export const uploadDemoLogo = internalAction({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.object({
+    logoUrl: v.string(),
+  }),
+  handler: async (ctx, args): Promise<{ logoUrl: string }> => {
+    // Dynamically import the base64 logo data (keeps bundle impact minimal)
+    const { INFOMAX_LOGO_BASE64 } = await import("./infomaxLogo");
+
+    // Decode base64 to binary
+    const binaryString = atob(INFOMAX_LOGO_BASE64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const blob = new Blob([bytes], { type: "image/png" });
+
+    // Store in Convex storage
+    const storageId = await ctx.storage.store(blob);
+    const logoUrl = await ctx.storage.getUrl(storageId);
+    if (!logoUrl) {
+      throw new Error("[uploadDemoLogo] Failed to get storage URL for logo");
+    }
+
+    // Update the orga's logoUrl
+    await ctx.runMutation(
+      internal.dataTest.createDemoOrga.updateOrgaLogo,
+      { orgaId: args.orgaId, logoUrl }
+    );
+
+    console.log(`[uploadDemoLogo] Logo uploaded and orga ${args.orgaId} updated.`);
+    return { logoUrl };
+  },
+});
+
+// ---------------------------------------------------------------------------
+// 4. ORCHESTRATING ACTION: delete + create (called by cron)
 // ---------------------------------------------------------------------------
 
 export const resetDemoOrga = internalAction({
@@ -809,7 +884,13 @@ export const resetDemoOrga = internalAction({
       {}
     );
 
-    // Step 3: Populate avatars for all members
+    // Step 3: Upload the Infomax logo and set it on the orga
+    const logoResult = await ctx.runAction(
+      internal.dataTest.createDemoOrga.uploadDemoLogo,
+      { orgaId: createResult.orgaId }
+    );
+
+    // Step 4: Populate avatars for all members
     const avatarResult = await ctx.runAction(
       internal.dataTest.users.populateMemberAvatarsInternal,
       { orgaId: createResult.orgaId }
@@ -817,6 +898,7 @@ export const resetDemoOrga = internalAction({
 
     console.log(
       `[resetDemoOrga] Reset complete. New orgaId: ${createResult.orgaId}, ` +
+      `logo: ${logoResult.logoUrl}, ` +
       `avatars: ${avatarResult.updatedCount} ok / ${avatarResult.failedCount} failed`
     );
 

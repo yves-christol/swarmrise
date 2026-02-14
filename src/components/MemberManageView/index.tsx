@@ -541,8 +541,13 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
     setIsSavingContacts(true);
     setContactSaveMessage(null);
     try {
-      // Use ref to get the current value, avoiding stale closure issues
-      const contactsToSave = editedContactsRef.current.filter((c) => c.value && c.value.trim());
+      // Include any pending new contact that hasn't been explicitly added yet
+      let contacts = editedContactsRef.current;
+      if (newContactValue.trim()) {
+        contacts = [...contacts, { type: newContactType, value: newContactValue.trim() }];
+        setNewContactValue("");
+      }
+      const contactsToSave = contacts.filter((c) => c.value && c.value.trim());
       await updateContactInfos({
         orgaId: selectedOrgaId,
         contactInfos: contactsToSave as { type: typeof CONTACT_TYPES[number]; value: string }[],

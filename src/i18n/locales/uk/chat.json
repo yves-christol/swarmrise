@@ -171,5 +171,13 @@
   "editMessageHint": "Enter для збереження, Escape для скасування",
   "deleteMessageConfirm": "Ви впевнені, що хочете видалити це повідомлення? Цю дію неможливо скасувати.",
   "deleteMessageYes": "Видалити",
-  "deleteMessageCancel": "Скасувати"
+  "deleteMessageCancel": "Скасувати",
+  "searchMessages": "Пошук повідомлень",
+  "searchPlaceholder": "Шукати повідомлення...",
+  "noSearchResults": "Нічого не знайдено",
+  "searchResultCount_one": "{{count}} результат",
+  "searchResultCount_other": "{{count}} результатів",
+  "allChannels": "Усі канали",
+  "thisChannel": "Цей канал",
+  "messageList": "Повідомлення"
 }

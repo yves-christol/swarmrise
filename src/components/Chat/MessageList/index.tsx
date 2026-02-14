@@ -132,6 +132,11 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
     );
   }
 
+  // Find the last message by the current user (for Up Arrow edit shortcut)
+  const lastOwnMessageId = currentMemberId
+    ? [...messages].reverse().find((m) => m.authorId === currentMemberId && !m.embeddedTool)?._id
+    : undefined;
+
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400 px-4 text-center">
@@ -146,6 +151,9 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
         ref={scrollContainerRef}
         onScroll={handleScroll}
         className="absolute inset-0 overflow-y-auto"
+        role="log"
+        aria-live="polite"
+        aria-label={t("messageList")}
       >
         {status === "LoadingMore" && (
           <div className="py-2 text-center text-xs text-gray-400 dark:text-gray-500">
@@ -183,6 +191,7 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
                 onReply={openThread}
                 currentMemberId={currentMemberId}
                 reactions={getReactions(msg._id)}
+                isLastOwnMessage={msg._id === lastOwnMessageId}
               />
             </div>
           );

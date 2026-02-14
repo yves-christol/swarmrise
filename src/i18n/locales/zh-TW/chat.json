@@ -171,5 +171,13 @@
   "editMessageHint": "按 Enter 儲存，按 Escape 取消",
   "deleteMessageConfirm": "確定要刪除此訊息嗎？此操作無法復原。",
   "deleteMessageYes": "刪除",
-  "deleteMessageCancel": "取消"
+  "deleteMessageCancel": "取消",
+  "searchMessages": "搜尋訊息",
+  "searchPlaceholder": "搜尋訊息...",
+  "noSearchResults": "沒有搜尋結果",
+  "searchResultCount_one": "{{count}} 個結果",
+  "searchResultCount_other": "{{count}} 個結果",
+  "allChannels": "所有頻道",
+  "thisChannel": "此頻道",
+  "messageList": "訊息"
 }

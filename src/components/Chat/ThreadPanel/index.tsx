@@ -39,6 +39,11 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
     return reactionsData?.find((r) => r.messageId === msgId)?.reactions ?? [];
   };
 
+  // Focus reply input on mount
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
+
   // Scroll to bottom when new replies arrive
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "auto" });

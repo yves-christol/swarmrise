@@ -171,5 +171,13 @@
   "editMessageHint": "Invio per salvare, Esc per annullare",
   "deleteMessageConfirm": "Sei sicuro di voler eliminare questo messaggio? Questa azione non puo essere annullata.",
   "deleteMessageYes": "Elimina",
-  "deleteMessageCancel": "Annulla"
+  "deleteMessageCancel": "Annulla",
+  "searchMessages": "Cerca messaggi",
+  "searchPlaceholder": "Cerca messaggi...",
+  "noSearchResults": "Nessun risultato",
+  "searchResultCount_one": "{{count}} risultato",
+  "searchResultCount_other": "{{count}} risultati",
+  "allChannels": "Tutti i canali",
+  "thisChannel": "Questo canale",
+  "messageList": "Messaggi"
 }

@@ -10,30 +10,42 @@ import { ChannelList } from "../ChannelList";
 import { MessageList } from "../MessageList";
 import { MessageInput } from "../MessageInput";
 import { ThreadPanel } from "../ThreadPanel";
+import { SearchPanel } from "../SearchPanel";
 
 export const ChatPanel = () => {
   const { t } = useTranslation("chat");
   const { isSignedIn } = useAuth();
   const { selectedOrgaId, selectedOrga } = useOrgaStore();
-  const { isChatOpen, closeChat, selectedChannelId, activeThreadMessageId, closeThread, isChatExpanded, toggleChatExpand } = useChatStore();
+  const { isChatOpen, closeChat, selectedChannelId, activeThreadMessageId, closeThread, isChatExpanded, toggleChatExpand, isSearchOpen, openSearch, closeSearch } = useChatStore();
 
   const channels = useQuery(
     api.chat.functions.getChannelsForMember,
     isSignedIn && selectedOrga ? { orgaId: selectedOrgaId! } : "skip"
   );
 
-  // Handle Escape key: close thread first, then close chat
+  // Handle keyboard shortcuts: Escape (search → thread → chat), Cmd/Ctrl+K (toggle search)
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        if (isSearchOpen) {
+          closeSearch();
+        } else {
+          openSearch();
+        }
+        return;
+      }
       if (e.key === "Escape") {
-        if (activeThreadMessageId) {
+        if (isSearchOpen) {
+          closeSearch();
+        } else if (activeThreadMessageId) {
           closeThread();
         } else {
           closeChat();
         }
       }
     },
-    [activeThreadMessageId, closeThread, closeChat]
+    [isSearchOpen, closeSearch, openSearch, activeThreadMessageId, closeThread, closeChat]
   );
 
   useEffect(() => {
@@ -71,6 +83,30 @@ export const ChatPanel = () => {
           {activeThreadMessageId ? t("inThread") : selectedChannelId ? channelName : t("chat")}
         </h2>
         <div className="flex items-center gap-1">
+          {/* Search toggle */}
+          <button
+            onClick={() => isSearchOpen ? closeSearch() : openSearch()}
+            className={`p-1.5 rounded-md transition-colors ${
+              isSearchOpen
+                ? "bg-[#eac840] text-dark"
+                : "hover:bg-slate-200 dark:hover:bg-slate-700 text-gray-500 dark:text-gray-400"
+            }`}
+            aria-label={t("searchMessages")}
+            title={t("searchMessages")}
+          >
+            <svg
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
           {/* Expand / Collapse toggle (hidden on mobile where panel is always full-width) */}
           <button
             onClick={toggleChatExpand}
@@ -142,7 +178,9 @@ export const ChatPanel = () => {
 
         {/* Message area */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0">
-          {selectedChannelId && activeThreadMessageId ? (
+          {isSearchOpen ? (
+            <SearchPanel orgaId={selectedOrgaId!} channelId={selectedChannelId} />
+          ) : selectedChannelId && activeThreadMessageId ? (
             <ThreadPanel
               messageId={activeThreadMessageId}
               channelId={selectedChannelId}

@@ -171,5 +171,13 @@
   "editMessageHint": "Enter para guardar, Escape para cancelar",
   "deleteMessageConfirm": "Seguro que quieres eliminar este mensaje? Esta accion no se puede deshacer.",
   "deleteMessageYes": "Eliminar",
-  "deleteMessageCancel": "Cancelar"
+  "deleteMessageCancel": "Cancelar",
+  "searchMessages": "Buscar mensajes",
+  "searchPlaceholder": "Buscar mensajes...",
+  "noSearchResults": "Sin resultados",
+  "searchResultCount_one": "{{count}} resultado",
+  "searchResultCount_other": "{{count}} resultados",
+  "allChannels": "Todos los canales",
+  "thisChannel": "Este canal",
+  "messageList": "Mensajes"
 }

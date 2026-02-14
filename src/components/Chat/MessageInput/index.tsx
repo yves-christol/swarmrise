@@ -24,6 +24,11 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
   const toolMenuRef = useRef<HTMLDivElement>(null);
   const sendMessage = useMutation(api.chat.functions.sendMessage);
 
+  // Focus textarea on mount (when chat opens or search closes)
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
+
   // Close tool menu on click outside
   useEffect(() => {
     if (!showToolMenu) return;
@@ -56,8 +61,11 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
         e.preventDefault();
         handleSend();
       }
+      if (e.key === "ArrowUp" && text === "") {
+        document.dispatchEvent(new CustomEvent("chat:edit-last-message"));
+      }
     },
-    [handleSend]
+    [handleSend, text]
   );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -147,6 +155,7 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             placeholder={t("typeMessage")}
+            aria-label={t("typeMessage")}
             rows={1}
             className="flex-1 resize-none bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             style={{ maxHeight: "80px" }}

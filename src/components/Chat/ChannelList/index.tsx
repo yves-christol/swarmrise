@@ -86,7 +86,7 @@ export const ChannelList = () => {
   });
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" role="listbox" aria-label={t("channels")}>
       {/* Channels section */}
       <div className="px-3 py-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 tracking-wider">
         {t("channels")}
@@ -176,6 +176,8 @@ const ChannelButton = ({
   onSelect,
 }: ChannelButtonProps) => (
   <button
+    role="option"
+    aria-selected={isSelected}
     onClick={() => onSelect(channelId)}
     className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors ${
       isSelected

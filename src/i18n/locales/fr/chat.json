@@ -171,5 +171,13 @@
   "editMessageHint": "Entree pour enregistrer, Echap pour annuler",
   "deleteMessageConfirm": "Etes-vous sur de vouloir supprimer ce message ? Cette action est irreversible.",
   "deleteMessageYes": "Supprimer",
-  "deleteMessageCancel": "Annuler"
+  "deleteMessageCancel": "Annuler",
+  "searchMessages": "Rechercher des messages",
+  "searchPlaceholder": "Rechercher des messages...",
+  "noSearchResults": "Aucun resultat",
+  "searchResultCount_one": "{{count}} resultat",
+  "searchResultCount_other": "{{count}} resultats",
+  "allChannels": "Tous les canaux",
+  "thisChannel": "Ce canal",
+  "messageList": "Messages"
 }

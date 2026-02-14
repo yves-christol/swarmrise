@@ -108,7 +108,11 @@ export default defineSchema({
     .index("by_channel", ["channelId"])
     .index("by_thread_parent", ["threadParentId"])
     .index("by_orga", ["orgaId"])
-    .index("by_author", ["authorId"]),
+    .index("by_author", ["authorId"])
+    .searchIndex("search_text", {
+      searchField: "text",
+      filterFields: ["orgaId", "channelId"],
+    }),
 
   channelReadPositions: defineTable({ ...channelReadPositionType.fields })
     .index("by_channel_and_member", ["channelId", "memberId"])

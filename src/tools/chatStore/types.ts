@@ -14,4 +14,8 @@ export type ChatStoreContextType = {
   activeThreadMessageId: Id<"messages"> | null;
   openThread: (messageId: Id<"messages">) => void;
   closeThread: () => void;
+  // Search panel state (Phase 7)
+  isSearchOpen: boolean;
+  openSearch: () => void;
+  closeSearch: () => void;
 };

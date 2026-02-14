@@ -64,6 +64,7 @@ type MessageItemProps = {
   onReply?: (messageId: Id<"messages">) => void;
   currentMemberId?: Id<"members">;
   reactions?: ReactionGroup[];
+  isLastOwnMessage?: boolean;
 };
 
 function formatTime(timestamp: number): string {
@@ -127,7 +128,7 @@ const DeleteConfirmDialog = ({
   );
 };
 
-export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMemberId, reactions }: MessageItemProps) => {
+export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMemberId, reactions, isLastOwnMessage }: MessageItemProps) => {
   const { t } = useTranslation("chat");
   const initials = `${message.author.firstname[0] ?? ""}${message.author.surname[0] ?? ""}`.toUpperCase();
   const messageReactions = reactions ?? [];
@@ -220,6 +221,17 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
 
   // Can edit/delete: is author AND no embedded tool
   const canEditOrDelete = isAuthor && !hasEmbeddedTool;
+
+  // Listen for Up Arrow edit shortcut (only on the last own message)
+  useEffect(() => {
+    if (!isLastOwnMessage || !canEditOrDelete) return;
+    const handler = () => {
+      setEditText(message.text);
+      setIsEditing(true);
+    };
+    document.addEventListener("chat:edit-last-message", handler);
+    return () => document.removeEventListener("chat:edit-last-message", handler);
+  }, [isLastOwnMessage, canEditOrDelete, message.text]);
 
   // Inline edit area (replaces text when editing)
   const editArea = (

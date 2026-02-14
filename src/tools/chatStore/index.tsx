@@ -23,11 +23,13 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
     return false;
   });
   const [activeThreadMessageId, setActiveThreadMessageId] = useState<Id<"messages"> | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Reset channel selection when orga changes
   useEffect(() => {
     setSelectedChannelId(null);
     setActiveThreadMessageId(null);
+    setIsSearchOpen(false);
   }, [selectedOrgaId]);
 
   // Persist chat open state
@@ -56,6 +58,9 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   const closeThread = useCallback(() => setActiveThreadMessageId(null), []);
 
+  const openSearch = useCallback(() => setIsSearchOpen(true), []);
+  const closeSearch = useCallback(() => setIsSearchOpen(false), []);
+
   return (
     <ChatStoreContext.Provider
       value={{
@@ -70,6 +75,9 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
         activeThreadMessageId,
         openThread,
         closeThread,
+        isSearchOpen,
+        openSearch,
+        closeSearch,
       }}
     >
       {children}

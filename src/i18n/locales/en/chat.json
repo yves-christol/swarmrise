@@ -171,5 +171,13 @@
   "editMessageHint": "Enter to save, Escape to cancel",
   "deleteMessageConfirm": "Are you sure you want to delete this message? This cannot be undone.",
   "deleteMessageYes": "Delete",
-  "deleteMessageCancel": "Cancel"
+  "deleteMessageCancel": "Cancel",
+  "searchMessages": "Search messages",
+  "searchPlaceholder": "Search messages...",
+  "noSearchResults": "No results found",
+  "searchResultCount_one": "{{count}} result",
+  "searchResultCount_other": "{{count}} results",
+  "allChannels": "All channels",
+  "thisChannel": "This channel",
+  "messageList": "Messages"
 }

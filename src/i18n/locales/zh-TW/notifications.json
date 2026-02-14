@@ -17,5 +17,8 @@
   "policyTitle": "新政策：{{policyTitle}}",
   "policyGlobalSubtitle": "{{orgaName}} 的組織政策",
   "policyTeamSubtitle": "{{teamName}} 的團隊政策",
-  "genericNotification": "新通知"
+  "genericNotification": "新通知",
+  "messageTitle": "{{channelName}} 中有新訊息",
+  "messagePreview": "{{senderName}}：{{preview}}",
+  "toolEventSubtitle": "在 {{channelName}}"
 }

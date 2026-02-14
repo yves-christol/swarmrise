@@ -26,6 +26,7 @@ export const notificationPreferencesType = v.object({
   // Per-category preferences
   invitation: channelPreferences,
   message: channelPreferences,
+  tool_event: v.optional(channelPreferences),
   policy_global: channelPreferences,
   policy_team: channelPreferences,
   decision: channelPreferences,
@@ -62,6 +63,7 @@ export function createDefaultPreferences(userId: string) {
     orgaId: undefined,
     invitation: defaultChannelPreferences,
     message: defaultChannelPreferences,
+    tool_event: defaultChannelPreferences,
     policy_global: defaultChannelPreferences,
     policy_team: defaultChannelPreferences,
     decision: defaultChannelPreferences,

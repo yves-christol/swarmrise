@@ -17,5 +17,8 @@
   "policyTitle": "New policy: {{policyTitle}}",
   "policyGlobalSubtitle": "Organization-wide policy in {{orgaName}}",
   "policyTeamSubtitle": "Team policy in {{teamName}}",
-  "genericNotification": "New notification"
+  "genericNotification": "New notification",
+  "messageTitle": "New messages in {{channelName}}",
+  "messagePreview": "{{senderName}}: {{preview}}",
+  "toolEventSubtitle": "In {{channelName}}"
 }

@@ -17,5 +17,8 @@
   "policyTitle": "Нова політика: {{policyTitle}}",
   "policyGlobalSubtitle": "Організаційна політика в {{orgaName}}",
   "policyTeamSubtitle": "Політика команди в {{teamName}}",
-  "genericNotification": "Нове сповіщення"
+  "genericNotification": "Нове сповіщення",
+  "messageTitle": "Нові повідомлення в {{channelName}}",
+  "messagePreview": "{{senderName}}: {{preview}}",
+  "toolEventSubtitle": "У {{channelName}}"
 }

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useOrgaStore } from "../../tools/orgaStore";
+import { useChatStore } from "../../tools/chatStore/hooks";
 import type { Notification } from "../../../convex/notifications";
 
 // Icons
@@ -72,6 +73,34 @@ const InfoIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const MessageCircleIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+  </svg>
+);
+
+const ZapIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
+);
+
 type NotificationItemProps = {
   notification: Notification;
   onActionComplete?: () => void;
@@ -98,6 +127,7 @@ export const NotificationItem = ({
 }: NotificationItemProps) => {
   const { t } = useTranslation();
   const { selectOrga } = useOrgaStore();
+  const { selectChannel, openChat } = useChatStore();
 
   // Mutations
   const markAsRead = useMutation(api.notifications.functions.markAsRead);
@@ -106,10 +136,22 @@ export const NotificationItem = ({
 
   const { payload, isRead, _creationTime } = notification;
 
+  // Navigate to chat channel for message/tool_event notifications
+  const navigateToChannel = (channelId: Id<"channels">) => {
+    selectChannel(channelId);
+    openChat();
+  };
+
   // Mark as read when clicking on the notification
   const handleClick = async () => {
     if (!isRead) {
       await markAsRead({ notificationId: notification._id });
+    }
+    // Navigate to channel for chat-related notifications
+    if (payload.category === "message") {
+      navigateToChannel(payload.channelId);
+    } else if (payload.category === "tool_event") {
+      navigateToChannel(payload.channelId);
     }
   };
 
@@ -131,6 +173,16 @@ export const NotificationItem = ({
         return {
           icon: <FileTextIcon className="w-5 h-5" />,
           color: "text-gray-500 dark:text-gray-400",
+        };
+      case "message":
+        return {
+          icon: <MessageCircleIcon className="w-5 h-5" />,
+          color: "text-blue-500 dark:text-blue-400",
+        };
+      case "tool_event":
+        return {
+          icon: <ZapIcon className="w-5 h-5" />,
+          color: "text-orange-500 dark:text-orange-400",
         };
       default:
         return {
@@ -261,6 +313,45 @@ export const NotificationItem = ({
     );
   };
 
+  // Render chat message notification content
+  const renderMessageContent = () => {
+    if (payload.category !== "message") return null;
+
+    return (
+      <>
+        <p className={`font-medium text-dark dark:text-light ${!isRead ? "font-semibold" : ""}`}>
+          {t("notifications:messageTitle", "New messages in {{channelName}}", {
+            channelName: payload.channelName,
+          })}
+        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+          {t("notifications:messagePreview", "{{senderName}}: {{preview}}", {
+            senderName: payload.senderName,
+            preview: payload.preview,
+          })}
+        </p>
+      </>
+    );
+  };
+
+  // Render tool event notification content
+  const renderToolEventContent = () => {
+    if (payload.category !== "tool_event") return null;
+
+    return (
+      <>
+        <p className={`font-medium text-dark dark:text-light ${!isRead ? "font-semibold" : ""}`}>
+          {payload.eventDescription}
+        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+          {t("notifications:toolEventSubtitle", "In {{channelName}}", {
+            channelName: payload.channelName,
+          })}
+        </p>
+      </>
+    );
+  };
+
   // Render default content for other categories
   const renderDefaultContent = () => {
     if (
@@ -268,7 +359,9 @@ export const NotificationItem = ({
       payload.category === "role_assignment" ||
       payload.category === "policy_global" ||
       payload.category === "policy_team" ||
-      payload.category === "system"
+      payload.category === "system" ||
+      payload.category === "message" ||
+      payload.category === "tool_event"
     ) {
       return null;
     }
@@ -299,6 +392,8 @@ export const NotificationItem = ({
           {renderRoleAssignmentContent()}
           {renderPolicyContent()}
           {renderSystemContent()}
+          {renderMessageContent()}
+          {renderToolEventContent()}
           {renderDefaultContent()}
         </div>
 

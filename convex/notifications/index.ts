@@ -3,7 +3,8 @@ import { v, Infer } from "convex/values";
 // Notification categories - extensible for future notification types
 export const notificationCategoryType = v.union(
   v.literal("invitation"),       // Pending invitation to join org
-  v.literal("message"),          // Unread message in team (future)
+  v.literal("message"),          // Unread chat messages in a channel
+  v.literal("tool_event"),       // Chat tool events (topic/election/vote phase changes)
   v.literal("policy_global"),    // New org-wide policy
   v.literal("policy_team"),      // New team policy
   v.literal("decision"),         // New decision affecting user
@@ -32,14 +33,26 @@ export const invitationPayload = v.object({
   inviterName: v.string(),
 });
 
-// Message payload (future feature)
+// Message payload (chat messages)
 export const messagePayload = v.object({
   category: v.literal("message"),
-  messageId: v.string(), // Will be v.id("messages") when messages table exists
-  teamId: v.id("teams"),
-  teamName: v.string(),
+  messageId: v.id("messages"),
+  channelId: v.id("channels"),
+  channelName: v.string(),
+  teamId: v.optional(v.id("teams")),
+  teamName: v.optional(v.string()),
   senderName: v.string(),
   preview: v.string(),
+});
+
+// Tool event payload (topic/election/vote phase changes)
+export const toolEventPayload = v.object({
+  category: v.literal("tool_event"),
+  messageId: v.id("messages"),
+  channelId: v.id("channels"),
+  channelName: v.string(),
+  toolType: v.union(v.literal("topic"), v.literal("voting"), v.literal("election")),
+  eventDescription: v.string(),
 });
 
 // Global policy payload
@@ -98,6 +111,7 @@ export const systemPayload = v.object({
 export const notificationPayload = v.union(
   invitationPayload,
   messagePayload,
+  toolEventPayload,
   policyGlobalPayload,
   policyTeamPayload,
   decisionPayload,

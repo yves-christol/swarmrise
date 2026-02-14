@@ -1,4 +1,5 @@
 import { query, mutation } from "../_generated/server";
+import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { paginationOptsValidator } from "convex/server";
 import { Id } from "../_generated/dataModel";
@@ -8,6 +9,12 @@ import { requireChannelAccess, requireNotArchived } from "./access";
 import { canFacilitateTopic, requireTopicPhase } from "./topicHelpers";
 import { requireVotingOpen, validateChoices } from "./votingHelpers";
 import { canFacilitateElection, requireElectionPhase } from "./electionHelpers";
+import {
+  buildMessageNotification,
+  buildToolEventNotification,
+  getChannelDisplayName,
+  getChannelRecipients,
+} from "../notifications/helpers";
 
 /**
  * Get all channels the authenticated member can access in an organization.
@@ -289,6 +296,56 @@ export const sendMessage = mutation({
       text: trimmed,
       isEdited: false,
     });
+
+    // --- Chat message notifications (coalesced) ---
+    const recipients = await getChannelRecipients(ctx, channel, member._id);
+    const channelName = await getChannelDisplayName(ctx, channel, member._id);
+    const senderName = `${member.firstname} ${member.surname}`;
+    const preview = trimmed.length > 80 ? trimmed.slice(0, 80) + "..." : trimmed;
+    const FIVE_MINUTES = 5 * 60 * 1000;
+    const now = Date.now();
+
+    const notifications: Array<ReturnType<typeof buildMessageNotification>> = [];
+    for (const r of recipients) {
+      // Check if user read the channel recently (within 5 min)
+      const readPos = await ctx.db
+        .query("channelReadPositions")
+        .withIndex("by_channel_and_member", (q) =>
+          q.eq("channelId", args.channelId).eq("memberId", r.memberId)
+        )
+        .unique();
+      if (readPos && now - readPos.lastReadTimestamp < FIVE_MINUTES) continue;
+
+      // Check if an unread notification already exists for this channel+user
+      const groupKey = `chat-message-${args.channelId}-${r.userId}`;
+      const existing = await ctx.db
+        .query("notifications")
+        .withIndex("by_group_key", (q) => q.eq("groupKey", groupKey))
+        .first();
+      if (existing && !existing.isRead) continue;
+
+      notifications.push(
+        buildMessageNotification({
+          userId: r.userId,
+          orgaId: channel.orgaId,
+          memberId: r.memberId,
+          messageId,
+          channelId: args.channelId,
+          channelName,
+          teamId: channel.teamId,
+          teamName: channel.teamId
+            ? (await ctx.db.get(channel.teamId))?.name
+            : undefined,
+          senderName,
+          preview,
+        })
+      );
+    }
+    if (notifications.length > 0) {
+      await ctx.scheduler.runAfter(0, internal.notifications.functions.createBatch, {
+        notifications,
+      });
+    }
 
     return messageId;
   },
@@ -724,6 +781,33 @@ export const advanceTopicPhase = mutation({
       },
     });
 
+    // Notify channel members when topic moves to consent phase
+    if (args.newPhase === "consent") {
+      const channel = await ctx.db.get(message.channelId);
+      if (channel) {
+        const recipients = await getChannelRecipients(ctx, channel, member._id);
+        const channelName = await getChannelDisplayName(ctx, channel, member._id);
+        const notifications = recipients.map((r) =>
+          buildToolEventNotification({
+            userId: r.userId,
+            orgaId: message.orgaId,
+            memberId: r.memberId,
+            messageId: args.messageId,
+            channelId: message.channelId,
+            channelName,
+            toolType: "topic",
+            eventDescription: `Topic "${message.embeddedTool!.type === "topic" ? message.embeddedTool!.title : ""}" moved to consent phase`,
+            priority: "high",
+          })
+        );
+        if (notifications.length > 0) {
+          await ctx.scheduler.runAfter(0, internal.notifications.functions.createBatch, {
+            notifications,
+          });
+        }
+      }
+    }
+
     return null;
   },
 });
@@ -847,6 +931,29 @@ export const resolveTopicTool = mutation({
         decisionId,
       },
     });
+
+    // Notify channel members about topic resolution
+    if (channel) {
+      const recipients = await getChannelRecipients(ctx, channel, member._id);
+      const channelName = await getChannelDisplayName(ctx, channel, member._id);
+      const notifications = recipients.map((r) =>
+        buildToolEventNotification({
+          userId: r.userId,
+          orgaId: message.orgaId,
+          memberId: r.memberId,
+          messageId: args.messageId,
+          channelId: message.channelId,
+          channelName,
+          toolType: "topic",
+          eventDescription: `Topic "${message.embeddedTool!.type === "topic" ? message.embeddedTool!.title : ""}" resolved: ${args.outcome}`,
+        })
+      );
+      if (notifications.length > 0) {
+        await ctx.scheduler.runAfter(0, internal.notifications.functions.createBatch, {
+          notifications,
+        });
+      }
+    }
 
     return null;
   },
@@ -1182,6 +1289,30 @@ export const closeVote = mutation({
       },
     });
 
+    // Notify channel members about vote closure
+    const channel = await ctx.db.get(message.channelId);
+    if (channel) {
+      const recipients = await getChannelRecipients(ctx, channel, member._id);
+      const channelName = await getChannelDisplayName(ctx, channel, member._id);
+      const notifications = recipients.map((r) =>
+        buildToolEventNotification({
+          userId: r.userId,
+          orgaId: message.orgaId,
+          memberId: r.memberId,
+          messageId: args.messageId,
+          channelId: message.channelId,
+          channelName,
+          toolType: "voting",
+          eventDescription: `Vote closed: "${message.embeddedTool!.type === "voting" ? message.embeddedTool!.question : ""}"`,
+        })
+      );
+      if (notifications.length > 0) {
+        await ctx.scheduler.runAfter(0, internal.notifications.functions.createBatch, {
+          notifications,
+        });
+      }
+    }
+
     return null;
   },
 });
@@ -1400,6 +1531,28 @@ export const createElectionMessage = mutation({
       },
     });
 
+    // Notify channel members about new election
+    const recipients = await getChannelRecipients(ctx, channel, member._id);
+    const channelName = await getChannelDisplayName(ctx, channel, member._id);
+    const notifications = recipients.map((r) =>
+      buildToolEventNotification({
+        userId: r.userId,
+        orgaId: channel.orgaId,
+        memberId: r.memberId,
+        messageId,
+        channelId: args.channelId,
+        channelName,
+        toolType: "election",
+        eventDescription: `Election opened for "${trimmedTitle}"`,
+        priority: "high",
+      })
+    );
+    if (notifications.length > 0) {
+      await ctx.scheduler.runAfter(0, internal.notifications.functions.createBatch, {
+        notifications,
+      });
+    }
+
     return messageId;
   },
 });
@@ -1537,6 +1690,34 @@ export const advanceElectionPhase = mutation({
         proposedCandidateId,
       },
     });
+
+    // Notify channel members for consent and discussion phases
+    if (args.newPhase === "consent" || args.newPhase === "discussion") {
+      const channel = await ctx.db.get(message.channelId);
+      if (channel) {
+        const recipients = await getChannelRecipients(ctx, channel, member._id);
+        const channelName = await getChannelDisplayName(ctx, channel, member._id);
+        const roleTitle = message.embeddedTool.roleTitle;
+        const notifications = recipients.map((r) =>
+          buildToolEventNotification({
+            userId: r.userId,
+            orgaId: message.orgaId,
+            memberId: r.memberId,
+            messageId: args.messageId,
+            channelId: message.channelId,
+            channelName,
+            toolType: "election",
+            eventDescription: `Election for "${roleTitle}" moved to ${args.newPhase} phase`,
+            priority: "high",
+          })
+        );
+        if (notifications.length > 0) {
+          await ctx.scheduler.runAfter(0, internal.notifications.functions.createBatch, {
+            notifications,
+          });
+        }
+      }
+    }
 
     return null;
   },
@@ -1713,6 +1894,30 @@ export const resolveElection = mutation({
         decisionId,
       },
     });
+
+    // Notify channel members about election resolution
+    if (channel) {
+      const recipients = await getChannelRecipients(ctx, channel, member._id);
+      const channelName = await getChannelDisplayName(ctx, channel, member._id);
+      const roleTitle = message.embeddedTool.roleTitle;
+      const notifications = recipients.map((r) =>
+        buildToolEventNotification({
+          userId: r.userId,
+          orgaId: message.orgaId,
+          memberId: r.memberId,
+          messageId: args.messageId,
+          channelId: message.channelId,
+          channelName,
+          toolType: "election",
+          eventDescription: `Election for "${roleTitle}" resolved: ${args.outcome}`,
+        })
+      );
+      if (notifications.length > 0) {
+        await ctx.scheduler.runAfter(0, internal.notifications.functions.createBatch, {
+          notifications,
+        });
+      }
+    }
 
     return null;
   },

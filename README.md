@@ -124,7 +124,29 @@ This project includes specialized Claude Code agents for assisted development:
 ## Documentation
 
 - `CLAUDE.md` - Development guidance for Claude Code
-- `SECURITY.md` - Security audit findings and recommendations
+
+The `docs/` directory contains project documentation:
+
+| Document | Description |
+|----------|-------------|
+| [VISION.md](docs/VISION.md) | Project philosophy, purpose, and direction |
+| [SWARMRISE.md](docs/SWARMRISE.md) | Product manifesto and core concepts |
+| [DATA_MODEL.md](docs/DATA_MODEL.md) | Data model philosophy and architectural decisions |
+| [CHAT.md](docs/CHAT.md) | Chat system architecture and implementation |
+| [BRAND.md](docs/BRAND.md) | Visual identity and brand standards |
+| [DESIGN_PRINCIPLES.md](docs/DESIGN_PRINCIPLES.md) | UX philosophy and interaction patterns |
+| [UX_PRINCIPLES.md](docs/UX_PRINCIPLES.md) | Actionable UX rules for interface decisions |
+| [UX_FOCUS_NAVIGATION.md](docs/UX_FOCUS_NAVIGATION.md) | Focus-based navigation UX spec |
+| [UX_NOTIFICATIONS.md](docs/UX_NOTIFICATIONS.md) | Notification system UX spec |
+| [UX_ORGA_SELECTOR.md](docs/UX_ORGA_SELECTOR.md) | Organization selector UX spec |
+| [ux/ORG_NETWORK_DIAGRAM.md](docs/ux/ORG_NETWORK_DIAGRAM.md) | Interactive org visualization design spec |
+| [I18N.md](docs/I18N.md) | Internationalization architecture and guidelines |
+| [ANIMATION.md](docs/ANIMATION.md) | Animation patterns, timing, and motion design |
+| [SECURITY.md](docs/SECURITY.md) | Security assessment report |
+| [LEGAL.md](docs/LEGAL.md) | Legal compliance (GDPR, licenses, cookies) |
+| [DEVOPS.md](docs/DEVOPS.md) | DevOps and production operations |
+| [ROUTING_MIGRATION_PLAN.md](docs/ROUTING_MIGRATION_PLAN.md) | React Router migration plan |
+| [CODEBASE_SIZE_REPORT.md](docs/CODEBASE_SIZE_REPORT.md) | Codebase size metrics |
 
 ## Getting Started
 

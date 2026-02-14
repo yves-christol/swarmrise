@@ -180,14 +180,14 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
         {isSignedIn && (
           <UserButton appearance={{ baseTheme: resolvedTheme === "dark" ? dark : undefined }}>
             <UserButton.MenuItems>
-              <UserButton.Action label="manageAccount" />
               {selectedOrgaId && myMember && (
                 <UserButton.Link
-                  label={t("myProfile")}
+                  label={t("myPage")}
                   labelIcon={<ProfileIcon />}
                   href={routes.member(selectedOrgaId, myMember._id)}
                 />
               )}
+              <UserButton.Action label="manageAccount" />
               <UserButton.Action
                 label={isDark ? t("switchToLightMode") : t("switchToDarkMode")}
                 labelIcon={isDark ? <SunIcon /> : <MoonIcon />}

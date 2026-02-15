@@ -24,7 +24,7 @@ const EMOJI_PALETTE = [
   "\u{274C}",  // cross mark
 ];
 
-const PICKER_WIDTH = 196; // 6 cols * 28px + padding + gaps
+const PICKER_WIDTH = 268; // 6 cols * 40px + padding + gaps
 
 /**
  * Portaled emoji picker that escapes parent overflow constraints.
@@ -84,7 +84,7 @@ const EmojiPickerPortal = ({
         <button
           key={emoji}
           onClick={() => onSelect(emoji)}
-          className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-lg transition-colors"
+          className="w-10 h-10 flex items-center justify-center rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-lg transition-colors"
           title={emoji}
         >
           {emoji}
@@ -174,7 +174,7 @@ export const ReactionBar = ({ messageId, reactions, showAddButton = true }: Reac
           <button
             ref={buttonRef}
             onClick={() => setPickerOpen(!pickerOpen)}
-            className="inline-flex items-center justify-center w-6 h-6 rounded-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors opacity-0 group-hover:opacity-100"
+            className="inline-flex items-center justify-center w-7 h-7 rounded-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors sm:opacity-0 sm:group-hover:opacity-100"
             title={t("addReaction")}
             aria-label={t("addReaction")}
           >
@@ -238,7 +238,7 @@ export const ReactionButton = ({ messageId }: ReactionButtonProps) => {
       <button
         ref={buttonRef}
         onClick={() => setPickerOpen(!pickerOpen)}
-        className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
       >
         {t("react")}
       </button>

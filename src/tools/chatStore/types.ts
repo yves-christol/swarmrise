@@ -3,6 +3,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 export type ChatStoreContextType = {
   selectedChannelId: Id<"channels"> | null;
   selectChannel: (channelId: Id<"channels">) => void;
+  deselectChannel: () => void;
   isChatOpen: boolean;
   openChat: () => void;
   closeChat: () => void;

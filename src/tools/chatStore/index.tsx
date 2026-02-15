@@ -47,6 +47,11 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
     setActiveThreadMessageId(null);
   }, []);
 
+  const deselectChannel = useCallback(() => {
+    setSelectedChannelId(null);
+    setActiveThreadMessageId(null);
+  }, []);
+
   const openChat = useCallback(() => setIsChatOpen(true), []);
   const closeChat = useCallback(() => setIsChatOpen(false), []);
   const toggleChat = useCallback(() => setIsChatOpen((prev) => !prev), []);
@@ -66,6 +71,7 @@ export const ChatStoreProvider = ({ children }: { children: ReactNode }) => {
       value={{
         selectedChannelId,
         selectChannel,
+        deselectChannel,
         isChatOpen,
         openChat,
         closeChat,

@@ -28,6 +28,7 @@
   "selectMember": "Select a member",
   "dmWith": "{{name}}",
   "inThread": "In thread",
+  "backToChannels": "Back to channels",
   "directMessages": "Direct Messages",
   "closeThread": "Close thread",
   "noReplies": "No replies yet",

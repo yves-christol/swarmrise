@@ -37,10 +37,14 @@ export const ChannelList = () => {
 
   const getOrCreateDM = useMutation(api.chat.functions.getOrCreateDMChannel);
 
-  // Auto-select the orga channel if no channel is selected
+  // Auto-select the orga channel if no channel is selected (desktop only).
+  // On mobile (<sm), users see the channel list overlay and pick manually.
   useEffect(() => {
     if (!selectedChannelId && channels && channels.length > 0) {
-      selectChannel(channels[0]._id);
+      const isDesktop = window.matchMedia("(min-width: 640px)").matches;
+      if (isDesktop) {
+        selectChannel(channels[0]._id);
+      }
     }
   }, [selectedChannelId, channels, selectChannel]);
 
@@ -111,11 +115,11 @@ export const ChannelList = () => {
         </span>
         <button
           onClick={() => setShowMemberPicker((v) => !v)}
-          className="p-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-gray-500 dark:text-gray-400 transition-colors"
+          className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-gray-500 dark:text-gray-400 transition-colors"
           aria-label={t("newConversation")}
           title={t("newConversation")}
         >
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>

@@ -16,7 +16,7 @@ export const ChatPanel = () => {
   const { t } = useTranslation("chat");
   const { isSignedIn } = useAuth();
   const { selectedOrgaId, selectedOrga } = useOrgaStore();
-  const { isChatOpen, closeChat, selectedChannelId, activeThreadMessageId, closeThread, isChatExpanded, toggleChatExpand, isSearchOpen, openSearch, closeSearch } = useChatStore();
+  const { isChatOpen, closeChat, selectedChannelId, deselectChannel, activeThreadMessageId, closeThread, isChatExpanded, toggleChatExpand, isSearchOpen, openSearch, closeSearch } = useChatStore();
 
   const channels = useQuery(
     api.chat.functions.getChannelsForMember,
@@ -79,9 +79,30 @@ export const ChatPanel = () => {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700 shrink-0">
-        <h2 className="text-sm font-semibold text-dark dark:text-light truncate">
-          {activeThreadMessageId ? t("inThread") : selectedChannelId ? channelName : t("chat")}
-        </h2>
+        <div className="flex items-center gap-1 min-w-0">
+          {selectedChannelId && (
+            <button
+              onClick={deselectChannel}
+              className="sm:hidden p-2 -ml-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-gray-500 dark:text-gray-400 shrink-0"
+              aria-label={t("backToChannels")}
+            >
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+          )}
+          <h2 className="text-sm font-semibold text-dark dark:text-light truncate">
+            {activeThreadMessageId ? t("inThread") : selectedChannelId ? channelName : t("chat")}
+          </h2>
+        </div>
         <div className="flex items-center gap-1">
           {/* Search toggle */}
           <button

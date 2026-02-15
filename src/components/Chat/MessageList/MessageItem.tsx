@@ -277,13 +277,13 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
     <>
       <button
         onClick={handleStartEdit}
-        className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
       >
         {t("editMessage")}
       </button>
       <button
         onClick={handleDelete}
-        className="text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
       >
         {t("deleteMessage")}
       </button>
@@ -302,7 +302,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
       )}
       <button
         onClick={() => onReply(message._id)}
-        className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
       >
         {t("reply")}
       </button>
@@ -339,7 +339,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
     return (
       <div className="group flex items-start gap-3 px-3 py-0.5 hover:bg-slate-50 dark:hover:bg-slate-800/50">
         <div className="w-8 shrink-0 flex items-center justify-center">
-          <span className="text-xs text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-xs text-gray-400 dark:text-gray-500 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
             {formatTime(message._creationTime)}
           </span>
         </div>

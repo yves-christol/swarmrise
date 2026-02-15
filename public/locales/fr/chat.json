@@ -28,6 +28,7 @@
   "selectMember": "Selectionner un membre",
   "dmWith": "{{name}}",
   "inThread": "Dans le fil",
+  "backToChannels": "Retour aux canaux",
   "directMessages": "Messages prives",
   "closeThread": "Fermer le fil",
   "noReplies": "Pas encore de reponses",

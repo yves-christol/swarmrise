@@ -45,8 +45,9 @@
 - Phase 3: Topic Tool -- DONE (consent decisions with clarification/consent phases)
 - Phase 4: Voting Tool -- DONE (single/approval/ranked modes)
 - Phase 5: Election Tool -- DONE (2026-02-14, nomination secrecy resolved with option b)
-- Phase 6: Notifications integration -- PENDING
-- Phase 7: Polish, search, accessibility -- PENDING
+- Phase 6: Notifications integration -- DONE
+- Phase 7: Polish, search, accessibility -- DONE
+- @Mentions feature -- DONE (2026-02-15)
 
 ## Phase 5 Election Implementation Details
 - Tables: `electionNominations` (by_message, by_message_and_nominator, by_orga), `electionResponses` (by_message, by_message_and_member, by_orga)
@@ -83,6 +84,21 @@
 - ThreadPanel updated to accept `orgaId` prop and pass `currentMemberId` to MessageItem
 - Compact messages show "(edited)" inline after text; full messages show it in header
 - i18n keys: edited, editMessage, deleteMessage, editMessageSave/Cancel/Hint, deleteMessageConfirm/Yes/Cancel
+
+## @Mentions (added 2026-02-15)
+- Mention syntax in message text: `@[Firstname Surname](memberId)` -- markdown-like, stores member ID inline
+- Schema: `mentions` field added to `messageType` as `v.optional(v.array(v.id("members")))` for efficient lookup
+- Backend: `sendMessage`, `sendThreadReply`, `editMessage` all accept optional `mentions` arg; all query return validators updated
+- Shared hook: `src/components/Chat/MessageInput/useMentionInput.ts` -- detects `@` at word boundary, tracks filter text and cursor position
+- `extractMentionIds(text)` utility parses mention syntax and returns deduplicated member IDs
+- Autocomplete: `MentionAutocomplete` component -- fixed position dropdown, keyboard navigation (ArrowUp/Down/Enter/Tab/Escape), mouse hover/click
+- Uses capture-phase keydown listener to intercept before textarea handlers
+- Member data sourced from existing `listMembers` query (already available, filtered client-side)
+- Rendering: `MessageText` component parses text into segments (plain text + mention spans), used in MessageItem + SearchPanel
+- Mention styling: gold background (`#eac840/15`), gold text (`#996800` light / `#eac840` dark), font-medium
+- Max 8 results shown in autocomplete, caps at that to keep dropdown compact
+- i18n keys: mentionNoResults, mentionMembers (in all 6 locales)
+- Edit flow: `handleSaveEdit` in MessageItem also calls `extractMentionIds` and passes to `editMessage`
 
 ## Open Questions (need collaborator input)
 - Karl: DM participant indexing (defaulted to dmMemberA/dmMemberB), tool table count (12 tables total now including reactions)

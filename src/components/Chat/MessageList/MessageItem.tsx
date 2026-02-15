@@ -8,6 +8,8 @@ import { TopicTool } from "../TopicTool";
 import { VotingTool } from "../VotingTool";
 import { ElectionTool } from "../ElectionTool";
 import { ReactionBar, ReactionButton } from "../Reactions";
+import { MessageText } from "./MessageText";
+import { extractMentionIds } from "../MessageInput/useMentionInput";
 import type { EmbeddedVoting } from "../VotingTool";
 import type { EmbeddedElection } from "../ElectionTool";
 
@@ -175,7 +177,12 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
       handleCancelEdit();
       return;
     }
-    void editMessage({ messageId: message._id, text: trimmed })
+    const mentions = extractMentionIds(trimmed);
+    void editMessage({
+      messageId: message._id,
+      text: trimmed,
+      mentions: mentions.length > 0 ? mentions : undefined,
+    })
       .then(() => setIsEditing(false))
       .catch((error) => {
         console.error("Failed to edit message:", error);
@@ -339,7 +346,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
         <div className="flex-1 min-w-0">
           {!hasEmbeddedTool && !isEditing && (
             <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
-              {message.text}
+              <MessageText text={message.text} />
               {message.isEdited && (
                 <> <span className="text-xs text-gray-400 dark:text-gray-500 italic">({t("edited")})</span></>
               )}
@@ -387,7 +394,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
         </div>
         {!hasEmbeddedTool && !isEditing && (
           <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
-            {message.text}
+            <MessageText text={message.text} />
           </p>
         )}
         {!hasEmbeddedTool && isEditing && editArea}

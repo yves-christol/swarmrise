@@ -179,5 +179,7 @@
   "searchResultCount_other": "{{count}} результатів",
   "allChannels": "Усі канали",
   "thisChannel": "Цей канал",
-  "messageList": "Повідомлення"
+  "messageList": "Повідомлення",
+  "mentionNoResults": "Учасників не знайдено",
+  "mentionMembers": "Згадати учасника"
 }

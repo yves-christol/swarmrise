@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useChatStore } from "../../../tools/chatStore/hooks";
+import { MessageText } from "../MessageList/MessageText";
 
 type SearchPanelProps = {
   orgaId: Id<"orgas">;
@@ -175,7 +176,7 @@ export const SearchPanel = ({ orgaId, channelId }: SearchPanelProps) => {
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
-                  {result.text.length > 100 ? result.text.slice(0, 100) + "..." : result.text}
+                  <MessageText text={result.text.length > 100 ? result.text.slice(0, 100) + "..." : result.text} />
                   {result.isEdited && (
                     <span className="text-xs text-gray-400 dark:text-gray-500 italic ml-1">
                       ({t("edited")})

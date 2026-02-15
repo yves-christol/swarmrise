@@ -94,6 +94,9 @@ export const messageType = v.object({
   embeddedTool: v.optional(embeddedToolType),
   isEdited: v.boolean(),
   editedAt: v.optional(v.number()),
+  // Member IDs mentioned in this message via @mention syntax.
+  // Stored separately from text for efficient lookup (e.g. notifications).
+  mentions: v.optional(v.array(v.id("members"))),
 });
 
 export const messageValidator = v.object({

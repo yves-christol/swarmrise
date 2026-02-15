@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { CreateTopicModal } from "./CreateTopicModal";
 import { CreateVotingModal } from "./CreateVotingModal";
 import { CreateElectionModal } from "./CreateElectionModal";
+import { MentionAutocomplete } from "./MentionAutocomplete";
+import { useMentionInput, extractMentionIds } from "./useMentionInput";
 
 type MessageInputProps = {
   channelId: Id<"channels">;
@@ -23,6 +25,20 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const toolMenuRef = useRef<HTMLDivElement>(null);
   const sendMessage = useMutation(api.chat.functions.sendMessage);
+
+  // Fetch org members for @mention autocomplete
+  const members = useQuery(api.members.functions.listMembers, { orgaId });
+
+  // Mention autocomplete hook
+  const {
+    showMentionAutocomplete,
+    mentionFilter,
+    mentionPosition,
+    handleTextChange,
+    handleMentionSelect,
+    closeMentionAutocomplete,
+    resolveText,
+  } = useMentionInput();
 
   // Focus textarea on mount (when chat opens or search closes)
   useEffect(() => {
@@ -45,7 +61,15 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
     const trimmed = text.trim();
     if (!trimmed) return;
 
-    void sendMessage({ channelId, text: trimmed }).then(() => {
+    // Resolve @Name display text to @[Name](id) storage syntax
+    const resolvedText = resolveText(trimmed);
+    const mentions = extractMentionIds(resolvedText);
+
+    void sendMessage({
+      channelId,
+      text: resolvedText,
+      mentions: mentions.length > 0 ? mentions : undefined,
+    }).then(() => {
       setText("");
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
@@ -53,10 +77,18 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
     }).catch((error) => {
       console.error("Failed to send message:", error);
     });
-  }, [text, channelId, sendMessage]);
+  }, [text, channelId, sendMessage, resolveText]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      // When mention autocomplete is open, let it handle Enter/Tab/Arrow keys
+      if (showMentionAutocomplete) {
+        if (e.key === "Enter" || e.key === "Tab" || e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "Escape") {
+          // These are handled by the MentionAutocomplete via document-level capture listener
+          return;
+        }
+      }
+
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         handleSend();
@@ -65,11 +97,16 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
         document.dispatchEvent(new CustomEvent("chat:edit-last-message"));
       }
     },
-    [handleSend, text]
+    [handleSend, text, showMentionAutocomplete]
   );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
+    const newText = e.target.value;
+    setText(newText);
+
+    // Notify mention hook about text change
+    handleTextChange(newText, e.target);
+
     // Auto-resize textarea
     const textarea = e.target;
     textarea.style.height = "auto";
@@ -77,7 +114,23 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
     const maxLines = 4;
     const maxHeight = lineHeight * maxLines;
     textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
-  }, []);
+  }, [handleTextChange]);
+
+  // Close mention autocomplete when clicking outside
+  useEffect(() => {
+    if (!showMentionAutocomplete) return;
+    const handleClick = () => {
+      closeMentionAutocomplete();
+    };
+    // Delay to avoid closing immediately on the click that triggered it
+    const timer = setTimeout(() => {
+      document.addEventListener("mousedown", handleClick);
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [showMentionAutocomplete, closeMentionAutocomplete]);
 
   if (isArchived) {
     return (
@@ -86,6 +139,14 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
       </div>
     );
   }
+
+  // Map members to autocomplete options
+  const memberOptions = (members ?? []).map((m) => ({
+    _id: m._id,
+    firstname: m.firstname,
+    surname: m.surname,
+    pictureURL: m.pictureURL,
+  }));
 
   return (
     <>
@@ -182,6 +243,21 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
           )}
         </div>
       </div>
+
+      {/* Mention autocomplete dropdown */}
+      {showMentionAutocomplete && textareaRef.current && (
+        <MentionAutocomplete
+          members={memberOptions}
+          filter={mentionFilter}
+          position={mentionPosition}
+          onSelect={(member) => {
+            if (textareaRef.current) {
+              handleMentionSelect(member, setText, textareaRef.current);
+            }
+          }}
+          onClose={closeMentionAutocomplete}
+        />
+      )}
 
       {showTopicModal && (
         <CreateTopicModal

@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { MessageItem } from "../MessageList/MessageItem";
+import { MentionAutocomplete } from "../MessageInput/MentionAutocomplete";
+import { useMentionInput, extractMentionIds } from "../MessageInput/useMentionInput";
 
 type ThreadPanelProps = {
   messageId: Id<"messages">;
@@ -24,6 +26,20 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
   const parentMessage = useQuery(api.chat.functions.getMessageById, { messageId });
   const replies = useQuery(api.chat.functions.getThreadReplies, { messageId });
   const sendThreadReply = useMutation(api.chat.functions.sendThreadReply);
+
+  // Fetch org members for @mention autocomplete
+  const members = useQuery(api.members.functions.listMembers, { orgaId });
+
+  // Mention autocomplete hook
+  const {
+    showMentionAutocomplete,
+    mentionFilter,
+    mentionPosition,
+    handleTextChange,
+    handleMentionSelect,
+    closeMentionAutocomplete,
+    resolveText,
+  } = useMentionInput();
 
   // Collect all message IDs (parent + replies) for batch reaction query
   const allMessageIds = [
@@ -53,7 +69,16 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
     const trimmed = text.trim();
     if (!trimmed) return;
 
-    void sendThreadReply({ channelId, threadParentId: messageId, text: trimmed })
+    // Resolve @Name display text to @[Name](id) storage syntax
+    const resolvedText = resolveText(trimmed);
+    const mentions = extractMentionIds(resolvedText);
+
+    void sendThreadReply({
+      channelId,
+      threadParentId: messageId,
+      text: resolvedText,
+      mentions: mentions.length > 0 ? mentions : undefined,
+    })
       .then(() => {
         setText("");
         if (textareaRef.current) {
@@ -63,25 +88,60 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
       .catch((error) => {
         console.error("Failed to send thread reply:", error);
       });
-  }, [text, channelId, messageId, sendThreadReply]);
+  }, [text, channelId, messageId, sendThreadReply, resolveText]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      // When mention autocomplete is open, let it handle Enter/Tab/Arrow keys
+      if (showMentionAutocomplete) {
+        if (e.key === "Enter" || e.key === "Tab" || e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "Escape") {
+          return;
+        }
+      }
+
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         handleSend();
       }
     },
-    [handleSend]
+    [handleSend, showMentionAutocomplete]
   );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
+    const newText = e.target.value;
+    setText(newText);
+
+    // Notify mention hook about text change
+    handleTextChange(newText, e.target);
+
     const textarea = e.target;
     textarea.style.height = "auto";
     const maxHeight = 80;
     textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
-  }, []);
+  }, [handleTextChange]);
+
+  // Close mention autocomplete when clicking outside
+  useEffect(() => {
+    if (!showMentionAutocomplete) return;
+    const handleClick = () => {
+      closeMentionAutocomplete();
+    };
+    const timer = setTimeout(() => {
+      document.addEventListener("mousedown", handleClick);
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [showMentionAutocomplete, closeMentionAutocomplete]);
+
+  // Map members to autocomplete options
+  const memberOptions = (members ?? []).map((m) => ({
+    _id: m._id,
+    firstname: m.firstname,
+    surname: m.surname,
+    pictureURL: m.pictureURL,
+  }));
 
   return (
     <div className="flex flex-col h-full bg-light dark:bg-dark">
@@ -161,6 +221,21 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
           )}
         </div>
       </div>
+
+      {/* Mention autocomplete dropdown */}
+      {showMentionAutocomplete && textareaRef.current && (
+        <MentionAutocomplete
+          members={memberOptions}
+          filter={mentionFilter}
+          position={mentionPosition}
+          onSelect={(member) => {
+            if (textareaRef.current) {
+              handleMentionSelect(member, setText, textareaRef.current);
+            }
+          }}
+          onClose={closeMentionAutocomplete}
+        />
+      )}
     </div>
   );
 };

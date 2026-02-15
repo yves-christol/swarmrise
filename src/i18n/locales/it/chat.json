@@ -179,5 +179,7 @@
   "searchResultCount_other": "{{count}} risultati",
   "allChannels": "Tutti i canali",
   "thisChannel": "Questo canale",
-  "messageList": "Messaggi"
+  "messageList": "Messaggi",
+  "mentionNoResults": "Nessun membro trovato",
+  "mentionMembers": "Menziona un membro"
 }

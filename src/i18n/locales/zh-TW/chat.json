@@ -179,5 +179,7 @@
   "searchResultCount_other": "{{count}} 個結果",
   "allChannels": "所有頻道",
   "thisChannel": "此頻道",
-  "messageList": "訊息"
+  "messageList": "訊息",
+  "mentionNoResults": "找不到成員",
+  "mentionMembers": "提及成員"
 }

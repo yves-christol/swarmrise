@@ -131,6 +131,7 @@ export const getMessages = query({
       editedAt: v.optional(v.number()),
       threadParentId: v.optional(v.id("messages")),
       embeddedTool: v.optional(embeddedToolType),
+      mentions: v.optional(v.array(v.id("members"))),
       author: v.object({
         firstname: v.string(),
         surname: v.string(),
@@ -175,6 +176,7 @@ export const getMessages = query({
           editedAt: msg.editedAt,
           threadParentId: msg.threadParentId,
           embeddedTool: msg.embeddedTool,
+          mentions: msg.mentions,
           author,
         };
       })
@@ -278,6 +280,7 @@ export const sendMessage = mutation({
   args: {
     channelId: v.id("channels"),
     text: v.string(),
+    mentions: v.optional(v.array(v.id("members"))),
   },
   returns: v.id("messages"),
   handler: async (ctx, args) => {
@@ -289,12 +292,16 @@ export const sendMessage = mutation({
       throw new Error("Message cannot be empty");
     }
 
+    // Deduplicate mentions
+    const mentions = args.mentions ? [...new Set(args.mentions)] : undefined;
+
     const messageId = await ctx.db.insert("messages", {
       channelId: args.channelId,
       orgaId: channel.orgaId,
       authorId: member._id,
       text: trimmed,
       isEdited: false,
+      mentions,
     });
 
     // --- Chat message notifications (coalesced) ---
@@ -411,6 +418,7 @@ export const getMessageById = query({
       editedAt: v.optional(v.number()),
       threadParentId: v.optional(v.id("messages")),
       embeddedTool: v.optional(embeddedToolType),
+      mentions: v.optional(v.array(v.id("members"))),
       author: v.object({
         firstname: v.string(),
         surname: v.string(),
@@ -441,6 +449,7 @@ export const getMessageById = query({
       editedAt: msg.editedAt,
       threadParentId: msg.threadParentId,
       embeddedTool: msg.embeddedTool,
+      mentions: msg.mentions,
       author,
     };
   },
@@ -465,6 +474,7 @@ export const getThreadReplies = query({
     editedAt: v.optional(v.number()),
     threadParentId: v.optional(v.id("messages")),
     embeddedTool: v.optional(embeddedToolType),
+    mentions: v.optional(v.array(v.id("members"))),
     author: v.object({
       firstname: v.string(),
       surname: v.string(),
@@ -506,6 +516,7 @@ export const getThreadReplies = query({
           editedAt: msg.editedAt,
           threadParentId: msg.threadParentId,
           embeddedTool: msg.embeddedTool,
+          mentions: msg.mentions,
           author,
         };
       })
@@ -521,6 +532,7 @@ export const sendThreadReply = mutation({
     channelId: v.id("channels"),
     threadParentId: v.id("messages"),
     text: v.string(),
+    mentions: v.optional(v.array(v.id("members"))),
   },
   returns: v.id("messages"),
   handler: async (ctx, args) => {
@@ -537,6 +549,9 @@ export const sendThreadReply = mutation({
       throw new Error("Message cannot be empty");
     }
 
+    // Deduplicate mentions
+    const mentions = args.mentions ? [...new Set(args.mentions)] : undefined;
+
     const messageId = await ctx.db.insert("messages", {
       channelId: args.channelId,
       orgaId: channel.orgaId,
@@ -544,6 +559,7 @@ export const sendThreadReply = mutation({
       text: trimmed,
       threadParentId: args.threadParentId,
       isEdited: false,
+      mentions,
     });
 
     return messageId;
@@ -2541,6 +2557,7 @@ export const editMessage = mutation({
   args: {
     messageId: v.id("messages"),
     text: v.string(),
+    mentions: v.optional(v.array(v.id("members"))),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
@@ -2564,10 +2581,14 @@ export const editMessage = mutation({
       throw new Error("Message cannot be empty");
     }
 
+    // Deduplicate mentions
+    const mentions = args.mentions ? [...new Set(args.mentions)] : undefined;
+
     await ctx.db.patch(args.messageId, {
       text: trimmed,
       isEdited: true,
       editedAt: Date.now(),
+      mentions,
     });
 
     return null;

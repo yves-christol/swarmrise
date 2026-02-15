@@ -1,23 +1,25 @@
 import "./index.css";
 import "./i18n"; // Initialize i18n
-import { StrictMode } from "react";
+import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import { ClerkProvider, useAuth } from "@clerk/clerk-react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
 import { BrowserRouter, Routes, Route } from "react-router";
-import App from "./components/App/index.tsx";
 import { OrgaStoreProvider } from "./tools/orgaStore/index.tsx";
 import { ChatStoreProvider } from "./tools/chatStore/index.tsx";
-import { ChatPanel } from "./components/Chat/ChatPanel/index.tsx";
 import { ThemeProvider } from "./contexts/ThemeContext.tsx";
-import { RawDataPage } from "./pages/RawData/index.tsx";
-import { PrinciplesPage } from "./pages/Principles/index.tsx";
-import { GlossaryPage } from "./pages/Glossary/index.tsx";
-import { TermsPage } from "./pages/Terms/index.tsx";
-import { PrivacyPage } from "./pages/Privacy/index.tsx";
-import { OrgaRoute } from "./routes/OrgaRoute.tsx";
-import { OrgaIndexRoute } from "./routes/OrgaIndexRoute.tsx";
+
+// Lazy-loaded route components
+const App = lazy(() => import("./components/App/index.tsx"));
+const ChatPanel = lazy(() => import("./components/Chat/ChatPanel/index.tsx").then(m => ({ default: m.ChatPanel })));
+const RawDataPage = lazy(() => import("./pages/RawData/index.tsx").then(m => ({ default: m.RawDataPage })));
+const PrinciplesPage = lazy(() => import("./pages/Principles/index.tsx").then(m => ({ default: m.PrinciplesPage })));
+const GlossaryPage = lazy(() => import("./pages/Glossary/index.tsx").then(m => ({ default: m.GlossaryPage })));
+const TermsPage = lazy(() => import("./pages/Terms/index.tsx").then(m => ({ default: m.TermsPage })));
+const PrivacyPage = lazy(() => import("./pages/Privacy/index.tsx").then(m => ({ default: m.PrivacyPage })));
+const OrgaRoute = lazy(() => import("./routes/OrgaRoute.tsx").then(m => ({ default: m.OrgaRoute })));
+const OrgaIndexRoute = lazy(() => import("./routes/OrgaIndexRoute.tsx").then(m => ({ default: m.OrgaIndexRoute })));
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 createRoot(document.getElementById("root")!).render(
@@ -28,6 +30,7 @@ createRoot(document.getElementById("root")!).render(
           <OrgaStoreProvider>
             <ChatStoreProvider>
             <BrowserRouter>
+              <Suspense fallback={null}>
               <Routes>
                 <Route path="/" element={<App />} />
                 {/* Static pages */}
@@ -49,6 +52,7 @@ createRoot(document.getElementById("root")!).render(
                 </Route>
               </Routes>
               <ChatPanel />
+              </Suspense>
             </BrowserRouter>
             </ChatStoreProvider>
           </OrgaStoreProvider>

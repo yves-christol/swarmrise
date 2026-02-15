@@ -1,18 +1,20 @@
-import { useEffect, useLayoutEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useLayoutEffect, useState, useRef, useCallback, lazy, Suspense } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useFocus, useViewMode } from "../../tools/orgaStore";
 import { useRouteSync, buildUrlFromFocus } from "../../hooks/useRouteSync";
 import type { ViewMode } from "../../tools/orgaStore/types";
 import "./animations.css";
-import { OrgaVisualView } from "../OrgaVisualView";
-import { TeamVisualView } from "../TeamVisualView";
-import { RoleVisualView } from "../RoleVisualView";
-import { MemberVisualView } from "../MemberVisualView";
-import { OrgaManageView } from "../OrgaManageView";
-import { RoleManageView } from "../RoleManageView";
-import { TeamManageView } from "../TeamManageView";
-import { MemberManageView } from "../MemberManageView";
 import { ViewToggle } from "../ViewToggle";
+
+// Lazy-loaded view components - only one renders at a time
+const OrgaVisualView = lazy(() => import("../OrgaVisualView").then(m => ({ default: m.OrgaVisualView })));
+const TeamVisualView = lazy(() => import("../TeamVisualView").then(m => ({ default: m.TeamVisualView })));
+const RoleVisualView = lazy(() => import("../RoleVisualView").then(m => ({ default: m.RoleVisualView })));
+const MemberVisualView = lazy(() => import("../MemberVisualView").then(m => ({ default: m.MemberVisualView })));
+const OrgaManageView = lazy(() => import("../OrgaManageView").then(m => ({ default: m.OrgaManageView })));
+const RoleManageView = lazy(() => import("../RoleManageView").then(m => ({ default: m.RoleManageView })));
+const TeamManageView = lazy(() => import("../TeamManageView").then(m => ({ default: m.TeamManageView })));
+const MemberManageView = lazy(() => import("../MemberManageView").then(m => ({ default: m.MemberManageView })));
 import { Id } from "../../../convex/_generated/dataModel";
 import type { FocusTarget } from "../../tools/orgaStore/types";
 
@@ -481,7 +483,9 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         className="focus-view absolute inset-0"
         style={isSpatial && animationPhase === "spatial-zoom" ? undefined : getNonSpatialStyles()}
       >
-        {renderView(currentView, focus, getFlipClass())}
+        <Suspense fallback={null}>
+          {renderView(currentView, focus, getFlipClass())}
+        </Suspense>
       </div>
 
       {/* ========== EXITING OVERLAY (spatial zoom only, removed when transition ends) ========== */}
@@ -492,12 +496,16 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
             className="zoom-layer-old zoom-in-exit"
             style={{ transformOrigin }}
           >
-            {renderView(exitingView, exitingFocus, getFlipClass())}
+            <Suspense fallback={null}>
+              {renderView(exitingView, exitingFocus, getFlipClass())}
+            </Suspense>
           </div>
         ) : transitionType === "team-to-orga" ? (
           /* Old team view contracting via clip-path — sits on top of the orga view */
           <div ref={clipLayerRef} className="zoom-layer-old">
-            {renderView(exitingView, exitingFocus, getFlipClass())}
+            <Suspense fallback={null}>
+              {renderView(exitingView, exitingFocus, getFlipClass())}
+            </Suspense>
           </div>
         ) : null
       )}

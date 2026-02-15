@@ -1,90 +1,7 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
-
-// Import English translations (default)
-import enCommon from './locales/en/common.json'
-import enOrgs from './locales/en/orgs.json'
-import enMembers from './locales/en/members.json'
-import enInvitations from './locales/en/invitations.json'
-import enAuth from './locales/en/auth.json'
-import enTeams from './locales/en/teams.json'
-import enGovernance from './locales/en/governance.json'
-import enLegal from './locales/en/legal.json'
-import enNotifications from './locales/en/notifications.json'
-import enDecisions from './locales/en/decisions.json'
-import enGlossary from './locales/en/glossary.json'
-import enChat from './locales/en/chat.json'
-
-// Import French translations
-import frCommon from './locales/fr/common.json'
-import frOrgs from './locales/fr/orgs.json'
-import frMembers from './locales/fr/members.json'
-import frInvitations from './locales/fr/invitations.json'
-import frAuth from './locales/fr/auth.json'
-import frTeams from './locales/fr/teams.json'
-import frGovernance from './locales/fr/governance.json'
-import frLegal from './locales/fr/legal.json'
-import frNotifications from './locales/fr/notifications.json'
-import frDecisions from './locales/fr/decisions.json'
-import frGlossary from './locales/fr/glossary.json'
-import frChat from './locales/fr/chat.json'
-
-// Import Spanish translations
-import esCommon from './locales/es/common.json'
-import esOrgs from './locales/es/orgs.json'
-import esMembers from './locales/es/members.json'
-import esInvitations from './locales/es/invitations.json'
-import esAuth from './locales/es/auth.json'
-import esTeams from './locales/es/teams.json'
-import esGovernance from './locales/es/governance.json'
-import esLegal from './locales/es/legal.json'
-import esNotifications from './locales/es/notifications.json'
-import esDecisions from './locales/es/decisions.json'
-import esGlossary from './locales/es/glossary.json'
-import esChat from './locales/es/chat.json'
-
-// Import Italian translations
-import itCommon from './locales/it/common.json'
-import itOrgs from './locales/it/orgs.json'
-import itMembers from './locales/it/members.json'
-import itInvitations from './locales/it/invitations.json'
-import itAuth from './locales/it/auth.json'
-import itTeams from './locales/it/teams.json'
-import itGovernance from './locales/it/governance.json'
-import itLegal from './locales/it/legal.json'
-import itNotifications from './locales/it/notifications.json'
-import itDecisions from './locales/it/decisions.json'
-import itGlossary from './locales/it/glossary.json'
-import itChat from './locales/it/chat.json'
-
-// Import Ukrainian translations
-import ukCommon from './locales/uk/common.json'
-import ukOrgs from './locales/uk/orgs.json'
-import ukMembers from './locales/uk/members.json'
-import ukInvitations from './locales/uk/invitations.json'
-import ukAuth from './locales/uk/auth.json'
-import ukTeams from './locales/uk/teams.json'
-import ukGovernance from './locales/uk/governance.json'
-import ukLegal from './locales/uk/legal.json'
-import ukNotifications from './locales/uk/notifications.json'
-import ukDecisions from './locales/uk/decisions.json'
-import ukGlossary from './locales/uk/glossary.json'
-import ukChat from './locales/uk/chat.json'
-
-// Import Traditional Chinese translations
-import zhTWCommon from './locales/zh-TW/common.json'
-import zhTWOrgs from './locales/zh-TW/orgs.json'
-import zhTWMembers from './locales/zh-TW/members.json'
-import zhTWInvitations from './locales/zh-TW/invitations.json'
-import zhTWAuth from './locales/zh-TW/auth.json'
-import zhTWTeams from './locales/zh-TW/teams.json'
-import zhTWGovernance from './locales/zh-TW/governance.json'
-import zhTWLegal from './locales/zh-TW/legal.json'
-import zhTWNotifications from './locales/zh-TW/notifications.json'
-import zhTWDecisions from './locales/zh-TW/decisions.json'
-import zhTWGlossary from './locales/zh-TW/glossary.json'
-import zhTWChat from './locales/zh-TW/chat.json'
+import HttpBackend from 'i18next-http-backend'
 
 export const supportedLanguages = ['en', 'fr', 'es', 'it', 'uk', 'zh-TW'] as const
 export type SupportedLanguage = typeof supportedLanguages[number]
@@ -98,101 +15,17 @@ export const languageNames: Record<SupportedLanguage, string> = {
   'zh-TW': '繁體中文'
 }
 
-const resources = {
-  en: {
-    common: enCommon,
-    orgs: enOrgs,
-    members: enMembers,
-    invitations: enInvitations,
-    auth: enAuth,
-    teams: enTeams,
-    governance: enGovernance,
-    legal: enLegal,
-    notifications: enNotifications,
-    decisions: enDecisions,
-    glossary: enGlossary,
-    chat: enChat
-  },
-  fr: {
-    common: frCommon,
-    orgs: frOrgs,
-    members: frMembers,
-    invitations: frInvitations,
-    auth: frAuth,
-    teams: frTeams,
-    governance: frGovernance,
-    legal: frLegal,
-    notifications: frNotifications,
-    decisions: frDecisions,
-    glossary: frGlossary,
-    chat: frChat
-  },
-  es: {
-    common: esCommon,
-    orgs: esOrgs,
-    members: esMembers,
-    invitations: esInvitations,
-    auth: esAuth,
-    teams: esTeams,
-    governance: esGovernance,
-    legal: esLegal,
-    notifications: esNotifications,
-    decisions: esDecisions,
-    glossary: esGlossary,
-    chat: esChat
-  },
-  it: {
-    common: itCommon,
-    orgs: itOrgs,
-    members: itMembers,
-    invitations: itInvitations,
-    auth: itAuth,
-    teams: itTeams,
-    governance: itGovernance,
-    legal: itLegal,
-    notifications: itNotifications,
-    decisions: itDecisions,
-    glossary: itGlossary,
-    chat: itChat
-  },
-  uk: {
-    common: ukCommon,
-    orgs: ukOrgs,
-    members: ukMembers,
-    invitations: ukInvitations,
-    auth: ukAuth,
-    teams: ukTeams,
-    governance: ukGovernance,
-    legal: ukLegal,
-    notifications: ukNotifications,
-    decisions: ukDecisions,
-    glossary: ukGlossary,
-    chat: ukChat
-  },
-  'zh-TW': {
-    common: zhTWCommon,
-    orgs: zhTWOrgs,
-    members: zhTWMembers,
-    invitations: zhTWInvitations,
-    auth: zhTWAuth,
-    teams: zhTWTeams,
-    governance: zhTWGovernance,
-    legal: zhTWLegal,
-    notifications: zhTWNotifications,
-    decisions: zhTWDecisions,
-    glossary: zhTWGlossary,
-    chat: zhTWChat
-  }
-}
-
 void i18n
+  .use(HttpBackend)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources,
     fallbackLng: 'en',
     defaultNS: 'common',
     ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal', 'notifications', 'decisions', 'glossary', 'chat'],
+    backend: {
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
+    },
     interpolation: {
       escapeValue: false // React already escapes values
     },

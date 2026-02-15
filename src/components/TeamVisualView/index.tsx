@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
@@ -7,6 +7,7 @@ import { useFocus } from "../../tools/orgaStore";
 import { Logo } from "../Logo";
 import { RoleNode } from "./RoleNode";
 import { NotFound } from "../NotFound";
+import { useViewport } from "../shared/useViewport";
 import type { RolePosition } from "./types";
 
 type TeamVisualViewProps = {
@@ -18,6 +19,15 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const { t } = useTranslation("teams");
+
+  // Viewport for pinch-to-zoom and pan
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
+  const svgRefCallback = useCallback((node: SVGSVGElement | null) => {
+    svgRef.current = node;
+    setSvgElement(node);
+  }, []);
+  const { viewport, handlers: viewportHandlers } = useViewport(svgElement);
 
   // Focus navigation for clicking into child teams and roles
   const { focusOnTeam, focusOnRole } = useFocus();
@@ -214,14 +224,18 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
 
       {/* SVG Diagram */}
       <svg
+        ref={svgRefCallback}
         width={dimensions.width}
         height={dimensions.height}
         className="block w-full h-full"
+        style={{ touchAction: "none" }}
         role="img"
         aria-label={t("diagram.teamStructureAriaLabel", { name: team.name, count: roles.length })}
+        {...viewportHandlers}
       >
         <title>{t("diagram.teamStructureTitle", { name: team.name })}</title>
 
+      <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
         {/* Outer boundary circle */}
         <circle
           cx={centerX}
@@ -306,6 +320,7 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
             onNavigate={() => focusOnTeam(pos.daughterTeam._id)}
           />
         ))}
+      </g>
       </svg>
 
       {/* Accessibility: text list alternative */}

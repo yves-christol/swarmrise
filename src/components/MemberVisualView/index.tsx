@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { useClerk } from "@clerk/clerk-react";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import { RoleLink } from "./RoleLink";
 import { TeamNode } from "./TeamNode";
 import { ContactInfo } from "./ContactInfo";
 import { NotFound } from "../NotFound";
+import { useViewport } from "../shared/useViewport";
 import type { MemberVisualViewProps, RoleLinkPosition, TeamNodePosition, RolesByTeam } from "./types";
 
 export function MemberVisualView({
@@ -22,6 +23,15 @@ export function MemberVisualView({
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [isAvatarHovered, setIsAvatarHovered] = useState(false);
   const { t } = useTranslation("members");
+
+  // Viewport for pinch-to-zoom and pan
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
+  const svgRefCallback = useCallback((node: SVGSVGElement | null) => {
+    svgRef.current = node;
+    setSvgElement(node);
+  }, []);
+  const { viewport, handlers: viewportHandlers } = useViewport(svgElement);
   const { myMember } = useSelectedOrga();
   const clerk = useClerk();
   const isOwnPage = myMember?._id === memberId;
@@ -444,14 +454,18 @@ export function MemberVisualView({
 
       {/* SVG Diagram */}
       <svg
+        ref={svgRefCallback}
         width={dimensions.width}
         height={dimensions.height}
         className="block w-full h-full"
+        style={{ touchAction: "none" }}
         role="img"
         aria-label={t("diagram.memberDetailsAriaLabel", { name: `${member.firstname} ${member.surname}`, roleCount: masterRoles.length, teamCount: teams?.length || 0 })}
+        {...viewportHandlers}
       >
         <title>{t("diagram.memberDetailsTitle", { name: `${member.firstname} ${member.surname}` })}</title>
 
+      <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
         {/* Outer boundary circle - encompasses roles but not teams */}
         <circle
           className="member-outer-ring"
@@ -642,6 +656,7 @@ export function MemberVisualView({
         >
           {t("diagram.rolesInTeams", { roleCount: masterRoles.length, teamCount: teams?.length || 0, count: masterRoles.length })}
         </text>
+      </g>
       </svg>
 
       {/* Accessibility: screen reader announcement */}

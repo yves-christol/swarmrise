@@ -1,10 +1,11 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { MemberLink } from "./MemberLink";
 import { NotFound } from "../NotFound";
+import { useViewport } from "../shared/useViewport";
 import type { RoleVisualViewProps } from "./types";
 
 function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
@@ -38,6 +39,15 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [showDuties, setShowDuties] = useState(false);
   const { t } = useTranslation("teams");
+
+  // Viewport for pinch-to-zoom and pan
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
+  const svgRefCallback = useCallback((node: SVGSVGElement | null) => {
+    svgRef.current = node;
+    setSvgElement(node);
+  }, []);
+  const { viewport, handlers: viewportHandlers } = useViewport(svgElement);
 
   // Fetch role data
   const role = useQuery(api.roles.functions.getRoleById, { roleId });
@@ -290,14 +300,18 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
 
       {/* SVG Diagram */}
       <svg
+        ref={svgRefCallback}
         width={dimensions.width}
         height={dimensions.height}
         className="block w-full h-full"
+        style={{ touchAction: "none" }}
         role="img"
         aria-label={t("diagram.roleDetailsAriaLabel", { name: role.title })}
+        {...viewportHandlers}
       >
         <title>{t("diagram.roleDetailsTitle", { name: role.title })}</title>
 
+      <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
         {/* Outer boundary circle */}
         <circle
           className="role-outer-circle"
@@ -465,6 +479,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             }}
           />
         )}
+      </g>
       </svg>
 
       {/* Duties Modal - rendered via portal to escape overflow-hidden ancestor */}

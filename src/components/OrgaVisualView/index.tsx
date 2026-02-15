@@ -275,6 +275,7 @@ export function OrgaVisualView({ orgaId, onRegisterNodePositionLookup }: OrgaVis
         aria-label={t("diagram.orgStructureAriaLabel", { count: nodes.length })}
         style={{
           cursor: isPanning ? "grabbing" : "grab",
+          touchAction: "none", // Prevent browser touch gestures; we handle pinch-to-zoom and pan
         }}
         onClick={handleBackgroundClick}
         onKeyDown={handleKeyDown}

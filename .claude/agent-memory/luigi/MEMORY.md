@@ -64,8 +64,13 @@ CSS variables: `--diagram-node-fill`, `--diagram-node-stroke`, `--diagram-node-t
 Defined in `:root.light` and `:root.dark` in `index.css`.
 
 ### 3D Flip Pattern (View Mode Toggle)
-CSS-driven 3D coin flip. Duration: 500ms with flip easing.
-Both faces rendered simultaneously with `backface-visibility: hidden`.
+Two distinct modes in `animations.css`:
+- **Two-face coin flip** (orga/role/member): `rotateY(0deg)` / `rotateY(180deg)` -- classic coin flip, faces flat at Z=0.
+- **Three-face prism** (team view with kanban): `.prism` modifier class on `.flip-card`. Faces at 120deg intervals with `translateZ(apothem)`. Apothem = `containerWidth / (2 * tan(60deg))`, set via `--flip-apothem` CSS variable computed by `useLayoutEffect` + `ResizeObserver`.
+- Duration: 500ms, easing: `cubic-bezier(0.2, 0.8, 0.3, 1)`.
+- `getFlipClass()` returns `"kanban"` only when `focus.type === "team"` to prevent kanban flip on non-team views.
+- V key cycles visual -> manage -> kanban (teams only), K key jumps to kanban.
+- Reduced motion: opacity-based face switching, all 3D transforms disabled via `!important`.
 
 ### Stagger Delay Pattern
 ```javascript

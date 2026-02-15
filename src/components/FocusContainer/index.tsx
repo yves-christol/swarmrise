@@ -315,11 +315,40 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
   };
 
   const getFlipClass = (): string => {
-    return viewMode === "manage" ? "manage" : "visual";
+    if (viewMode === "kanban" && focus.type === "team") return "kanban";
+    if (viewMode === "manage") return "manage";
+    return "visual";
   };
 
   const isTeamFocused = focus.type === "team";
-  const isKanbanMode = viewMode === "kanban" && isTeamFocused;
+
+  // Compute the prism apothem (distance from center to face) based on container width.
+  // apothem = width / (2 * tan(60deg)) = width / 3.4641
+  // This is set as a CSS custom property on flip-card elements.
+  const flipApothemRef = useRef<number>(300);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const updateApothem = () => {
+      const width = container.getBoundingClientRect().width;
+      const apothem = width / (2 * Math.tan(Math.PI / 3));
+      flipApothemRef.current = apothem;
+
+      // Set on prism flip-card elements (team view with 3 faces)
+      const prismCards = container.querySelectorAll<HTMLElement>(".flip-card.prism");
+      prismCards.forEach((el) => {
+        el.style.setProperty("--flip-apothem", `${apothem}px`);
+      });
+    };
+
+    updateApothem();
+
+    const observer = new ResizeObserver(updateApothem);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [currentView]); // Re-run when view changes so newly mounted prism cards get the apothem
 
   // Keyboard shortcut for view toggle (V key cycles modes, K jumps to kanban)
   useEffect(() => {
@@ -411,16 +440,9 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     }
 
     if (viewType === "team" && focusTarget.type === "team") {
-      if (isKanbanMode) {
-        return (
-          <div className="absolute inset-0 overflow-auto p-4 pt-16">
-            <KanbanBoard teamId={focusTarget.teamId} orgaId={orgaId} />
-          </div>
-        );
-      }
       return (
         <div className="flip-container absolute inset-0">
-          <div className={`flip-card absolute inset-0 ${flipClass}`}>
+          <div className={`flip-card prism absolute inset-0 ${flipClass}`}>
             <div className="flip-face flip-face-visual">
               <TeamVisualView
                 teamId={focusTarget.teamId}
@@ -432,6 +454,11 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
                 teamId={focusTarget.teamId}
                 onZoomOut={focusOnOrga}
               />
+            </div>
+            <div className="flip-face flip-face-kanban">
+              <div className="absolute inset-0 overflow-auto p-4 pt-16">
+                <KanbanBoard teamId={focusTarget.teamId} orgaId={orgaId} />
+              </div>
             </div>
           </div>
         </div>

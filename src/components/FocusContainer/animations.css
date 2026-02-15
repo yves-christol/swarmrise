@@ -83,7 +83,22 @@
 }
 
 /* ============================================================
-   VIEW MODE FLIP (3D coin flip - visual/manage toggle)
+   VIEW MODE FLIP (3D rotation for view switching)
+
+   Two modes:
+
+   1. TWO-FACE COIN FLIP (default) - orga, role, member views
+      Visual at 0deg, Manage at 180deg. Classic Y-axis coin flip.
+
+   2. THREE-FACE PRISM (.prism modifier) - team view with kanban
+      Visual at 0deg, Manage at 120deg, Kanban at 240deg.
+      Each face pushed outward by the prism's apothem so they
+      don't intersect during rotation.
+      Apothem = containerWidth / (2 * tan(60deg))
+      Set via --flip-apothem CSS variable from JavaScript.
+
+   Duration: 500ms
+   Easing: cubic-bezier(0.2, 0.8, 0.3, 1) - smooth with slight overshoot
    ============================================================ */
 
 /* Container with perspective for 3D effect */
@@ -99,7 +114,8 @@
   will-change: transform;
 }
 
-/* Flip states */
+/* --- TWO-FACE COIN FLIP (default for orga/role/member) --- */
+
 .flip-card.visual {
   transform: rotateY(0deg);
 }
@@ -108,7 +124,7 @@
   transform: rotateY(180deg);
 }
 
-/* Both faces share common positioning */
+/* All faces share common positioning and hide when facing away */
 .flip-face {
   position: absolute;
   inset: 0;
@@ -124,6 +140,41 @@
 /* Back face (manage) - pre-rotated 180deg so it shows correctly when flipped */
 .flip-face-manage {
   transform: rotateY(180deg);
+}
+
+/* --- THREE-FACE PRISM (team view with kanban) --- */
+
+.flip-card.prism {
+  --flip-apothem: 300px; /* Fallback; JS overrides this */
+}
+
+/* Override card rotation angles for prism geometry (120deg spacing).
+   translateZ(-apothem) pulls the prism back so the front face sits at Z=0,
+   preventing the apparent zoom caused by faces being pushed toward the camera. */
+.flip-card.prism.visual {
+  transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(0deg);
+}
+
+.flip-card.prism.manage {
+  transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(-120deg);
+}
+
+.flip-card.prism.kanban {
+  transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(-240deg);
+}
+
+/* Override face positioning: push each face out to the prism surface */
+.flip-card.prism .flip-face-visual {
+  transform: rotateY(0deg) translateZ(var(--flip-apothem));
+}
+
+.flip-card.prism .flip-face-manage {
+  transform: rotateY(120deg) translateZ(var(--flip-apothem));
+}
+
+/* Kanban face only exists inside prism containers */
+.flip-face-kanban {
+  transform: rotateY(240deg) translateZ(var(--flip-apothem));
 }
 
 /* ============================================================
@@ -230,16 +281,34 @@
     -webkit-backface-visibility: visible !important;
     transform: none !important;
   }
+  /* Default: only visual face visible */
   .flip-face-visual {
     opacity: 1;
   }
   .flip-face-manage {
     opacity: 0;
   }
+  .flip-face-kanban {
+    opacity: 0;
+  }
+  /* Manage mode: only manage face visible */
   .flip-card.manage .flip-face-visual {
     opacity: 0;
   }
   .flip-card.manage .flip-face-manage {
+    opacity: 1;
+  }
+  .flip-card.manage .flip-face-kanban {
+    opacity: 0;
+  }
+  /* Kanban mode: only kanban face visible */
+  .flip-card.kanban .flip-face-visual {
+    opacity: 0;
+  }
+  .flip-card.kanban .flip-face-manage {
+    opacity: 0;
+  }
+  .flip-card.kanban .flip-face-kanban {
     opacity: 1;
   }
 }

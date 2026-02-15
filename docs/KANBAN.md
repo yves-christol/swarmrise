@@ -796,6 +796,9 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | Card CRUD flows | Done | Phase 3.2-3.4 |
 | Overdue visual indicator | Done | Phase 3.5 (built into KanbanCard) |
 | Drag and drop | Done | Phase 4 |
+| Click-to-edit cards | Done | PointerSensor distance constraint (5px) separates click from drag |
+| Touch tap-to-edit cards | Done | TouchSensor delay constraint (250ms) separates tap from long-press drag |
+| i18n type declarations | Done | `kanban` namespace added to `src/i18n/types.ts` |
 | Search/filter | Done | Phase 5.1-5.2 |
 | Responsive design | Done | Phase 5.3 |
 
@@ -850,6 +853,12 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 **Decision:** Start by embedding the board in the existing team manage view, not as a separate route.
 
 **Rationale:** Avoids routing changes, keeps the board visible alongside team context (members, roles). A dedicated route can be added in a future phase if more screen real estate is needed.
+
+### 9. Distance-based drag activation to enable click-to-edit
+
+**Decision:** Configure `PointerSensor` with `activationConstraint: { distance: 5 }` and `TouchSensor` with `activationConstraint: { delay: 250, tolerance: 5 }` instead of using a dedicated drag handle.
+
+**Rationale:** Without an activation constraint, `@dnd-kit` captures pointer events on `pointerdown`, preventing the native `click` event from firing on cards. A distance constraint (5px) tells dnd-kit to wait until the pointer moves at least 5 pixels before activating drag. A quick click (pointer down + pointer up with < 5px movement) falls through to the normal `onClick` handler, opening the card edit modal. For touch devices, a 250ms delay separates a quick tap (edit) from a long press (drag). This preserves full-card dragging without needing a separate drag handle element.
 
 ---
 

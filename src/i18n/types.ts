@@ -11,6 +11,7 @@ import type enNotifications from '../../public/locales/en/notifications.json'
 import type enDecisions from '../../public/locales/en/decisions.json'
 import type enGlossary from '../../public/locales/en/glossary.json'
 import type enChat from '../../public/locales/en/chat.json'
+import type enKanban from '../../public/locales/en/kanban.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -28,6 +29,7 @@ declare module 'i18next' {
       decisions: typeof enDecisions
       glossary: typeof enGlossary
       chat: typeof enChat
+      kanban: typeof enKanban
     }
   }
 }

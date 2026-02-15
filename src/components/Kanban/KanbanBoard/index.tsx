@@ -5,8 +5,12 @@ import { useTranslation } from "react-i18next";
 import {
   DndContext,
   DragOverlay,
+  PointerSensor,
+  TouchSensor,
   closestCorners,
   pointerWithin,
+  useSensor,
+  useSensors,
   type DragStartEvent,
   type DragEndEvent,
   type DragOverEvent,
@@ -49,6 +53,16 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
       ensureBoardCalledRef.current = false;
     }
   }, [boardData, teamId, ensureBoard]);
+
+  // DnD sensors: require 5px movement before drag activates so clicks pass through to onClick.
+  // Touch: 250ms delay so taps open the edit modal; long-press initiates drag.
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: { delay: 250, tolerance: 5 },
+  });
+  const sensors = useSensors(pointerSensor, touchSensor);
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -328,6 +342,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
 
       {/* Columns with DnD */}
       <DndContext
+        sensors={sensors}
         collisionDetection={collisionDetection}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}

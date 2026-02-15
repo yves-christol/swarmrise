@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
 import {
@@ -35,6 +35,19 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   const boardData = useQuery(api.kanban.functions.getBoardWithData, { teamId });
   const members = useQuery(api.members.functions.listMembers, { orgaId });
   const moveCard = useMutation(api.kanban.functions.moveCard);
+  const ensureBoard = useMutation(api.kanban.functions.ensureBoard);
+
+  // Auto-create board for teams that don't have one yet
+  const ensureBoardCalledRef = useRef(false);
+  useEffect(() => {
+    if (boardData === null && !ensureBoardCalledRef.current) {
+      ensureBoardCalledRef.current = true;
+      void ensureBoard({ teamId });
+    }
+    if (boardData !== null) {
+      ensureBoardCalledRef.current = false;
+    }
+  }, [boardData, teamId, ensureBoard]);
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -226,9 +239,13 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     );
   }
 
-  // No board
+  // No board yet (ensureBoard is creating it)
   if (boardData === null) {
-    return null;
+    return (
+      <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+        {tCommon("loading")}
+      </div>
+    );
   }
 
   const handleCardClick = (card: KanbanCardType) => {

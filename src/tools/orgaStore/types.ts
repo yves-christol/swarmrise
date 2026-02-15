@@ -5,8 +5,8 @@ import type { Member } from "../../../convex/members";
 
 export type Orga = Infer<typeof orgaValidator>;
 
-// View mode types for switching between visual (SVG) and manage (web) views
-export type ViewMode = "visual" | "manage";
+// View mode types for switching between visual (SVG), manage (web), and kanban views
+export type ViewMode = "visual" | "manage" | "kanban";
 export type SwapPhase = "idle" | "swapping-out" | "swapping-in";
 export type SwapDirection = "up" | "down";
 

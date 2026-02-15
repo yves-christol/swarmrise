@@ -15,6 +15,7 @@ const OrgaManageView = lazy(() => import("../OrgaManageView").then(m => ({ defau
 const RoleManageView = lazy(() => import("../RoleManageView").then(m => ({ default: m.RoleManageView })));
 const TeamManageView = lazy(() => import("../TeamManageView").then(m => ({ default: m.TeamManageView })));
 const MemberManageView = lazy(() => import("../MemberManageView").then(m => ({ default: m.MemberManageView })));
+const KanbanBoard = lazy(() => import("../Kanban/KanbanBoard").then(m => ({ default: m.KanbanBoard })));
 import { Id } from "../../../convex/_generated/dataModel";
 import type { FocusTarget } from "../../tools/orgaStore/types";
 
@@ -317,7 +318,10 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     return viewMode === "manage" ? "manage" : "visual";
   };
 
-  // Keyboard shortcut for view toggle (V key)
+  const isTeamFocused = focus.type === "team";
+  const isKanbanMode = viewMode === "kanban" && isTeamFocused;
+
+  // Keyboard shortcut for view toggle (V key cycles modes, K jumps to kanban)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -330,13 +334,22 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         return;
       }
       if (e.key === "v" || e.key === "V") {
-        handleViewModeChange(viewMode === "visual" ? "manage" : "visual");
+        if (isTeamFocused) {
+          // Cycle: visual -> manage -> kanban -> visual
+          const next = viewMode === "visual" ? "manage" : viewMode === "manage" ? "kanban" : "visual";
+          handleViewModeChange(next);
+        } else {
+          handleViewModeChange(viewMode === "visual" ? "manage" : "visual");
+        }
+      }
+      if ((e.key === "k" || e.key === "K") && isTeamFocused) {
+        handleViewModeChange("kanban");
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [viewMode, handleViewModeChange, isFocusTransitioning, animationPhase]);
+  }, [viewMode, handleViewModeChange, isFocusTransitioning, animationPhase, isTeamFocused]);
 
   // --- Render helper ---
 
@@ -398,6 +411,13 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     }
 
     if (viewType === "team" && focusTarget.type === "team") {
+      if (isKanbanMode) {
+        return (
+          <div className="absolute inset-0 overflow-auto p-4 pt-16">
+            <KanbanBoard teamId={focusTarget.teamId} orgaId={orgaId} />
+          </div>
+        );
+      }
       return (
         <div className="flip-container absolute inset-0">
           <div className={`flip-card absolute inset-0 ${flipClass}`}>
@@ -474,6 +494,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           mode={viewMode}
           onChange={handleViewModeChange}
           disabled={swapPhase !== "idle"}
+          showKanban={isTeamFocused}
         />
       )}
 
@@ -513,9 +534,11 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
       {/* Screen reader announcement for view mode */}
       <div role="status" aria-live="polite" className="sr-only">
         {swapPhase === "idle" &&
-          (displayedMode === "visual"
-            ? "Now viewing visual diagram. Press V to switch to management view."
-            : "Now viewing management options. Press V to switch to visual diagram.")}
+          (displayedMode === "kanban"
+            ? "Now viewing Kanban board. Press V to cycle views."
+            : displayedMode === "visual"
+              ? "Now viewing visual diagram. Press V to switch to management view."
+              : "Now viewing management options. Press V to switch to visual diagram.")}
       </div>
     </div>
   );

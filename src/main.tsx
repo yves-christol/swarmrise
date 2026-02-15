@@ -45,6 +45,7 @@ createRoot(document.getElementById("root")!).render(
                   <Route path="manage" element={<App />} />
                   <Route path="teams/:teamId" element={<App />} />
                   <Route path="teams/:teamId/manage" element={<App />} />
+                  <Route path="teams/:teamId/kanban" element={<App />} />
                   <Route path="teams/:teamId/roles/:roleId" element={<App />} />
                   <Route path="teams/:teamId/roles/:roleId/manage" element={<App />} />
                   <Route path="members/:memberId" element={<App />} />

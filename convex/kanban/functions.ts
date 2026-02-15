@@ -266,6 +266,53 @@ export const reorderColumns = mutation({
   },
 });
 
+/**
+ * Ensure a Kanban board exists for a team, creating one with default columns if needed.
+ * Called by the frontend when no board is found.
+ */
+export const ensureBoard = mutation({
+  args: { teamId: v.id("teams") },
+  returns: v.id("kanbanBoards"),
+  handler: async (ctx, args) => {
+    const team = await ctx.db.get(args.teamId);
+    if (!team) throw new Error("Team not found");
+
+    await requireAuthAndMembership(ctx, team.orgaId);
+    const member = await requireAuthAndMembership(ctx, team.orgaId);
+    const hasAccess = await memberHasTeamAccess(ctx, member, args.teamId);
+    if (!hasAccess) throw new Error("Not a member of this team");
+
+    // Check if board already exists (race condition guard)
+    const existing = await ctx.db
+      .query("kanbanBoards")
+      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
+      .unique();
+
+    if (existing) return existing._id;
+
+    // Create board with default columns
+    const boardId = await ctx.db.insert("kanbanBoards", {
+      teamId: args.teamId,
+      orgaId: team.orgaId,
+      columnOrder: [],
+    });
+
+    const columnIds: Id<"kanbanColumns">[] = [];
+    for (let i = 0; i < DEFAULT_COLUMNS.length; i++) {
+      const columnId = await ctx.db.insert("kanbanColumns", {
+        boardId,
+        orgaId: team.orgaId,
+        name: DEFAULT_COLUMNS[i],
+        position: i,
+      });
+      columnIds.push(columnId);
+    }
+
+    await ctx.db.patch(boardId, { columnOrder: columnIds });
+    return boardId;
+  },
+});
+
 // ============================================================
 // Internal mutations
 // ============================================================

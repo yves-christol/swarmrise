@@ -6,6 +6,7 @@ export const routes = {
   orgaManage: (orgaId: Id<"orgas">) => `/o/${orgaId}/manage`,
   team: (orgaId: Id<"orgas">, teamId: Id<"teams">) => `/o/${orgaId}/teams/${teamId}`,
   teamManage: (orgaId: Id<"orgas">, teamId: Id<"teams">) => `/o/${orgaId}/teams/${teamId}/manage`,
+  teamKanban: (orgaId: Id<"orgas">, teamId: Id<"teams">) => `/o/${orgaId}/teams/${teamId}/kanban`,
   role: (orgaId: Id<"orgas">, teamId: Id<"teams">, roleId: Id<"roles">) =>
     `/o/${orgaId}/teams/${teamId}/roles/${roleId}`,
   roleManage: (orgaId: Id<"orgas">, teamId: Id<"teams">, roleId: Id<"roles">) =>

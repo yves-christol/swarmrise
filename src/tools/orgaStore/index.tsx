@@ -72,7 +72,7 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
       setDisplayedMode(newMode);
       // Set swapPhase briefly for ViewToggle disable state
       setSwapPhase("swapping-out");
-      setSwapDirection(newMode === "manage" ? "up" : "down");
+      setSwapDirection(newMode === "visual" ? "down" : "up");
 
       // Clear swap phase after animation completes
       setTimeout(() => {

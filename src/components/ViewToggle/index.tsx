@@ -1,14 +1,26 @@
 import { useTranslation } from "react-i18next";
-
-export type ViewMode = "visual" | "manage";
+import type { ViewMode } from "../../tools/orgaStore/types";
 
 type ViewToggleProps = {
   mode: ViewMode;
   onChange: (mode: ViewMode) => void;
   disabled?: boolean;
+  showKanban?: boolean;
 };
 
-export function ViewToggle({ mode, onChange, disabled = false }: ViewToggleProps) {
+const tabClass = (isActive: boolean) => `
+  flex items-center gap-2 px-3 py-2
+  transition-colors duration-75
+  focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#eac840]
+  disabled:opacity-50 disabled:cursor-not-allowed
+  ${
+    isActive
+      ? "bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]"
+      : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+  }
+`;
+
+export function ViewToggle({ mode, onChange, disabled = false, showKanban = false }: ViewToggleProps) {
   const { t } = useTranslation("common");
   return (
     <div className="absolute top-4 right-4 z-10">
@@ -30,17 +42,7 @@ export function ViewToggle({ mode, onChange, disabled = false }: ViewToggleProps
           aria-controls="visual-view"
           onClick={() => onChange("visual")}
           disabled={disabled}
-          className={`
-            flex items-center gap-2 px-3 py-2
-            transition-colors duration-75
-            focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#eac840]
-            disabled:opacity-50 disabled:cursor-not-allowed
-            ${
-              mode === "visual"
-                ? "bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]"
-                : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-            }
-          `}
+          className={tabClass(mode === "visual")}
         >
           {/* Circle/Visual icon - network of circles */}
           <svg
@@ -68,17 +70,7 @@ export function ViewToggle({ mode, onChange, disabled = false }: ViewToggleProps
           aria-controls="manage-view"
           onClick={() => onChange("manage")}
           disabled={disabled}
-          className={`
-            flex items-center gap-2 px-3 py-2
-            transition-colors duration-75
-            focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#eac840]
-            disabled:opacity-50 disabled:cursor-not-allowed
-            ${
-              mode === "manage"
-                ? "bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]"
-                : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-            }
-          `}
+          className={tabClass(mode === "manage")}
         >
           {/* List/Config icon - stacked rectangles */}
           <svg
@@ -96,6 +88,37 @@ export function ViewToggle({ mode, onChange, disabled = false }: ViewToggleProps
           </svg>
           <span className="text-sm font-medium sr-only sm:not-sr-only">{t("manage")}</span>
         </button>
+
+        {showKanban && (
+          <>
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" aria-hidden="true" />
+
+            <button
+              role="tab"
+              aria-selected={mode === "kanban"}
+              aria-controls="kanban-view"
+              onClick={() => onChange("kanban")}
+              disabled={disabled}
+              className={tabClass(mode === "kanban")}
+            >
+              {/* Kanban icon - three vertical columns */}
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                aria-hidden="true"
+              >
+                <rect x="2" y="3" width="3.5" height="12" rx="1" />
+                <rect x="7.25" y="3" width="3.5" height="8" rx="1" />
+                <rect x="12.5" y="3" width="3.5" height="10" rx="1" />
+              </svg>
+              <span className="text-sm font-medium sr-only sm:not-sr-only">{t("kanban")}</span>
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

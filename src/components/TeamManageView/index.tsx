@@ -10,7 +10,7 @@ import { MissionReminder } from "../MissionReminder";
 import { NotFound } from "../NotFound";
 import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
 import { ContactInfo } from "../../utils/contacts";
-import { KanbanBoard } from "../Kanban/KanbanBoard";
+
 
 type TeamManageViewProps = {
   teamId: Id<"teams">;
@@ -522,11 +522,6 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
               </div>
             )}
           </div>
-        </section>
-
-        {/* Kanban Board */}
-        <section className="mb-8">
-          <KanbanBoard teamId={team._id} orgaId={team.orgaId} />
         </section>
 
         {/* Decision journal */}

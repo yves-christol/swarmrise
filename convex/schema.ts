@@ -14,6 +14,7 @@ import { channelType } from "./chat"
 import { messageType } from "./chat"
 import { channelReadPositionType } from "./chat"
 import { topicClarificationType, topicAnswerType, topicResponseType, voteType, electionNominationType, electionResponseType, reactionType } from "./chat"
+import { kanbanBoardType, kanbanColumnType, kanbanCardType } from "./kanban"
 /**
  * Swarmrise Data Model Schema
  *
@@ -150,4 +151,22 @@ export default defineSchema({
     .index("by_message", ["messageId"])
     .index("by_message_and_member_and_emoji", ["messageId", "memberId", "emoji"])
     .index("by_orga", ["orgaId"]),
+
+  // Kanban system tables
+  kanbanBoards: defineTable({ ...kanbanBoardType.fields })
+    .index("by_orga", ["orgaId"])
+    .index("by_team", ["teamId"]),
+
+  kanbanColumns: defineTable({ ...kanbanColumnType.fields })
+    .index("by_orga", ["orgaId"])
+    .index("by_board", ["boardId"])
+    .index("by_board_and_position", ["boardId", "position"]),
+
+  kanbanCards: defineTable({ ...kanbanCardType.fields })
+    .index("by_orga", ["orgaId"])
+    .index("by_board", ["boardId"])
+    .index("by_column", ["columnId"])
+    .index("by_column_and_position", ["columnId", "position"])
+    .index("by_owner", ["ownerId"])
+    .index("by_board_and_owner", ["boardId", "ownerId"]),
 });

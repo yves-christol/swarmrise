@@ -1,0 +1,38 @@
+{
+  "board": {
+    "title": "Tablero Kanban",
+    "empty": "A\u00fan no hay tarjetas. Crea una para empezar.",
+    "search": "Buscar tarjetas...",
+    "addCard": "A\u00f1adir tarjeta",
+    "cardCount": "{{count}} tarjeta",
+    "cardCount_other": "{{count}} tarjetas"
+  },
+  "columns": {
+    "newTopics": "Nuevos temas",
+    "actions": "Acciones",
+    "done": "Hecho",
+    "archived": "Archivado"
+  },
+  "card": {
+    "title": "T\u00edtulo",
+    "owner": "Responsable",
+    "dueDate": "Fecha l\u00edmite",
+    "comments": "Comentarios",
+    "overdue": "Vencida",
+    "dueIn": "Vence {{date}}",
+    "create": "Crear tarjeta",
+    "edit": "Editar tarjeta",
+    "delete": "Eliminar tarjeta",
+    "deleteConfirm": "\u00bfEst\u00e1s seguro de que quieres eliminar esta tarjeta?",
+    "titleRequired": "El t\u00edtulo es obligatorio",
+    "ownerRequired": "El responsable es obligatorio",
+    "dueDateRequired": "La fecha l\u00edmite es obligatoria",
+    "noComments": "Sin comentarios"
+  },
+  "actions": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "moveToColumn": "Mover a {{column}}"
+  }
+}

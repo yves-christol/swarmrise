@@ -22,7 +22,7 @@ void i18n
   .init({
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal', 'notifications', 'decisions', 'glossary', 'chat'],
+    ns: ['common', 'orgs', 'members', 'invitations', 'auth', 'teams', 'governance', 'legal', 'notifications', 'decisions', 'glossary', 'chat', 'kanban'],
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
     },

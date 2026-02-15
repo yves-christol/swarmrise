@@ -2,6 +2,7 @@ import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { teamValidator } from ".";
+import { DEFAULT_COLUMNS } from "../kanban";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -206,6 +207,26 @@ export const createTeam = mutation({
       teamId,
       isArchived: false,
     });
+
+    // Auto-create Kanban board with default columns
+    const boardId = await ctx.db.insert("kanbanBoards", {
+      teamId,
+      orgaId: args.orgaId,
+      columnOrder: [],
+    });
+
+    const columnIds: Id<"kanbanColumns">[] = [];
+    for (let i = 0; i < DEFAULT_COLUMNS.length; i++) {
+      const columnId = await ctx.db.insert("kanbanColumns", {
+        boardId,
+        orgaId: args.orgaId,
+        name: DEFAULT_COLUMNS[i],
+        position: i,
+      });
+      columnIds.push(columnId);
+    }
+
+    await ctx.db.patch(boardId, { columnOrder: columnIds });
 
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
@@ -436,6 +457,32 @@ export const deleteTeam = mutation({
       .collect();
     for (const policy of teamPolicies) {
       await ctx.db.delete(policy._id);
+    }
+
+    // Clean up Kanban data
+    const teamBoard = await ctx.db
+      .query("kanbanBoards")
+      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
+      .unique();
+
+    if (teamBoard) {
+      const boardCards = await ctx.db
+        .query("kanbanCards")
+        .withIndex("by_board", (q) => q.eq("boardId", teamBoard._id))
+        .collect();
+      for (const card of boardCards) {
+        await ctx.db.delete(card._id);
+      }
+
+      const boardColumns = await ctx.db
+        .query("kanbanColumns")
+        .withIndex("by_board", (q) => q.eq("boardId", teamBoard._id))
+        .collect();
+      for (const column of boardColumns) {
+        await ctx.db.delete(column._id);
+      }
+
+      await ctx.db.delete(teamBoard._id);
     }
 
     // Delete team

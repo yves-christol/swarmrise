@@ -28,6 +28,9 @@ import type * as emails_sendInvitationEmail from "../emails/sendInvitationEmail.
 import type * as http from "../http.js";
 import type * as invitations_functions from "../invitations/functions.js";
 import type * as invitations_index from "../invitations/index.js";
+import type * as kanban_access from "../kanban/access.js";
+import type * as kanban_functions from "../kanban/functions.js";
+import type * as kanban_index from "../kanban/index.js";
 import type * as members_functions from "../members/functions.js";
 import type * as members_index from "../members/index.js";
 import type * as notificationPreferences_functions from "../notificationPreferences/functions.js";
@@ -80,6 +83,9 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   "invitations/functions": typeof invitations_functions;
   "invitations/index": typeof invitations_index;
+  "kanban/access": typeof kanban_access;
+  "kanban/functions": typeof kanban_functions;
+  "kanban/index": typeof kanban_index;
   "members/functions": typeof members_functions;
   "members/index": typeof members_index;
   "notificationPreferences/functions": typeof notificationPreferences_functions;

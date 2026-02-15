@@ -1,0 +1,38 @@
+{
+  "board": {
+    "title": "Tableau Kanban",
+    "empty": "Aucune carte pour le moment. Cr\u00e9ez-en une pour commencer.",
+    "search": "Rechercher des cartes...",
+    "addCard": "Ajouter une carte",
+    "cardCount": "{{count}} carte",
+    "cardCount_other": "{{count}} cartes"
+  },
+  "columns": {
+    "newTopics": "Nouveaux sujets",
+    "actions": "Actions",
+    "done": "Termin\u00e9",
+    "archived": "Archiv\u00e9"
+  },
+  "card": {
+    "title": "Titre",
+    "owner": "Responsable",
+    "dueDate": "\u00c9ch\u00e9ance",
+    "comments": "Commentaires",
+    "overdue": "En retard",
+    "dueIn": "\u00c9ch\u00e9ance {{date}}",
+    "create": "Cr\u00e9er une carte",
+    "edit": "Modifier la carte",
+    "delete": "Supprimer la carte",
+    "deleteConfirm": "\u00cates-vous s\u00fbr de vouloir supprimer cette carte ?",
+    "titleRequired": "Le titre est requis",
+    "ownerRequired": "Le responsable est requis",
+    "dueDateRequired": "La date d'\u00e9ch\u00e9ance est requise",
+    "noComments": "Aucun commentaire"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "moveToColumn": "D\u00e9placer vers {{column}}"
+  }
+}

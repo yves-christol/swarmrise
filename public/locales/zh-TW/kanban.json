@@ -1,0 +1,38 @@
+{
+  "board": {
+    "title": "\u770b\u677f",
+    "empty": "\u5c1a\u7121\u5361\u7247\u3002\u5efa\u7acb\u4e00\u5f35\u4ee5\u958b\u59cb\u4f7f\u7528\u3002",
+    "search": "\u641c\u5c0b\u5361\u7247...",
+    "addCard": "\u65b0\u589e\u5361\u7247",
+    "cardCount": "{{count}} \u5f35\u5361\u7247",
+    "cardCount_other": "{{count}} \u5f35\u5361\u7247"
+  },
+  "columns": {
+    "newTopics": "\u65b0\u8b70\u984c",
+    "actions": "\u57f7\u884c\u4e2d",
+    "done": "\u5df2\u5b8c\u6210",
+    "archived": "\u5df2\u6b78\u6a94"
+  },
+  "card": {
+    "title": "\u6a19\u984c",
+    "owner": "\u8ca0\u8cac\u4eba",
+    "dueDate": "\u5230\u671f\u65e5",
+    "comments": "\u7559\u8a00",
+    "overdue": "\u5df2\u904e\u671f",
+    "dueIn": "{{date}} \u5230\u671f",
+    "create": "\u5efa\u7acb\u5361\u7247",
+    "edit": "\u7de8\u8f2f\u5361\u7247",
+    "delete": "\u522a\u9664\u5361\u7247",
+    "deleteConfirm": "\u4f60\u78ba\u5b9a\u8981\u522a\u9664\u9019\u5f35\u5361\u7247\u55ce\uff1f",
+    "titleRequired": "\u6a19\u984c\u70ba\u5fc5\u586b\u6b04\u4f4d",
+    "ownerRequired": "\u8ca0\u8cac\u4eba\u70ba\u5fc5\u586b\u6b04\u4f4d",
+    "dueDateRequired": "\u5230\u671f\u65e5\u70ba\u5fc5\u586b\u6b04\u4f4d",
+    "noComments": "\u7121\u7559\u8a00"
+  },
+  "actions": {
+    "save": "\u5132\u5b58",
+    "cancel": "\u53d6\u6d88",
+    "close": "\u95dc\u9589",
+    "moveToColumn": "\u79fb\u81f3 {{column}}"
+  }
+}

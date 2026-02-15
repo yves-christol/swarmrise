@@ -1,0 +1,38 @@
+{
+  "board": {
+    "title": "Bacheca Kanban",
+    "empty": "Nessuna scheda al momento. Creane una per iniziare.",
+    "search": "Cerca schede...",
+    "addCard": "Aggiungi scheda",
+    "cardCount": "{{count}} scheda",
+    "cardCount_other": "{{count}} schede"
+  },
+  "columns": {
+    "newTopics": "Nuovi argomenti",
+    "actions": "Azioni",
+    "done": "Completato",
+    "archived": "Archiviato"
+  },
+  "card": {
+    "title": "Titolo",
+    "owner": "Responsabile",
+    "dueDate": "Scadenza",
+    "comments": "Commenti",
+    "overdue": "Scaduta",
+    "dueIn": "Scade {{date}}",
+    "create": "Crea scheda",
+    "edit": "Modifica scheda",
+    "delete": "Elimina scheda",
+    "deleteConfirm": "Sei sicuro di voler eliminare questa scheda?",
+    "titleRequired": "Il titolo \u00e8 obbligatorio",
+    "ownerRequired": "Il responsabile \u00e8 obbligatorio",
+    "dueDateRequired": "La data di scadenza \u00e8 obbligatoria",
+    "noComments": "Nessun commento"
+  },
+  "actions": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "moveToColumn": "Sposta in {{column}}"
+  }
+}

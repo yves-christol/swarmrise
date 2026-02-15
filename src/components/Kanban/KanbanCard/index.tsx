@@ -7,12 +7,11 @@ type KanbanCardProps = {
   card: KanbanCardType;
   owner: Member | undefined;
   onClick?: () => void;
-  isDragging?: boolean;
   style?: React.CSSProperties;
 };
 
 export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
-  function KanbanCard({ card, owner, onClick, isDragging, style, ...props }, ref) {
+  function KanbanCard({ card, owner, onClick, style, ...props }, ref) {
     const { t } = useTranslation("kanban");
     const isOverdue = card.dueDate < Date.now();
 
@@ -35,7 +34,6 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
           bg-white dark:bg-gray-800
           border
           ${isOverdue ? "border-red-300 dark:border-red-700" : "border-gray-200 dark:border-gray-700"}
-          ${isDragging ? "opacity-50 shadow-lg ring-2 ring-[#eac840]" : ""}
           ${onClick ? "hover:shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#eac840]" : "shadow-lg"}
           transition-shadow duration-75
         `}

@@ -292,7 +292,10 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
 
   const getNonSpatialStyles = (): React.CSSProperties => {
     if (animationPhase === "idle") {
-      return { opacity: 1, transform: "scale(1)" };
+      // No transform in idle state — a CSS transform (even identity scale(1))
+      // creates a containing block that breaks position:fixed descendants
+      // like @dnd-kit's DragOverlay.
+      return { opacity: 1 };
     }
     if (animationPhase === "zoom-out-old") {
       const { scale, origin } = getZoomOutParams();

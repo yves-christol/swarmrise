@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
 import {
@@ -365,17 +366,21 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
           })}
         </div>
 
-        {/* Drag overlay */}
-        <DragOverlay dropAnimation={null}>
-          {activeCard ? (
-            <div className="w-64 sm:w-72">
-              <KanbanCard
-                card={activeCard}
-                owner={memberMap.get(activeCard.ownerId)}
-              />
-            </div>
-          ) : null}
-        </DragOverlay>
+        {/* Drag overlay — portaled to document.body to escape ancestor
+            transforms/filters that break position:fixed coordinates */}
+        {createPortal(
+          <DragOverlay dropAnimation={null}>
+            {activeCard ? (
+              <div className="w-64 sm:w-72">
+                <KanbanCard
+                  card={activeCard}
+                  owner={memberMap.get(activeCard.ownerId)}
+                />
+              </div>
+            ) : null}
+          </DragOverlay>,
+          document.body,
+        )}
       </DndContext>
 
       {/* Card modal */}

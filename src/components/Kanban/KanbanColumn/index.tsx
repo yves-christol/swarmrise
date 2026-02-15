@@ -36,8 +36,9 @@ function SortableCard({
   } = useSortable({ id: card._id });
 
   const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
+    opacity: isDragging ? 0 : undefined,
   };
 
   return (
@@ -46,7 +47,6 @@ function SortableCard({
       card={card}
       owner={owner}
       onClick={() => onCardClick(card)}
-      isDragging={isDragging}
       style={style}
       {...attributes}
       {...listeners}

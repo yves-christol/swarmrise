@@ -5,7 +5,8 @@
     "search": "Buscar tarjetas...",
     "addCard": "A\u00f1adir tarjeta",
     "cardCount": "{{count}} tarjeta",
-    "cardCount_other": "{{count}} tarjetas"
+    "cardCount_other": "{{count}} tarjetas",
+    "noAccess": "Debes ser miembro de este equipo para ver su tablero Kanban."
   },
   "columns": {
     "newTopics": "Nuevos temas",

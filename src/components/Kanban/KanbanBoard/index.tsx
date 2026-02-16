@@ -42,17 +42,31 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   const moveCard = useMutation(api.kanban.functions.moveCard);
   const ensureBoard = useMutation(api.kanban.functions.ensureBoard);
 
+  // Track whether the user lacks access to this team's board.
+  // When getBoardWithData returns null AND ensureBoard fails, the user is not a team member.
+  const [noAccess, setNoAccess] = useState(false);
+
   // Auto-create board for teams that don't have one yet
   const ensureBoardCalledRef = useRef(false);
   useEffect(() => {
-    if (boardData === null && !ensureBoardCalledRef.current) {
+    if (boardData === null && !ensureBoardCalledRef.current && !noAccess) {
       ensureBoardCalledRef.current = true;
-      void ensureBoard({ teamId });
+      ensureBoard({ teamId }).catch(() => {
+        // ensureBoard throws if the user is not a team member — surface gracefully
+        setNoAccess(true);
+      });
     }
     if (boardData !== null) {
       ensureBoardCalledRef.current = false;
+      setNoAccess(false);
     }
-  }, [boardData, teamId, ensureBoard]);
+  }, [boardData, teamId, ensureBoard, noAccess]);
+
+  // Reset noAccess when switching teams
+  useEffect(() => {
+    setNoAccess(false);
+    ensureBoardCalledRef.current = false;
+  }, [teamId]);
 
   // DnD sensors: require 5px movement before drag activates so clicks pass through to onClick.
   // Touch: 250ms delay so taps open the edit modal; long-press initiates drag.
@@ -250,6 +264,15 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     return (
       <div className="py-8 text-center text-gray-500 dark:text-gray-400">
         {tCommon("loading")}
+      </div>
+    );
+  }
+
+  // User is not a member of this team — show nothing (the Kanban view is inaccessible)
+  if (boardData === null && noAccess) {
+    return (
+      <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+        {t("board.noAccess")}
       </div>
     );
   }

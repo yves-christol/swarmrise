@@ -22,7 +22,7 @@ export const getBoard = query({
 
     const member = await requireAuthAndMembership(ctx, team.orgaId);
     const hasAccess = await memberHasTeamAccess(ctx, member, args.teamId);
-    if (!hasAccess) throw new Error("Not a member of this team");
+    if (!hasAccess) return null;
 
     return await ctx.db
       .query("kanbanBoards")
@@ -51,7 +51,7 @@ export const getBoardWithData = query({
 
     const member = await requireAuthAndMembership(ctx, team.orgaId);
     const hasAccess = await memberHasTeamAccess(ctx, member, args.teamId);
-    if (!hasAccess) throw new Error("Not a member of this team");
+    if (!hasAccess) return null;
 
     const board = await ctx.db
       .query("kanbanBoards")

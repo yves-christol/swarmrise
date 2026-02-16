@@ -5,7 +5,8 @@
     "search": "Cerca schede...",
     "addCard": "Aggiungi scheda",
     "cardCount": "{{count}} scheda",
-    "cardCount_other": "{{count}} schede"
+    "cardCount_other": "{{count}} schede",
+    "noAccess": "Devi essere membro di questo team per visualizzare la sua bacheca Kanban."
   },
   "columns": {
     "newTopics": "Nuovi argomenti",

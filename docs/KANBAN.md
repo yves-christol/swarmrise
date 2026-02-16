@@ -801,6 +801,7 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | i18n type declarations | Done | `kanban` namespace added to `src/i18n/types.ts` |
 | Search/filter | Done | Phase 5.1-5.2 |
 | Responsive design | Done | Phase 5.3 |
+| Graceful no-access handling | Done | Queries return null instead of throwing for non-members; frontend shows i18n message |
 
 ---
 
@@ -859,6 +860,12 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 **Decision:** Configure `PointerSensor` with `activationConstraint: { distance: 5 }` and `TouchSensor` with `activationConstraint: { delay: 250, tolerance: 5 }` instead of using a dedicated drag handle.
 
 **Rationale:** Without an activation constraint, `@dnd-kit` captures pointer events on `pointerdown`, preventing the native `click` event from firing on cards. A distance constraint (5px) tells dnd-kit to wait until the pointer moves at least 5 pixels before activating drag. A quick click (pointer down + pointer up with < 5px movement) falls through to the normal `onClick` handler, opening the card edit modal. For touch devices, a 250ms delay separates a quick tap (edit) from a long press (drag). This preserves full-card dragging without needing a separate drag handle element.
+
+### 10. Graceful access denial in queries (not throwing)
+
+**Decision:** `getBoard` and `getBoardWithData` return `null` instead of throwing when the user is not a team member. The frontend detects the no-access state by catching `ensureBoard` failures.
+
+**Rationale:** Throwing from a Convex query causes an uncaught error in the React component tree, crashing the entire view. Users who navigate to a team they are not a member of (e.g., via the org visual view) should see a polite message, not a white screen. Mutations like `ensureBoard`, `createCard`, `moveCard`, and `deleteCard` still throw for access violations since those are user-initiated actions that should not be silently ignored.
 
 ---
 

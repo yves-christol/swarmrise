@@ -5,7 +5,8 @@
     "search": "Rechercher des cartes...",
     "addCard": "Ajouter une carte",
     "cardCount": "{{count}} carte",
-    "cardCount_other": "{{count}} cartes"
+    "cardCount_other": "{{count}} cartes",
+    "noAccess": "Vous devez \u00eatre membre de cette \u00e9quipe pour voir son tableau Kanban."
   },
   "columns": {
     "newTopics": "Nouveaux sujets",

@@ -5,7 +5,8 @@
     "search": "\u641c\u5c0b\u5361\u7247...",
     "addCard": "\u65b0\u589e\u5361\u7247",
     "cardCount": "{{count}} \u5f35\u5361\u7247",
-    "cardCount_other": "{{count}} \u5f35\u5361\u7247"
+    "cardCount_other": "{{count}} \u5f35\u5361\u7247",
+    "noAccess": "\u60a8\u5fc5\u9808\u662f\u6b64\u5718\u968a\u7684\u6210\u54e1\u624d\u80fd\u67e5\u770b\u5176\u770b\u677f\u3002"
   },
   "columns": {
     "newTopics": "\u65b0\u8b70\u984c",

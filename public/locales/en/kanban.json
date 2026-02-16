@@ -5,7 +5,8 @@
     "search": "Search cards...",
     "addCard": "Add card",
     "cardCount": "{{count}} card",
-    "cardCount_other": "{{count}} cards"
+    "cardCount_other": "{{count}} cards",
+    "noAccess": "You must be a member of this team to view its Kanban board."
   },
   "columns": {
     "newTopics": "New Topics",

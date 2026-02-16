@@ -28,44 +28,6 @@ function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): st
   }
 }
 
-function ZoomOutButton({ onClick, ariaLabel, label }: { onClick: () => void; ariaLabel: string; label: string }) {
-  return (
-    <button
-      onClick={onClick}
-      className="
-        absolute top-4 left-4 z-10
-        flex items-center gap-2
-        px-3 py-2
-        bg-white dark:bg-gray-800
-        border border-gray-300 dark:border-gray-700
-        rounded-lg
-        shadow-md hover:shadow-lg
-        transition-shadow
-        text-gray-700 dark:text-gray-200
-        hover:text-dark dark:hover:text-light
-        focus:outline-none focus:ring-2 focus:ring-[#eac840]
-      "
-      aria-label={ariaLabel}
-    >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <circle cx="6" cy="10" r="4" />
-        <circle cx="14" cy="6" r="3" />
-        <circle cx="14" cy="14" r="3" />
-        <line x1="9" y1="8" x2="11" y2="7" />
-        <line x1="9" y1="12" x2="11" y2="13" />
-      </svg>
-      <span className="text-sm font-medium">{label}</span>
-    </button>
-  );
-}
-
 function StatCard({
   value,
   label,
@@ -219,11 +181,8 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
 
   return (
     <div className="absolute inset-0 bg-light dark:bg-dark overflow-auto">
-      {/* Back button */}
-      <ZoomOutButton onClick={onZoomOut} ariaLabel={t("manage.returnToOrgOverview")} label={t("manage.overview")} />
-
       {/* Content */}
-      <div className="pt-20 px-8 pb-8 max-w-2xl mx-auto">
+      <div className="pt-8 px-8 pb-8 max-w-2xl mx-auto">
         {/* Header */}
         <header className="mb-8">
           {isEditingName ? (

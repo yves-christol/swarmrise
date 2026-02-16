@@ -156,16 +156,25 @@ export const Header = () => {
           {/* Member indicator */}
           {focus.type === "member" && <MemberIndicator />}
 
-          {/* Desktop nav: team, role, view toggle */}
+          {/* Desktop nav: team, role selectors */}
           <div className="hidden md:contents">
             {showTeamSelector && <TeamSelector />}
             {showRoleSelector && <RoleSelector />}
-            <HeaderViewToggle />
           </div>
         </>
       )}
 
-      {/* Spacer */}
+      {/* Left spacer */}
+      <div className="flex-1" />
+
+      {/* Center: view toggle (desktop) */}
+      {isSignedIn && selectedOrga && (
+        <div className="hidden md:block">
+          <HeaderViewToggle />
+        </div>
+      )}
+
+      {/* Right spacer */}
       <div className="flex-1" />
 
       {/* Mobile overflow */}

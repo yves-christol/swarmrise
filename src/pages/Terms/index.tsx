@@ -1,4 +1,5 @@
 import { Header } from "../../components/Header";
+import { FloatingBackButton } from "../../components/FloatingLogo";
 import { Logo } from "../../components/Logo";
 import { LegalFooter } from "../../components/LegalFooter";
 import { renderBrandText } from "../../components/shared/BrandText";
@@ -11,7 +12,8 @@ export const TermsPage = () => {
 
   return (
     <>
-      <Header showBackButton />
+      <Header />
+      <FloatingBackButton />
       <main className="p-8 flex flex-col gap-12 max-w-3xl mx-auto">
         {/* Hero section */}
         <section className="flex flex-col items-center gap-6 text-center pt-8">

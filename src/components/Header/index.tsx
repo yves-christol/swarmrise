@@ -163,7 +163,7 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
         </Link>
       ) : !selectedOrga ? (
         <Link
-          to={isSignedIn ? "/" : "/glossary"}
+          to="/glossary"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
         >
           <Logo size={24} begin={2} repeatCount={1} />

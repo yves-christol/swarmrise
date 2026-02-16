@@ -11,6 +11,23 @@ import { requireBoardAccess } from "./access";
 // ============================================================
 
 /**
+ * Check if the authenticated user has access to a team's Kanban board.
+ * Returns true if the user is a member of the team, false otherwise.
+ * Used by the frontend to skip heavier queries when the user lacks access.
+ */
+export const checkTeamAccess = query({
+  args: { teamId: v.id("teams") },
+  returns: v.boolean(),
+  handler: async (ctx, args) => {
+    const team = await ctx.db.get(args.teamId);
+    if (!team) return false;
+
+    const member = await requireAuthAndMembership(ctx, team.orgaId);
+    return await memberHasTeamAccess(ctx, member, args.teamId);
+  },
+});
+
+/**
  * Get the Kanban board for a team.
  */
 export const getBoard = query({

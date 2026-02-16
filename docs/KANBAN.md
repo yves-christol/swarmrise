@@ -300,6 +300,7 @@ convex/kanban/
 
 | Function | Args | Returns | Description |
 |----------|------|---------|-------------|
+| `kanban.checkTeamAccess` | `{ teamId: Id<"teams"> }` | `boolean` | Check if the authenticated user has access to a team's board. Used as a guard to skip heavier queries for non-members. |
 | `kanban.getBoard` | `{ teamId: Id<"teams"> }` | `KanbanBoard \| null` | Get the Kanban board for a team |
 | `kanban.getBoardWithData` | `{ teamId: Id<"teams"> }` | `{ board, columns, cards } \| null` | Get board with all columns and cards in one query (main board loader) |
 | `kanban.getCardsByMember` | `{ memberId: Id<"members"> }` | `KanbanCard[]` | Get all cards owned by a member across all boards (for member profile view) |
@@ -801,7 +802,7 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | i18n type declarations | Done | `kanban` namespace added to `src/i18n/types.ts` |
 | Search/filter | Done | Phase 5.1-5.2 |
 | Responsive design | Done | Phase 5.3 |
-| Graceful no-access handling | Done | Queries return null instead of throwing for non-members; frontend shows i18n message |
+| Graceful no-access handling | Done | `checkTeamAccess` query gates all downstream queries; non-members see i18n message with zero backend errors |
 
 ---
 
@@ -861,11 +862,11 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 
 **Rationale:** Without an activation constraint, `@dnd-kit` captures pointer events on `pointerdown`, preventing the native `click` event from firing on cards. A distance constraint (5px) tells dnd-kit to wait until the pointer moves at least 5 pixels before activating drag. A quick click (pointer down + pointer up with < 5px movement) falls through to the normal `onClick` handler, opening the card edit modal. For touch devices, a 250ms delay separates a quick tap (edit) from a long press (drag). This preserves full-card dragging without needing a separate drag handle element.
 
-### 10. Graceful access denial in queries (not throwing)
+### 10. Access-gated query skipping (not error catching)
 
-**Decision:** `getBoard` and `getBoardWithData` return `null` instead of throwing when the user is not a team member. The frontend detects the no-access state by catching `ensureBoard` failures.
+**Decision:** The frontend uses a lightweight `checkTeamAccess` query as a guard before calling `getBoardWithData`, `listMembers`, or `ensureBoard`. When the user lacks access, these queries are skipped entirely using Convex's `"skip"` sentinel.
 
-**Rationale:** Throwing from a Convex query causes an uncaught error in the React component tree, crashing the entire view. Users who navigate to a team they are not a member of (e.g., via the org visual view) should see a polite message, not a white screen. Mutations like `ensureBoard`, `createCard`, `moveCard`, and `deleteCard` still throw for access violations since those are user-initiated actions that should not be silently ignored.
+**Rationale:** Previously the frontend called `getBoardWithData` unconditionally and relied on catching `ensureBoard` mutation failures to detect non-membership, which produced console errors. The `checkTeamAccess` query is a cheap boolean check that prevents all downstream queries and mutations from firing when the user is not a team member. This eliminates console exceptions entirely and provides a clean "no access" message without any backend error noise.
 
 ---
 

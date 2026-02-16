@@ -37,34 +37,34 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   const { t } = useTranslation("kanban");
   const { t: tCommon } = useTranslation("common");
 
-  const boardData = useQuery(api.kanban.functions.getBoardWithData, { teamId });
-  const members = useQuery(api.members.functions.listMembers, { orgaId });
+  // Check team access first — skip all other queries if the user is not a member
+  const hasAccess = useQuery(api.kanban.functions.checkTeamAccess, { teamId });
+
+  const boardData = useQuery(
+    api.kanban.functions.getBoardWithData,
+    hasAccess ? { teamId } : "skip",
+  );
+  const members = useQuery(
+    api.members.functions.listMembers,
+    hasAccess ? { orgaId } : "skip",
+  );
   const moveCard = useMutation(api.kanban.functions.moveCard);
   const ensureBoard = useMutation(api.kanban.functions.ensureBoard);
 
-  // Track whether the user lacks access to this team's board.
-  // When getBoardWithData returns null AND ensureBoard fails, the user is not a team member.
-  const [noAccess, setNoAccess] = useState(false);
-
-  // Auto-create board for teams that don't have one yet
+  // Auto-create board for teams that don't have one yet (only when we have access)
   const ensureBoardCalledRef = useRef(false);
   useEffect(() => {
-    if (boardData === null && !ensureBoardCalledRef.current && !noAccess) {
+    if (hasAccess && boardData === null && !ensureBoardCalledRef.current) {
       ensureBoardCalledRef.current = true;
-      ensureBoard({ teamId }).catch(() => {
-        // ensureBoard throws if the user is not a team member — surface gracefully
-        setNoAccess(true);
-      });
+      void ensureBoard({ teamId });
     }
     if (boardData !== null) {
       ensureBoardCalledRef.current = false;
-      setNoAccess(false);
     }
-  }, [boardData, teamId, ensureBoard, noAccess]);
+  }, [boardData, teamId, ensureBoard, hasAccess]);
 
-  // Reset noAccess when switching teams
+  // Reset when switching teams
   useEffect(() => {
-    setNoAccess(false);
     ensureBoardCalledRef.current = false;
   }, [teamId]);
 
@@ -259,8 +259,8 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   // Active card for drag overlay
   const activeCard = activeCardId ? cardById.get(activeCardId) : null;
 
-  // Loading
-  if (boardData === undefined) {
+  // Loading (access check still pending)
+  if (hasAccess === undefined) {
     return (
       <div className="py-8 text-center text-gray-500 dark:text-gray-400">
         {tCommon("loading")}
@@ -269,10 +269,19 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   }
 
   // User is not a member of this team — show nothing (the Kanban view is inaccessible)
-  if (boardData === null && noAccess) {
+  if (!hasAccess) {
     return (
       <div className="py-8 text-center text-gray-500 dark:text-gray-400">
         {t("board.noAccess")}
+      </div>
+    );
+  }
+
+  // Board data still loading
+  if (boardData === undefined) {
+    return (
+      <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+        {tCommon("loading")}
       </div>
     );
   }

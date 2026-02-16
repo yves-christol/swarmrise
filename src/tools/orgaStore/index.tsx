@@ -275,6 +275,19 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [focus]);
 
+  // Nav-driven focus (crossfade transition, no spatial zoom)
+  const focusOnTeamFromNav = useCallback((teamId: Id<"teams">) => {
+    setTransitionDirection("in");
+    setIsFocusTransitioning(true);
+    setFocus({ type: "team", teamId });
+  }, []);
+
+  const focusOnRoleFromNav = useCallback((roleId: Id<"roles">, teamId: Id<"teams">) => {
+    setTransitionDirection("in");
+    setIsFocusTransitioning(true);
+    setFocus({ type: "role", roleId, teamId });
+  }, []);
+
   const focusOnOrga = useCallback(() => {
     // Capture the team we're returning from so the org view can center on it
     if (focus.type === "team") {
@@ -360,6 +373,8 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
         focusOnTeamFromMember,
         focusOnOrgaFromMember,
         focusOnOrga,
+        focusOnTeamFromNav,
+        focusOnRoleFromNav,
         isFocusTransitioning,
         transitionOrigin,
         transitionDirection,

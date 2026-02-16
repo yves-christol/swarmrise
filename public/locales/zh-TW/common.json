@@ -34,5 +34,8 @@
   "kanban": "Kanban",
   "viewMode": "檢視模式",
   "mission": "使命",
-  "noMissionDefined": "尚未定義使命"
+  "noMissionDefined": "尚未定義使命",
+  "selectTeam": "選擇團隊",
+  "selectRole": "選擇角色",
+  "moreOptions": "更多選項"
 }

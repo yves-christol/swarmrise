@@ -6,8 +6,14 @@ import { Logo } from "../Logo";
 import { OrgaSelector } from "../OrgaSelector";
 import { NotificationBell } from "../NotificationBell";
 import { ChatToggle } from "../ChatToggle";
+import { ChevronSeparator } from "../NavBar/ChevronSeparator";
+import { TeamSelector } from "../NavBar/TeamSelector";
+import { RoleSelector } from "../NavBar/RoleSelector";
+import { HeaderViewToggle } from "../NavBar/HeaderViewToggle";
+import { NavOverflowMenu } from "../NavBar/NavOverflowMenu";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useSelectedOrga } from "../../tools/orgaStore/hooks";
+import { useFocus } from "../../tools/orgaStore/hooks";
 import { routes } from "../../routes";
 import {
   supportedLanguages,
@@ -119,7 +125,8 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
   const { t } = useTranslation();
   const { isSignedIn } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
-  const { selectedOrgaId, myMember } = useSelectedOrga();
+  const { selectedOrgaId, selectedOrga, myMember } = useSelectedOrga();
+  const { focus } = useFocus();
 
   const isDark = resolvedTheme === "dark";
 
@@ -127,9 +134,12 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
     setTheme(isDark ? "light" : "dark");
   };
 
+  const showTeamSelector = focus.type === "team" || focus.type === "role";
+  const showRoleSelector = focus.type === "role";
+
   return (
-    <header className="flex-shrink-0 z-30 bg-light dark:bg-dark p-4 border-b-2 border-slate-300 dark:border-slate-800 flex flex-row justify-between items-center">
-      {/* Left side: Back button or Logo/brand */}
+    <header className="flex-shrink-0 z-30 bg-light dark:bg-dark px-4 py-2 border-b-2 border-slate-300 dark:border-slate-800 flex items-center gap-1">
+      {/* Left: Logo (always) */}
       {showBackButton ? (
         <Link
           to="/"
@@ -153,63 +163,96 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
         </Link>
       ) : (
         <Link
-          to="/glossary"
-          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          aria-label={t("governance:glossary.title", "swarmrise glossary")}
+          to="/"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
         >
           <Logo size={24} begin={2} repeatCount={1} />
-          <b className="font-swarm text-dark dark:text-light hidden sm:inline">swarmrise</b>
+          <b className={`font-swarm text-dark dark:text-light ${selectedOrga ? "hidden md:inline" : ""}`}>
+            swarmrise
+          </b>
         </Link>
       )}
 
-      {/* Center: Organization selector (only when signed in) */}
-      {isSignedIn && (
-        <div className="flex-1 flex justify-center">
+      {/* Navigation selectors (signed in + org selected) */}
+      {isSignedIn && selectedOrga && (
+        <>
+          <ChevronSeparator />
           <OrgaSelector />
+
+          {/* Desktop nav: team, role */}
+          <div className="hidden md:contents">
+            {showTeamSelector && (
+              <>
+                <ChevronSeparator />
+                <TeamSelector />
+              </>
+            )}
+            {showRoleSelector && (
+              <>
+                <ChevronSeparator />
+                <RoleSelector />
+              </>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* View toggle - desktop only */}
+      {isSignedIn && selectedOrga && (
+        <div className="hidden md:flex">
+          <HeaderViewToggle />
         </div>
       )}
 
-      {/* Right side: Utility icons + User button */}
-      <div className="flex items-center gap-4">
-        {/* Utility icons cluster */}
-        <div className="flex items-center gap-2">
-          <ChatToggle />
-          <NotificationBell />
+      {/* Mobile overflow */}
+      {isSignedIn && selectedOrga && (
+        <div className="md:hidden">
+          <NavOverflowMenu />
         </div>
-        {/* User identity */}
-        {isSignedIn && (
-          <UserButton appearance={{ baseTheme: resolvedTheme === "dark" ? dark : undefined }}>
-            <UserButton.MenuItems>
-              {selectedOrgaId && myMember && (
-                <UserButton.Link
-                  label={t("myPage")}
-                  labelIcon={<ProfileIcon />}
-                  href={routes.member(selectedOrgaId, myMember._id)}
-                />
-              )}
-              <UserButton.Action label="manageAccount" />
-              <UserButton.Action
-                label={isDark ? t("switchToLightMode") : t("switchToDarkMode")}
-                labelIcon={isDark ? <SunIcon /> : <MoonIcon />}
-                onClick={toggleTheme}
+      )}
+
+      {/* Right: utilities */}
+      <div className="flex items-center gap-2">
+        <ChatToggle />
+        <NotificationBell />
+      </div>
+
+      {/* User identity */}
+      {isSignedIn && (
+        <UserButton appearance={{ baseTheme: resolvedTheme === "dark" ? dark : undefined }}>
+          <UserButton.MenuItems>
+            {selectedOrgaId && myMember && (
+              <UserButton.Link
+                label={t("myPage")}
+                labelIcon={<ProfileIcon />}
+                href={routes.member(selectedOrgaId, myMember._id)}
               />
-              <UserButton.Action
-                label={t("language")}
-                labelIcon={<GlobeIcon />}
-                open="language"
-              />
-              <UserButton.Action label="signOut" />
-            </UserButton.MenuItems>
-            <UserButton.UserProfilePage
+            )}
+            <UserButton.Action label="manageAccount" />
+            <UserButton.Action
+              label={isDark ? t("switchToLightMode") : t("switchToDarkMode")}
+              labelIcon={isDark ? <SunIcon /> : <MoonIcon />}
+              onClick={toggleTheme}
+            />
+            <UserButton.Action
               label={t("language")}
               labelIcon={<GlobeIcon />}
-              url="language"
-            >
-              <LanguagePage />
-            </UserButton.UserProfilePage>
-          </UserButton>
-        )}
-      </div>
+              open="language"
+            />
+            <UserButton.Action label="signOut" />
+          </UserButton.MenuItems>
+          <UserButton.UserProfilePage
+            label={t("language")}
+            labelIcon={<GlobeIcon />}
+            url="language"
+          >
+            <LanguagePage />
+          </UserButton.UserProfilePage>
+        </UserButton>
+      )}
     </header>
   );
 };

@@ -35,5 +35,8 @@
   "kanban": "Kanban",
   "viewMode": "Mode d'affichage",
   "mission": "Mission",
-  "noMissionDefined": "Aucune mission definie"
+  "noMissionDefined": "Aucune mission definie",
+  "selectTeam": "Choisir l'équipe",
+  "selectRole": "Choisir le rôle",
+  "moreOptions": "Plus d'options"
 }

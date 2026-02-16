@@ -34,5 +34,8 @@
   "kanban": "Kanban",
   "viewMode": "Режим перегляду",
   "mission": "Місія",
-  "noMissionDefined": "Місія не визначена"
+  "noMissionDefined": "Місія не визначена",
+  "selectTeam": "Обрати команду",
+  "selectRole": "Обрати роль",
+  "moreOptions": "Більше опцій"
 }

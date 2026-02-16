@@ -1,10 +1,8 @@
 import { useEffect, useLayoutEffect, useState, useRef, useCallback, lazy, Suspense } from "react";
-import { useLocation, useNavigate } from "react-router";
 import { useFocus, useViewMode } from "../../tools/orgaStore";
-import { useRouteSync, buildUrlFromFocus } from "../../hooks/useRouteSync";
-import type { ViewMode } from "../../tools/orgaStore/types";
+import { useRouteSync } from "../../hooks/useRouteSync";
+import { useViewModeNavigation } from "../../hooks/useViewModeNavigation";
 import "./animations.css";
-import { ViewToggle } from "../ViewToggle";
 
 // Lazy-loaded view components - only one renders at a time
 const OrgaVisualView = lazy(() => import("../OrgaVisualView").then(m => ({ default: m.OrgaVisualView })));
@@ -68,26 +66,12 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     onTransitionEnd,
     previousFocusFromMember,
   } = useFocus();
-  const { viewMode, swapPhase, displayedMode, setViewMode } = useViewMode();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const { viewMode, swapPhase, displayedMode } = useViewMode();
+  const { changeViewMode } = useViewModeNavigation();
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Sync focus state with URL
   useRouteSync();
-
-  // Handle view mode toggle with immediate URL update
-  const handleViewModeChange = useCallback(
-    (newMode: ViewMode) => {
-      const newPath = buildUrlFromFocus(orgaId, focus, newMode);
-
-      if (location.pathname !== newPath) {
-        void navigate(newPath, { replace: true });
-      }
-      setViewMode(newMode);
-    },
-    [orgaId, focus, location.pathname, navigate, setViewMode]
-  );
 
   // --- Transition state ---
 
@@ -157,7 +141,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     const to = focus.type;
     const type = `${from}-to-${to}` as TransitionType;
 
-    if (isSpatialTransition(type)) {
+    if (isSpatialTransition(type) && transitionOrigin !== null) {
       // === SPATIAL ZOOM TRANSITION ===
       const container = containerRef.current;
       if (!container) return;
@@ -369,19 +353,19 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         if (isTeamFocused) {
           // Cycle: visual -> manage -> kanban -> visual
           const next = viewMode === "visual" ? "manage" : viewMode === "manage" ? "kanban" : "visual";
-          handleViewModeChange(next);
+          changeViewMode(next);
         } else {
-          handleViewModeChange(viewMode === "visual" ? "manage" : "visual");
+          changeViewMode(viewMode === "visual" ? "manage" : "visual");
         }
       }
       if ((e.key === "k" || e.key === "K") && isTeamFocused) {
-        handleViewModeChange("kanban");
+        changeViewMode("kanban");
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [viewMode, handleViewModeChange, isFocusTransitioning, animationPhase, isTeamFocused]);
+  }, [viewMode, changeViewMode, isFocusTransitioning, animationPhase, isTeamFocused]);
 
   // --- Render helper ---
 
@@ -459,7 +443,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
               />
             </div>
             <div className="flip-face flip-face-kanban">
-              <div className="absolute inset-0 overflow-auto p-4 pt-16">
+              <div className="absolute inset-0 overflow-auto p-4">
                 <KanbanBoard teamId={focusTarget.teamId} orgaId={orgaId} />
               </div>
             </div>
@@ -518,16 +502,6 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
 
   return (
     <div ref={containerRef} className="absolute inset-0 overflow-hidden z-0">
-      {/* View toggle -- visible only when idle */}
-      {animationPhase === "idle" && !isFocusTransitioning && (
-        <ViewToggle
-          mode={viewMode}
-          onChange={handleViewModeChange}
-          disabled={swapPhase !== "idle"}
-          showKanban={isTeamFocused}
-        />
-      )}
-
       {/* ========== MAIN VIEW (always rendered here, persists after transitions) ========== */}
       <div
         ref={isSpatial && animationPhase === "spatial-zoom" && transitionType === "orga-to-team" ? clipLayerRef : undefined}

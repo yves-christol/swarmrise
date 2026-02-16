@@ -36,6 +36,9 @@
   "viewMode": "View mode",
   "mission": "Mission",
   "noMissionDefined": "No mission defined yet",
+  "selectTeam": "Select team",
+  "selectRole": "Select role",
+  "moreOptions": "More options",
   "notFound": {
     "team": "Team not found",
     "role": "Role not found",

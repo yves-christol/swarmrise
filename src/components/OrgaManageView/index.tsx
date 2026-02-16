@@ -185,7 +185,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
   return (
     <div className="absolute inset-0 bg-light dark:bg-dark overflow-auto">
       {/* Content with consistent spacing */}
-      <div className="pt-20 px-8 pb-8 max-w-4xl mx-auto">
+      <div className="pt-8 px-8 pb-8 max-w-4xl mx-auto">
         {/* Header */}
         <header className="mb-8">
           <div className="flex items-center justify-between">

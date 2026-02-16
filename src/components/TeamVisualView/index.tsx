@@ -133,7 +133,6 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
   if (isLoading || !hasDimensions || isEmpty) {
     return (
       <div ref={containerRef} className="absolute inset-0 bg-light dark:bg-dark overflow-hidden">
-        {isEmpty && <ZoomOutButton onClick={onZoomOut} />}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
           {isLoading ? (
             <>
@@ -220,9 +219,6 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
           }
         }
       `}</style>
-
-      {/* Zoom out button */}
-      <ZoomOutButton onClick={onZoomOut} />
 
       {/* SVG Diagram */}
       <svg
@@ -333,49 +329,6 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
   );
 }
 
-// Zoom out button component
-function ZoomOutButton({ onClick }: { onClick: () => void }) {
-  const { t } = useTranslation("teams");
-  return (
-    <button
-      onClick={onClick}
-      className="
-        absolute top-4 left-4 z-10
-        flex items-center gap-2
-        px-3 py-2
-        bg-white dark:bg-gray-800
-        border border-gray-300 dark:border-gray-700
-        rounded-lg
-        shadow-md hover:shadow-lg
-        transition-shadow
-        text-gray-700 dark:text-gray-200
-        hover:text-dark dark:hover:text-light
-        focus:outline-none focus:ring-2 focus:ring-[#eac840]
-      "
-      aria-label={t("diagram.returnToOrgOverview")}
-    >
-      {/* Simplified network graph icon */}
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        {/* Three connected circles representing network */}
-        <circle cx="10" cy="5" r="3" />
-        <circle cx="5" cy="15" r="3" />
-        <circle cx="15" cy="15" r="3" />
-        {/* Connection lines */}
-        <line x1="10" y1="8" x2="6" y2="12" />
-        <line x1="10" y1="8" x2="14" y2="12" />
-        <line x1="8" y1="15" x2="12" y2="15" />
-      </svg>
-      <span className="text-sm font-medium">{t("diagram.overview")}</span>
-    </button>
-  );
-}
 
 // Team name and mission text component - name positioned higher, mission up to 3 lines
 function TeamNameText({

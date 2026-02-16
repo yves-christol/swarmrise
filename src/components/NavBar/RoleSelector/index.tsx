@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { useFocus, useSelectedOrga } from "../../../tools/orgaStore/hooks";
+import { useFocus } from "../../../tools/orgaStore/hooks";
 
 const ChevronDownIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -25,27 +25,19 @@ const CheckIcon = ({ className }: { className?: string }) => (
 );
 
 export const RoleSelector = () => {
-  const { t } = useTranslation("common");
-  const { myMember } = useSelectedOrga();
+  const { t } = useTranslation(["common", "members"]);
   const { focus, focusOnRoleFromNav } = useFocus();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const focusedTeamId =
-    focus.type === "team" ? focus.teamId : focus.type === "role" ? focus.teamId : null;
+  const focusedTeamId = focus.type === "role" ? focus.teamId : null;
   const focusedRoleId = focus.type === "role" ? focus.roleId : null;
 
-  // Fetch all of user's roles
-  const myRoles = useQuery(
-    api.members.functions.listMemberRoles,
-    myMember ? { memberId: myMember._id } : "skip"
-  );
-
-  // Filter to roles in the focused team
-  const rolesInTeam = useMemo(
-    () => (myRoles && focusedTeamId ? myRoles.filter((r) => r.teamId === focusedTeamId) : []),
-    [myRoles, focusedTeamId]
+  // Fetch all roles in the focused team
+  const teamRoles = useQuery(
+    api.roles.functions.listRolesInTeam,
+    focusedTeamId ? { teamId: focusedTeamId } : "skip"
   );
 
   // Close dropdown when clicking outside
@@ -68,45 +60,40 @@ export const RoleSelector = () => {
     }
   }, []);
 
-  // Don't render if no team focused, or user has 0 roles in this team
-  if (!focusedTeamId || rolesInTeam.length === 0) return null;
+  if (!focusedTeamId || !focusedRoleId) return null;
 
-  // Determine current role name
-  const currentRole = focusedRoleId
-    ? rolesInTeam.find((r) => r._id === focusedRoleId)
-    : null;
-  const currentRoleName = currentRole?.title ?? t("selectRole");
+  const currentRole = teamRoles?.find((r) => r._id === focusedRoleId);
+  const currentRoleName = currentRole?.title ?? t("loading");
+  const otherRoles = teamRoles?.filter((r) => r._id !== focusedRoleId) ?? [];
+  const hasOtherRoles = otherRoles.length > 0;
 
-  // Single role: static text
-  if (rolesInTeam.length === 1) {
-    return (
-      <span className="text-sm text-dark dark:text-light truncate max-w-[140px] font-medium">
-        {rolesInTeam[0].title}
-      </span>
-    );
-  }
-
-  // Multiple roles: dropdown
   return (
     <div className="relative" ref={dropdownRef} onKeyDown={handleKeyDown}>
-      <button
-        ref={triggerRef}
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 px-2 py-1 rounded-md transition-colors
-          focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
-          hover:bg-slate-200 dark:hover:bg-slate-700"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-      >
-        <span className="text-sm text-dark dark:text-light truncate max-w-[140px] font-medium">
+      <div className="flex items-center rounded-md">
+        <span
+          className={`flex items-center gap-1 px-3 py-1.5 text-sm text-dark dark:text-light truncate max-w-[140px] font-medium
+            ${hasOtherRoles ? 'rounded-l-md' : 'rounded-md'}`}
+        >
           {currentRoleName}
         </span>
-        <ChevronDownIcon
-          className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
-        />
-      </button>
+        {hasOtherRoles && (
+          <button
+            ref={triggerRef}
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex items-center py-1.5 pr-2 pl-1 rounded-r-md transition-colors
+              focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
+              hover:bg-slate-200 dark:hover:bg-slate-700"
+            aria-haspopup="listbox"
+            aria-expanded={isOpen}
+          >
+            <ChevronDownIcon
+              className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+        )}
+      </div>
 
-      {isOpen && focusedTeamId && (
+      {isOpen && hasOtherRoles && focusedTeamId && (
         <div
           role="listbox"
           aria-label={t("selectRole")}
@@ -114,7 +101,7 @@ export const RoleSelector = () => {
             bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50"
         >
           <div className="py-1">
-            {rolesInTeam.map((role) => {
+            {teamRoles?.map((role) => {
               const isSelected = role._id === focusedRoleId;
               return (
                 <button
@@ -132,7 +119,9 @@ export const RoleSelector = () => {
                     transition-colors text-left text-sm
                     ${isSelected ? "bg-gray-100 dark:bg-gray-700" : "hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                 >
-                  <span className="text-dark dark:text-light truncate">{role.title}</span>
+                  <span className="text-dark dark:text-light truncate">
+                    {role.roleType === "leader" ? t("members:roleTypes.leader") : role.title}
+                  </span>
                   {isSelected && <CheckIcon className="w-4 h-4 text-gold flex-shrink-0" />}
                 </button>
               );

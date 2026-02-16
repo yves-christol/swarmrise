@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useOrgaStore } from '../../tools/orgaStore'
+import { useFocus } from '../../tools/orgaStore/hooks'
 import { Id } from '../../../convex/_generated/dataModel'
 import { CreateOrganizationModal } from '../CreateOrganizationModal'
 import { routes } from '../../routes'
@@ -44,6 +45,7 @@ export const OrgaSelector = () => {
   const { t } = useTranslation('orgs')
   const navigate = useNavigate()
   const { selectedOrgaId, selectedOrga, selectOrga, orgasWithCounts, isLoading, hasOrgas, isSwitchingOrga } = useOrgaStore()
+  const { focus, focusOnOrga } = useFocus()
   const [isOpen, setIsOpen] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -104,38 +106,54 @@ export const OrgaSelector = () => {
 
   return (
     <div className="relative" ref={dropdownRef} onKeyDown={handleKeyDown}>
-      {/* Trigger button */}
-      <button
-        ref={triggerRef}
-        onClick={() => setIsOpen(!isOpen)}
-        disabled={isSwitchingOrga}
-        className={`flex items-center gap-2 px-3 py-1.5 rounded-md
-          transition-colors
-          focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
-          ${isSwitchingOrga ? 'opacity-75 cursor-wait' : 'hover:bg-slate-200 dark:hover:bg-slate-700'}`}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        aria-controls="orga-selector-dropdown"
-        aria-busy={isSwitchingOrga}
+      {/* Split button: main area focuses orga, chevron opens dropdown */}
+      <div
+        className={`flex items-center rounded-md transition-colors
+          ${isSwitchingOrga ? 'opacity-75 cursor-wait' : ''}`}
       >
-        {isSwitchingOrga ? (
-          <SpinnerIcon className="w-5 h-5 text-gray-400" />
-        ) : selectedOrga?.logoUrl ? (
-          <img
-            src={selectedOrga.logoUrl}
-            alt=""
-            className="w-6 h-6 rounded object-contain"
-          />
-        ) : (
-          <OrgPlaceholderIcon className="w-5 h-5 text-gray-400" />
-        )}
-        <span className="font-swarm text-dark dark:text-light max-w-[160px] truncate">
-          {isSwitchingOrga ? t('switching') : (selectedOrga?.name ?? t('selectOrganization'))}
-        </span>
+        <button
+          ref={triggerRef}
+          onClick={() => {
+            if (focus.type !== "orga") {
+              focusOnOrga()
+            }
+          }}
+          disabled={isSwitchingOrga}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-l-md transition-colors
+            focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
+            ${isSwitchingOrga ? '' : 'hover:bg-slate-200 dark:hover:bg-slate-700'}
+            ${focus.type === "orga" ? '' : 'cursor-pointer'}`}
+          aria-label={selectedOrga?.name ?? t('selectOrganization')}
+        >
+          {isSwitchingOrga ? (
+            <SpinnerIcon className="w-5 h-5 text-gray-400" />
+          ) : selectedOrga?.logoUrl ? (
+            <img
+              src={selectedOrga.logoUrl}
+              alt=""
+              className="w-6 h-6 rounded object-contain"
+            />
+          ) : (
+            <OrgPlaceholderIcon className="w-5 h-5 text-gray-400" />
+          )}
+          <span className="font-swarm text-dark dark:text-light max-w-[160px] truncate">
+            {isSwitchingOrga ? t('switching') : (selectedOrga?.name ?? t('selectOrganization'))}
+          </span>
+        </button>
         {!isSwitchingOrga && (
-          <ChevronDownIcon className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex items-center py-1.5 pr-2 pl-1 rounded-r-md transition-colors
+              focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
+              hover:bg-slate-200 dark:hover:bg-slate-700"
+            aria-haspopup="listbox"
+            aria-expanded={isOpen}
+            aria-controls="orga-selector-dropdown"
+          >
+            <ChevronDownIcon className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          </button>
         )}
-      </button>
+      </div>
 
       {/* Dropdown panel */}
       {isOpen && (

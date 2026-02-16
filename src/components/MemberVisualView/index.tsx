@@ -432,15 +432,8 @@ export function MemberVisualView({
         }
       `}</style>
 
-      {/* Back button */}
-      <BackButton onClick={onZoomOut} />
-
       {/* Keyboard hints */}
       <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-gray-400 dark:text-gray-500">
-        <span className="flex items-center gap-1">
-          <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">Esc</kbd>
-          <span>{t("diagram.keyboardBack")}</span>
-        </span>
         <span className="flex items-center gap-1">
           <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">C</kbd>
           <span>{t("diagram.keyboardContact")}</span>
@@ -693,40 +686,3 @@ export function MemberVisualView({
   );
 }
 
-// Back button component
-function BackButton({ onClick }: { onClick: () => void }) {
-  const { t } = useTranslation("members");
-  return (
-    <button
-      onClick={onClick}
-      className="
-        absolute top-4 left-4 z-10
-        flex items-center gap-2
-        px-3 py-2
-        bg-white dark:bg-gray-800
-        border border-gray-300 dark:border-gray-700
-        rounded-lg
-        shadow-md hover:shadow-lg
-        transition-shadow
-        text-gray-700 dark:text-gray-200
-        hover:text-dark dark:hover:text-light
-        focus:outline-none focus:ring-2 focus:ring-[#a2dbed]
-      "
-      aria-label={t("returnToPreviousView")}
-    >
-      {/* Role circle icon */}
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <circle cx="10" cy="10" r="8" />
-        <circle cx="10" cy="10" r="4" fill="currentColor" fillOpacity="0.3" />
-      </svg>
-      <span className="text-sm font-medium">{t("diagram.keyboardBack")}</span>
-    </button>
-  );
-}

@@ -6,9 +6,9 @@ import { Logo } from "../Logo";
 import { OrgaSelector } from "../OrgaSelector";
 import { NotificationBell } from "../NotificationBell";
 import { ChatToggle } from "../ChatToggle";
-import { ChevronSeparator } from "../NavBar/ChevronSeparator";
 import { TeamSelector } from "../NavBar/TeamSelector";
 import { RoleSelector } from "../NavBar/RoleSelector";
+import { MemberIndicator } from "../NavBar/MemberIndicator";
 import { HeaderViewToggle } from "../NavBar/HeaderViewToggle";
 import { NavOverflowMenu } from "../NavBar/NavOverflowMenu";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -134,7 +134,7 @@ export const Header = () => {
   const showRoleSelector = focus.type === "role";
 
   return (
-    <header className="flex-shrink-0 z-30 bg-light dark:bg-dark px-4 py-2 border-b-2 border-slate-300 dark:border-slate-800 flex items-center gap-1">
+    <header className="flex-shrink-0 z-30 bg-light dark:bg-dark px-4 py-2 border-b-2 border-slate-300 dark:border-slate-800 flex items-center gap-2">
       {/* Left: Logo (when no org selected) */}
       {!selectedOrga ? (
         <Link
@@ -151,36 +151,22 @@ export const Header = () => {
       {/* Navigation selectors (signed in + org selected) */}
       {isSignedIn && selectedOrga && (
         <>
-          <ChevronSeparator />
           <OrgaSelector />
 
-          {/* Desktop nav: team, role */}
+          {/* Member indicator */}
+          {focus.type === "member" && <MemberIndicator />}
+
+          {/* Desktop nav: team, role, view toggle */}
           <div className="hidden md:contents">
-            {showTeamSelector && (
-              <>
-                <ChevronSeparator />
-                <TeamSelector />
-              </>
-            )}
-            {showRoleSelector && (
-              <>
-                <ChevronSeparator />
-                <RoleSelector />
-              </>
-            )}
+            {showTeamSelector && <TeamSelector />}
+            {showRoleSelector && <RoleSelector />}
+            <HeaderViewToggle />
           </div>
         </>
       )}
 
       {/* Spacer */}
       <div className="flex-1" />
-
-      {/* View toggle - desktop only */}
-      {isSignedIn && selectedOrga && (
-        <div className="hidden md:flex">
-          <HeaderViewToggle />
-        </div>
-      )}
 
       {/* Mobile overflow */}
       {isSignedIn && selectedOrga && (

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { useFocus, useSelectedOrga } from "../../../tools/orgaStore/hooks";
+import { useFocus } from "../../../tools/orgaStore/hooks";
 
 const ChevronDownIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -14,11 +14,21 @@ const ChevronDownIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const CheckIcon = ({ className }: { className?: string }) => (
+const ChevronUpIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
     <path
       fillRule="evenodd"
-      d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+      d="M14.77 12.79a.75.75 0 01-1.06-.02L10 8.832l-3.71 3.938a.75.75 0 11-1.08-1.04l4.25-4.5a.75.75 0 011.08 0l4.25 4.5a.75.75 0 01-.02 1.06z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
+const ChevronDownSmallIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+    <path
+      fillRule="evenodd"
+      d="M4.22 6.22a.75.75 0 011.06 0L8 8.94l2.72-2.72a.75.75 0 111.06 1.06l-3.25 3.25a.75.75 0 01-1.06 0L4.22 7.28a.75.75 0 010-1.06z"
       clipRule="evenodd"
     />
   </svg>
@@ -26,8 +36,7 @@ const CheckIcon = ({ className }: { className?: string }) => (
 
 export const TeamSelector = () => {
   const { t } = useTranslation("common");
-  const { myMember } = useSelectedOrga();
-  const { focus, focusOnTeamFromNav } = useFocus();
+  const { focus, focusOnTeamFromNav, focusOnTeamFromRole } = useFocus();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -36,17 +45,16 @@ export const TeamSelector = () => {
   const focusedTeamId =
     focus.type === "team" ? focus.teamId : focus.type === "role" ? focus.teamId : null;
 
-  // Fetch user's teams (via their roles)
-  const myTeams = useQuery(
-    api.members.functions.listMemberTeams,
-    myMember ? { memberId: myMember._id } : "skip"
+  // Fetch connected teams (parent + children)
+  const connected = useQuery(
+    api.teams.functions.listConnectedTeams,
+    focusedTeamId ? { teamId: focusedTeamId } : "skip"
   );
 
-  // Fetch the focused team info (for non-member teams)
-  const isMyTeam = myTeams?.some((t) => t._id === focusedTeamId) ?? false;
-  const focusedTeamData = useQuery(
+  // Fetch the current team info
+  const currentTeam = useQuery(
     api.teams.functions.getTeamById,
-    focusedTeamId && !isMyTeam ? { teamId: focusedTeamId } : "skip"
+    focusedTeamId ? { teamId: focusedTeamId } : "skip"
   );
 
   // Close dropdown when clicking outside
@@ -72,52 +80,47 @@ export const TeamSelector = () => {
   // Don't render if no team context
   if (!focusedTeamId) return null;
 
-  // Find the current team name
-  const currentTeam = isMyTeam
-    ? myTeams?.find((t) => t._id === focusedTeamId)
-    : focusedTeamData;
-
   const currentTeamName = currentTeam?.name ?? t("loading");
+  const canGoBackToTeam = focus.type === "role";
+  const hasConnectedTeams = connected && (connected.parent !== null || connected.children.length > 0);
 
-  // Breadcrumb mode: non-member team
-  if (!isMyTeam) {
-    return (
-      <span className="text-sm text-gray-400 dark:text-gray-500 truncate max-w-[140px]">
-        {currentTeamName}
-      </span>
-    );
-  }
-
-  // Single team: static text
-  if (myTeams && myTeams.length <= 1) {
-    return (
-      <span className="text-sm text-dark dark:text-light truncate max-w-[140px] font-medium">
-        {currentTeamName}
-      </span>
-    );
-  }
-
-  // Dropdown mode: multiple teams
   return (
     <div className="relative" ref={dropdownRef} onKeyDown={handleKeyDown}>
-      <button
-        ref={triggerRef}
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 px-2 py-1 rounded-md transition-colors
-          focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
-          hover:bg-slate-200 dark:hover:bg-slate-700"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-      >
-        <span className="text-sm text-dark dark:text-light truncate max-w-[140px] font-medium">
-          {currentTeamName}
-        </span>
-        <ChevronDownIcon
-          className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
-        />
-      </button>
+      <div className="flex items-center rounded-md">
+        <button
+          ref={triggerRef}
+          onClick={() => {
+            if (canGoBackToTeam) {
+              focusOnTeamFromRole();
+            }
+          }}
+          className={`flex items-center gap-1 px-3 py-1.5 transition-colors
+            focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
+            ${hasConnectedTeams ? 'rounded-l-md' : 'rounded-md'}
+            ${canGoBackToTeam ? 'hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer' : ''}`}
+          aria-label={currentTeamName}
+        >
+          <span className="text-sm text-dark dark:text-light truncate max-w-[140px] font-medium">
+            {currentTeamName}
+          </span>
+        </button>
+        {hasConnectedTeams && (
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex items-center py-1.5 pr-2 pl-1 rounded-r-md transition-colors
+              focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
+              hover:bg-slate-200 dark:hover:bg-slate-700"
+            aria-haspopup="listbox"
+            aria-expanded={isOpen}
+          >
+            <ChevronDownIcon
+              className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+        )}
+      </div>
 
-      {isOpen && (
+      {isOpen && hasConnectedTeams && connected && (
         <div
           role="listbox"
           aria-label={t("selectTeam")}
@@ -125,29 +128,49 @@ export const TeamSelector = () => {
             bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50"
         >
           <div className="py-1">
-            {myTeams?.map((team) => {
-              const isSelected = team._id === focusedTeamId;
-              return (
-                <button
-                  key={team._id}
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => {
-                    if (team._id !== focusedTeamId) {
-                      focusOnTeamFromNav(team._id);
-                    }
-                    setIsOpen(false);
-                    triggerRef.current?.focus();
-                  }}
-                  className={`w-full flex items-center justify-between px-4 py-2
-                    transition-colors text-left text-sm
-                    ${isSelected ? "bg-gray-100 dark:bg-gray-700" : "hover:bg-gray-100 dark:hover:bg-gray-700"}`}
-                >
-                  <span className="text-dark dark:text-light truncate">{team.name}</span>
-                  {isSelected && <CheckIcon className="w-4 h-4 text-gold flex-shrink-0" />}
-                </button>
-              );
-            })}
+            {/* Parent team */}
+            {connected.parent && (
+              <button
+                role="option"
+                aria-selected={false}
+                onClick={() => {
+                  focusOnTeamFromNav(connected.parent!._id);
+                  setIsOpen(false);
+                  triggerRef.current?.focus();
+                }}
+                className="w-full flex items-center gap-2 px-4 py-2
+                  transition-colors text-left text-sm
+                  hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <ChevronUpIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className="text-dark dark:text-light truncate">{connected.parent.name}</span>
+              </button>
+            )}
+
+            {/* Separator between parent and children */}
+            {connected.parent && connected.children.length > 0 && (
+              <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
+            )}
+
+            {/* Child teams */}
+            {connected.children.map((child) => (
+              <button
+                key={child._id}
+                role="option"
+                aria-selected={false}
+                onClick={() => {
+                  focusOnTeamFromNav(child._id);
+                  setIsOpen(false);
+                  triggerRef.current?.focus();
+                }}
+                className="w-full flex items-center gap-2 px-4 py-2
+                  transition-colors text-left text-sm
+                  hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <ChevronDownSmallIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className="text-dark dark:text-light truncate">{child.name}</span>
+              </button>
+            ))}
           </div>
         </div>
       )}

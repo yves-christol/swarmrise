@@ -89,6 +89,70 @@ export const listChildTeams = query({
 });
 
 /**
+ * List connected teams (parent + children) for a given team.
+ * Parent is found via the team's leader role's parentTeamId.
+ * Children are teams whose leader role has parentTeamId pointing to this team.
+ */
+export const listConnectedTeams = query({
+  args: {
+    teamId: v.id("teams"),
+  },
+  returns: v.object({
+    parent: v.union(
+      v.object({
+        _id: v.id("teams"),
+        _creationTime: v.number(),
+        orgaId: v.id("orgas"),
+        name: v.string(),
+      }),
+      v.null()
+    ),
+    children: v.array(
+      v.object({
+        _id: v.id("teams"),
+        _creationTime: v.number(),
+        orgaId: v.id("orgas"),
+        name: v.string(),
+      })
+    ),
+  }),
+  handler: async (ctx, args) => {
+    const orgaId = await getOrgaFromTeam(ctx, args.teamId);
+    await requireAuthAndMembership(ctx, orgaId);
+
+    // Find parent: this team's leader role with a parentTeamId
+    const teamRoles = await ctx.db
+      .query("roles")
+      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
+      .filter((q) => q.eq(q.field("roleType"), "leader"))
+      .collect();
+
+    let parent = null;
+    for (const role of teamRoles) {
+      if (role.parentTeamId) {
+        parent = await ctx.db.get(role.parentTeamId);
+        break;
+      }
+    }
+
+    // Find children: leader roles with parentTeamId pointing to this team
+    const childLeaderRoles = await ctx.db
+      .query("roles")
+      .withIndex("by_parent_team", (q) => q.eq("parentTeamId", args.teamId))
+      .filter((q) => q.eq(q.field("roleType"), "leader"))
+      .collect();
+
+    const childTeamIds = [...new Set(childLeaderRoles.map((role) => role.teamId))];
+    const childTeams = await Promise.all(childTeamIds.map((id) => ctx.db.get(id)));
+
+    return {
+      parent,
+      children: childTeams.filter((t): t is NonNullable<typeof t> => t !== null),
+    };
+  },
+});
+
+/**
  * Create a new team
  * Requires a non-leader role that will become the leader of the new team
  */

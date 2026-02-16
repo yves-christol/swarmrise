@@ -161,17 +161,17 @@ export const Header = ({ showBackButton = false }: HeaderProps) => {
           </svg>
           <span className="text-sm">{t("back")}</span>
         </Link>
-      ) : (
+      ) : !selectedOrga ? (
         <Link
           to="/"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
         >
           <Logo size={24} begin={2} repeatCount={1} />
-          <b className={`font-swarm text-dark dark:text-light ${selectedOrga ? "hidden md:inline" : ""}`}>
+          <b className="font-swarm text-dark dark:text-light">
             swarmrise
           </b>
         </Link>
-      )}
+      ) : null}
 
       {/* Navigation selectors (signed in + org selected) */}
       {isSignedIn && selectedOrga && (

@@ -171,43 +171,6 @@ function getContactPlaceholderKey(type: string) {
   return (keyMap[type as keyof typeof keyMap] ?? "contactPlaceholders.default") as any;
 }
 
-function BackButton({ onClick }: { onClick: () => void }) {
-  const { t } = useTranslation("common");
-  const { t: tMembers } = useTranslation("members");
-  return (
-    <button
-      onClick={onClick}
-      className="
-        absolute top-4 left-4 z-10
-        flex items-center gap-2
-        px-3 py-2
-        bg-white dark:bg-gray-800
-        border border-gray-300 dark:border-gray-700
-        rounded-lg
-        shadow-md hover:shadow-lg
-        transition-shadow
-        text-gray-700 dark:text-gray-200
-        hover:text-dark dark:hover:text-light
-        focus:outline-none focus:ring-2 focus:ring-[#a2dbed]
-      "
-      aria-label={tMembers("returnToPreviousView")}
-    >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <circle cx="10" cy="10" r="8" />
-        <circle cx="10" cy="10" r="4" fill="currentColor" />
-      </svg>
-      <span className="text-sm font-medium">{t("back")}</span>
-    </button>
-  );
-}
-
 function StatCard({
   value,
   label,
@@ -643,11 +606,8 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
 
   return (
     <div className="absolute inset-0 bg-light dark:bg-dark overflow-auto">
-      {/* Back button */}
-      <BackButton onClick={onZoomOut} />
-
       {/* Content */}
-      <div className="pt-20 px-8 pb-8 max-w-2xl mx-auto">
+      <div className="pt-8 px-8 pb-8 max-w-2xl mx-auto">
         {/* Profile Header */}
         <header className="mb-8">
           <div className="flex items-center gap-4">

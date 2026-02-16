@@ -117,6 +117,8 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
   const maxRadius = Math.min(dimensions.width, dimensions.height) / 2 - 40;
+  // Outer circle is inner-tangent with role circles: roleRingRadius + ROLE_RADIUS
+  const outerCircleRadius = maxRadius * 0.75 + 36;
 
   // Not found state - team doesn't exist or no access
   if (team === null) {
@@ -236,27 +238,15 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
         <title>{t("diagram.teamStructureTitle", { name: team.name })}</title>
 
       <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
-        {/* Outer boundary circle */}
+        {/* Outer boundary circle (inner-tangent with role circles) */}
         <circle
           cx={centerX}
           cy={centerY}
-          r={maxRadius}
+          r={outerCircleRadius}
           fill="none"
           stroke="var(--diagram-node-stroke)"
           strokeWidth={2}
           opacity={0.3}
-        />
-
-        {/* Inner ring guide (decorative) - matches role ring */}
-        <circle
-          cx={centerX}
-          cy={centerY}
-          r={maxRadius * 0.75}
-          fill="none"
-          stroke="var(--diagram-node-stroke)"
-          strokeWidth={1}
-          strokeDasharray="2 4"
-          opacity={0.15}
         />
 
         {/* Team name and mission - centered inside the circle */}
@@ -677,9 +667,10 @@ function calculateParentTeamPlacement(
     leaderPosition.x - centerX
   );
 
-  // Place outside the main circle boundary
-  const parentDistance = maxRadius + 55;
+  // Place just outside the outer boundary circle (outerCircleRadius = maxRadius * 0.75 + 36)
+  const outerCircleRadius = maxRadius * 0.75 + 36;
   const parentRadius = 28; // Smaller than role nodes
+  const parentDistance = outerCircleRadius + 8 + parentRadius;
 
   return {
     team: parentTeam,
@@ -716,9 +707,10 @@ function calculateDaughterTeamPlacements(
   const centerY = containerSize.height / 2;
   const maxRadius = Math.min(containerSize.width, containerSize.height) / 2 - 40;
 
-  // Place outside the main circle boundary
-  const daughterDistance = maxRadius + 55;
-  const daughterRadius = 28; // Same as parent team node
+  // Place just outside the outer boundary circle (outerCircleRadius = maxRadius * 0.75 + 36)
+  const outerCircleRadius = maxRadius * 0.75 + 36;
+  const daughterRadius = 34; // Slightly smaller than role nodes (36)
+  const daughterDistance = outerCircleRadius + 8 + daughterRadius;
 
   return linkedLeaderRoles.map((linked) => {
     // Find the source role position
@@ -922,10 +914,10 @@ function DaughterTeamNode({
         textAnchor="middle"
         dominantBaseline="central"
         fill="var(--diagram-muted-text)"
-        fontSize={9}
+        fontSize={10}
         style={{ pointerEvents: "none", userSelect: "none" }}
       >
-        {daughterTeam.name.length > 8 ? daughterTeam.name.slice(0, 7) + "…" : daughterTeam.name}
+        {daughterTeam.name.length > 10 ? daughterTeam.name.slice(0, 9) + "…" : daughterTeam.name}
       </text>
     </g>
   );

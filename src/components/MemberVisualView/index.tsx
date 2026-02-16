@@ -9,8 +9,18 @@ import { RoleLink } from "./RoleLink";
 import { TeamNode } from "./TeamNode";
 import { ContactInfo } from "./ContactInfo";
 import { NotFound } from "../NotFound";
+import { Logo } from "../Logo";
 import { useViewport } from "../shared/useViewport";
 import type { MemberVisualViewProps, RoleLinkPosition, TeamNodePosition, RolesByTeam } from "./types";
+
+// Layout constants
+const AVATAR_RADIUS = 44;
+const ROLE_RADIUS = 36;
+const TEAM_RADIUS = 32;
+const COLUMN_GAP = 180; // horizontal gap between columns
+const ROLE_VERTICAL_GAP = 24; // vertical gap between role nodes within a team group
+const TEAM_GROUP_GAP = 48; // vertical gap between team groups
+const ARROW_HEAD_SIZE = 6;
 
 export function MemberVisualView({
   memberId,
@@ -67,7 +77,6 @@ export function MemberVisualView({
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't handle if user is typing in an input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
@@ -87,23 +96,18 @@ export function MemberVisualView({
   }, [onZoomOut]);
 
   // Filter out replica roles (linked roles) - only show master roles
-  // Replica roles have linkedRoleId set, pointing to their master in the parent team
   const masterRoles = useMemo(() => {
     if (!roles) return [];
     return roles.filter((role) => !role.linkedRoleId);
   }, [roles]);
 
   // Build a map from master role ID -> child team info and roleType from replica
-  // This maps master roles to the child teams they lead (via their replica/linked roles)
-  // Also captures the roleType from the replica role (e.g., "leader") to propagate to the master role display
   const masterToChildTeam = useMemo(() => {
     if (!roles || !teams) return new Map<string, { _id: Id<"teams">; name: string; roleType?: "leader" | "secretary" | "referee" }>();
 
     const teamMap = new Map(teams.map((t) => [t._id, t]));
     const result = new Map<string, { _id: Id<"teams">; name: string; roleType?: "leader" | "secretary" | "referee" }>();
 
-    // Find replica roles and map their linkedRoleId to their team (the child team)
-    // Also capture the roleType from the replica role
     for (const role of roles) {
       if (role.linkedRoleId) {
         const childTeam = teamMap.get(role.teamId);
@@ -123,7 +127,6 @@ export function MemberVisualView({
     const teamMap = new Map(teams.map((t) => [t._id, t]));
     const grouped: RolesByTeam[] = [];
 
-    // Group roles by teamId
     const roleGroups = new Map<string, typeof masterRoles>();
     for (const role of masterRoles) {
       const existing = roleGroups.get(role.teamId) || [];
@@ -131,7 +134,6 @@ export function MemberVisualView({
       roleGroups.set(role.teamId, existing);
     }
 
-    // Create RolesByTeam objects
     for (const [teamId, teamRoles] of roleGroups) {
       const team = teamMap.get(teamId as Id<"teams">);
       if (team) {
@@ -142,88 +144,79 @@ export function MemberVisualView({
     return grouped;
   }, [masterRoles, teams]);
 
-  // Calculate positions
-  const { rolePositions, teamPositions, centerX, centerY, maxRadius, memberRadius } = useMemo(() => {
-    const cX = dimensions.width / 2;
-    const cY = dimensions.height / 2;
-    const mR = Math.min(dimensions.width, dimensions.height) / 2 - 60;
-    const memberR = 52;
-    const roleRingRadius = mR * 0.65;
-    const teamRingRadius = mR * 0.95;
-    const roleR = 36;
-    const teamR = 32;
-
+  // Calculate horizontal flow positions:
+  // Column 1 (left): Avatar
+  // Column 2 (center): Roles (grouped by team)
+  // Column 3 (right): Teams
+  const { avatarPos, rolePositions, teamPositions, contentHeight, contentWidth } = useMemo(() => {
     if (rolesByTeam.length === 0) {
       return {
-        rolePositions: [],
-        teamPositions: [],
-        centerX: cX,
-        centerY: cY,
-        maxRadius: mR,
-        memberRadius: memberR,
+        avatarPos: { x: 0, y: 0 },
+        rolePositions: [] as RoleLinkPosition[],
+        teamPositions: [] as TeamNodePosition[],
+        contentHeight: 0,
+        contentWidth: 0,
       };
     }
 
-    // Collect all teams that need to be displayed (parent teams + child teams for master roles)
-    const allTeams = new Map<string, { _id: Id<"teams">; name: string }>();
+    // Collect all unique teams (parent teams where roles live + child teams for master roles leading child teams)
+    const allTeamNodes = new Map<string, { team: { _id: Id<"teams">; _creationTime: number; orgaId: Id<"orgas">; name: string }; roles: RoleLinkPosition[] }>();
+
+    // Calculate total height needed for all role groups
+    let totalRolesHeight = 0;
+    const groupHeights: number[] = [];
+
     for (const group of rolesByTeam) {
-      allTeams.set(group.team._id, { _id: group.team._id, name: group.team.name });
+      const groupHeight = group.roles.length * (ROLE_RADIUS * 2) + (group.roles.length - 1) * ROLE_VERTICAL_GAP;
+      groupHeights.push(groupHeight);
+      totalRolesHeight += groupHeight;
     }
-    // Add child teams from masterToChildTeam map
-    for (const [, childTeam] of masterToChildTeam) {
-      if (!allTeams.has(childTeam._id)) {
-        allTeams.set(childTeam._id, childTeam);
-      }
-    }
+    totalRolesHeight += (rolesByTeam.length - 1) * TEAM_GROUP_GAP;
 
-    // Calculate sector angles for all teams
-    const allTeamsList = Array.from(allTeams.values());
-    const teamCount = allTeamsList.length;
-    const sectorAngle = (2 * Math.PI) / teamCount;
+    // Column X positions
+    const avatarX = AVATAR_RADIUS + 40;
+    const roleX = avatarX + COLUMN_GAP;
+    const teamX = roleX + COLUMN_GAP;
 
-    // Create a map for team positions by team ID
-    const teamPositionMap = new Map<string, TeamNodePosition>();
+    // Total content dimensions
+    const cWidth = teamX + TEAM_RADIUS + 40;
+    const cHeight = Math.max(totalRolesHeight, AVATAR_RADIUS * 2) + 80;
+
+    // Start Y position for roles (centered vertically)
+    const startY = cHeight / 2 - totalRolesHeight / 2;
 
     const rPositions: RoleLinkPosition[] = [];
     const tPositions: TeamNodePosition[] = [];
 
-    // First pass: create all team positions
-    allTeamsList.forEach((team, teamIndex) => {
-      const sectorMid = (teamIndex * sectorAngle) - Math.PI / 2;
-      const teamPos: TeamNodePosition = {
-        team: { _id: team._id, _creationTime: 0, orgaId: "" as Id<"orgas">, name: team.name },
-        x: cX + Math.cos(sectorMid) * teamRingRadius,
-        y: cY + Math.sin(sectorMid) * teamRingRadius,
-        radius: teamR,
+    let currentY = startY;
+
+    for (let gi = 0; gi < rolesByTeam.length; gi++) {
+      const group = rolesByTeam[gi];
+      const groupHeight = groupHeights[gi];
+      const groupCenterY = currentY + groupHeight / 2;
+
+      // Create the parent team node position
+      const parentTeamNode: TeamNodePosition = {
+        team: { _id: group.team._id, _creationTime: group.team._creationTime, orgaId: group.team.orgaId, name: group.team.name },
+        x: teamX,
+        y: groupCenterY,
+        radius: TEAM_RADIUS,
         roles: [],
       };
-      teamPositionMap.set(team._id, teamPos);
-      tPositions.push(teamPos);
-    });
 
-    // Second pass: position roles and link them to teams
-    rolesByTeam.forEach((group) => {
-      const teamPos = teamPositionMap.get(group.team._id);
-      if (!teamPos) return;
+      // Store for deduplication (a team may appear both as parent and child)
+      if (!allTeamNodes.has(group.team._id)) {
+        allTeamNodes.set(group.team._id, { team: parentTeamNode.team, roles: [] });
+        tPositions.push(parentTeamNode);
+      }
 
-      // Calculate the team's angle from its position
-      const teamAngle = Math.atan2(teamPos.y - cY, teamPos.x - cX);
+      // Position each role in this group
+      for (let ri = 0; ri < group.roles.length; ri++) {
+        const role = group.roles[ri];
+        const roleY = currentY + ri * (ROLE_RADIUS * 2 + ROLE_VERTICAL_GAP) + ROLE_RADIUS;
 
-      // Position roles near their parent team
-      const roleCount = group.roles.length;
-      const roleSpread = roleCount > 1 ? sectorAngle * 0.7 : 0;
-      const roleStartAngle = teamAngle - roleSpread / 2;
-
-      group.roles.forEach((role, roleIndex) => {
-        const roleAngle = roleCount > 1
-          ? roleStartAngle + (roleIndex / (roleCount - 1)) * roleSpread
-          : teamAngle;
-
-        // Check if this role has a child team (via replica/linked role)
+        // Propagate roleType from replica if needed
         const childTeam = masterToChildTeam.get(role._id);
-
-        // If this master role has a replica role that's a leader of a child team,
-        // propagate the roleType from the replica to ensure the golden ring is shown
         const effectiveRoleType = role.roleType || childTeam?.roleType;
         const displayRole = effectiveRoleType !== role.roleType
           ? { ...role, roleType: effectiveRoleType }
@@ -231,34 +224,65 @@ export function MemberVisualView({
 
         const pos: RoleLinkPosition = {
           role: displayRole,
-          x: cX + Math.cos(roleAngle) * roleRingRadius,
-          y: cY + Math.sin(roleAngle) * roleRingRadius,
-          radius: roleR,
+          x: roleX,
+          y: roleY,
+          radius: ROLE_RADIUS,
           teamId: group.team._id,
           childTeamId: childTeam?._id,
         };
         rPositions.push(pos);
-        teamPos.roles.push(pos);
 
-        // If this role has a child team, also add it to the child team's role list
-        if (childTeam) {
-          const childTeamPos = teamPositionMap.get(childTeam._id);
-          if (childTeamPos) {
-            childTeamPos.roles.push(pos);
+        // Link role to its parent team node
+        const parentEntry = allTeamNodes.get(group.team._id);
+        if (parentEntry) {
+          parentEntry.roles.push(pos);
+        }
+        parentTeamNode.roles.push(pos);
+
+        // If this role leads a child team, create a child team node too
+        if (childTeam && !allTeamNodes.has(childTeam._id)) {
+          // Position child team slightly below the parent team, offset vertically
+          const childTeamNode: TeamNodePosition = {
+            team: { _id: childTeam._id, _creationTime: 0, orgaId: "" as Id<"orgas">, name: childTeam.name },
+            x: teamX,
+            y: roleY + TEAM_RADIUS + ROLE_VERTICAL_GAP,
+            radius: TEAM_RADIUS,
+            roles: [pos],
+          };
+          allTeamNodes.set(childTeam._id, { team: childTeamNode.team, roles: [pos] });
+          tPositions.push(childTeamNode);
+        } else if (childTeam) {
+          // Team already exists, add this role to its connections
+          const entry = allTeamNodes.get(childTeam._id);
+          if (entry) {
+            entry.roles.push(pos);
           }
         }
-      });
-    });
+      }
+
+      currentY += groupHeight + TEAM_GROUP_GAP;
+    }
+
+    // Avatar position: left column, vertically centered with all content
+    const aPos = { x: avatarX, y: cHeight / 2 };
 
     return {
+      avatarPos: aPos,
       rolePositions: rPositions,
       teamPositions: tPositions,
-      centerX: cX,
-      centerY: cY,
-      maxRadius: mR,
-      memberRadius: memberR,
+      contentHeight: cHeight,
+      contentWidth: cWidth,
     };
-  }, [dimensions, rolesByTeam, masterToChildTeam]);
+  }, [rolesByTeam, masterToChildTeam]);
+
+  // Calculate viewport offset to center the content in the container
+  const viewportCenterOffset = useMemo(() => {
+    if (contentWidth === 0 || contentHeight === 0) return { x: 0, y: 0 };
+    return {
+      x: Math.max(0, (dimensions.width - contentWidth) / 2),
+      y: Math.max(0, (dimensions.height - contentHeight) / 2),
+    };
+  }, [dimensions, contentWidth, contentHeight]);
 
   // Member not found
   if (member === null) {
@@ -305,6 +329,51 @@ export function MemberVisualView({
     );
   }
 
+  // Empty state: member has no roles
+  const isEmpty = masterRoles.length === 0;
+
+  if (isEmpty) {
+    return (
+      <div ref={containerRef} className="absolute inset-0 bg-light dark:bg-dark overflow-hidden">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
+          {/* Member avatar */}
+          <div className="relative">
+            {member.pictureURL ? (
+              <img
+                src={member.pictureURL}
+                alt={`${member.firstname} ${member.surname}`}
+                className="w-24 h-24 rounded-full object-cover border-3 border-[#a2dbed]"
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-slate-200 dark:bg-gray-800 border-3 border-[#a2dbed]">
+                <span className="font-swarm text-2xl font-semibold text-dark dark:text-light">
+                  {member.firstname[0] || ""}{member.surname[0] || ""}
+                </span>
+              </div>
+            )}
+          </div>
+          <h2 className="font-swarm text-xl font-semibold text-dark dark:text-light">
+            {member.firstname} {member.surname}
+          </h2>
+          <Logo size={36} begin={0} repeatCount={2} />
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center max-w-xs">
+            {t("noRolesAssigned")}
+          </p>
+        </div>
+
+        {/* Keyboard hints */}
+        <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-gray-400 dark:text-gray-500">
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">C</kbd>
+            <span>{t("diagram.keyboardContact")}</span>
+          </span>
+        </div>
+
+        {showContactInfo && <ContactInfo member={member} />}
+      </div>
+    );
+  }
+
   // Get initials for avatar fallback
   const initials = `${member.firstname[0] || ""}${member.surname[0] || ""}`;
 
@@ -315,18 +384,29 @@ export function MemberVisualView({
     >
       {/* CSS for animations */}
       <style>{`
-        @keyframes memberCircleReveal {
+        @keyframes flowNodeReveal {
           from {
-            stroke-dashoffset: 400;
             opacity: 0;
+            transform: scale(0.85);
           }
           to {
-            stroke-dashoffset: 0;
             opacity: 1;
+            transform: scale(1);
           }
         }
 
-        @keyframes roleReveal {
+        @keyframes flowArrowReveal {
+          from {
+            opacity: 0;
+            stroke-dashoffset: 60;
+          }
+          to {
+            opacity: 1;
+            stroke-dashoffset: 0;
+          }
+        }
+
+        @keyframes flowAvatarReveal {
           from {
             opacity: 0;
             transform: scale(0.8);
@@ -337,97 +417,41 @@ export function MemberVisualView({
           }
         }
 
-        @keyframes teamNodeReveal {
-          from {
-            opacity: 0;
-            transform: scale(0.8);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
+        @keyframes flowContentFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
 
-        @keyframes connectionReveal {
-          from {
-            opacity: 0;
-            stroke-dashoffset: 100;
-          }
-          to {
-            opacity: 1;
-            stroke-dashoffset: 0;
-          }
+        .flow-avatar {
+          animation: flowAvatarReveal 400ms ease-out 100ms both;
         }
 
-        @keyframes outerRingReveal {
-          from {
-            stroke-dashoffset: 2000;
-            opacity: 0;
-          }
-          to {
-            stroke-dashoffset: 0;
-            opacity: 0.3;
-          }
+        .flow-arrow {
+          stroke-dasharray: 60;
+          animation: flowArrowReveal 400ms ease-out both;
         }
 
-        @keyframes contactFadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes memberContentFadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        .member-outer-ring {
-          stroke-dasharray: 2000;
-          animation: outerRingReveal 600ms ease-out forwards;
-        }
-
-        .member-circle {
-          stroke-dasharray: 400;
-          animation: memberCircleReveal 400ms ease-out 150ms forwards;
-          opacity: 0;
-        }
-
-        .member-content {
-          animation: memberContentFadeIn 300ms ease-out 250ms both;
+        .flow-content {
+          animation: flowContentFadeIn 300ms ease-out 200ms both;
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .member-outer-ring,
-          .member-circle {
-            animation: none !important;
-            stroke-dasharray: none !important;
-            stroke-dashoffset: 0 !important;
-          }
-          .member-outer-ring { opacity: 0.3 !important; }
-          .member-circle { opacity: 1 !important; }
-          .member-content {
+          .flow-avatar,
+          .flow-content {
             animation: none !important;
             opacity: 1 !important;
+            transform: none !important;
+          }
+          .flow-arrow {
+            animation: none !important;
+            opacity: 1 !important;
+            stroke-dasharray: none !important;
+            stroke-dashoffset: 0 !important;
           }
           g[role="button"] {
             animation: none !important;
             opacity: 1 !important;
             transform: none !important;
-          }
-          .connection-line {
-            animation: none !important;
-            opacity: 1 !important;
-            stroke-dasharray: none !important;
-            stroke-dashoffset: 0 !important;
           }
         }
       `}</style>
@@ -458,55 +482,104 @@ export function MemberVisualView({
       >
         <title>{t("diagram.memberDetailsTitle", { name: `${member.firstname} ${member.surname}` })}</title>
 
-      <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
-        {/* Outer boundary circle - encompasses roles but not teams */}
-        <circle
-          className="member-outer-ring"
-          cx={centerX}
-          cy={centerY}
-          r={maxRadius * 0.80}
-          fill="none"
-          stroke="#a2dbed"
-          strokeWidth={2}
-        />
+        {/* Arrow marker definition */}
+        <defs>
+          <marker
+            id="arrowhead"
+            markerWidth={ARROW_HEAD_SIZE}
+            markerHeight={ARROW_HEAD_SIZE}
+            refX={ARROW_HEAD_SIZE}
+            refY={ARROW_HEAD_SIZE / 2}
+            orient="auto"
+          >
+            <path
+              d={`M0,0 L${ARROW_HEAD_SIZE},${ARROW_HEAD_SIZE / 2} L0,${ARROW_HEAD_SIZE}`}
+              fill="var(--diagram-arrow)"
+              opacity={0.6}
+            />
+          </marker>
+          <marker
+            id="arrowhead-golden"
+            markerWidth={ARROW_HEAD_SIZE}
+            markerHeight={ARROW_HEAD_SIZE}
+            refX={ARROW_HEAD_SIZE}
+            refY={ARROW_HEAD_SIZE / 2}
+            orient="auto"
+          >
+            <path
+              d={`M0,0 L${ARROW_HEAD_SIZE},${ARROW_HEAD_SIZE / 2} L0,${ARROW_HEAD_SIZE}`}
+              fill="var(--diagram-golden-bee)"
+              opacity={0.7}
+            />
+          </marker>
+          {/* Avatar clip path */}
+          <clipPath id={`member-avatar-clip-${member._id}`}>
+            <circle cx={avatarPos.x} cy={avatarPos.y} r={AVATAR_RADIUS - 3} />
+          </clipPath>
+        </defs>
 
-        {/* Connection lines (render first, below nodes) */}
-        {teamPositions.map((pos, teamIndex) =>
-          pos.roles.map((rolePos) => {
-            // Calculate the point on the role circle's edge closest to team node
-            const dx = pos.x - rolePos.x;
-            const dy = pos.y - rolePos.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist === 0) return null;
-            const edgeX = rolePos.x + (dx / dist) * rolePos.radius;
-            const edgeY = rolePos.y + (dy / dist) * rolePos.radius;
-            // Check if this is a leader connection (gold):
-            // 1. Leader role connecting to its child team (master role leading child team)
-            // 2. Leader role directly in this team with no child team (root team leader)
-            const isLeaderToChildTeam = rolePos.role.roleType === "leader" && rolePos.childTeamId === pos.team._id;
-            const isDirectLeaderOfTeam = rolePos.role.roleType === "leader" && rolePos.teamId === pos.team._id && !rolePos.childTeamId;
-            const isGoldConnection = isLeaderToChildTeam || isDirectLeaderOfTeam;
+      <g transform={`translate(${viewport.offsetX + viewportCenterOffset.x}, ${viewport.offsetY + viewportCenterOffset.y}) scale(${viewport.scale})`}>
+
+        {/* === ARROWS: Avatar -> Roles === */}
+        {rolePositions.map((pos, index) => {
+          const fromX = avatarPos.x + AVATAR_RADIUS;
+          const fromY = avatarPos.y;
+          const toX = pos.x - pos.radius;
+          const toY = pos.y;
+          // Curved path for visual elegance
+          const cpX1 = fromX + (toX - fromX) * 0.4;
+          const cpX2 = fromX + (toX - fromX) * 0.6;
+          return (
+            <path
+              className="flow-arrow"
+              key={`avatar-to-role-${pos.role._id}`}
+              d={`M${fromX},${fromY} C${cpX1},${fromY} ${cpX2},${toY} ${toX},${toY}`}
+              fill="none"
+              stroke="var(--diagram-arrow)"
+              strokeWidth={1.5}
+              opacity={0.5}
+              markerEnd="url(#arrowhead)"
+              style={{
+                pointerEvents: "none",
+                animationDelay: `${200 + index * 40}ms`,
+              }}
+            />
+          );
+        })}
+
+        {/* === ARROWS: Roles -> Teams === */}
+        {teamPositions.map((teamPos) =>
+          teamPos.roles.map((rolePos, ri) => {
+            const fromX = rolePos.x + rolePos.radius;
+            const fromY = rolePos.y;
+            const toX = teamPos.x - teamPos.radius;
+            const toY = teamPos.y;
+            const cpX1 = fromX + (toX - fromX) * 0.4;
+            const cpX2 = fromX + (toX - fromX) * 0.6;
+            // Gold connection for leader roles connecting to their team
+            const isLeaderToChildTeam = rolePos.role.roleType === "leader" && rolePos.childTeamId === teamPos.team._id;
+            const isDirectLeaderOfTeam = rolePos.role.roleType === "leader" && rolePos.teamId === teamPos.team._id && !rolePos.childTeamId;
+            const isGold = isLeaderToChildTeam || isDirectLeaderOfTeam;
             return (
-              <line
-                className="connection-line"
-                key={`conn-${pos.team._id}-${rolePos.role._id}`}
-                x1={pos.x}
-                y1={pos.y}
-                x2={edgeX}
-                y2={edgeY}
-                stroke={isGoldConnection ? "var(--diagram-golden-bee)" : "var(--diagram-node-stroke)"}
-                strokeWidth={isGoldConnection ? 2 : 1.5}
+              <path
+                className="flow-arrow"
+                key={`role-to-team-${rolePos.role._id}-${teamPos.team._id}`}
+                d={`M${fromX},${fromY} C${cpX1},${fromY} ${cpX2},${toY} ${toX},${toY}`}
+                fill="none"
+                stroke={isGold ? "var(--diagram-golden-bee)" : "var(--diagram-arrow)"}
+                strokeWidth={isGold ? 2 : 1.5}
+                opacity={isGold ? 0.7 : 0.5}
+                markerEnd={isGold ? "url(#arrowhead-golden)" : "url(#arrowhead)"}
                 style={{
                   pointerEvents: "none",
-                  animation: `connectionReveal 300ms ease-out both`,
-                  animationDelay: `${400 + teamIndex * 60}ms`,
+                  animationDelay: `${350 + ri * 40}ms`,
                 }}
               />
             );
           })
         )}
 
-        {/* Team nodes */}
+        {/* === TEAM NODES (right column) === */}
         {teamPositions.map((pos, index) => (
           <TeamNode
             key={pos.team._id}
@@ -516,7 +589,7 @@ export function MemberVisualView({
           />
         ))}
 
-        {/* Role circles */}
+        {/* === ROLE NODES (center column) === */}
         {rolePositions.map((pos, index) => (
           <RoleLink
             key={pos.role._id}
@@ -526,8 +599,9 @@ export function MemberVisualView({
           />
         ))}
 
-        {/* Member circle at center - interactive when viewing own page */}
+        {/* === MEMBER AVATAR (left column) === */}
         <g
+          className="flow-avatar"
           role={isOwnPage ? "button" : undefined}
           tabIndex={isOwnPage ? 0 : undefined}
           aria-label={isOwnPage ? t("diagram.manageAccount") : undefined}
@@ -544,9 +618,9 @@ export function MemberVisualView({
           {/* Hover glow ring */}
           {isAvatarHovered && (
             <circle
-              cx={centerX}
-              cy={centerY}
-              r={memberRadius + 3}
+              cx={avatarPos.x}
+              cy={avatarPos.y}
+              r={AVATAR_RADIUS + 3}
               fill="none"
               stroke="#a2dbed"
               strokeWidth={1}
@@ -556,10 +630,9 @@ export function MemberVisualView({
           )}
 
           <circle
-            className="member-circle"
-            cx={centerX}
-            cy={centerY}
-            r={memberRadius}
+            cx={avatarPos.x}
+            cy={avatarPos.y}
+            r={AVATAR_RADIUS}
             fill="var(--diagram-node-fill)"
             stroke="#a2dbed"
             strokeWidth={3}
@@ -570,32 +643,25 @@ export function MemberVisualView({
           />
 
           {/* Member avatar or initials */}
-          <g className="member-content">
+          <g className="flow-content">
             {member.pictureURL ? (
-              <>
-                <defs>
-                  <clipPath id={`member-avatar-clip-${member._id}`}>
-                    <circle cx={centerX} cy={centerY} r={memberRadius - 4} />
-                  </clipPath>
-                </defs>
-                <image
-                  href={member.pictureURL}
-                  x={centerX - memberRadius + 4}
-                  y={centerY - memberRadius + 4}
-                  width={(memberRadius - 4) * 2}
-                  height={(memberRadius - 4) * 2}
-                  clipPath={`url(#member-avatar-clip-${member._id})`}
-                  preserveAspectRatio="xMidYMid slice"
-                />
-              </>
+              <image
+                href={member.pictureURL}
+                x={avatarPos.x - AVATAR_RADIUS + 3}
+                y={avatarPos.y - AVATAR_RADIUS + 3}
+                width={(AVATAR_RADIUS - 3) * 2}
+                height={(AVATAR_RADIUS - 3) * 2}
+                clipPath={`url(#member-avatar-clip-${member._id})`}
+                preserveAspectRatio="xMidYMid slice"
+              />
             ) : (
               <text
-                x={centerX}
-                y={centerY}
+                x={avatarPos.x}
+                y={avatarPos.y}
                 textAnchor="middle"
                 dominantBaseline="central"
                 fill="var(--diagram-node-text)"
-                fontSize={20}
+                fontSize={22}
                 fontWeight={600}
                 fontFamily="'Montserrat Alternates', sans-serif"
                 style={{ pointerEvents: "none", userSelect: "none" }}
@@ -606,15 +672,15 @@ export function MemberVisualView({
           </g>
         </g>
 
-        {/* Member name below the circle */}
+        {/* Member name below the avatar */}
         <text
-          className="member-content"
-          x={centerX}
-          y={centerY + memberRadius + 20}
+          className="flow-content"
+          x={avatarPos.x}
+          y={avatarPos.y + AVATAR_RADIUS + 18}
           textAnchor="middle"
           dominantBaseline="central"
           fill="var(--diagram-node-text)"
-          fontSize={16}
+          fontSize={14}
           fontWeight={600}
           fontFamily="'Montserrat Alternates', sans-serif"
           style={{
@@ -622,22 +688,22 @@ export function MemberVisualView({
             userSelect: "none",
             paintOrder: "stroke",
             stroke: "var(--diagram-bg)",
-            strokeWidth: 5,
+            strokeWidth: 4,
             strokeLinejoin: "round",
           }}
         >
           {member.firstname} {member.surname}
         </text>
 
-        {/* Role count subtitle */}
+        {/* Role count subtitle below name */}
         <text
-          className="member-content"
-          x={centerX}
-          y={centerY + memberRadius + 40}
+          className="flow-content"
+          x={avatarPos.x}
+          y={avatarPos.y + AVATAR_RADIUS + 36}
           textAnchor="middle"
           dominantBaseline="central"
           fill="var(--diagram-muted-text)"
-          fontSize={12}
+          fontSize={11}
           style={{
             pointerEvents: "none",
             userSelect: "none",
@@ -685,4 +751,3 @@ export function MemberVisualView({
     </div>
   );
 }
-

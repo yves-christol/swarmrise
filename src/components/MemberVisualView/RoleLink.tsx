@@ -88,8 +88,8 @@ export const RoleLink = memo(function RoleLink({
       style={{
         cursor: "pointer",
         outline: "none",
-        animation: `roleReveal 400ms ease-out both`,
-        animationDelay: `${Math.min(index * 60, 400)}ms`,
+        animation: `flowNodeReveal 400ms ease-out both`,
+        animationDelay: `${150 + Math.min(index * 50, 400)}ms`,
       }}
       onClick={handleClick}
       onKeyDown={handleKeyDown}

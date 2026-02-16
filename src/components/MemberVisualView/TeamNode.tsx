@@ -36,8 +36,8 @@ export const TeamNode = memo(function TeamNode({
       style={{
         cursor: "pointer",
         outline: "none",
-        animation: `teamNodeReveal 400ms ease-out both`,
-        animationDelay: `${300 + index * 60}ms`,
+        animation: `flowNodeReveal 400ms ease-out both`,
+        animationDelay: `${300 + index * 50}ms`,
       }}
       onClick={handleClick}
       onKeyDown={handleKeyDown}

@@ -263,14 +263,30 @@ export function MemberVisualView({
       currentY += groupHeight + TEAM_GROUP_GAP;
     }
 
+    // Resolve team node vertical overlaps (e.g., parent + child team at same Y)
+    const MIN_TEAM_SPACING = TEAM_RADIUS * 2 + 16;
+    tPositions.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < tPositions.length; i++) {
+      const gap = tPositions[i].y - tPositions[i - 1].y;
+      if (gap < MIN_TEAM_SPACING) {
+        tPositions[i].y = tPositions[i - 1].y + MIN_TEAM_SPACING;
+      }
+    }
+
+    // Recalculate content height to account for any shifted team nodes
+    const maxTeamBottom = tPositions.length > 0
+      ? Math.max(...tPositions.map((t) => t.y + t.radius))
+      : 0;
+    const adjustedHeight = Math.max(cHeight, maxTeamBottom + 40);
+
     // Avatar position: left column, vertically centered with all content
-    const aPos = { x: avatarX, y: cHeight / 2 };
+    const aPos = { x: avatarX, y: adjustedHeight / 2 };
 
     return {
       avatarPos: aPos,
       rolePositions: rPositions,
       teamPositions: tPositions,
-      contentHeight: cHeight,
+      contentHeight: adjustedHeight,
       contentWidth: cWidth,
     };
   }, [rolesByTeam, masterToChildTeam]);

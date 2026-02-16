@@ -34,43 +34,6 @@ function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): st
   }
 }
 
-function BackToTeamButton({ teamName, onClick }: { teamName: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="
-        absolute top-4 left-4 z-10
-        flex items-center gap-2
-        px-3 py-2
-        bg-white dark:bg-gray-800
-        border border-gray-300 dark:border-gray-700
-        rounded-lg
-        shadow-md hover:shadow-lg
-        transition-shadow
-        text-gray-700 dark:text-gray-200
-        hover:text-dark dark:hover:text-light
-        focus:outline-none focus:ring-2 focus:ring-[#eac840]
-      "
-      aria-label={`Return to ${teamName} team view`}
-    >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <circle cx="10" cy="10" r="8" />
-        <circle cx="10" cy="6" r="2" />
-        <circle cx="6" cy="12" r="2" />
-        <circle cx="14" cy="12" r="2" />
-      </svg>
-      <span className="text-sm font-medium">{teamName}</span>
-    </button>
-  );
-}
-
 function ReassignConfirmModal({
   roleName,
   currentMemberName,
@@ -451,12 +414,6 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
   // Fetch role data
   const role = useQuery(api.roles.functions.getRoleById, { roleId });
 
-  // Fetch team for back button
-  const team = useQuery(
-    api.teams.functions.getTeamById,
-    role ? { teamId: role.teamId } : "skip"
-  );
-
   // Fetch current member
   const currentMember = useQuery(
     api.members.functions.getMemberById,
@@ -689,11 +646,8 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
 
   return (
     <div className="absolute inset-0 bg-light dark:bg-dark overflow-auto">
-      {/* Back button */}
-      <BackToTeamButton teamName={team?.name || "Team"} onClick={onZoomOut} />
-
       {/* Content */}
-      <div className="pt-20 px-8 pb-8 max-w-2xl mx-auto">
+      <div className="pt-8 px-8 pb-8 max-w-2xl mx-auto">
         {/* Header */}
         <header className="mb-8">
           {isEditingName ? (

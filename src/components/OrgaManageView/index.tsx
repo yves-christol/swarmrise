@@ -99,6 +99,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
       _id: team._id,
       name: team.name,
       roleCount: roleCountByTeam.get(team._id) || 0,
+      color: team.color,
     }));
   }, [teams, roleCountByTeam]);
 

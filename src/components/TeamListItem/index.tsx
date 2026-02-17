@@ -5,6 +5,7 @@ export type TeamListItemTeam = {
   _id: Id<"teams">;
   name: string;
   roleCount: number;
+  color?: string;
 };
 
 export type TeamListItemProps = {
@@ -17,23 +18,12 @@ export function TeamListItem({ team, onNavigate }: TeamListItemProps) {
 
   const content = (
     <>
-      {/* Team icon */}
-      <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          className="text-green-600 dark:text-green-400"
-        >
-          <circle cx="10" cy="10" r="7" />
-          <circle cx="10" cy="7" r="2" />
-          <circle cx="6" cy="13" r="2" />
-          <circle cx="14" cy="13" r="2" />
-        </svg>
-      </div>
+      {/* Team color dot */}
+      <div
+        className="w-4 h-4 rounded-full flex-shrink-0"
+        style={{ backgroundColor: team.color || "#9CA3AF" }}
+        aria-hidden="true"
+      />
 
       {/* Team name and role count */}
       <div className="flex-1 min-w-0">

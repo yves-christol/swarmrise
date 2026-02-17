@@ -23,6 +23,16 @@ export const FONT_OPTIONS: FontOption[] = [
   { value: "'Merriweather', serif", label: "Merriweather", source: "google", googleFamily: "Merriweather" },
   { value: "'Nunito', sans-serif", label: "Nunito", source: "google", googleFamily: "Nunito" },
   { value: "'Oswald', sans-serif", label: "Oswald", source: "google", googleFamily: "Oswald" },
+  { value: "'Roboto Slab', serif", label: "Roboto Slab", source: "google", googleFamily: "Roboto+Slab" },
+  { value: "'Montserrat', sans-serif", label: "Montserrat", source: "google", googleFamily: "Montserrat" },
+  { value: "'Open Sans', sans-serif", label: "Open Sans", source: "google", googleFamily: "Open+Sans" },
+  { value: "'Roboto', sans-serif", label: "Roboto", source: "google", googleFamily: "Roboto" },
+  { value: "'Source Sans 3', sans-serif", label: "Source Sans 3", source: "google", googleFamily: "Source+Sans+3" },
+  { value: "'Quicksand', sans-serif", label: "Quicksand", source: "google", googleFamily: "Quicksand" },
+  { value: "'Cabin', sans-serif", label: "Cabin", source: "google", googleFamily: "Cabin" },
+  { value: "'Bitter', serif", label: "Bitter", source: "google", googleFamily: "Bitter" },
+  { value: "'Josefin Sans', sans-serif", label: "Josefin Sans", source: "google", googleFamily: "Josefin+Sans" },
+  { value: "'Space Grotesk', sans-serif", label: "Space Grotesk", source: "google", googleFamily: "Space+Grotesk" },
 ];
 
 /** Google Fonts URL to preload all curated fonts for the picker preview */

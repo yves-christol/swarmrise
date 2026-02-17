@@ -1,9 +1,8 @@
 import { Id } from "../../../convex/_generated/dataModel";
-import type { Infer } from "convex/values";
-import type { orgaValidator } from "../../../convex/orgas";
+import type { Orga } from "../../../convex/orgas";
 import type { Member } from "../../../convex/members";
 
-export type Orga = Infer<typeof orgaValidator>;
+export type { Orga };
 
 // View mode types for switching between visual (SVG), manage (web), and kanban views
 export type ViewMode = "visual" | "manage" | "kanban";

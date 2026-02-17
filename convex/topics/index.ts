@@ -1,4 +1,4 @@
-import { v } from "convex/values"
+import { v, Infer } from "convex/values"
 
 export const topicType = v.object({
   teamId: v.id("teams"),
@@ -13,3 +13,5 @@ export const topicValidator = v.object({
   _creationTime: v.number(),
   ...topicType.fields,
 })
+
+export type Topic = Infer<typeof topicValidator>

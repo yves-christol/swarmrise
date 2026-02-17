@@ -1,4 +1,4 @@
-import { v } from"convex/values"
+import { v, Infer } from "convex/values"
 import { colorScheme } from "../orgas";
 import { policyVisibilityType } from "../policies";
 import { invitationStatusType } from "../invitations";
@@ -200,3 +200,5 @@ export const decisionValidator = v.object({
   _creationTime: v.number(),
   ...decisionType.fields
 })
+
+export type Decision = Infer<typeof decisionValidator>

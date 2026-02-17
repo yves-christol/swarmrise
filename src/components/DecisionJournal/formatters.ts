@@ -1,7 +1,6 @@
-import type { Infer } from "convex/values";
-import type { decisionValidator } from "../../../convex/decisions";
+import type { Decision } from "../../../convex/decisions";
 
-export type Decision = Infer<typeof decisionValidator>;
+export type { Decision };
 
 type Diff = Decision["diff"];
 

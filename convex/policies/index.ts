@@ -21,3 +21,5 @@ export const policyValidator = v.object({
   ...policyType.fields
 })
 
+export type Policy = Infer<typeof policyValidator>
+

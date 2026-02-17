@@ -51,9 +51,3 @@ export type ViewportState = {
   offsetY: number;
 };
 
-// Transition origin for zoom animations
-export type TransitionOrigin = {
-  x: number;
-  y: number;
-  radius: number;
-} | null;

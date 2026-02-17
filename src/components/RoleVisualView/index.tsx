@@ -127,11 +127,23 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             onZoomOut();
           }
           break;
+        case "m":
+        case "M":
+          // Navigate to assigned member
+          if (member && onNavigateToMember) {
+            const cx = dimensions.width / 2;
+            const cy = dimensions.height / 2;
+            const mr = (Math.min(dimensions.width, dimensions.height) / 2 - 70) * 0.85;
+            const linkY = cy + mr + 30;
+            const linkRadius = 36;
+            onNavigateToMember(member._id, { x: cx, y: linkY, radius: linkRadius });
+          }
+          break;
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onZoomOut, showDuties, role?.duties, linkedRole, onNavigateToRole, team]);
+  }, [onZoomOut, showDuties, role?.duties, linkedRole, onNavigateToRole, team, member, onNavigateToMember, dimensions]);
 
   // Calculate layout
   const centerX = dimensions.width / 2;
@@ -312,6 +324,12 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           <span className="flex items-center gap-1">
             <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">T</kbd>
             <span>{t("diagram.keyboardTeam")}</span>
+          </span>
+        )}
+        {member && (
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">M</kbd>
+            <span>{t("diagram.keyboardMember")}</span>
           </span>
         )}
       </div>
@@ -562,6 +580,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
         {team && t("diagram.srRoleViewTeamHint", { name: team.name })}
         {role.duties && role.duties.length > 0 && t("diagram.srRoleViewDutiesHint")}
         {role.linkedRoleId && t("diagram.srRoleViewSourceHint")}
+        {member && t("diagram.srRoleViewMemberHint")}
       </div>
 
       {/* Accessibility: text alternative */}

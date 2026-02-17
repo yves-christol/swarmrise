@@ -106,7 +106,7 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
                     setNewNomineeId(null);
                   }}
                   placeholder={t("electionSearchMembers")}
-                  className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#eac840]"
+                  className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
                 />
                 {searchTerm && filteredNominees && filteredNominees.length > 0 && !newNomineeId && (
                   <div className="mt-1 max-h-32 overflow-y-auto border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700">
@@ -142,7 +142,7 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
                 onChange={(e) => setNewReason(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") handleChange(); }}
                 placeholder={t("electionNominateReasonPlaceholder")}
-                className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#eac840]"
+                className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
               />
 
               <div className="flex items-center gap-2">
@@ -192,7 +192,7 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
           <button
             onClick={handleAdvance}
             disabled={!tool.proposedCandidateId}
-            className="text-xs px-3 py-1.5 rounded-md bg-[#eac840] text-dark font-medium hover:bg-[#d4b435] disabled:opacity-40 transition-colors"
+            className="text-xs px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover disabled:opacity-40 transition-colors"
           >
             {t("electionAdvanceToConsent")}
           </button>

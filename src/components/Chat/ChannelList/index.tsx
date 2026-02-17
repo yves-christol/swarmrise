@@ -194,7 +194,7 @@ const ChannelButton = ({
       <span className="truncate">{displayName}</span>
     </span>
     {unread > 0 && (
-      <span className="shrink-0 ml-2 min-w-5 h-5 flex items-center justify-center text-xs font-bold bg-[#eac840] text-dark rounded-full px-1.5">
+      <span className="shrink-0 ml-2 min-w-5 h-5 flex items-center justify-center text-xs font-bold bg-highlight text-dark rounded-full px-1.5">
         {unread > 99 ? "99+" : unread}
       </span>
     )}

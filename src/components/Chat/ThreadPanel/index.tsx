@@ -204,13 +204,13 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
             onKeyDown={handleKeyDown}
             placeholder={t("reply")}
             rows={1}
-            className="flex-1 resize-none bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+            className="flex-1 resize-none bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             style={{ maxHeight: "80px" }}
           />
           {text.trim().length > 0 && (
             <button
               onClick={handleSend}
-              className="shrink-0 p-2 rounded-lg bg-[#eac840] text-dark hover:bg-[#d4b435] transition-colors focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1"
+              className="shrink-0 p-2 rounded-lg bg-highlight text-dark hover:bg-highlight-hover transition-colors focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1"
               aria-label={t("sendMessage")}
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

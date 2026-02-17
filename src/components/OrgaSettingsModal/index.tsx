@@ -120,6 +120,12 @@ export const OrgaSettingsModal = ({
   const [customSecondary, setCustomSecondary] = useState<RGB>(COLOR_PRESETS[0].secondary);
   const [emailDomains, setEmailDomains] = useState<string[]>([]);
 
+  // Customisation state
+  const [paperColorLight, setPaperColorLight] = useState<RGB | null>(null);
+  const [paperColorDark, setPaperColorDark] = useState<RGB | null>(null);
+  const [highlightColorLight, setHighlightColorLight] = useState<RGB | null>(null);
+  const [highlightColorDark, setHighlightColorDark] = useState<RGB | null>(null);
+
   // Logo state
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
@@ -159,6 +165,12 @@ export const OrgaSettingsModal = ({
         setSelectedPresetId(matchingPreset?.id ?? "custom");
       }
 
+      // Set customisation colors
+      setPaperColorLight(orga.paperColorLight ?? null);
+      setPaperColorDark(orga.paperColorDark ?? null);
+      setHighlightColorLight(orga.highlightColorLight ?? null);
+      setHighlightColorDark(orga.highlightColorDark ?? null);
+
       // Reset logo state
       setLogoFile(null);
       setLogoPreviewUrl(null);
@@ -187,6 +199,13 @@ export const OrgaSettingsModal = ({
       : { primary: customPrimary, secondary: customSecondary };
   }, [selectedPresetId, customPrimary, customSecondary]);
 
+  // Helper to compare optional RGB values
+  const rgbOptionalEqual = (a: RGB | null | undefined, b: RGB | null | undefined): boolean => {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+    return rgbEqual(a, b);
+  };
+
   // Detect if form has changes
   const hasChanges = useMemo(() => {
     if (!orga) return false;
@@ -200,9 +219,13 @@ export const OrgaSettingsModal = ({
       !colorSchemesEqual(currentColorScheme, originalColorScheme) ||
       !arraysEqual(emailDomains, originalDomains) ||
       logoFile !== null ||
-      logoRemoved
+      logoRemoved ||
+      !rgbOptionalEqual(paperColorLight, orga.paperColorLight) ||
+      !rgbOptionalEqual(paperColorDark, orga.paperColorDark) ||
+      !rgbOptionalEqual(highlightColorLight, orga.highlightColorLight) ||
+      !rgbOptionalEqual(highlightColorDark, orga.highlightColorDark)
     );
-  }, [orga, name, getColorScheme, emailDomains, logoFile, logoRemoved]);
+  }, [orga, name, getColorScheme, emailDomains, logoFile, logoRemoved, paperColorLight, paperColorDark, highlightColorLight, highlightColorDark]);
 
   // Handle open/close animation
   useEffect(() => {
@@ -420,12 +443,28 @@ export const OrgaSettingsModal = ({
 
       const colorScheme = getColorScheme();
 
+      // Build customisation args (only send changed values)
+      const customisationArgs: Record<string, RGB | null> = {};
+      if (!rgbOptionalEqual(paperColorLight, orga?.paperColorLight)) {
+        customisationArgs.paperColorLight = paperColorLight;
+      }
+      if (!rgbOptionalEqual(paperColorDark, orga?.paperColorDark)) {
+        customisationArgs.paperColorDark = paperColorDark;
+      }
+      if (!rgbOptionalEqual(highlightColorLight, orga?.highlightColorLight)) {
+        customisationArgs.highlightColorLight = highlightColorLight;
+      }
+      if (!rgbOptionalEqual(highlightColorDark, orga?.highlightColorDark)) {
+        customisationArgs.highlightColorDark = highlightColorDark;
+      }
+
       await updateOrga({
         orgaId,
         name: name.trim(),
         colorScheme,
         ...(logoStorageId !== undefined && { logoStorageId }),
         authorizedEmailDomains: emailDomains.length > 0 ? emailDomains : null,
+        ...customisationArgs,
       });
 
       onClose();
@@ -534,7 +573,7 @@ export const OrgaSettingsModal = ({
                 onBlur={handleNameBlur}
                 disabled={isSubmitting}
                 className={`px-4 py-3 rounded-md border bg-white dark:bg-gray-900 text-dark dark:text-light
-                  focus:outline-none focus:ring-2 focus:ring-[#eac840] transition-colors
+                  focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed
                   ${validationError ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600"}`}
                 aria-invalid={!!validationError}
@@ -565,7 +604,7 @@ export const OrgaSettingsModal = ({
                     className={`relative flex items-center justify-center gap-1 p-2 rounded-md border-2 transition-all
                       disabled:opacity-50 disabled:cursor-not-allowed
                       ${selectedPresetId === preset.id
-                        ? "border-[#eac840] ring-2 ring-[#eac840]/30"
+                        ? "border-highlight ring-2 ring-highlight/30"
                         : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                       }`}
                     aria-pressed={selectedPresetId === preset.id}
@@ -580,7 +619,7 @@ export const OrgaSettingsModal = ({
                       style={{ backgroundColor: rgbToHex(preset.secondary) }}
                     />
                     {selectedPresetId === preset.id && (
-                      <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-[#eac840] bg-white dark:bg-gray-800 rounded-full" />
+                      <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
                     )}
                   </button>
                 ))}
@@ -593,7 +632,7 @@ export const OrgaSettingsModal = ({
                   className={`relative flex items-center justify-center gap-1 p-2 rounded-md border-2 transition-all
                     disabled:opacity-50 disabled:cursor-not-allowed
                     ${selectedPresetId === "custom"
-                      ? "border-[#eac840] ring-2 ring-[#eac840]/30"
+                      ? "border-highlight ring-2 ring-highlight/30"
                       : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                     }`}
                   aria-pressed={selectedPresetId === "custom"}
@@ -602,7 +641,7 @@ export const OrgaSettingsModal = ({
                     {t("customColors")}
                   </span>
                   {selectedPresetId === "custom" && (
-                    <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-[#eac840] bg-white dark:bg-gray-800 rounded-full" />
+                    <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
                   )}
                 </button>
               </div>
@@ -721,6 +760,158 @@ export const OrgaSettingsModal = ({
                 </p>
               )}
               <p className="text-xs text-gray-400">{t("logoHint")}</p>
+            </div>
+          </section>
+
+          {/* Customisation Section */}
+          <section>
+            <h3 className="font-swarm text-lg font-semibold text-dark dark:text-light mb-4">
+              {t("settings.customisationSection")}
+            </h3>
+
+            {/* Paper Color */}
+            <div className="flex flex-col gap-3 mb-4">
+              <label className="text-sm font-bold text-dark dark:text-light">
+                {t("settings.paperColorLabel")}
+              </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {t("settings.paperColorHint")}
+              </p>
+              <div className="flex gap-4">
+                <div className="flex-1 flex flex-col gap-1">
+                  <label htmlFor="paper-color-light" className="text-xs text-gray-500 dark:text-gray-400">
+                    {t("settings.lightMode")}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="paper-color-light"
+                      type="color"
+                      value={paperColorLight ? rgbToHex(paperColorLight) : "#ffffff"}
+                      onChange={(e) => setPaperColorLight(hexToRgb(e.target.value))}
+                      disabled={isSubmitting}
+                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    {paperColorLight && (
+                      <button
+                        type="button"
+                        onClick={() => setPaperColorLight(null)}
+                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        {t("settings.resetColor")}
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-1 flex flex-col gap-1">
+                  <label htmlFor="paper-color-dark" className="text-xs text-gray-500 dark:text-gray-400">
+                    {t("settings.darkMode")}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="paper-color-dark"
+                      type="color"
+                      value={paperColorDark ? rgbToHex(paperColorDark) : "#1a1a2e"}
+                      onChange={(e) => setPaperColorDark(hexToRgb(e.target.value))}
+                      disabled={isSubmitting}
+                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    {paperColorDark && (
+                      <button
+                        type="button"
+                        onClick={() => setPaperColorDark(null)}
+                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        {t("settings.resetColor")}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Highlight Color */}
+            <div className="flex flex-col gap-3">
+              <label className="text-sm font-bold text-dark dark:text-light">
+                {t("settings.highlightColorLabel")}
+              </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {t("settings.highlightColorHint")}
+              </p>
+              <div className="flex gap-4">
+                <div className="flex-1 flex flex-col gap-1">
+                  <label htmlFor="highlight-color-light" className="text-xs text-gray-500 dark:text-gray-400">
+                    {t("settings.lightMode")}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="highlight-color-light"
+                      type="color"
+                      value={highlightColorLight ? rgbToHex(highlightColorLight) : "#eac840"}
+                      onChange={(e) => setHighlightColorLight(hexToRgb(e.target.value))}
+                      disabled={isSubmitting}
+                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    {highlightColorLight && (
+                      <button
+                        type="button"
+                        onClick={() => setHighlightColorLight(null)}
+                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        {t("settings.resetColor")}
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-1 flex flex-col gap-1">
+                  <label htmlFor="highlight-color-dark" className="text-xs text-gray-500 dark:text-gray-400">
+                    {t("settings.darkMode")}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="highlight-color-dark"
+                      type="color"
+                      value={highlightColorDark ? rgbToHex(highlightColorDark) : "#eac840"}
+                      onChange={(e) => setHighlightColorDark(hexToRgb(e.target.value))}
+                      disabled={isSubmitting}
+                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    {highlightColorDark && (
+                      <button
+                        type="button"
+                        onClick={() => setHighlightColorDark(null)}
+                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        {t("settings.resetColor")}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Live preview */}
+              <div className="flex items-center gap-3 p-3 rounded-md bg-gray-100 dark:bg-gray-700/50">
+                <span className="text-xs text-gray-500 dark:text-gray-400">{t("preview")}</span>
+                <div className="flex-1 flex items-center gap-2">
+                  <div
+                    className="flex-1 h-8 rounded flex items-center justify-center text-xs font-bold"
+                    style={{
+                      backgroundColor: highlightColorLight ? rgbToHex(highlightColorLight) : "#eac840",
+                      color: "#1a1a2e",
+                    }}
+                  >
+                    {t("settings.lightMode")}
+                  </div>
+                  <div
+                    className="flex-1 h-8 rounded flex items-center justify-center text-xs font-bold"
+                    style={{
+                      backgroundColor: highlightColorDark ? rgbToHex(highlightColorDark) : "#eac840",
+                      color: "#1a1a2e",
+                    }}
+                  >
+                    {t("settings.darkMode")}
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -865,7 +1056,7 @@ export const OrgaSettingsModal = ({
               type="button"
               onClick={() => void handleSave()}
               disabled={isSubmitting || !hasChanges}
-              className="px-6 py-2 bg-[#eac840] hover:bg-[#d4af37] text-dark font-bold rounded-lg
+              className="px-6 py-2 bg-highlight hover:bg-highlight-hover text-dark font-bold rounded-lg
                 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
                 flex items-center gap-2"
             >

@@ -82,5 +82,30 @@
   "requestDemoInvitationDescription": "探索一個完整的組織，了解 swarmrise 的運作方式。",
   "requestingDemoInvitation": "請求中...",
   "demoInvitationSent": "邀請已發送！請查看上方的待處理邀請。",
-  "demoInvitationError": "無法請求示範邀請。請再試一次。"
+  "demoInvitationError": "無法請求示範邀請。請再試一次。",
+  "settings": {
+    "title": "組織設定",
+    "button": "設定",
+    "ariaLabel": "開啟組織設定",
+    "generalSection": "一般",
+    "accessSection": "存取",
+    "saveButton": "儲存變更",
+    "saving": "儲存中...",
+    "unsavedChangesWarning": "您有未儲存的變更。確定要關閉嗎？",
+    "transferOwnership": "轉讓所有權",
+    "transferOwnershipDescription": "將此組織轉讓給其他成員。您將失去擁有者權限。",
+    "noOtherMembers": "沒有其他成員可轉讓。請先邀請成員。",
+    "selectNewOwner": "選擇新擁有者...",
+    "confirmTransfer": "轉讓所有權",
+    "transferring": "轉讓中...",
+    "deleteOrgDisabledReason": "您必須是唯一的成員才能刪除此組織。請先轉讓所有權或移除其他成員。",
+    "customisationSection": "自訂外觀",
+    "paperColorLabel": "背景色",
+    "paperColorHint": "選擇此組織時應用程式的背景色。",
+    "highlightColorLabel": "強調色",
+    "highlightColorHint": "用於按鈕、連結和互動元素的強調色。",
+    "lightMode": "淺色",
+    "darkMode": "深色",
+    "resetColor": "重設"
+  }
 }

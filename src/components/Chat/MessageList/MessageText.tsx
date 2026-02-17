@@ -70,7 +70,7 @@ export const MessageText = ({ text }: MessageTextProps) => {
         return (
           <span
             key={idx}
-            className="inline-flex items-baseline gap-0.5 rounded px-0.5 py-px bg-[#eac840]/15 text-[#996800] dark:text-[#eac840] font-medium cursor-default"
+            className="inline-flex items-baseline gap-0.5 rounded px-0.5 py-px bg-highlight/15 text-gold dark:text-highlight font-medium cursor-default"
             title={`@${segment.displayName}`}
             data-member-id={segment.memberId}
           >

@@ -203,7 +203,7 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
       {showNewIndicator && (
         <button
           onClick={scrollToBottom}
-          className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-medium bg-[#eac840] text-dark rounded-full shadow-md hover:bg-[#d4b435] transition-colors"
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-medium bg-highlight text-dark rounded-full shadow-md hover:bg-highlight-hover transition-colors"
         >
           {t("newMessages")}
         </button>

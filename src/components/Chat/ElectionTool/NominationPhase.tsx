@@ -92,7 +92,7 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t("electionSearchMembers")}
-              className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#eac840]"
+              className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
             />
             {searchTerm && filteredNominees && filteredNominees.length > 0 && !selectedNominee && (
               <div className="mt-1 max-h-32 overflow-y-auto border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700">
@@ -143,7 +143,7 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
               onChange={(e) => setReason(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
               placeholder={t("electionNominateReasonPlaceholder")}
-              className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#eac840]"
+              className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
             />
           </div>
 
@@ -162,7 +162,7 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
         <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex justify-end">
           <button
             onClick={handleAdvance}
-            className="text-xs px-3 py-1.5 rounded-md bg-[#eac840] text-dark font-medium hover:bg-[#d4b435] transition-colors"
+            className="text-xs px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover transition-colors"
           >
             {t("electionAdvanceToDiscussion")}
           </button>

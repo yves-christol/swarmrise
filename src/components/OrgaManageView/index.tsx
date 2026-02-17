@@ -202,7 +202,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                   hover:bg-gray-100 dark:hover:bg-gray-800
                   rounded-md
                   transition-colors duration-75
-                  focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                  focus:outline-none focus:ring-2 focus:ring-highlight
                 "
                 aria-label={t("settings.ariaLabel")}
               >
@@ -250,7 +250,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                   hover:bg-gray-100 dark:hover:bg-gray-800
                   rounded-md
                   transition-colors duration-75
-                  focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                  focus:outline-none focus:ring-2 focus:ring-highlight
                 "
                 aria-label={tInvitations("sendInvitation")}
               >
@@ -272,7 +272,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                   bg-white dark:bg-gray-800
                   text-dark dark:text-light
                   placeholder:text-gray-400
-                  focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                  focus:outline-none focus:ring-2 focus:ring-highlight
                 "
               />
             </div>
@@ -351,7 +351,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                 bg-white dark:bg-gray-800
                 text-dark dark:text-light
                 placeholder:text-gray-400
-                focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                focus:outline-none focus:ring-2 focus:ring-highlight
               "
             />
           </div>

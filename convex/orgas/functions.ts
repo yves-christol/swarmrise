@@ -1,6 +1,6 @@
 import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { orgaValidator, ColorScheme } from ".";
+import { orgaValidator, ColorScheme, rgbColor, type RgbColor } from ".";
 import {
   requireAuthAndMembership,
   getAuthenticatedUserEmail,
@@ -291,6 +291,12 @@ export const updateOrga = mutation({
     // Optional: list of authorized email domains for invitations (owner-only)
     // Pass null to remove the restriction, empty array is treated the same as null
     authorizedEmailDomains: v.optional(v.union(v.array(v.string()), v.null())),
+    // Customisation fields (pass null to clear)
+    paperColorLight: v.optional(v.union(rgbColor, v.null())),
+    paperColorDark: v.optional(v.union(rgbColor, v.null())),
+    highlightColorLight: v.optional(v.union(rgbColor, v.null())),
+    highlightColorDark: v.optional(v.union(rgbColor, v.null())),
+    titleFont: v.optional(v.union(v.string(), v.null())),
   },
   returns: v.id("orgas"),
   handler: async (ctx, args) => {
@@ -314,6 +320,15 @@ export const updateOrga = mutation({
     if (args.authorizedEmailDomains !== undefined && !isOwner) {
       throw new Error("Only the organization owner can modify authorized email domains");
     }
+    const hasCustomisationChange =
+      args.paperColorLight !== undefined ||
+      args.paperColorDark !== undefined ||
+      args.highlightColorLight !== undefined ||
+      args.highlightColorDark !== undefined ||
+      args.titleFont !== undefined;
+    if (hasCustomisationChange && !isOwner) {
+      throw new Error("Only the organization owner can modify customisation settings");
+    }
 
     // Update organization
     const updates: {
@@ -321,6 +336,11 @@ export const updateOrga = mutation({
       logoUrl?: string;
       colorScheme?: ColorScheme;
       authorizedEmailDomains?: string[];
+      paperColorLight?: RgbColor;
+      paperColorDark?: RgbColor;
+      highlightColorLight?: RgbColor;
+      highlightColorDark?: RgbColor;
+      titleFont?: string;
     } = {};
 
     if (args.name !== undefined) updates.name = args.name;
@@ -333,6 +353,11 @@ export const updateOrga = mutation({
       }
     }
     if (args.colorScheme !== undefined) updates.colorScheme = args.colorScheme;
+    if (args.paperColorLight !== undefined) updates.paperColorLight = args.paperColorLight ?? undefined;
+    if (args.paperColorDark !== undefined) updates.paperColorDark = args.paperColorDark ?? undefined;
+    if (args.highlightColorLight !== undefined) updates.highlightColorLight = args.highlightColorLight ?? undefined;
+    if (args.highlightColorDark !== undefined) updates.highlightColorDark = args.highlightColorDark ?? undefined;
+    if (args.titleFont !== undefined) updates.titleFont = args.titleFont ?? undefined;
     if (args.authorizedEmailDomains !== undefined) {
       if (args.authorizedEmailDomains === null || args.authorizedEmailDomains.length === 0) {
         // Remove the restriction

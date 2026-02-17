@@ -6,11 +6,11 @@ import type { ViewMode } from "../../../tools/orgaStore/types";
 const tabClass = (isActive: boolean, disabled: boolean) => `
   flex items-center justify-center px-2 py-1.5
   transition-colors duration-75
-  focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#eac840]
+  focus:outline-none focus:ring-2 focus:ring-inset focus:ring-highlight
   ${disabled ? "opacity-50 cursor-not-allowed" : ""}
   ${
     isActive
-      ? "bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]"
+      ? "bg-highlight/20 text-highlight-hover dark:text-highlight"
       : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
   }
 `;

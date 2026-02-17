@@ -114,7 +114,7 @@ export const MentionAutocomplete = ({
             aria-selected={idx === selectedIndex}
             className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm text-left transition-colors ${
               idx === selectedIndex
-                ? "bg-[#eac840]/15 text-dark dark:text-light"
+                ? "bg-highlight/15 text-dark dark:text-light"
                 : "text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700"
             }`}
             onClick={() => onSelect(member)}

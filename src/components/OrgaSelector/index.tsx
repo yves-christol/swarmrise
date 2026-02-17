@@ -120,7 +120,7 @@ export const OrgaSelector = () => {
           }}
           disabled={isSwitchingOrga}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-l-md transition-colors
-            focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
+            focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
             ${isSwitchingOrga ? '' : 'hover:bg-slate-200 dark:hover:bg-slate-700'}
             ${focus.type === "orga" ? '' : 'cursor-pointer'}`}
           aria-label={selectedOrga?.name ?? t('selectOrganization')}
@@ -144,7 +144,7 @@ export const OrgaSelector = () => {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="flex items-center py-1.5 pr-2 pl-1 rounded-r-md transition-colors
-              focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
+              focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
               hover:bg-slate-200 dark:hover:bg-slate-700"
             aria-haspopup="listbox"
             aria-expanded={isOpen}

@@ -82,7 +82,7 @@ export const ClarificationPhase = ({ messageId }: ClarificationPhaseProps) => {
                   onChange={(e) => setAnswerInputs((prev) => ({ ...prev, [c._id]: e.target.value }))}
                   onKeyDown={(e) => { if (e.key === "Enter") handleAnswer(c._id); }}
                   placeholder={t("topicAnswerPlaceholder")}
-                  className="flex-1 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#eac840]"
+                  className="flex-1 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
                 />
                 <button
                   onClick={() => handleAnswer(c._id)}
@@ -104,7 +104,7 @@ export const ClarificationPhase = ({ messageId }: ClarificationPhaseProps) => {
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") handleAsk(); }}
             placeholder={t("topicAskPlaceholder")}
-            className="flex-1 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#eac840]"
+            className="flex-1 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
           />
           <button
             onClick={handleAsk}
@@ -121,7 +121,7 @@ export const ClarificationPhase = ({ messageId }: ClarificationPhaseProps) => {
         <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex justify-end">
           <button
             onClick={handleAdvance}
-            className="text-xs px-3 py-1.5 rounded-md bg-[#eac840] text-dark font-medium hover:bg-[#d4b435] transition-colors"
+            className="text-xs px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover transition-colors"
           >
             {t("topicAdvanceToConsent")}
           </button>

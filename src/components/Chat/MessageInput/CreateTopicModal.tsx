@@ -63,7 +63,7 @@ export const CreateTopicModal = ({ channelId, onClose }: CreateTopicModalProps) 
               onChange={(e) => setTitle(e.target.value)}
               placeholder={t("topicTitlePlaceholder")}
               autoFocus
-              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-2 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-2 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             />
           </div>
 
@@ -76,7 +76,7 @@ export const CreateTopicModal = ({ channelId, onClose }: CreateTopicModalProps) 
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t("topicDescriptionPlaceholder")}
               rows={4}
-              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-2 resize-none placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-2 resize-none placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             />
           </div>
         </div>
@@ -92,7 +92,7 @@ export const CreateTopicModal = ({ channelId, onClose }: CreateTopicModalProps) 
           <button
             onClick={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}
-            className="text-sm px-3 py-1.5 rounded-md bg-[#eac840] text-dark font-medium hover:bg-[#d4b435] disabled:opacity-40 transition-colors"
+            className="text-sm px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover disabled:opacity-40 transition-colors"
           >
             {t("topicSubmit")}
           </button>

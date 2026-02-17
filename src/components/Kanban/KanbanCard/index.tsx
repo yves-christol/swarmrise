@@ -34,7 +34,7 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
           bg-white dark:bg-gray-800
           border
           ${isOverdue ? "border-red-300 dark:border-red-700" : "border-gray-200 dark:border-gray-700"}
-          ${onClick ? "hover:shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#eac840]" : "shadow-lg"}
+          ${onClick ? "hover:shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-highlight" : "shadow-lg"}
           transition-shadow duration-75
         `}
         aria-label={`${card.title} - ${owner ? `${owner.firstname} ${owner.surname}` : ""}`}

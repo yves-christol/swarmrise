@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { OrgaStoreProvider } from "./tools/orgaStore/index.tsx";
 import { ChatStoreProvider } from "./tools/chatStore/index.tsx";
 import { ThemeProvider } from "./contexts/ThemeContext.tsx";
+import { OrgCustomisationProvider } from "./contexts/OrgCustomisationProvider.tsx";
 
 // Lazy-loaded route components
 const App = lazy(() => import("./components/App/index.tsx"));
@@ -28,6 +29,7 @@ createRoot(document.getElementById("root")!).render(
       <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY} >
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
           <OrgaStoreProvider>
+          <OrgCustomisationProvider>
             <ChatStoreProvider>
             <BrowserRouter>
               <Suspense fallback={null}>
@@ -56,6 +58,7 @@ createRoot(document.getElementById("root")!).render(
               </Suspense>
             </BrowserRouter>
             </ChatStoreProvider>
+          </OrgCustomisationProvider>
           </OrgaStoreProvider>
         </ConvexProviderWithClerk>
       </ClerkProvider>

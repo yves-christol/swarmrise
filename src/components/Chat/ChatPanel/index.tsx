@@ -109,7 +109,7 @@ export const ChatPanel = () => {
             onClick={() => isSearchOpen ? closeSearch() : openSearch()}
             className={`p-1.5 rounded-md transition-colors ${
               isSearchOpen
-                ? "bg-[#eac840] text-dark"
+                ? "bg-highlight text-dark"
                 : "hover:bg-slate-200 dark:hover:bg-slate-700 text-gray-500 dark:text-gray-400"
             }`}
             aria-label={t("searchMessages")}

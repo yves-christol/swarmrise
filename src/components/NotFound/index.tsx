@@ -80,10 +80,10 @@ export function NotFound({
           onClick={handleBack}
           className="
             flex items-center gap-2 px-4 py-2
-            bg-[#eac840] hover:bg-[#d4af37]
+            bg-highlight hover:bg-highlight-hover
             text-dark font-medium rounded-lg
             transition-colors duration-150
-            focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-2
+            focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2
             dark:focus:ring-offset-dark
           "
         >

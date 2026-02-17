@@ -44,7 +44,7 @@ export const VotingClosed = ({ messageId, tool }: VotingClosedProps) => {
                 </div>
                 <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[#eac840] rounded-full transition-all"
+                    className="h-full bg-highlight rounded-full transition-all"
                     style={{ width: `${(r.count / maxCount) * 100}%` }}
                   />
                 </div>

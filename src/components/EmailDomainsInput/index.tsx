@@ -117,11 +117,11 @@ export function EmailDomainsInput({
               className="
                 inline-flex items-center gap-1
                 px-2.5 py-1
-                bg-[#eac840]/20 dark:bg-[#eac840]/10
+                bg-highlight/20 dark:bg-highlight/10
                 text-dark dark:text-light
                 text-sm
                 rounded-full
-                border border-[#eac840]/30 dark:border-[#eac840]/20
+                border border-highlight/30 dark:border-highlight/20
               "
             >
               {domain}
@@ -131,7 +131,7 @@ export function EmailDomainsInput({
                 disabled={disabled}
                 className="
                   p-0.5 rounded-full
-                  hover:bg-[#eac840]/30 dark:hover:bg-[#eac840]/20
+                  hover:bg-highlight/30 dark:hover:bg-highlight/20
                   transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed
                 "
@@ -161,7 +161,7 @@ export function EmailDomainsInput({
             text-dark dark:text-light
             text-sm
             placeholder:text-gray-400
-            focus:outline-none focus:ring-2 focus:ring-[#eac840]
+            focus:outline-none focus:ring-2 focus:ring-highlight
             transition-colors
             disabled:opacity-50 disabled:cursor-not-allowed
             ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600"}
@@ -173,7 +173,7 @@ export function EmailDomainsInput({
           disabled={disabled || !inputValue.trim()}
           className="
             px-3 py-2
-            bg-[#eac840] hover:bg-[#d4af37]
+            bg-highlight hover:bg-highlight-hover
             text-dark
             font-medium
             text-sm

@@ -16,7 +16,15 @@
     "selectNewOwner": "Selectionner le nouveau proprietaire...",
     "confirmTransfer": "Transferer la propriete",
     "transferring": "Transfert en cours...",
-    "deleteOrgDisabledReason": "Vous devez etre le seul membre pour supprimer cette organisation. Transferez la propriete ou supprimez les autres membres d'abord."
+    "deleteOrgDisabledReason": "Vous devez etre le seul membre pour supprimer cette organisation. Transferez la propriete ou supprimez les autres membres d'abord.",
+    "customisationSection": "Personnalisation",
+    "paperColorLabel": "Couleur du fond",
+    "paperColorHint": "Couleur de fond de l'application lorsque cette organisation est selectionnee.",
+    "highlightColorLabel": "Couleur d'accentuation",
+    "highlightColorHint": "Couleur d'accent utilisee pour les boutons, liens et elements interactifs.",
+    "lightMode": "Clair",
+    "darkMode": "Sombre",
+    "resetColor": "Reinitialiser"
   },
   "orga": "orga",
   "noOrganization": "Aucune organisation",

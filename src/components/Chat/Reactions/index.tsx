@@ -157,7 +157,7 @@ export const ReactionBar = ({ messageId, reactions, showAddButton = true }: Reac
             border transition-colors
             ${
               group.reacted
-                ? "bg-[#eac840]/15 border-[#eac840]/40 text-dark dark:text-light"
+                ? "bg-highlight/15 border-highlight/40 text-dark dark:text-light"
                 : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-gray-600 dark:text-gray-400"
             }
             hover:bg-slate-200 dark:hover:bg-slate-700

@@ -10,9 +10,13 @@
   --color-light-paper: #FAFAEE;
   --color-dark-paper: #1a1a1a;
 
-  /* Brand gold colors */
+  /* Brand gold colors (kept for Logo component only) */
   --color-bee-gold: #eac840;
   --color-bee-gold-dark: #d4af37;
+
+  /* Org-customisable highlight colors (overridden at runtime by OrgCustomisationProvider) */
+  --color-highlight: var(--org-highlight-color, #eac840);
+  --color-highlight-hover: var(--org-highlight-hover, #d4af37);
 
   /* Custom font family */
   --font-family-swarm: 'Montserrat Alternates', sans-serif;
@@ -82,7 +86,9 @@
 
 /* Dark mode (class-based for manual override) */
 :root.dark {
-  --color-gold-text: #eac840;
+  --org-highlight-color: #eac840;
+  --org-highlight-hover: #d4af37;
+  --color-gold-text: var(--org-highlight-color, #eac840);
 }
 
 :root.dark body {
@@ -93,12 +99,14 @@
 
 :root.dark h1, :root.dark h2, :root.dark h3,
 :root.dark h4, :root.dark h5, :root.dark h6, :root.dark b {
-  font-family: 'Montserrat Alternates', sans-serif;
+  font-family: var(--org-title-font, Arial, Helvetica, sans-serif);
   font-weight: 400;
 }
 
 /* Light mode (class-based for manual override) */
 :root.light {
+  --org-highlight-color: #eac840;
+  --org-highlight-hover: #d4af37;
   --color-gold-text: #996800;
 }
 
@@ -110,7 +118,7 @@
 
 :root.light h1, :root.light h2, :root.light h3,
 :root.light h4, :root.light h5, :root.light h6, :root.light b {
-  font-family: 'Montserrat Alternates', sans-serif;
+  font-family: var(--org-title-font, Arial, Helvetica, sans-serif);
   font-weight: 400;
 }
 
@@ -132,7 +140,7 @@ body {
   --diagram-tooltip-text: #1f2937;     /* gray-800 */
   --diagram-badge-bg: #a78bfa;         /* purple-400 */
   --diagram-arrow: #6b7280;            /* gray-500 */
-  --diagram-golden-bee: #D4AF37;       /* golden-bee light mode */
+  --diagram-golden-bee: var(--org-highlight-hover, #D4AF37); /* golden-bee light mode */
 }
 
 :root.dark {
@@ -147,7 +155,7 @@ body {
   --diagram-tooltip-text: #e5e7eb;     /* gray-200 */
   --diagram-badge-bg: #8b5cf6;         /* purple-500 */
   --diagram-arrow: #6b7280;            /* gray-500 */
-  --diagram-golden-bee: #EAC840;       /* golden-bee dark mode */
+  --diagram-golden-bee: var(--org-highlight-color, #EAC840); /* golden-bee dark mode */
 }
 
 /* Principles page animations */

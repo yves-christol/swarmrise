@@ -87,7 +87,7 @@ export function MemberLink({
           strokeWidth={1}
           opacity={0.5}
           style={{
-            filter: "drop-shadow(0 0 8px rgba(234, 200, 64, 0.5))",
+            filter: "drop-shadow(0 0 8px var(--diagram-golden-bee))",
           }}
         />
       )}

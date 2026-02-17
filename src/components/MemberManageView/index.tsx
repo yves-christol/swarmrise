@@ -33,7 +33,7 @@ type MemberManageViewProps = {
 function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): string {
   switch (roleType) {
     case "leader":
-      return "#d4af37";
+      return "var(--org-highlight-hover, #d4af37)";
     case "secretary":
       return "#7dd3fc";
     case "referee":
@@ -634,7 +634,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                   {member.firstname} {member.surname}
                 </h1>
                 {isCurrentUser && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-highlight/20 text-highlight-hover dark:text-highlight">
                     {tMembers("you")}
                   </span>
                 )}
@@ -682,7 +682,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
             {isCurrentUser && !isEditingContacts && (
               <button
                 onClick={handleStartEditingContacts}
-                className="text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
+                className="text-sm text-highlight-hover dark:text-highlight hover:underline"
               >
                 {tMembers("editContacts")}
               </button>
@@ -699,7 +699,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                       <select
                         value={contact.type}
                         onChange={(e) => handleContactTypeChange(index, e.target.value)}
-                        className="w-28 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-[#eac840]"
+                        className="w-28 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-highlight"
                       >
                         {CONTACT_TYPES.map((type) => (
                           <option key={type} value={type}>
@@ -712,7 +712,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                         value={contact.value}
                         onChange={(e) => handleContactValueChange(index, e.target.value)}
                         placeholder={tMembers(getContactPlaceholderKey(contact.type))}
-                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-[#eac840]"
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-highlight"
                       />
                       <button
                         onClick={() => handleRemoveContact(index)}
@@ -740,7 +740,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                 <select
                   value={newContactType}
                   onChange={(e) => setNewContactType(e.target.value)}
-                  className="w-28 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-[#eac840]"
+                  className="w-28 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-highlight"
                 >
                   {CONTACT_TYPES.map((type) => (
                     <option key={type} value={type}>
@@ -759,7 +759,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                     }
                   }}
                   placeholder={tMembers(getContactPlaceholderKey(newContactType))}
-                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-[#eac840]"
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-highlight"
                 />
                 <button
                   onClick={handleAddContact}
@@ -781,7 +781,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                 <button
                   onClick={() => void handleSaveContacts()}
                   disabled={isSavingContacts}
-                  className="px-3 py-1.5 text-sm bg-[#eac840] hover:bg-[#d4af37] text-dark rounded-lg transition-colors duration-75 disabled:opacity-50"
+                  className="px-3 py-1.5 text-sm bg-highlight hover:bg-highlight-hover text-dark rounded-lg transition-colors duration-75 disabled:opacity-50"
                 >
                   {isSavingContacts ? tMembers("savingContacts") : tMembers("saveContacts")}
                 </button>
@@ -804,7 +804,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                             href={link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block text-dark dark:text-light hover:text-[#d4af37] dark:hover:text-[#eac840] transition-colors truncate"
+                            className="block text-dark dark:text-light hover:text-highlight-hover dark:hover:text-highlight transition-colors truncate"
                           >
                             {contact.value}
                           </a>
@@ -825,7 +825,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
               {isCurrentUser && (
                 <button
                   onClick={handleStartEditingContacts}
-                  className="mt-3 text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
+                  className="mt-3 text-sm text-highlight-hover dark:text-highlight hover:underline"
                 >
                   {tMembers("addFirstContact")}
                 </button>
@@ -979,7 +979,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                                     tabIndex={0}
                                     className="
                                       font-medium text-dark dark:text-light
-                                      hover:text-[#d4af37] dark:hover:text-[#eac840]
+                                      hover:text-highlight-hover dark:hover:text-highlight
                                       hover:underline
                                       transition-colors duration-75
                                       focus:outline-none focus:underline

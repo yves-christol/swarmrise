@@ -33,14 +33,7 @@ export const listTeamsInOrga = query({
   args: {
     orgaId: v.id("orgas"),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("teams"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      name: v.string(),
-    })
-  ),
+  returns: v.array(teamValidator),
   handler: async (ctx, args) => {
     await requireAuthAndMembership(ctx, args.orgaId);
     return await ctx.db
@@ -58,14 +51,7 @@ export const listChildTeams = query({
   args: {
     parentTeamId: v.id("teams"),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("teams"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      name: v.string(),
-    })
-  ),
+  returns: v.array(teamValidator),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.parentTeamId);
     await requireAuthAndMembership(ctx, orgaId);
@@ -99,23 +85,8 @@ export const listConnectedTeams = query({
     teamId: v.id("teams"),
   },
   returns: v.object({
-    parent: v.union(
-      v.object({
-        _id: v.id("teams"),
-        _creationTime: v.number(),
-        orgaId: v.id("orgas"),
-        name: v.string(),
-      }),
-      v.null()
-    ),
-    children: v.array(
-      v.object({
-        _id: v.id("teams"),
-        _creationTime: v.number(),
-        orgaId: v.id("orgas"),
-        name: v.string(),
-      })
-    ),
+    parent: v.union(teamValidator, v.null()),
+    children: v.array(teamValidator),
   }),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);

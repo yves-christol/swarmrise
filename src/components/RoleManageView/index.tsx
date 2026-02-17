@@ -26,7 +26,7 @@ function getRoleTypeLabel(roleType: "leader" | "secretary" | "referee"): string 
 function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): string {
   switch (roleType) {
     case "leader":
-      return "#d4af37";
+      return "var(--org-highlight-hover, #d4af37)";
     case "secretary":
       return "#7dd3fc";
     case "referee":
@@ -143,15 +143,15 @@ function ReassignConfirmModal({
           </p>
           <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
             <li className="flex items-start gap-2">
-              <span className="text-[#d4af37] dark:text-[#eac840] mt-0.5">-</span>
+              <span className="text-highlight-hover dark:text-highlight mt-0.5">-</span>
               <span>{t("roleManage.reassignBullet1", { currentMember: currentMemberName })}</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#d4af37] dark:text-[#eac840] mt-0.5">-</span>
+              <span className="text-highlight-hover dark:text-highlight mt-0.5">-</span>
               <span>{t("roleManage.reassignBullet2", { newMember: newMemberName })}</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#d4af37] dark:text-[#eac840] mt-0.5">-</span>
+              <span className="text-highlight-hover dark:text-highlight mt-0.5">-</span>
               <span>{t("roleManage.reassignBullet3")}</span>
             </li>
           </ul>
@@ -187,7 +187,7 @@ function ReassignConfirmModal({
               aria-label={t("roleManage.reassignConfirmTitle", { roleName })}
               className="
                 px-5 py-2 text-sm font-bold rounded-md
-                bg-[#eac840] hover:bg-[#d4af37] text-dark
+                bg-highlight hover:bg-highlight-hover text-dark
                 transition-colors duration-75
                 disabled:opacity-50 disabled:cursor-not-allowed
                 flex items-center gap-1.5
@@ -326,15 +326,15 @@ function CreateTeamConfirmModal({
           </p>
           <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
             <li className="flex items-start gap-2">
-              <span className="text-[#d4af37] dark:text-[#eac840] mt-0.5">-</span>
+              <span className="text-highlight-hover dark:text-highlight mt-0.5">-</span>
               <span>{t("roleManage.createTeamBullet1", { roleName })}</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#d4af37] dark:text-[#eac840] mt-0.5">-</span>
+              <span className="text-highlight-hover dark:text-highlight mt-0.5">-</span>
               <span>{t("roleManage.createTeamBullet2")}</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#d4af37] dark:text-[#eac840] mt-0.5">-</span>
+              <span className="text-highlight-hover dark:text-highlight mt-0.5">-</span>
               <span>{t("roleManage.createTeamBullet3")}</span>
             </li>
           </ul>
@@ -373,7 +373,7 @@ function CreateTeamConfirmModal({
               aria-label={t("roleManage.createTeamConfirmTitle", { roleName })}
               className="
                 px-5 py-2 text-sm font-bold rounded-md
-                bg-[#eac840] hover:bg-[#d4af37] text-dark
+                bg-highlight hover:bg-highlight-hover text-dark
                 transition-colors duration-75
                 disabled:opacity-50 disabled:cursor-not-allowed
                 flex items-center gap-1.5
@@ -671,7 +671,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                   font-swarm text-3xl font-bold
                   text-dark dark:text-light
                   bg-transparent
-                  border-b-2 border-[#eac840]
+                  border-b-2 border-highlight
                   focus:outline-none
                   w-full
                 "
@@ -681,7 +681,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                 disabled={isSaving}
                 className="
                   px-3 py-1.5 text-sm
-                  bg-[#eac840] hover:bg-[#d4af37]
+                  bg-highlight hover:bg-highlight-hover
                   text-dark
                   rounded-lg
                   transition-colors duration-75
@@ -719,7 +719,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
               {!isLinkedRole && (
                 <button
                   onClick={() => setIsEditingName(true)}
-                  className="text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
+                  className="text-sm text-highlight-hover dark:text-highlight hover:underline"
                 >
                   Edit
                 </button>
@@ -758,7 +758,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             {!isLinkedRole && !isEditingMission && (
               <button
                 onClick={() => setIsEditingMission(true)}
-                className="text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
+                className="text-sm text-highlight-hover dark:text-highlight hover:underline"
               >
                 Edit
               </button>
@@ -777,7 +777,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                     rounded-lg
                     bg-white dark:bg-gray-800
                     text-dark dark:text-light
-                    focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                    focus:outline-none focus:ring-2 focus:ring-highlight
                     resize-none
                   "
                   placeholder="Describe the mission of this role..."
@@ -797,7 +797,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                     disabled={isSaving}
                     className="
                       px-3 py-1.5 text-sm
-                      bg-[#eac840] hover:bg-[#d4af37]
+                      bg-highlight hover:bg-highlight-hover
                       text-dark
                       rounded-lg
                       transition-colors
@@ -825,7 +825,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             {!isLinkedRole && !isEditingDuties && (
               <button
                 onClick={() => setIsEditingDuties(true)}
-                className="text-sm text-[#d4af37] dark:text-[#eac840] hover:underline"
+                className="text-sm text-highlight-hover dark:text-highlight hover:underline"
               >
                 Edit
               </button>
@@ -847,7 +847,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                           rounded-lg
                           bg-white dark:bg-gray-800
                           text-dark dark:text-light
-                          focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                          focus:outline-none focus:ring-2 focus:ring-highlight
                         "
                       />
                       <button
@@ -882,7 +882,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                       rounded-lg
                       bg-white dark:bg-gray-800
                       text-dark dark:text-light
-                      focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                      focus:outline-none focus:ring-2 focus:ring-highlight
                     "
                   />
                   <button
@@ -917,7 +917,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                     disabled={isSaving}
                     className="
                       px-3 py-1.5 text-sm
-                      bg-[#eac840] hover:bg-[#d4af37]
+                      bg-highlight hover:bg-highlight-hover
                       text-dark
                       rounded-lg
                       transition-colors
@@ -993,7 +993,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                     rounded-lg
                     bg-white dark:bg-gray-800
                     text-dark dark:text-light
-                    focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                    focus:outline-none focus:ring-2 focus:ring-highlight
                     disabled:opacity-50 disabled:cursor-not-allowed
                   "
                 >
@@ -1023,12 +1023,12 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                 className="
                   flex items-center gap-2
                   px-4 py-2 text-sm font-medium
-                  border border-[#d4af37] dark:border-[#eac840]
-                  text-[#d4af37] dark:text-[#eac840]
-                  hover:bg-[#eac840]/10 dark:hover:bg-[#eac840]/10
+                  border border-highlight-hover dark:border-highlight
+                  text-highlight-hover dark:text-highlight
+                  hover:bg-highlight/10 dark:hover:bg-highlight/10
                   rounded-lg
                   transition-colors duration-75
-                  focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                  focus:outline-none focus:ring-2 focus:ring-highlight
                 "
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"

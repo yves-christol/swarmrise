@@ -120,7 +120,7 @@ export function getTargetTypeColor(
     case "members":
       return { light: "rgb(59 130 246)", dark: "rgb(96 165 250)" }; // blue-500 / blue-400
     case "orgas":
-      return { light: "#d4af37", dark: "#eac840" };
+      return { light: "var(--org-highlight-hover, #d4af37)", dark: "var(--org-highlight-color, #eac840)" };
     case "invitations":
       return { light: "#a2dbed", dark: "#a2dbed" };
     case "policies":

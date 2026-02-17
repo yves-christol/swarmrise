@@ -90,7 +90,7 @@ const InvitationCard = ({ data }: { data: InvitationWithOrga }) => {
           onClick={handleAccept}
           disabled={isProcessing}
           className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5
-            bg-[#eac840] hover:bg-[#d4af37] disabled:opacity-50
+            bg-highlight hover:bg-highlight-hover disabled:opacity-50
             text-dark font-medium rounded transition-colors"
         >
           <CheckIcon className="w-4 h-4" />
@@ -186,7 +186,7 @@ export const EmptyState = () => {
       <button
         onClick={() => setIsCreateModalOpen(true)}
         type="button"
-        className="px-6 py-3 bg-[#eac840] hover:bg-[#d4af37]
+        className="px-6 py-3 bg-highlight hover:bg-highlight-hover
           text-dark font-bold rounded-lg transition-colors"
       >
         {hasInvitations

@@ -174,7 +174,7 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
                   }}
                   className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
                 >
-                  <svg className="w-4 h-4 text-[#eac840] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-4 h-4 text-highlight shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M9 12l2 2 4-4" />
                   </svg>
@@ -187,7 +187,7 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
                   }}
                   className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
                 >
-                  <svg className="w-4 h-4 text-[#eac840] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-4 h-4 text-highlight shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="3" width="20" height="18" rx="2" />
                     <path d="M9 12l2 2 4-4" />
                   </svg>
@@ -200,7 +200,7 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
                   }}
                   className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
                 >
-                  <svg className="w-4 h-4 text-[#eac840] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-4 h-4 text-highlight shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
@@ -218,13 +218,13 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
             placeholder={t("typeMessage")}
             aria-label={t("typeMessage")}
             rows={1}
-            className="flex-1 resize-none bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+            className="flex-1 resize-none bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             style={{ maxHeight: "80px" }}
           />
           {text.trim().length > 0 && (
             <button
               onClick={handleSend}
-              className="shrink-0 p-2 rounded-lg bg-[#eac840] text-dark hover:bg-[#d4b435] transition-colors focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1"
+              className="shrink-0 p-2 rounded-lg bg-highlight text-dark hover:bg-highlight-hover transition-colors focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1"
               aria-label={t("sendMessage")}
             >
               <svg

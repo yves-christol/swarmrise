@@ -94,7 +94,7 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
               onChange={(e) => setQuestion(e.target.value)}
               placeholder={t("votingQuestionPlaceholder")}
               autoFocus
-              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-2 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-2 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             />
           </div>
 
@@ -111,7 +111,7 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
                     value={opt.label}
                     onChange={(e) => updateOption(i, e.target.value)}
                     placeholder={`${t("votingOptionPlaceholder")} ${i + 1}`}
-                    className="flex-1 text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-1.5 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+                    className="flex-1 text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-1.5 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
                   />
                   {options.length > 2 && (
                     <button
@@ -129,7 +129,7 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
             </div>
             <button
               onClick={addOption}
-              className="mt-1.5 text-xs text-[#996800] dark:text-[#eac840] hover:underline"
+              className="mt-1.5 text-xs text-gold dark:text-highlight hover:underline"
             >
               + {t("votingAddOption")}
             </button>
@@ -148,7 +148,7 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
                     name="votingMode"
                     checked={mode === m}
                     onChange={() => setMode(m)}
-                    className="accent-[#eac840]"
+                    className="accent-highlight"
                   />
                   {t(`votingMode_${m}`)}
                 </label>
@@ -162,7 +162,7 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
               type="checkbox"
               checked={isAnonymous}
               onChange={(e) => setIsAnonymous(e.target.checked)}
-              className="accent-[#eac840]"
+              className="accent-highlight"
             />
             {t("votingAnonymous")}
           </label>
@@ -176,7 +176,7 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
               type="datetime-local"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             />
           </div>
         </div>
@@ -192,7 +192,7 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
           <button
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="text-sm px-3 py-1.5 rounded-md bg-[#eac840] text-dark font-medium hover:bg-[#d4b435] disabled:opacity-40 transition-colors"
+            className="text-sm px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover disabled:opacity-40 transition-colors"
           >
             {t("votingSubmit")}
           </button>

@@ -16,6 +16,8 @@ export const roleType = v.object({
   mission: v.string(),
   duties: v.array(v.string()),
   memberId: v.id("members"),
+  // Customisation field: key into iconDict (e.g. "star", "heart")
+  iconKey: v.optional(v.string()),
 })
 
 export const roleValidator = v.object({

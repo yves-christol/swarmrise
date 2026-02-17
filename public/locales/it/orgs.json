@@ -82,5 +82,30 @@
   "requestDemoInvitationDescription": "Esplora un'organizzazione completa per scoprire come funziona swarmrise.",
   "requestingDemoInvitation": "Invio in corso...",
   "demoInvitationSent": "Invito inviato! Controlla i tuoi inviti in sospeso sopra.",
-  "demoInvitationError": "Impossibile richiedere un invito demo. Riprova."
+  "demoInvitationError": "Impossibile richiedere un invito demo. Riprova.",
+  "settings": {
+    "title": "Impostazioni dell'organizzazione",
+    "button": "Impostazioni",
+    "ariaLabel": "Apri impostazioni dell'organizzazione",
+    "generalSection": "Generale",
+    "accessSection": "Accesso",
+    "saveButton": "Salva modifiche",
+    "saving": "Salvataggio...",
+    "unsavedChangesWarning": "Hai modifiche non salvate. Sei sicuro di voler chiudere?",
+    "transferOwnership": "Trasferisci proprieta",
+    "transferOwnershipDescription": "Trasferisci questa organizzazione a un altro membro. Perderai i tuoi privilegi di proprietario.",
+    "noOtherMembers": "Nessun altro membro a cui trasferire. Invita prima dei membri.",
+    "selectNewOwner": "Seleziona nuovo proprietario...",
+    "confirmTransfer": "Trasferisci proprieta",
+    "transferring": "Trasferimento...",
+    "deleteOrgDisabledReason": "Devi essere l'unico membro per eliminare questa organizzazione. Trasferisci la proprieta o rimuovi prima gli altri membri.",
+    "customisationSection": "Personalizzazione",
+    "paperColorLabel": "Colore dello sfondo",
+    "paperColorHint": "Colore di sfondo dell'applicazione quando questa organizzazione e selezionata.",
+    "highlightColorLabel": "Colore di accento",
+    "highlightColorHint": "Colore di accento utilizzato per pulsanti, link ed elementi interattivi.",
+    "lightMode": "Chiaro",
+    "darkMode": "Scuro",
+    "resetColor": "Reimposta"
+  }
 }

@@ -160,7 +160,7 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
                 border border-gray-200 dark:border-gray-700
                 text-dark dark:text-light
                 placeholder:text-gray-400
-                focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:border-transparent"
+                focus:outline-none focus:ring-2 focus:ring-highlight focus:border-transparent"
               aria-label={t("searchTeams")}
             />
           </div>
@@ -201,7 +201,7 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
                 border border-gray-200 dark:border-gray-700
                 text-dark dark:text-light
                 placeholder:text-gray-400
-                focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:border-transparent"
+                focus:outline-none focus:ring-2 focus:ring-highlight focus:border-transparent"
               aria-label={t("searchRoles")}
             />
           </div>
@@ -245,7 +245,7 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
                 border border-gray-200 dark:border-gray-700
                 text-dark dark:text-light
                 placeholder:text-gray-400
-                focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:border-transparent"
+                focus:outline-none focus:ring-2 focus:ring-highlight focus:border-transparent"
               aria-label={t("searchMembers")}
             />
           </div>

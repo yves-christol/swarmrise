@@ -249,13 +249,13 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
         onChange={handleEditChange}
         onKeyDown={handleEditKeyDown}
         rows={1}
-        className="w-full resize-none bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#eac840] focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+        className="w-full resize-none bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
         style={{ maxHeight: "160px" }}
       />
       <div className="flex items-center gap-2 mt-1">
         <button
           onClick={handleSaveEdit}
-          className="px-2.5 py-1 text-xs font-medium bg-[#eac840] text-dark rounded-md hover:bg-[#d4b435] transition-colors"
+          className="px-2.5 py-1 text-xs font-medium bg-highlight text-dark rounded-md hover:bg-highlight-hover transition-colors"
         >
           {t("editMessageSave")}
         </button>
@@ -295,7 +295,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
       {replyCount !== undefined && replyCount > 0 && (
         <button
           onClick={() => onReply(message._id)}
-          className="text-xs text-[#996800] dark:text-[#eac840] hover:underline"
+          className="text-xs text-gold dark:text-highlight hover:underline"
         >
           {t("replies", { count: replyCount })}
         </button>

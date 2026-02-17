@@ -302,7 +302,7 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
                 disabled={isSending}
                 className={`flex-1 px-3 py-2 text-sm rounded-md border bg-white dark:bg-gray-900 text-dark dark:text-light
                   placeholder:text-gray-400
-                  focus:outline-none focus:ring-2 focus:ring-[#eac840] transition-colors
+                  focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed
                   ${sendError ? "border-red-400 focus:ring-red-400" : "border-gray-300 dark:border-gray-600"}`}
                 aria-invalid={!!sendError}
@@ -314,7 +314,7 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
                 disabled={isSending || !email.trim()}
                 className="
                   px-4 py-2 text-sm font-bold rounded-md
-                  bg-[#eac840] hover:bg-[#d4af37] text-dark
+                  bg-highlight hover:bg-highlight-hover text-dark
                   transition-colors duration-75
                   disabled:opacity-50 disabled:cursor-not-allowed
                   flex items-center gap-1.5

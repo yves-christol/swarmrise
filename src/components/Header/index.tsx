@@ -127,7 +127,7 @@ const LanguagePage = () => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="w-5 h-5 text-[#eac840]"
+                className="w-5 h-5 text-highlight"
               >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
@@ -218,7 +218,7 @@ export const Header = () => {
           onClick={handleLogoClick}
           disabled={isSwitchingOrga}
           className={`flex items-center gap-2 flex-shrink-0 rounded-md px-2 py-1 transition-colors
-            focus:outline-none focus:ring-2 focus:ring-[#eac840]
+            focus:outline-none focus:ring-2 focus:ring-highlight
             ${focus.type === "orga" ? "" : "hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"}`}
           aria-label={selectedOrga.name}
         >
@@ -244,7 +244,7 @@ export const Header = () => {
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="p-1.5 rounded-md transition-colors
-                focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                focus:outline-none focus:ring-2 focus:ring-highlight
                 hover:bg-slate-200 dark:hover:bg-slate-700
                 text-gray-500 dark:text-gray-400"
               aria-label={t("search")}

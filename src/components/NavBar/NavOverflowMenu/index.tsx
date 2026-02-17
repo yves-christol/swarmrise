@@ -78,7 +78,7 @@ export const NavOverflowMenu = () => {
         ref={triggerRef}
         onClick={() => setIsOpen(!isOpen)}
         className="p-1.5 rounded-md transition-colors
-          focus:outline-none focus:ring-2 focus:ring-[#eac840]
+          focus:outline-none focus:ring-2 focus:ring-highlight
           hover:bg-slate-200 dark:hover:bg-slate-700
           text-gray-500 dark:text-gray-400"
         aria-label={t("moreOptions")}
@@ -174,7 +174,7 @@ export const NavOverflowMenu = () => {
             <button
               onClick={() => handleViewChange("visual")}
               className={`w-full flex items-center gap-2 px-4 py-2 transition-colors text-left text-sm
-                ${viewMode === "visual" ? "bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-dark dark:text-light"}`}
+                ${viewMode === "visual" ? "bg-highlight/20 text-highlight-hover dark:text-highlight" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-dark dark:text-light"}`}
             >
               <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                 <circle cx="9" cy="9" r="7" /><circle cx="9" cy="5" r="2" /><circle cx="5" cy="12" r="2" /><circle cx="13" cy="12" r="2" />
@@ -184,7 +184,7 @@ export const NavOverflowMenu = () => {
             <button
               onClick={() => handleViewChange("manage")}
               className={`w-full flex items-center gap-2 px-4 py-2 transition-colors text-left text-sm
-                ${viewMode === "manage" ? "bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-dark dark:text-light"}`}
+                ${viewMode === "manage" ? "bg-highlight/20 text-highlight-hover dark:text-highlight" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-dark dark:text-light"}`}
             >
               <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                 <rect x="3" y="3" width="12" height="3" rx="1" /><rect x="3" y="8" width="12" height="3" rx="1" /><rect x="3" y="13" width="8" height="3" rx="1" />
@@ -195,7 +195,7 @@ export const NavOverflowMenu = () => {
               <button
                 onClick={() => handleViewChange("kanban")}
                 className={`w-full flex items-center gap-2 px-4 py-2 transition-colors text-left text-sm
-                  ${viewMode === "kanban" ? "bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-dark dark:text-light"}`}
+                  ${viewMode === "kanban" ? "bg-highlight/20 text-highlight-hover dark:text-highlight" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-dark dark:text-light"}`}
               >
                 <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <rect x="2" y="3" width="3.5" height="12" rx="1" /><rect x="7.25" y="3" width="3.5" height="8" rx="1" /><rect x="12.5" y="3" width="3.5" height="10" rx="1" />

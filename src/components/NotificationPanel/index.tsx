@@ -55,7 +55,7 @@ export const NotificationPanel = ({
         {unreadCount > 0 && (
           <button
             onClick={() => void handleMarkAllAsRead()}
-            className="text-sm text-gray-500 dark:text-gray-400 hover:text-[#eac840] dark:hover:text-[#eac840] transition-colors"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-highlight dark:hover:text-highlight transition-colors"
           >
             {t("notifications:markAllAsRead", "Mark all as read")}
           </button>

@@ -100,7 +100,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
               </div>
               <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#eac840] rounded-full transition-all"
+                  className="h-full bg-highlight rounded-full transition-all"
                   style={{ width: `${(r.count / maxCount) * 100}%` }}
                 />
               </div>
@@ -127,7 +127,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
                     name={`vote-${messageId}`}
                     checked={selectedSingle === opt.id}
                     onChange={() => setSelectedSingle(opt.id)}
-                    className="accent-[#eac840]"
+                    className="accent-highlight"
                   />
                   {opt.label}
                 </label>
@@ -150,7 +150,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
                         return next;
                       });
                     }}
-                    className="accent-[#eac840]"
+                    className="accent-highlight"
                   />
                   {opt.label}
                 </label>
@@ -196,7 +196,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
                 (tool.mode === "single" && !selectedSingle) ||
                 (tool.mode === "approval" && selectedApproval.size === 0)
               }
-              className="text-xs px-3 py-1.5 rounded-md bg-[#eac840] text-dark font-medium hover:bg-[#d4b435] disabled:opacity-40 transition-colors"
+              className="text-xs px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover disabled:opacity-40 transition-colors"
             >
               {hasVoted ? t("votingChangeVote") : t("votingSubmitVote")}
             </button>
@@ -220,7 +220,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
           </span>
           <button
             onClick={handleChangeVote}
-            className="text-xs text-[#996800] dark:text-[#eac840] hover:underline"
+            className="text-xs text-gold dark:text-highlight hover:underline"
           >
             {t("votingChangeVote")}
           </button>
@@ -232,7 +232,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
         <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex justify-end">
           <button
             onClick={handleClose}
-            className="text-xs px-3 py-1.5 rounded-md bg-[#eac840] text-dark font-medium hover:bg-[#d4b435] transition-colors"
+            className="text-xs px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover transition-colors"
           >
             {t("votingCloseVote")}
           </button>

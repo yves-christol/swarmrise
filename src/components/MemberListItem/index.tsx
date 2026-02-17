@@ -95,7 +95,7 @@ export function MemberListItem({
             {member.firstname} {member.surname}
           </span>
           {isCurrentUser && (
-            <span className="text-xs px-1.5 py-0.5 rounded bg-[#eac840]/20 text-[#d4af37] dark:text-[#eac840]">
+            <span className="text-xs px-1.5 py-0.5 rounded bg-highlight/20 text-highlight-hover dark:text-highlight">
               {tMembers("you")}
             </span>
           )}
@@ -166,7 +166,7 @@ export function MemberListItem({
                           href={link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-dark dark:text-light hover:text-[#d4af37] dark:hover:text-[#eac840] transition-colors truncate"
+                          className="text-sm text-dark dark:text-light hover:text-highlight-hover dark:hover:text-highlight transition-colors truncate"
                           onClick={(e) => e.stopPropagation()}
                         >
                           {contact.value}

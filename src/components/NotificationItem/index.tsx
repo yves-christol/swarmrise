@@ -161,7 +161,7 @@ export const NotificationItem = ({
       case "invitation":
         return {
           icon: <MailIcon className="w-5 h-5" />,
-          color: "text-[#eac840]",
+          color: "text-highlight",
         };
       case "role_assignment":
         return {
@@ -237,7 +237,7 @@ export const NotificationItem = ({
         <div className="flex gap-2 mt-2">
           <button
             onClick={() => void handleAccept()}
-            className="px-3 py-1.5 text-sm font-medium bg-[#eac840] hover:bg-[#d4af37] text-dark rounded transition-colors"
+            className="px-3 py-1.5 text-sm font-medium bg-highlight hover:bg-highlight-hover text-dark rounded transition-colors"
           >
             {t("notifications:accept", "Accept")}
           </button>
@@ -404,7 +404,7 @@ export const NotificationItem = ({
           </span>
           {!isRead && (
             <span
-              className="w-2 h-2 bg-[#eac840] rounded-full"
+              className="w-2 h-2 bg-highlight rounded-full"
               aria-label={t("notifications:unread", "Unread")}
             />
           )}

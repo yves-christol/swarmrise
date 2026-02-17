@@ -20,6 +20,12 @@ export const orgaType = v.object({
   name: v.string(),
   logoUrl: v.optional(v.string()),
   colorScheme: colorScheme,
+  // Customisation fields
+  paperColorLight: v.optional(rgbColor),
+  paperColorDark: v.optional(rgbColor),
+  highlightColorLight: v.optional(rgbColor),
+  highlightColorDark: v.optional(rgbColor),
+  titleFont: v.optional(v.string()),
   owner: v.id("users"),
   // When set and non-empty, only emails with domains in this list can be invited
   authorizedEmailDomains: v.optional(v.array(v.string())),

@@ -82,5 +82,30 @@
   "requestDemoInvitationDescription": "Explora una organizacion completa para ver como funciona swarmrise.",
   "requestingDemoInvitation": "Solicitando...",
   "demoInvitationSent": "Invitacion enviada! Revisa tus invitaciones pendientes arriba.",
-  "demoInvitationError": "No se pudo solicitar una invitacion de demo. Intentalo de nuevo."
+  "demoInvitationError": "No se pudo solicitar una invitacion de demo. Intentalo de nuevo.",
+  "settings": {
+    "title": "Configuracion de la organizacion",
+    "button": "Configuracion",
+    "ariaLabel": "Abrir configuracion de la organizacion",
+    "generalSection": "General",
+    "accessSection": "Acceso",
+    "saveButton": "Guardar cambios",
+    "saving": "Guardando...",
+    "unsavedChangesWarning": "Tienes cambios sin guardar. Estas seguro de que quieres cerrar?",
+    "transferOwnership": "Transferir propiedad",
+    "transferOwnershipDescription": "Transfiere esta organizacion a otro miembro. Perderas tus privilegios de propietario.",
+    "noOtherMembers": "No hay otros miembros a quienes transferir. Invita miembros primero.",
+    "selectNewOwner": "Seleccionar nuevo propietario...",
+    "confirmTransfer": "Transferir propiedad",
+    "transferring": "Transfiriendo...",
+    "deleteOrgDisabledReason": "Debes ser el unico miembro para eliminar esta organizacion. Transfiere la propiedad o elimina a otros miembros primero.",
+    "customisationSection": "Personalizacion",
+    "paperColorLabel": "Color de fondo",
+    "paperColorHint": "Color de fondo de la aplicacion cuando esta organizacion esta seleccionada.",
+    "highlightColorLabel": "Color de acento",
+    "highlightColorHint": "Color de acento utilizado para botones, enlaces y elementos interactivos.",
+    "lightMode": "Claro",
+    "darkMode": "Oscuro",
+    "resetColor": "Restablecer"
+  }
 }

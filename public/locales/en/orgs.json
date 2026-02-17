@@ -16,7 +16,15 @@
     "selectNewOwner": "Select new owner...",
     "confirmTransfer": "Transfer Ownership",
     "transferring": "Transferring...",
-    "deleteOrgDisabledReason": "You must be the only member to delete this organization. Transfer ownership or remove other members first."
+    "deleteOrgDisabledReason": "You must be the only member to delete this organization. Transfer ownership or remove other members first.",
+    "customisationSection": "Customisation",
+    "paperColorLabel": "Paper colour",
+    "paperColorHint": "Background colour of the application when this organisation is selected.",
+    "highlightColorLabel": "Highlight colour",
+    "highlightColorHint": "Accent colour used for buttons, links, and interactive elements.",
+    "lightMode": "Light",
+    "darkMode": "Dark",
+    "resetColor": "Reset"
   },
   "orga": "orga",
   "noOrganization": "No organization",

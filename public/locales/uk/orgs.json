@@ -82,5 +82,30 @@
   "requestDemoInvitationDescription": "Дослідіть повністю заповнену організацію, щоб побачити як працює swarmrise.",
   "requestingDemoInvitation": "Запит...",
   "demoInvitationSent": "Запрошення надіслано! Перевірте очікувані запрошення вище.",
-  "demoInvitationError": "Не вдалося запросити демо-запрошення. Спробуйте ще раз."
+  "demoInvitationError": "Не вдалося запросити демо-запрошення. Спробуйте ще раз.",
+  "settings": {
+    "title": "Налаштування організації",
+    "button": "Налаштування",
+    "ariaLabel": "Відкрити налаштування організації",
+    "generalSection": "Загальне",
+    "accessSection": "Доступ",
+    "saveButton": "Зберегти зміни",
+    "saving": "Збереження...",
+    "unsavedChangesWarning": "У вас є незбережені зміни. Ви впевнені, що хочете закрити?",
+    "transferOwnership": "Передати право власності",
+    "transferOwnershipDescription": "Передайте цю організацію іншому учаснику. Ви втратите привілеї власника.",
+    "noOtherMembers": "Немає інших учасників для передачі. Спочатку запросіть учасників.",
+    "selectNewOwner": "Виберіть нового власника...",
+    "confirmTransfer": "Передати право власності",
+    "transferring": "Передача...",
+    "deleteOrgDisabledReason": "Ви повинні бути єдиним учасником, щоб видалити цю організацію. Передайте право власності або видаліть інших учасників.",
+    "customisationSection": "Налаштування вигляду",
+    "paperColorLabel": "Колір фону",
+    "paperColorHint": "Колір фону додатку, коли ця організація обрана.",
+    "highlightColorLabel": "Колір акценту",
+    "highlightColorHint": "Колір акценту для кнопок, посилань та інтерактивних елементів.",
+    "lightMode": "Світла",
+    "darkMode": "Темна",
+    "resetColor": "Скинути"
+  }
 }

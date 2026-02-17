@@ -1,5 +1,5 @@
 import { v } from"convex/values"
-import { colorScheme } from "../orgas";
+import { colorScheme, rgbColor } from "../orgas";
 import { policyVisibilityType } from "../policies";
 import { invitationStatusType } from "../invitations";
 
@@ -45,10 +45,14 @@ const teamDiff = v.object({
   before: v.optional(v.object({
     orgaId: v.optional(v.id("orgas")),
     name: v.optional(v.string()),
+    colorLight: v.optional(v.union(rgbColor, v.null())),
+    colorDark: v.optional(v.union(rgbColor, v.null())),
   })),
   after: v.optional(v.object({
     orgaId: v.optional(v.id("orgas")),
     name: v.optional(v.string()),
+    colorLight: v.optional(v.union(rgbColor, v.null())),
+    colorDark: v.optional(v.union(rgbColor, v.null())),
   })),
 });
 

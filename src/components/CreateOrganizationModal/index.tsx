@@ -433,7 +433,7 @@ export const CreateOrganizationModal = ({
               onBlur={handleBlur}
               disabled={isSubmitting}
               className={`px-4 py-3 rounded-md border bg-white dark:bg-gray-900 text-dark dark:text-light
-                focus:outline-none focus:ring-2 focus:ring-[#eac840] transition-colors
+                focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                 disabled:opacity-50 disabled:cursor-not-allowed
                 ${
                   validationError
@@ -473,7 +473,7 @@ export const CreateOrganizationModal = ({
                     disabled:opacity-50 disabled:cursor-not-allowed
                     ${
                       selectedPresetId === preset.id
-                        ? "border-[#eac840] ring-2 ring-[#eac840]/30"
+                        ? "border-highlight ring-2 ring-highlight/30"
                         : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                     }`}
                   aria-pressed={selectedPresetId === preset.id}
@@ -488,7 +488,7 @@ export const CreateOrganizationModal = ({
                     style={{ backgroundColor: rgbToHex(preset.secondary) }}
                   />
                   {selectedPresetId === preset.id && (
-                    <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-[#eac840] bg-white dark:bg-gray-800 rounded-full" />
+                    <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
                   )}
                 </button>
               ))}
@@ -502,7 +502,7 @@ export const CreateOrganizationModal = ({
                   disabled:opacity-50 disabled:cursor-not-allowed
                   ${
                     selectedPresetId === "custom"
-                      ? "border-[#eac840] ring-2 ring-[#eac840]/30"
+                      ? "border-highlight ring-2 ring-highlight/30"
                       : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                   }`}
                 aria-pressed={selectedPresetId === "custom"}
@@ -511,7 +511,7 @@ export const CreateOrganizationModal = ({
                   {t("customColors")}
                 </span>
                 {selectedPresetId === "custom" && (
-                  <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-[#eac840] bg-white dark:bg-gray-800 rounded-full" />
+                  <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
                 )}
               </button>
             </div>
@@ -666,7 +666,7 @@ export const CreateOrganizationModal = ({
                   placeholder={name || t("firstTeamNamePlaceholder")}
                   className="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
                     bg-white dark:bg-gray-900 text-dark dark:text-light text-sm
-                    focus:outline-none focus:ring-2 focus:ring-[#eac840] transition-colors
+                    focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                     disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <p className="text-xs text-gray-400">{t("firstTeamNameHint")}</p>
@@ -707,7 +707,7 @@ export const CreateOrganizationModal = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2 bg-[#eac840] hover:bg-[#d4af37] text-dark font-bold rounded-lg
+              className="px-6 py-2 bg-highlight hover:bg-highlight-hover text-dark font-bold rounded-lg
                 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
                 flex items-center gap-2"
             >

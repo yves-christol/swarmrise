@@ -191,7 +191,7 @@ export const ConsentPhase = ({ messageId, tool }: ConsentPhaseProps) => {
           {!showResolve ? (
             <button
               onClick={() => setShowResolve(true)}
-              className="text-xs px-3 py-1.5 rounded-md bg-[#eac840] text-dark font-medium hover:bg-[#d4b435] transition-colors"
+              className="text-xs px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover transition-colors"
             >
               {t("electionResolve")}
             </button>

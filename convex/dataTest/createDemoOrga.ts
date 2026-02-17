@@ -64,6 +64,35 @@ const PHONE_PREFIXES = [
 // Helpers for synthetic data
 // ---------------------------------------------------------------------------
 
+function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: number } {
+  h = ((h % 360) + 360) % 360;
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  let r1: number, g1: number, b1: number;
+  if (h < 60) { r1 = c; g1 = x; b1 = 0; }
+  else if (h < 120) { r1 = x; g1 = c; b1 = 0; }
+  else if (h < 180) { r1 = 0; g1 = c; b1 = x; }
+  else if (h < 240) { r1 = 0; g1 = x; b1 = c; }
+  else if (h < 300) { r1 = x; g1 = 0; b1 = c; }
+  else { r1 = c; g1 = 0; b1 = x; }
+  return {
+    r: Math.round((r1 + m) * 255),
+    g: Math.round((g1 + m) * 255),
+    b: Math.round((b1 + m) * 255),
+  };
+}
+
+function generateTeamColors(hue: number): {
+  colorLight: { r: number; g: number; b: number };
+  colorDark: { r: number; g: number; b: number };
+} {
+  return {
+    colorLight: hslToRgb(hue, 0.65, 0.42),
+    colorDark: hslToRgb(hue, 0.55, 0.62),
+  };
+}
+
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -476,12 +505,16 @@ export const seedDemoOrga = internalMutation({
 
     const createTeamFromTemplate = async (
       template: TeamTemplate,
-      parentTeamId: Id<"teams"> | undefined
+      parentTeamId: Id<"teams"> | undefined,
+      hue: number,
     ): Promise<{ teamId: Id<"teams">; sourceRoleId: Id<"roles"> | undefined }> => {
-      // Create the team
+      // Create the team with colors derived from its hue
+      const colors = generateTeamColors(hue);
       const teamId = await ctx.db.insert("teams", {
         orgaId,
         name: template.name,
+        colorLight: colors.colorLight,
+        colorDark: colors.colorDark,
       });
       teamIds.push(teamId);
 
@@ -616,15 +649,27 @@ export const seedDemoOrga = internalMutation({
         await assignRoleToMember(memberId, roleId);
       }
 
-      // Recurse into children
-      for (const child of template.children) {
-        await createTeamFromTemplate(child, teamId);
+      // Recurse into children with nearby hues
+      const childCount = template.children.length;
+      for (let i = 0; i < childCount; i++) {
+        let childHue: number;
+        if (parentTeamId === undefined) {
+          // Root's children: distribute evenly across the full color wheel
+          childHue = (360 / childCount) * i + 15;
+        } else if (childCount === 1) {
+          // Single child: slight offset from parent
+          childHue = hue + 10;
+        } else {
+          // Multiple children: spread within ±15° of parent hue
+          childHue = hue - 15 + (i / (childCount - 1)) * 30;
+        }
+        await createTeamFromTemplate(template.children[i], teamId, childHue);
       }
 
       return { teamId, sourceRoleId };
     };
 
-    await createTeamFromTemplate(config.organizationTree, undefined);
+    await createTeamFromTemplate(config.organizationTree, undefined, 220);
 
     // --- Create channels for the demo orga ---
     // Orga channel

@@ -158,7 +158,8 @@ export function MemberVisualView({
     }
 
     // Collect all unique teams (parent teams where roles live + child teams for master roles leading child teams)
-    const allTeamNodes = new Map<string, { team: { _id: Id<"teams">; _creationTime: number; orgaId: Id<"orgas">; name: string; color?: string }; roles: RoleLinkPosition[] }>();
+    // Stores the SAME TeamNodePosition objects that go into tPositions, so role pushes are shared
+    const allTeamNodes = new Map<string, TeamNodePosition>();
 
     // Calculate total height needed for all role groups
     let totalRolesHeight = 0;
@@ -204,7 +205,7 @@ export function MemberVisualView({
 
       // Store for deduplication (a team may appear both as parent and child)
       if (!allTeamNodes.has(group.team._id)) {
-        allTeamNodes.set(group.team._id, { team: parentTeamNode.team, roles: [] });
+        allTeamNodes.set(group.team._id, parentTeamNode);
         tPositions.push(parentTeamNode);
       }
 
@@ -230,12 +231,11 @@ export function MemberVisualView({
         };
         rPositions.push(pos);
 
-        // Link role to its parent team node
+        // Link role to its parent team node (allTeamNodes stores the same ref as tPositions)
         const parentEntry = allTeamNodes.get(group.team._id);
         if (parentEntry) {
           parentEntry.roles.push(pos);
         }
-        parentTeamNode.roles.push(pos);
 
         // If this role leads a child team, create a child team node too
         if (childTeam && !allTeamNodes.has(childTeam._id)) {
@@ -247,7 +247,7 @@ export function MemberVisualView({
             radius: TEAM_RADIUS,
             roles: [pos],
           };
-          allTeamNodes.set(childTeam._id, { team: childTeamNode.team, roles: [pos] });
+          allTeamNodes.set(childTeam._id, childTeamNode);
           tPositions.push(childTeamNode);
         } else if (childTeam) {
           // Team already exists, add this role to its connections

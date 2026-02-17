@@ -386,22 +386,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
                   onClick={() => linkedRole && onNavigateToRole?.(linkedRole._id, linkedRole.teamId)}
                   title="Go to source role in parent team (L)"
                 >
-                  {role.roleType === "leader" && (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
-                      <path d="M8,0 L9.8,5.5 L16,5.5 L11,9 L12.8,15 L8,11 L3.2,15 L5,9 L0,5.5 L6.2,5.5 Z" />
-                    </svg>
-                  )}
-                  {role.roleType === "secretary" && (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
-                      <path d="M12,0 C12,0 2,8 3,14 L5,14 C5,14 9,6 12,0 M4,12 L2,14 L3,14 C3.5,13.5 4,13 4,12" />
-                    </svg>
-                  )}
-                  {role.roleType === "referee" && (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
-                      <rect x="1" y="12" width="10" height="3" rx="1" />
-                      <rect x="4" y="2" width="8" height="4" rx="1" transform="rotate(-45 8 4)" />
-                    </svg>
-                  )}
                   <span
                     className="text-xs font-medium"
                     style={{ color: getRoleTypeBadgeColor(role.roleType) }}
@@ -418,22 +402,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
                   className="role-content-badge flex items-center gap-2 px-3 py-1 rounded-full"
                   style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) + "30" }}
                 >
-                  {role.roleType === "leader" && (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
-                      <path d="M8,0 L9.8,5.5 L16,5.5 L11,9 L12.8,15 L8,11 L3.2,15 L5,9 L0,5.5 L6.2,5.5 Z" />
-                    </svg>
-                  )}
-                  {role.roleType === "secretary" && (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
-                      <path d="M12,0 C12,0 2,8 3,14 L5,14 C5,14 9,6 12,0 M4,12 L2,14 L3,14 C3.5,13.5 4,13 4,12" />
-                    </svg>
-                  )}
-                  {role.roleType === "referee" && (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill={getRoleTypeBadgeColor(role.roleType)}>
-                      <rect x="1" y="12" width="10" height="3" rx="1" />
-                      <rect x="4" y="2" width="8" height="4" rx="1" transform="rotate(-45 8 4)" />
-                    </svg>
-                  )}
                   <span
                     className="text-xs font-medium"
                     style={{ color: getRoleTypeBadgeColor(role.roleType) }}

@@ -270,33 +270,6 @@ export const TeamNode = memo(function TeamNode({
         {displayName}
       </text>
 
-      {/* Role count badge */}
-      {node.roleCount > 0 && (
-        <g>
-          <circle
-            cx={node.x + node.radius * 0.7}
-            cy={node.y - node.radius * 0.7}
-            r={12}
-            fill="var(--diagram-badge-bg)"
-          />
-          <text
-            x={node.x + node.radius * 0.7}
-            y={node.y - node.radius * 0.7}
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="white"
-            fontSize={10}
-            fontWeight={600}
-            style={{
-              pointerEvents: "none",
-              userSelect: "none",
-            }}
-          >
-            {node.roleCount}
-          </text>
-        </g>
-      )}
-
       {/* Full name tooltip on hover */}
       {isHovered && !isDragging && displayName !== node.name && (
         <g>

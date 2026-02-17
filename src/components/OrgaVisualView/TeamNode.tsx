@@ -125,23 +125,28 @@ export const TeamNode = memo(function TeamNode({
 
   // Resolve team colour based on theme
   const teamColor = resolvedTheme === "dark" ? node.colorDark : node.colorLight;
-  const fillColor = teamColor
+  const teamColorRgb = teamColor
     ? `rgb(${teamColor.r}, ${teamColor.g}, ${teamColor.b})`
+    : null;
+  // Fill: team color at 80% transparency (0.2 opacity), fallback to default
+  const fillColor = teamColor
+    ? `rgba(${teamColor.r}, ${teamColor.g}, ${teamColor.b}, 0.2)`
     : "var(--diagram-node-fill)";
 
   // Determine stroke and fill based on state
-  let strokeColor = "var(--diagram-node-stroke)";
-  let strokeWidth = 2;
+  // Stroke: use the team color when available, thicker line
+  let strokeColor = teamColorRgb ?? "var(--diagram-node-stroke)";
+  let strokeWidth = 3;
   const textColor = "var(--diagram-node-text)";
 
   if (isDragging) {
     strokeColor = "var(--org-highlight-color, #eac840)"; // Highlight during drag
-    strokeWidth = 3;
+    strokeWidth = 4;
   } else if (isSelected) {
     strokeColor = "var(--org-highlight-color, #eac840)"; // Selected accent
-    strokeWidth = 3;
+    strokeWidth = 4;
   } else if (isHovered) {
-    strokeColor = "var(--diagram-node-stroke-hover)";
+    strokeColor = teamColorRgb ?? "var(--diagram-node-stroke-hover)";
   }
 
   // Scale and shadow for drag state

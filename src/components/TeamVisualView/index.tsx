@@ -236,30 +236,21 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
         <title>{t("diagram.teamStructureTitle", { name: team.name })}</title>
 
       <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
-        {/* Team colour background fill */}
+        {/* Outer boundary circle: team color fill at 80% transparency, team color stroke */}
         {(() => {
           const tc = resolvedTheme === "dark" ? team.colorDark : team.colorLight;
-          return tc ? (
+          return (
             <circle
               cx={centerX}
               cy={centerY}
               r={outerCircleRadius}
-              fill={`rgba(${tc.r}, ${tc.g}, ${tc.b}, 0.2)`}
-              stroke="none"
+              fill={tc ? `rgba(${tc.r}, ${tc.g}, ${tc.b}, 0.2)` : "none"}
+              stroke={tc ? `rgb(${tc.r}, ${tc.g}, ${tc.b})` : "var(--diagram-node-stroke)"}
+              strokeWidth={3}
+              opacity={tc ? 1 : 0.3}
             />
-          ) : null;
+          );
         })()}
-
-        {/* Outer boundary circle (inner-tangent with role circles) */}
-        <circle
-          cx={centerX}
-          cy={centerY}
-          r={outerCircleRadius}
-          fill="none"
-          stroke="var(--diagram-node-stroke)"
-          strokeWidth={2}
-          opacity={0.3}
-        />
 
         {/* Team name and mission - centered inside the circle */}
         <TeamNameText

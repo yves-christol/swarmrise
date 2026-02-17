@@ -11,23 +11,13 @@ import { MissionReminder } from "../MissionReminder";
 import { NotFound } from "../NotFound";
 import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
 import { ContactInfo } from "../../utils/contacts";
+import { getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
 
 
 type TeamManageViewProps = {
   teamId: Id<"teams">;
   onZoomOut: () => void;
 };
-
-function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): string {
-  switch (roleType) {
-    case "leader":
-      return "var(--org-highlight-hover, #d4af37)";
-    case "secretary":
-      return "#7dd3fc";
-    case "referee":
-      return "#c4b5fd";
-  }
-}
 
 function StatCard({
   value,

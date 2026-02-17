@@ -8,6 +8,7 @@ import { useMembers, useFocus } from "../../tools/orgaStore";
 import { NotFound } from "../NotFound";
 import { ReassignConfirmModal } from "./ReassignConfirmModal";
 import { CreateTeamConfirmModal } from "./CreateTeamConfirmModal";
+import { getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
 
 type RoleManageViewProps = {
   roleId: Id<"roles">;
@@ -22,17 +23,6 @@ function getRoleTypeLabel(roleType: "leader" | "secretary" | "referee"): string 
       return "Secretary";
     case "referee":
       return "Referee";
-  }
-}
-
-function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): string {
-  switch (roleType) {
-    case "leader":
-      return "var(--org-highlight-hover, #d4af37)";
-    case "secretary":
-      return "#7dd3fc";
-    case "referee":
-      return "#c4b5fd";
   }
 }
 

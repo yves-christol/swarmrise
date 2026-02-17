@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getRoleStroke } from "../../utils/roleTypeColors";
 import type { RoleLinkPosition } from "./types";
 
 type RoleLinkProps = {
@@ -42,19 +43,6 @@ function splitTitle(title: string, maxCharsPerLine: number): string[] {
         ? line.slice(0, maxCharsPerLine)
         : line
   );
-}
-
-function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
-  switch (roleType) {
-    case "leader":
-      return "var(--diagram-golden-bee)"; // Golden-bee (theme-aware)
-    case "secretary":
-      return "#a2dbed"; // Wing Blue
-    case "referee":
-      return "#a78bfa"; // Purple-400
-    default:
-      return "var(--diagram-node-stroke)";
-  }
 }
 
 export const RoleLink = memo(function RoleLink({

@@ -10,6 +10,7 @@ import { NotFound } from "../NotFound";
 import { type ContactInfo, CONTACT_TYPES, getContactLink, getContactPlaceholderKey } from "../../utils/contacts";
 import { LeaveOrgConfirmModal } from "./LeaveOrgConfirmModal";
 import { StatCard } from "./StatCard";
+import { getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
 
 type MemberManageViewProps = {
   memberId: Id<"members">;
@@ -83,17 +84,6 @@ function getContactIcon(type: string) {
           <circle cx="8" cy="8" r="6" />
         </svg>
       );
-  }
-}
-
-function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): string {
-  switch (roleType) {
-    case "leader":
-      return "var(--org-highlight-hover, #d4af37)";
-    case "secretary":
-      return "#7dd3fc";
-    case "referee":
-      return "#c4b5fd";
   }
 }
 

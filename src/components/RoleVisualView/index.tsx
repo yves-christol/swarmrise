@@ -7,33 +7,8 @@ import { TeamLink } from "./TeamLink";
 import { MemberLink } from "./MemberLink";
 import { NotFound } from "../NotFound";
 import { useViewport } from "../shared/useViewport";
+import { getRoleStroke, getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
 import type { RoleVisualViewProps } from "./types";
-
-function getRoleStroke(roleType?: "leader" | "secretary" | "referee"): string {
-  switch (roleType) {
-    case "leader":
-      return "var(--diagram-golden-bee)"; // Golden-bee (theme-aware)
-    case "secretary":
-      return "#a2dbed"; // Wing Blue
-    case "referee":
-      return "#a78bfa"; // Purple-400
-    default:
-      return "var(--diagram-node-stroke)";
-  }
-}
-
-function getRoleTypeBadgeColor(roleType: "leader" | "secretary" | "referee"): string {
-  switch (roleType) {
-    case "leader":
-      return "var(--diagram-golden-bee)"; // Golden-bee (theme-aware)
-    case "secretary":
-      return "#7dd3fc"; // Light Blue
-    case "referee":
-      return "#c4b5fd"; // Light Purple
-  }
-}
-
-// getRoleTypeLabel is now handled via i18n: t("roleTypes.<type>", { ns: "members" })
 
 export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigateToMember }: RoleVisualViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);

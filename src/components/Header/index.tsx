@@ -217,7 +217,7 @@ export const Header = () => {
         <button
           onClick={handleLogoClick}
           disabled={isSwitchingOrga}
-          className={`flex items-center gap-2 flex-shrink-0 rounded-md px-2 py-1 transition-colors
+          className={`flex items-center justify-center flex-shrink-0 w-8 h-8 transition-colors
             focus:outline-none focus:ring-2 focus:ring-highlight
             ${focus.type === "orga" ? "" : "hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"}`}
           aria-label={selectedOrga.name}
@@ -226,7 +226,7 @@ export const Header = () => {
             <img
               src={selectedOrga.logoUrl}
               alt=""
-              className="w-6 h-6 rounded object-contain"
+              className="w-8 h-8 object-contain"
             />
           ) : (
             <OrgPlaceholderIcon className="w-5 h-5 text-gray-400" />

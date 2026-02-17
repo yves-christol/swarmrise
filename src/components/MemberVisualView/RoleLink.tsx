@@ -119,13 +119,12 @@ export const RoleLink = memo(function RoleLink({
 
       {/* Role icon (inside circle, above title) */}
       <g
-        transform={`translate(${x - 6}, ${y - radius * 0.45}) scale(0.3)`}
+        transform={`translate(${x - 8}, ${y - radius * 0.6}) scale(0.4)`}
         style={{ pointerEvents: "none" }}
       >
         <path
           d={getRoleIconPath(role.iconKey, role.roleType)}
-          fill="var(--diagram-muted-text)"
-          opacity={0.6}
+          fill="var(--diagram-node-text)"
         />
       </g>
 

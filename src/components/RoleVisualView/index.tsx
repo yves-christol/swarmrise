@@ -363,11 +363,11 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           >
             {/* Role Icon */}
             <div className="role-content-title">
-              <svg width="40" height="40" viewBox="0 0 40 40" className="opacity-50">
+              <svg width="48" height="48" viewBox="0 0 40 40">
                 <path
                   d={getRoleIconPath(role.iconKey, role.roleType)}
                   fill="currentColor"
-                  className="text-gray-500 dark:text-gray-400"
+                  className="text-dark dark:text-light"
                 />
               </svg>
             </div>

@@ -91,13 +91,12 @@ export const RoleNode = memo(function RoleNode({
 
       {/* Role icon (inside circle, above title) */}
       <g
-        transform={`translate(${x - 8}, ${memberName ? y - 22 : y - 16}) scale(0.4)`}
+        transform={`translate(${x - 10}, ${memberName ? y - 26 : y - 20}) scale(0.5)`}
         style={{ pointerEvents: "none" }}
       >
         <path
           d={getRoleIconPath(role.iconKey, role.roleType)}
-          fill="var(--diagram-muted-text)"
-          opacity={0.6}
+          fill="var(--diagram-node-text)"
         />
       </g>
 

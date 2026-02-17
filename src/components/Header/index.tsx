@@ -201,7 +201,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="flex-shrink-0 z-30 bg-light dark:bg-dark px-4 py-2 border-b-2 border-slate-300 dark:border-slate-800 flex items-center gap-2">
+    <header className="flex-shrink-0 z-30 bg-light dark:bg-dark px-4 py-2 border-b-2 border-slate-300 dark:border-slate-800 relative flex items-center gap-2">
       {/* LEFT: Logo */}
       {!selectedOrga ? (
         <Link
@@ -261,15 +261,14 @@ export const Header = () => {
         </div>
       )}
 
-      {/* Left spacer */}
-      <div className="flex-1" />
-
-      {/* CENTER: View toggle */}
+      {/* CENTER: View toggle (absolutely centered) */}
       {isSignedIn && selectedOrga && (
-        <HeaderViewToggle />
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <HeaderViewToggle />
+        </div>
       )}
 
-      {/* Right spacer */}
+      {/* Spacer to push utilities to the right */}
       <div className="flex-1" />
 
       {/* Utilities: Chat + Notifications */}

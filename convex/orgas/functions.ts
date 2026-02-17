@@ -1,4 +1,4 @@
-import { query, mutation, internalMutation } from "../_generated/server";
+import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
 import { orgaValidator, ColorScheme } from ".";
 import {
@@ -580,58 +580,6 @@ export const deleteOrganization = mutation({
     await ctx.db.delete(args.orgaId);
 
     return null;
-  },
-});
-
-/**
- * Migration: convert legacy RGB color objects to hex strings.
- * Run once after deploying the hex color schema change.
- */
-function rgbObjectToHex(rgb: { r: number; g: number; b: number }): string {
-  const toHex = (n: number) => Math.round(n).toString(16).padStart(2, "0");
-  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
-}
-
-function isRgbObject(val: unknown): val is { r: number; g: number; b: number } {
-  return typeof val === "object" && val !== null && "r" in val && "g" in val && "b" in val;
-}
-
-export const migrateColorsToHex = internalMutation({
-  args: {},
-  returns: v.object({ migrated: v.number(), skipped: v.number() }),
-  handler: async (ctx) => {
-    const orgas = await ctx.db.query("orgas").collect();
-    let migrated = 0;
-    let skipped = 0;
-
-    for (const orga of orgas) {
-      const updates: Record<string, unknown> = {};
-
-      // Migrate colorScheme
-      if (isRgbObject(orga.colorScheme?.primary)) {
-        updates.colorScheme = {
-          primary: rgbObjectToHex(orga.colorScheme.primary as { r: number; g: number; b: number }),
-          secondary: rgbObjectToHex(orga.colorScheme.secondary as { r: number; g: number; b: number }),
-        };
-      }
-
-      // Migrate customisation colors
-      for (const field of ["paperColorLight", "paperColorDark", "highlightColorLight", "highlightColorDark"] as const) {
-        const val = orga[field];
-        if (isRgbObject(val)) {
-          updates[field] = rgbObjectToHex(val as { r: number; g: number; b: number });
-        }
-      }
-
-      if (Object.keys(updates).length > 0) {
-        await ctx.db.patch(orga._id, updates);
-        migrated++;
-      } else {
-        skipped++;
-      }
-    }
-
-    return { migrated, skipped };
   },
 });
 

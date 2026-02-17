@@ -1,0 +1,81 @@
+import { useState, useMemo } from "react";
+import { iconDict, icons } from "../Icons/icons";
+
+type IconPickerProps = {
+  selectedIconKey: string;
+  onSelect: (iconKey: string) => void;
+};
+
+export function IconPicker({ selectedIconKey, onSelect }: IconPickerProps) {
+  const [search, setSearch] = useState("");
+
+  const filteredIcons = useMemo(() => {
+    if (!search.trim()) return icons;
+    const term = search.toLowerCase();
+    return icons.filter((key) => key.toLowerCase().includes(term));
+  }, [search]);
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* Search input */}
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search icons..."
+        className="
+          w-full px-3 py-2 text-sm
+          border border-gray-300 dark:border-gray-600
+          rounded-lg
+          bg-white dark:bg-gray-800
+          text-dark dark:text-light
+          focus:outline-none focus:ring-2 focus:ring-highlight
+        "
+      />
+
+      {/* Icons grid */}
+      <div
+        className="grid grid-cols-8 gap-1 overflow-y-auto p-1"
+        style={{ maxHeight: "240px" }}
+      >
+        {filteredIcons.map((key) => {
+          const isSelected = key === selectedIconKey;
+          return (
+            <button
+              key={key}
+              onClick={() => onSelect(key)}
+              title={key}
+              className={`
+                flex items-center justify-center
+                w-9 h-9 rounded-md
+                transition-colors duration-75
+                cursor-pointer border-none
+                ${isSelected
+                  ? "bg-highlight/20 ring-2 ring-highlight"
+                  : "bg-gray-50 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                }
+              `}
+            >
+              <svg width="24" height="24" viewBox="0 0 40 40">
+                <path
+                  d={iconDict[key].path}
+                  fill="currentColor"
+                  className={
+                    isSelected
+                      ? "text-highlight-hover dark:text-highlight"
+                      : "text-gray-500 dark:text-gray-400"
+                  }
+                />
+              </svg>
+            </button>
+          );
+        })}
+        {filteredIcons.length === 0 && (
+          <p className="col-span-8 text-center text-sm text-gray-400 dark:text-gray-500 py-4">
+            No icons found
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}

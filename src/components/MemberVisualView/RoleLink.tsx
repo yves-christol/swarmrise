@@ -1,6 +1,7 @@
 import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getRoleStroke } from "../../utils/roleTypeColors";
+import { getRoleIconPath } from "../../utils/roleIconDefaults";
 import type { RoleLinkPosition } from "./types";
 
 type RoleLinkProps = {
@@ -116,6 +117,18 @@ export const RoleLink = memo(function RoleLink({
         }}
       />
 
+      {/* Role icon (inside circle, above title) */}
+      <g
+        transform={`translate(${x - 6}, ${y - radius * 0.45}) scale(0.3)`}
+        style={{ pointerEvents: "none" }}
+      >
+        <path
+          d={getRoleIconPath(role.iconKey, role.roleType)}
+          fill="var(--diagram-muted-text)"
+          opacity={0.6}
+        />
+      </g>
+
       {/* Role type badge (for special roles) */}
       {role.roleType && (
         <g>
@@ -158,7 +171,7 @@ export const RoleLink = memo(function RoleLink({
         const maxChars = Math.floor(radius / 3);
         const lines = splitTitle(role.title, maxChars);
         const lineHeight = 12;
-        const startY = y - ((lines.length - 1) * lineHeight) / 2;
+        const startY = y + 4 - ((lines.length - 1) * lineHeight) / 2;
         return (
           <text
             x={x}

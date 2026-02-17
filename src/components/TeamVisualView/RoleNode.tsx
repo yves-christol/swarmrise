@@ -1,6 +1,7 @@
 import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getRoleStroke, getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
+import { getRoleIconPath } from "../../utils/roleIconDefaults";
 import type { RolePosition } from "./types";
 
 type RoleNodeProps = {
@@ -88,6 +89,18 @@ export const RoleNode = memo(function RoleNode({
         }}
       />
 
+      {/* Role icon (inside circle, above title) */}
+      <g
+        transform={`translate(${x - 8}, ${memberName ? y - 22 : y - 16}) scale(0.4)`}
+        style={{ pointerEvents: "none" }}
+      >
+        <path
+          d={getRoleIconPath(role.iconKey, role.roleType)}
+          fill="var(--diagram-muted-text)"
+          opacity={0.6}
+        />
+      </g>
+
       {/* Role type badge (for special roles) */}
       {role.roleType && (
         <g>
@@ -151,7 +164,7 @@ export const RoleNode = memo(function RoleNode({
       {/* Role title - same typography for all roles (flat organization) */}
       <text
         x={x}
-        y={memberName ? y - 6 : y}
+        y={memberName ? y + 2 : y + 4}
         textAnchor="middle"
         dominantBaseline="central"
         fill="var(--diagram-node-text)"
@@ -170,7 +183,7 @@ export const RoleNode = memo(function RoleNode({
       {memberName && (
         <text
           x={x}
-          y={y + 10}
+          y={y + 16}
           textAnchor="middle"
           dominantBaseline="central"
           fill="var(--diagram-muted-text)"

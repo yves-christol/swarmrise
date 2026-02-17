@@ -9,6 +9,7 @@ import {
   getRoleAndTeamInfo,
   getOrgaFromTeam,
 } from "../utils";
+import { getDefaultIconKey } from "../roles/iconDefaults";
 
 /**
  * Convert a 7-character hex color string (e.g. "#3B82F6") to HSL.
@@ -268,6 +269,7 @@ export const createTeam = mutation({
       mission: role.mission,
       duties: role.duties,
       memberId: role.memberId,
+      iconKey: role.iconKey ?? getDefaultIconKey("leader"),
     });
     
     // Create secretary role assigned to the leader's member
@@ -279,6 +281,7 @@ export const createTeam = mutation({
       mission: "",
       duties: [],
       memberId: role.memberId,
+      iconKey: getDefaultIconKey("secretary"),
     });
 
     // Create referee role assigned to the leader's member
@@ -290,6 +293,7 @@ export const createTeam = mutation({
       mission: "",
       duties: [],
       memberId: role.memberId,
+      iconKey: getDefaultIconKey("referee"),
     });
 
     // Update member's roleIds to include the new leader, secretary, and referee roles

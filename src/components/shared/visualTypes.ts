@@ -16,6 +16,7 @@ export type RoleData = {
   mission: string;
   duties: string[];
   memberId: Id<"members">;
+  iconKey?: string;
 };
 
 // Shared team data type used across visual views

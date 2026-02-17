@@ -8,6 +8,7 @@ import { MemberLink } from "./MemberLink";
 import { NotFound } from "../NotFound";
 import { useViewport } from "../shared/useViewport";
 import { getRoleStroke, getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
+import { getRoleIconPath } from "../../utils/roleIconDefaults";
 import type { RoleVisualViewProps } from "./types";
 
 export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigateToMember }: RoleVisualViewProps) {
@@ -360,6 +361,17 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
               xmlns: "http://www.w3.org/1999/xhtml"
             }}
           >
+            {/* Role Icon */}
+            <div className="role-content-title">
+              <svg width="40" height="40" viewBox="0 0 40 40" className="opacity-50">
+                <path
+                  d={getRoleIconPath(role.iconKey, role.roleType)}
+                  fill="currentColor"
+                  className="text-gray-500 dark:text-gray-400"
+                />
+              </svg>
+            </div>
+
             {/* Role Title */}
             <h2 className="role-content-title text-xl md:text-2xl font-semibold text-dark dark:text-light text-center">
               {role.title}

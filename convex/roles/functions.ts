@@ -13,6 +13,7 @@ import {
   hasTeamLeader,
 } from "../utils";
 import { buildRoleAssignmentNotification } from "../notifications/helpers";
+import { getDefaultIconKey } from "./iconDefaults";
 
 /**
  * Get a role by ID
@@ -76,12 +77,13 @@ export const createRole = mutation({
     duties: v.array(v.string()),
     parentTeamId: v.optional(v.id("teams")), // For leader roles: the parent team this role connects to
     memberId: v.optional(v.id("members")), // Optional: if not provided, defaults to team leader
+    iconKey: v.optional(v.string()), // Key into iconDict (e.g. "fivestar", "poetry")
   },
   returns: v.id("roles"),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
     const member = await getMemberInOrga(ctx, orgaId);
-    
+
     // Enforce one leader per team
     if (args.roleType === "leader") {
       if (await hasTeamLeader(ctx, args.teamId)) {
@@ -124,6 +126,7 @@ export const createRole = mutation({
     }
     
     // Create role
+    const iconKey = args.iconKey ?? getDefaultIconKey(args.roleType);
     const roleId = await ctx.db.insert("roles", {
       orgaId,
       teamId: args.teamId,
@@ -133,6 +136,7 @@ export const createRole = mutation({
       mission: args.mission,
       duties: args.duties,
       memberId: assignedMemberId,
+      iconKey,
     });
     
     // Update member's roleIds
@@ -166,6 +170,7 @@ export const createRole = mutation({
           mission: args.mission,
           duties: args.duties,
           memberId: assignedMemberId,
+          iconKey,
         },
       },
     });
@@ -209,6 +214,7 @@ export const updateRole = mutation({
     duties: v.optional(v.array(v.string())),
     parentTeamId: v.optional(v.union(v.id("teams"), v.null())), // For leader roles: the parent team this role connects to
     memberId: v.optional(v.id("members")), // Optional: if provided, must be a valid member ID
+    iconKey: v.optional(v.string()), // Key into iconDict (e.g. "fivestar", "poetry")
   },
   returns: v.id("roles"),
   handler: async (ctx, args) => {
@@ -291,14 +297,16 @@ export const updateRole = mutation({
       duties?: string[];
       parentTeamId?: Id<"teams">;
       memberId?: Id<"members">;
+      iconKey?: string;
     } = {};
-    
+
     if (args.title !== undefined) updates.title = args.title;
     if (args.roleType !== undefined) updates.roleType = args.roleType;
     if (args.mission !== undefined) updates.mission = args.mission;
     if (args.duties !== undefined) updates.duties = args.duties;
     if (args.parentTeamId !== undefined) updates.parentTeamId = args.parentTeamId ?? undefined;
     if (args.memberId !== undefined) updates.memberId = args.memberId;
+    if (args.iconKey !== undefined) updates.iconKey = args.iconKey;
     
     // Build before and after with only modified fields
     const before: {
@@ -309,6 +317,7 @@ export const updateRole = mutation({
       mission?: string;
       duties?: string[];
       memberId?: Id<"members">;
+      iconKey?: string;
     } = {};
     const after: {
       teamId?: Id<"teams">;
@@ -318,8 +327,9 @@ export const updateRole = mutation({
       mission?: string;
       duties?: string[];
       memberId?: Id<"members">;
+      iconKey?: string;
     } = {};
-    
+
     if (args.title !== undefined) {
       before.title = role.title;
       after.title = args.title;
@@ -343,6 +353,10 @@ export const updateRole = mutation({
     if (args.memberId !== undefined) {
       before.memberId = role.memberId;
       after.memberId = args.memberId;
+    }
+    if (args.iconKey !== undefined) {
+      before.iconKey = role.iconKey;
+      after.iconKey = args.iconKey;
     }
     
     await ctx.db.patch(args.roleId, updates);
@@ -382,6 +396,7 @@ export const updateRole = mutation({
             mission: updatedRole.mission,
             duties: updatedRole.duties,
             memberId: updatedRole.memberId,
+            iconKey: updatedRole.iconKey,
           });
         }
       }

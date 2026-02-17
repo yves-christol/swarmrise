@@ -23,18 +23,24 @@ export const targetIdType = v.union(
   v.id('messages'),
 )
 
+// Color value in org diffs: current format is hex string, legacy format was {r,g,b} object
+const colorValue = v.union(
+  v.string(),
+  v.object({ r: v.number(), g: v.number(), b: v.number() })
+);
+
 // Organization diff
 const organizationDiff = v.object({
   type: v.literal("Organization"),
   before: v.optional(v.object({
     name: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
-    colorScheme: v.optional(v.object({ primary: v.string(), secondary: v.string() })),
+    colorScheme: v.optional(v.object({ primary: colorValue, secondary: colorValue })),
   })),
   after: v.optional(v.object({
     name: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
-    colorScheme: v.optional(v.object({ primary: v.string(), secondary: v.string() })),
+    colorScheme: v.optional(v.object({ primary: colorValue, secondary: colorValue })),
   })),
 });
 
@@ -64,6 +70,7 @@ const roleDiff = v.object({
     mission: v.optional(v.string()),
     duties: v.optional(v.array(v.string())),
     memberId: v.optional(v.id("members")),
+    iconKey: v.optional(v.string()),
   })),
   after: v.optional(v.object({
     teamId: v.optional(v.id("teams")),
@@ -73,6 +80,7 @@ const roleDiff = v.object({
     mission: v.optional(v.string()),
     duties: v.optional(v.array(v.string())),
     memberId: v.optional(v.id("members")),
+    iconKey: v.optional(v.string()),
   })),
 });
 

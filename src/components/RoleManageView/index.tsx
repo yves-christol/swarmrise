@@ -9,6 +9,8 @@ import { NotFound } from "../NotFound";
 import { ReassignConfirmModal } from "./ReassignConfirmModal";
 import { CreateTeamConfirmModal } from "./CreateTeamConfirmModal";
 import { getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
+import { getRoleIconPath, getDefaultIconKey } from "../../utils/roleIconDefaults";
+import { IconPicker } from "../shared/IconPicker";
 
 type RoleManageViewProps = {
   roleId: Id<"roles">;
@@ -76,6 +78,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
   const [showCreateTeamConfirm, setShowCreateTeamConfirm] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
   const [createTeamError, setCreateTeamError] = useState<string | null>(null);
+  const [showIconPicker, setShowIconPicker] = useState(false);
 
   const reassignModalRef = useRef<HTMLDivElement>(null);
   const createTeamModalRef = useRef<HTMLDivElement>(null);
@@ -226,6 +229,22 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
     }
   };
 
+  const handleIconChange = async (iconKey: string) => {
+    if (isLinkedRole || !role) return;
+    setIsSaving(true);
+    setSaveMessage(null);
+    try {
+      await updateRole({ roleId, iconKey });
+      setShowIconPicker(false);
+      setSaveMessage({ type: "success", text: "Icon updated" });
+    } catch (error) {
+      setSaveMessage({ type: "error", text: error instanceof Error ? error.message : "Failed to update" });
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(null), 3000);
+    }
+  };
+
   const handleCreateTeam = async () => {
     if (!role) return;
     setIsCreatingTeam(true);
@@ -354,6 +373,55 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             </div>
           )}
         </header>
+
+        {/* Icon Section */}
+        <section className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-dark dark:text-light">
+              Icon
+            </h2>
+            {!isLinkedRole && !showIconPicker && (
+              <button
+                onClick={() => setShowIconPicker(true)}
+                className="text-sm text-highlight-hover dark:text-highlight hover:underline"
+              >
+                Change
+              </button>
+            )}
+          </div>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            {/* Current icon preview */}
+            <div className="flex items-center gap-3 mb-2">
+              <svg width="40" height="40" viewBox="0 0 40 40" className="shrink-0">
+                <path
+                  d={getRoleIconPath(role.iconKey, role.roleType)}
+                  fill="currentColor"
+                  className="text-gray-600 dark:text-gray-300"
+                />
+              </svg>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {role.iconKey ?? getDefaultIconKey(role.roleType)}
+              </span>
+            </div>
+            {/* Icon picker (expandable) */}
+            {showIconPicker && !isLinkedRole && (
+              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <IconPicker
+                  selectedIconKey={role.iconKey ?? getDefaultIconKey(role.roleType)}
+                  onSelect={(key) => void handleIconChange(key)}
+                />
+                <div className="flex justify-end mt-3">
+                  <button
+                    onClick={() => setShowIconPicker(false)}
+                    className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
 
         {/* Save message */}
         {saveMessage && (

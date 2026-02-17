@@ -17,9 +17,23 @@ import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { DEMO_ORGA_CONFIG, TeamTemplate, RoleTemplate } from "./demoOrgaConfig";
+import { getDefaultIconKey } from "../roles/iconDefaults";
 
 // Email domain used for all synthetic demo users
 const DEMO_EMAIL_DOMAIN = "@demo-infomax.test";
+
+// Icon keys suitable for random assignment to regular roles (no roleType)
+const RANDOM_ICON_KEYS = [
+  "rond", "cross", "square", "diamond", "diamondcurve", "morningstar",
+  "heightstar", "triangle", "starship", "chevron", "tranchoir", "moon",
+  "octogon", "diamondband", "diamondstar", "blur", "tunnel", "clouds",
+  "round", "sphere", "world", "spiral", "star", "sun", "pyramid",
+  "heart", "moon2", "brightness", "allergen", "3d",
+];
+
+function getRandomIconKey(): string {
+  return RANDOM_ICON_KEYS[Math.floor(Math.random() * RANDOM_ICON_KEYS.length)];
+}
 
 // ---------------------------------------------------------------------------
 // Name pools for generating realistic fake users
@@ -537,6 +551,7 @@ export const seedDemoOrga = internalMutation({
           mission: leaderMission,
           duties: leaderDuties,
           memberId: leaderMemberId,
+          iconKey: getRandomIconKey(),
         });
         totalRoleCount++;
         await assignRoleToMember(leaderMemberId, sourceRoleId);
@@ -553,6 +568,7 @@ export const seedDemoOrga = internalMutation({
         mission: leaderMission,
         duties: leaderDuties,
         memberId: leaderMemberId,
+        iconKey: getDefaultIconKey("leader"),
       });
       totalRoleCount++;
       await assignRoleToMember(leaderMemberId, leaderRoleId);
@@ -571,6 +587,7 @@ export const seedDemoOrga = internalMutation({
         mission: "Define and organize the rituals, meetings and documentation of the team",
         duties: ["Plan and facilitate recurring team rituals and meetings", "Maintain and organize team documentation and decision records", "Ensure meeting outcomes are captured, shared, and followed up on"],
         memberId: secretaryMemberId,
+        iconKey: getDefaultIconKey("secretary"),
       });
       totalRoleCount++;
       await assignRoleToMember(secretaryMemberId, secretaryRoleId);
@@ -593,6 +610,7 @@ export const seedDemoOrga = internalMutation({
         mission: "Remind the governance rules, ensure every role can exert its duties and settle decisions when needed",
         duties: ["Remind and uphold governance rules and processes during team interactions", "Ensure every role holder has the space and resources to exert their duties", "Settle decisions and mediate disagreements when the team cannot reach consensus"],
         memberId: refereeMemberId,
+        iconKey: getDefaultIconKey("referee"),
       });
       totalRoleCount++;
       await assignRoleToMember(refereeMemberId, refereeRoleId);
@@ -619,6 +637,7 @@ export const seedDemoOrga = internalMutation({
           mission: rt.mission,
           duties: rt.duties,
           memberId: specialId,
+          iconKey: getRandomIconKey(),
         });
         totalRoleCount++;
         await assignRoleToMember(specialId, roleId);
@@ -635,6 +654,7 @@ export const seedDemoOrga = internalMutation({
           mission: rt.mission,
           duties: rt.duties,
           memberId,
+          iconKey: getRandomIconKey(),
         });
         totalRoleCount++;
         await assignRoleToMember(memberId, roleId);
@@ -741,6 +761,7 @@ export const seedDemoOrga = internalMutation({
             mission: rt.mission,
             duties: rt.duties,
             memberId,
+            iconKey: getRandomIconKey(),
           });
           totalRoleCount++;
           newRoleIds.push(roleId);
@@ -766,6 +787,7 @@ export const seedDemoOrga = internalMutation({
             mission: rt.mission,
             duties: rt.duties,
             memberId,
+            iconKey: getRandomIconKey(),
           });
           totalRoleCount++;
           extraRoleIds.push(roleId);

@@ -26,8 +26,22 @@ import {
   OPERATIONS_ROLES,
   ORGANIZATION_TREE,
 } from "./demoOrgaConfig";
+import { getDefaultIconKey } from "../roles/iconDefaults";
 
 const TEST_ORGA_NAME_PREFIX = "INFOMAX DEMO";
+
+// Icon keys suitable for random assignment to regular roles (no roleType)
+const RANDOM_ICON_KEYS = [
+  "rond", "cross", "square", "diamond", "diamondcurve", "morningstar",
+  "heightstar", "triangle", "starship", "chevron", "tranchoir", "moon",
+  "octogon", "diamondband", "diamondstar", "blur", "tunnel", "clouds",
+  "round", "sphere", "world", "spiral", "star", "sun", "pyramid",
+  "heart", "moon2", "brightness", "allergen", "3d",
+];
+
+function getRandomIconKey(): string {
+  return RANDOM_ICON_KEYS[Math.floor(Math.random() * RANDOM_ICON_KEYS.length)];
+}
 
 // Helper to get a random subset of roles
 function getRandomRoles(roles: RoleTemplate[], minCount: number, maxCount: number): RoleTemplate[] {
@@ -182,6 +196,7 @@ export const createTestOrganization = internalMutation({
           mission: leaderMission,
           duties: leaderDuties,
           memberId: leaderMemberId,
+          iconKey: getRandomIconKey(),
           // No roleType - this is a regular role representing the child team
         });
         totalRoleCount++;
@@ -201,6 +216,7 @@ export const createTestOrganization = internalMutation({
         mission: leaderMission,
         duties: leaderDuties,
         memberId: leaderMemberId,
+        iconKey: getDefaultIconKey("leader"),
       });
       totalRoleCount++;
       await assignRoleToMember(leaderMemberId, leaderRoleId);
@@ -218,6 +234,7 @@ export const createTestOrganization = internalMutation({
         mission: `Coordinate administrative functions for ${template.name}`,
         duties: ["Meeting coordination", "Documentation", "Communication management"],
         memberId: secretaryMemberId,
+        iconKey: getDefaultIconKey("secretary"),
       });
       totalRoleCount++;
       await assignRoleToMember(secretaryMemberId, secretaryRoleId);
@@ -235,6 +252,7 @@ export const createTestOrganization = internalMutation({
         mission: `Ensure fair processes and resolve conflicts within ${template.name}`,
         duties: ["Process facilitation", "Conflict resolution", "Decision support"],
         memberId: refereeMemberId,
+        iconKey: getDefaultIconKey("referee"),
       });
       totalRoleCount++;
       await assignRoleToMember(refereeMemberId, refereeRoleId);
@@ -265,6 +283,7 @@ export const createTestOrganization = internalMutation({
             mission: roleTemplate.mission,
             duties: roleTemplate.duties,
             memberId: specialMemberId,
+            iconKey: getRandomIconKey(),
           });
           totalRoleCount++;
           await assignRoleToMember(specialMemberId, roleId);
@@ -282,6 +301,7 @@ export const createTestOrganization = internalMutation({
           mission: roleTemplate.mission,
           duties: roleTemplate.duties,
           memberId: roleMemberId,
+          iconKey: getRandomIconKey(),
         });
         totalRoleCount++;
         await assignRoleToMember(roleMemberId, roleId);
@@ -336,6 +356,7 @@ export const createTestOrganization = internalMutation({
             mission: randomTemplate.mission,
             duties: randomTemplate.duties,
             memberId,
+            iconKey: getRandomIconKey(),
           });
 
           memberRoleIds.push(roleId);
@@ -375,6 +396,7 @@ export const createTestOrganization = internalMutation({
             mission: randomTemplate.mission,
             duties: randomTemplate.duties,
             memberId,
+            iconKey: getRandomIconKey(),
           });
 
           newRoleIds.push(roleId);

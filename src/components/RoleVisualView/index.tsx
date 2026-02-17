@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
+import { TeamLink } from "./TeamLink";
 import { MemberLink } from "./MemberLink";
 import { NotFound } from "../NotFound";
 import { useViewport } from "../shared/useViewport";
@@ -64,6 +65,12 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
     role ? { memberId: role.memberId } : "skip"
   );
 
+  // Fetch team for link
+  const team = useQuery(
+    api.teams.functions.getTeamById,
+    role ? { teamId: role.teamId } : "skip"
+  );
+
   // Handle container resize
   useEffect(() => {
     const container = containerRef.current;
@@ -113,11 +120,18 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             onNavigateToRole(linkedRole._id, linkedRole.teamId);
           }
           break;
+        case "t":
+        case "T":
+          // Navigate to team
+          if (team) {
+            onZoomOut();
+          }
+          break;
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onZoomOut, showDuties, role?.duties, linkedRole, onNavigateToRole]);
+  }, [onZoomOut, showDuties, role?.duties, linkedRole, onNavigateToRole, team]);
 
   // Calculate layout
   const centerX = dimensions.width / 2;
@@ -245,6 +259,17 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           }
         }
 
+        @keyframes teamLinkReveal {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .role-outer-circle {
             animation: none !important;
@@ -281,6 +306,12 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           <span className="flex items-center gap-1">
             <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">L</kbd>
             <span>{t("diagram.keyboardSource")}</span>
+          </span>
+        )}
+        {team && (
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">T</kbd>
+            <span>{t("diagram.keyboardTeam")}</span>
           </span>
         )}
       </div>
@@ -451,6 +482,17 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           </div>
         </foreignObject>
 
+        {/* Team link - positioned outside the main circle at the top */}
+        {team && (
+          <TeamLink
+            team={team}
+            centerX={centerX}
+            centerY={centerY}
+            maxRadius={maxRadius}
+            onTeamClick={onZoomOut}
+          />
+        )}
+
         {/* Member link - positioned outside the main circle */}
         {member && (
           <MemberLink
@@ -517,6 +559,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
       {/* Accessibility: screen reader announcement */}
       <div role="status" aria-live="polite" className="sr-only">
         {t("diagram.srRoleViewAnnouncement", { title: role.title })}
+        {team && t("diagram.srRoleViewTeamHint", { name: team.name })}
         {role.duties && role.duties.length > 0 && t("diagram.srRoleViewDutiesHint")}
         {role.linkedRoleId && t("diagram.srRoleViewSourceHint")}
       </div>
@@ -528,6 +571,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
         </summary>
         <div className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-2">
           <p><strong>{t("diagram.textRole")}</strong> {role.title}</p>
+          {team && <p><strong>{t("diagram.textTeam")}</strong> {team.name}</p>}
           {role.roleType && <p><strong>{t("diagram.textType")}</strong> {t(`roleTypes.${role.roleType}`, { ns: "members" })}</p>}
           <p><strong>{t("diagram.textMission")}</strong> {role.mission || t("diagram.noMissionDefined")}</p>
           {role.duties && role.duties.length > 0 && (

@@ -37,5 +37,11 @@
   "noMissionDefined": "Nessuna missione definita",
   "selectTeam": "Seleziona squadra",
   "selectRole": "Seleziona ruolo",
-  "moreOptions": "Più opzioni"
+  "moreOptions": "Più opzioni",
+  "search": "Cerca",
+  "searchTeams": "Cerca squadre...",
+  "searchRoles": "Cerca ruoli...",
+  "searchMembers": "Cerca membri...",
+  "noResults": "Nessun risultato",
+  "focusedEntity": "Elemento in focus"
 }

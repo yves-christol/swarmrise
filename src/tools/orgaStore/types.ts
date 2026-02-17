@@ -67,6 +67,7 @@ export type OrgaStoreContextType = {
   focusOnOrga: () => void;
   focusOnTeamFromNav: (teamId: Id<"teams">) => void;
   focusOnRoleFromNav: (roleId: Id<"roles">, teamId: Id<"teams">) => void;
+  focusOnMemberFromNav: (memberId: Id<"members">) => void;
   isFocusTransitioning: boolean;
   transitionOrigin: TransitionOrigin;
   transitionDirection: "in" | "out" | null;

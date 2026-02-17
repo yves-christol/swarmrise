@@ -37,5 +37,11 @@
   "noMissionDefined": "尚未定義使命",
   "selectTeam": "選擇團隊",
   "selectRole": "選擇角色",
-  "moreOptions": "更多選項"
+  "moreOptions": "更多選項",
+  "search": "搜尋",
+  "searchTeams": "搜尋團隊...",
+  "searchRoles": "搜尋角色...",
+  "searchMembers": "搜尋成員...",
+  "noResults": "無結果",
+  "focusedEntity": "聚焦元素"
 }

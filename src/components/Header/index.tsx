@@ -1,16 +1,15 @@
+import { useState } from "react";
 import { dark } from "@clerk/themes";
 import { UserButton, useAuth } from "@clerk/clerk-react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "convex/react";
 import { Link } from "react-router";
+import { api } from "../../../convex/_generated/api";
 import { Logo } from "../Logo";
-import { OrgaSelector } from "../OrgaSelector";
-import { NotificationBell } from "../NotificationBell";
 import { ChatToggle } from "../ChatToggle";
-import { TeamSelector } from "../NavBar/TeamSelector";
-import { RoleSelector } from "../NavBar/RoleSelector";
-import { MemberIndicator } from "../NavBar/MemberIndicator";
+import { NotificationBell } from "../NotificationBell";
 import { HeaderViewToggle } from "../NavBar/HeaderViewToggle";
-import { NavOverflowMenu } from "../NavBar/NavOverflowMenu";
+import { SearchPanel } from "../NavBar/SearchPanel";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useSelectedOrga } from "../../tools/orgaStore/hooks";
 import { useFocus } from "../../tools/orgaStore/hooks";
@@ -20,6 +19,29 @@ import {
   languageNames,
   type SupportedLanguage,
 } from "../../i18n";
+
+// Placeholder icon for orgs without logos
+const OrgPlaceholderIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
+  </svg>
+);
+
+const SearchIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="11" cy="11" r="8" />
+    <path d="M21 21l-4.35-4.35" />
+  </svg>
+);
 
 const ProfileIcon = () => (
   <svg
@@ -117,25 +139,70 @@ const LanguagePage = () => {
   );
 };
 
+/**
+ * Resolves the display name for the currently focused entity.
+ */
+const useFocusedEntityName = () => {
+  const { t } = useTranslation("common");
+  const { focus } = useFocus();
+  const { selectedOrga } = useSelectedOrga();
+
+  const teamId = focus.type === "team" ? focus.teamId : undefined;
+  const roleId = focus.type === "role" ? focus.roleId : undefined;
+  const memberId = focus.type === "member" ? focus.memberId : undefined;
+
+  const team = useQuery(
+    api.teams.functions.getTeamById,
+    teamId ? { teamId } : "skip"
+  );
+
+  const role = useQuery(
+    api.roles.functions.getRoleById,
+    roleId ? { roleId } : "skip"
+  );
+
+  const member = useQuery(
+    api.members.functions.getMemberById,
+    memberId ? { memberId } : "skip"
+  );
+
+  if (focus.type === "orga") {
+    return selectedOrga?.name ?? t("loading");
+  }
+  if (focus.type === "team") {
+    return team?.name ?? t("loading");
+  }
+  if (focus.type === "role") {
+    return role?.title ?? t("loading");
+  }
+  if (focus.type === "member") {
+    return member ? `${member.firstname} ${member.surname}` : t("loading");
+  }
+  return "";
+};
+
 export const Header = () => {
   const { t } = useTranslation();
   const { isSignedIn } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
-  const { selectedOrgaId, selectedOrga, myMember } = useSelectedOrga();
-  const { focus } = useFocus();
+  const { selectedOrgaId, selectedOrga, myMember, isSwitchingOrga } = useSelectedOrga();
+  const { focus, focusOnOrga } = useFocus();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const isDark = resolvedTheme === "dark";
+  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 
-  const toggleTheme = () => {
-    setTheme(isDark ? "light" : "dark");
+  const focusedEntityName = useFocusedEntityName();
+
+  const handleLogoClick = () => {
+    if (focus.type !== "orga") {
+      focusOnOrga();
+    }
   };
-
-  const showTeamSelector = focus.type === "team" || focus.type === "role";
-  const showRoleSelector = focus.type === "role";
 
   return (
     <header className="flex-shrink-0 z-30 bg-light dark:bg-dark px-4 py-2 border-b-2 border-slate-300 dark:border-slate-800 flex items-center gap-2">
-      {/* Left: Logo (when no org selected) */}
+      {/* LEFT: Logo */}
       {!selectedOrga ? (
         <Link
           to="/glossary"
@@ -146,45 +213,66 @@ export const Header = () => {
             swarmrise
           </b>
         </Link>
-      ) : null}
+      ) : (
+        <button
+          onClick={handleLogoClick}
+          disabled={isSwitchingOrga}
+          className={`flex items-center gap-2 flex-shrink-0 rounded-md px-2 py-1 transition-colors
+            focus:outline-none focus:ring-2 focus:ring-[#eac840]
+            ${focus.type === "orga" ? "" : "hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"}`}
+          aria-label={selectedOrga.name}
+        >
+          {selectedOrga.logoUrl ? (
+            <img
+              src={selectedOrga.logoUrl}
+              alt=""
+              className="w-6 h-6 rounded object-contain"
+            />
+          ) : (
+            <OrgPlaceholderIcon className="w-5 h-5 text-gray-400" />
+          )}
+        </button>
+      )}
 
-      {/* Navigation selectors (signed in + org selected) */}
+      {/* LEFT: Focused entity name + search button (next to logo) */}
       {isSignedIn && selectedOrga && (
-        <>
-          <OrgaSelector />
-
-          {/* Member indicator */}
-          {focus.type === "member" && <MemberIndicator />}
-
-          {/* Desktop nav: team, role selectors */}
-          <div className="hidden md:contents">
-            {showTeamSelector && <TeamSelector />}
-            {showRoleSelector && <RoleSelector />}
+        <div className="flex items-center gap-1">
+          <span className="text-sm text-dark dark:text-light truncate max-w-[160px] hidden sm:block">
+            {focusedEntityName}
+          </span>
+          <div className="relative">
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="p-1.5 rounded-md transition-colors
+                focus:outline-none focus:ring-2 focus:ring-[#eac840]
+                hover:bg-slate-200 dark:hover:bg-slate-700
+                text-gray-500 dark:text-gray-400"
+              aria-label={t("search")}
+              aria-haspopup="dialog"
+              aria-expanded={isSearchOpen}
+            >
+              <SearchIcon className="w-5 h-5" />
+            </button>
+            <SearchPanel
+              isOpen={isSearchOpen}
+              onClose={() => setIsSearchOpen(false)}
+            />
           </div>
-        </>
+        </div>
       )}
 
       {/* Left spacer */}
       <div className="flex-1" />
 
-      {/* Center: view toggle (desktop) */}
+      {/* CENTER: View toggle */}
       {isSignedIn && selectedOrga && (
-        <div className="hidden md:block">
-          <HeaderViewToggle />
-        </div>
+        <HeaderViewToggle />
       )}
 
       {/* Right spacer */}
       <div className="flex-1" />
 
-      {/* Mobile overflow */}
-      {isSignedIn && selectedOrga && (
-        <div className="md:hidden">
-          <NavOverflowMenu />
-        </div>
-      )}
-
-      {/* Right: utilities */}
+      {/* Utilities: Chat + Notifications */}
       <div className="flex items-center gap-2">
         <ChatToggle />
         <NotificationBell />

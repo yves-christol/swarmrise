@@ -37,5 +37,11 @@
   "noMissionDefined": "Місія не визначена",
   "selectTeam": "Обрати команду",
   "selectRole": "Обрати роль",
-  "moreOptions": "Більше опцій"
+  "moreOptions": "Більше опцій",
+  "search": "Пошук",
+  "searchTeams": "Шукати команди...",
+  "searchRoles": "Шукати ролі...",
+  "searchMembers": "Шукати учасників...",
+  "noResults": "Немає результатів",
+  "focusedEntity": "Елемент у фокусі"
 }

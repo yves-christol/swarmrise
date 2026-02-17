@@ -288,6 +288,12 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     setFocus({ type: "role", roleId, teamId });
   }, []);
 
+  const focusOnMemberFromNav = useCallback((memberId: Id<"members">) => {
+    setTransitionDirection("in");
+    setIsFocusTransitioning(true);
+    setFocus({ type: "member", memberId });
+  }, []);
+
   const focusOnOrga = useCallback(() => {
     // Capture the team we're returning from so the org view can center on it
     if (focus.type === "team") {
@@ -375,6 +381,7 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
         focusOnOrga,
         focusOnTeamFromNav,
         focusOnRoleFromNav,
+        focusOnMemberFromNav,
         isFocusTransitioning,
         transitionOrigin,
         transitionDirection,

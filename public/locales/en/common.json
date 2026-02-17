@@ -39,6 +39,12 @@
   "selectTeam": "Select team",
   "selectRole": "Select role",
   "moreOptions": "More options",
+  "search": "Search",
+  "searchTeams": "Search teams...",
+  "searchRoles": "Search roles...",
+  "searchMembers": "Search members...",
+  "noResults": "No results",
+  "focusedEntity": "Focused entity",
   "notFound": {
     "team": "Team not found",
     "role": "Role not found",

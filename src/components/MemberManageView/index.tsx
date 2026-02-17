@@ -630,7 +630,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
             {/* Name and email */}
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">
+                <h1 className="text-3xl font-bold text-dark dark:text-light">
                   {member.firstname} {member.surname}
                 </h1>
                 {isCurrentUser && (
@@ -651,7 +651,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
 
         {/* Analytics section */}
         <section className="mb-8">
-          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+          <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
             {t("overview")}
           </h2>
           <div className="grid grid-cols-2 gap-4">
@@ -676,7 +676,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
           )}
 
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+            <h2 className="text-lg font-semibold text-dark dark:text-light">
               {tMembers("contactInformation")}
             </h2>
             {isCurrentUser && !isEditingContacts && (
@@ -836,7 +836,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
 
         {/* Roles by Team */}
         <section className="mb-8">
-          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+          <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
             {tTeams("roles")}
           </h2>
           {rolesByTeam.length === 0 ? (
@@ -1028,7 +1028,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
         {/* Danger Zone - only shown for current user */}
         {isCurrentUser && (
           <section className="mb-8 pt-6 border-t border-red-200 dark:border-red-900/50">
-            <h2 className="font-swarm text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
+            <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
               {tMembers("dangerZone")}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">

@@ -20,12 +20,19 @@
 
   /* Custom font family */
   --font-family-swarm: 'Montserrat Alternates', sans-serif;
+
+  /* Org-customisable title font */
+  --font-family-title: var(--org-title-font, Arial, Helvetica, sans-serif);
 }
 
 /* Explicit utilities to ensure they work properly in Tailwind v4 */
 @layer utilities {
   .font-swarm {
     font-family: var(--font-family-swarm);
+  }
+
+  .font-title {
+    font-family: var(--font-family-title);
   }
 
   .bg-light {

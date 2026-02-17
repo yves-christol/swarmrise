@@ -189,7 +189,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
         {/* Header */}
         <header className="mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">{orga.name}</h1>
+            <h1 className="text-3xl font-bold text-dark dark:text-light">{orga.name}</h1>
             {isOwner && (
               <button
                 onClick={() => setShowSettingsModal(true)}
@@ -220,7 +220,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
 
         {/* Overview section */}
         <section className="mb-8">
-          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+          <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
             {tCommon("overview")}
           </h2>
           {/* Mission reminder */}
@@ -235,7 +235,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
         {/* Member directory */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+            <h2 className="text-lg font-semibold text-dark dark:text-light">
               {tMembers("memberDirectory")}
             </h2>
             <div className="flex items-center gap-2">
@@ -336,7 +336,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
         {/* Team directory */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+            <h2 className="text-lg font-semibold text-dark dark:text-light">
               {t("teamDirectory")}
             </h2>
             <input

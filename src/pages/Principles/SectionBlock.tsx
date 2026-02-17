@@ -11,7 +11,7 @@ export const SectionBlock = ({ title, subtitle, children }: SectionBlockProps) =
   return (
     <section className="flex flex-col gap-6 principle-card">
       <div className="flex flex-col gap-2">
-        <h2 className="font-swarm text-2xl font-bold">
+        <h2 className="text-2xl font-bold">
           {title.toLowerCase()}
         </h2>
         {subtitle && (
@@ -45,7 +45,7 @@ type SectionItemProps = {
 export const SectionItem = ({ title, content }: SectionItemProps) => {
   return (
     <div className="flex flex-col gap-1">
-      <h3 className="font-swarm text-lg font-semibold">{title.toLowerCase()}</h3>
+      <h3 className="text-lg font-semibold">{title.toLowerCase()}</h3>
       <p className="text-base leading-relaxed pl-4 border-l-2 border-gold/30">
         {renderBrandText(content)}
       </p>

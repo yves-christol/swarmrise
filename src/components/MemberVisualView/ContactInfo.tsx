@@ -168,13 +168,13 @@ export function ContactInfo({ member, onClose }: ContactInfoProps) {
               />
             ) : (
               <div className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-200 dark:bg-gray-700 border-2 border-[#a2dbed]">
-                <span className="font-swarm text-xs font-semibold text-dark dark:text-light">
+                <span className="font-title text-xs font-semibold text-dark dark:text-light">
                   {member.firstname[0] || ""}{member.surname[0] || ""}
                 </span>
               </div>
             )}
             <div>
-              <h3 className="font-swarm text-sm font-semibold text-dark dark:text-light leading-tight">
+              <h3 className="text-sm font-semibold text-dark dark:text-light leading-tight">
                 {member.firstname} {member.surname}
               </h3>
               <p className="text-xs text-gray-500 dark:text-gray-400">

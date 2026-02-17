@@ -136,7 +136,7 @@ export const OrgaSelector = () => {
           ) : (
             <OrgPlaceholderIcon className="w-5 h-5 text-gray-400" />
           )}
-          <span className="font-swarm text-dark dark:text-light max-w-[160px] truncate">
+          <span className="font-title text-dark dark:text-light max-w-[160px] truncate">
             {isSwitchingOrga ? t('switching') : (selectedOrga?.name ?? t('selectOrganization'))}
           </span>
         </button>

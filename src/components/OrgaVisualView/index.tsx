@@ -223,7 +223,7 @@ export function OrgaVisualView({ orgaId, onRegisterNodePositionLookup }: OrgaVis
             <>
               <Logo size={64} begin={0} repeatCount={2} />
               <div>
-                <h3 className="font-swarm text-xl font-bold mb-2 text-dark dark:text-light">
+                <h3 className="text-xl font-bold mb-2 text-dark dark:text-light">
                   {t("diagram.noTeamsYet")}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 max-w-sm">

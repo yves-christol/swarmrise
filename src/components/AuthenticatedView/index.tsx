@@ -53,7 +53,7 @@ export const AuthenticatedView = () => {
     return (
       <main className="flex-1 min-h-0 p-8 overflow-auto">
         <div className="flex flex-col gap-8 max-w-4xl mx-auto">
-          <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">{t("selectOrganization")}</h1>
+          <h1 className="text-3xl font-bold text-dark dark:text-light">{t("selectOrganization")}</h1>
           <p className="text-gray-600 dark:text-gray-400">
             {t("selectOrgPrompt")}
           </p>

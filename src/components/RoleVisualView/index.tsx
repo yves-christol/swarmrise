@@ -386,7 +386,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             }}
           >
             {/* Role Title */}
-            <h2 className="role-content-title font-swarm text-xl md:text-2xl font-semibold text-dark dark:text-light text-center">
+            <h2 className="role-content-title text-xl md:text-2xl font-semibold text-dark dark:text-light text-center">
               {role.title}
             </h2>
 
@@ -485,7 +485,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
 
             {/* Mission Section */}
             <div className="role-content-mission flex flex-col items-center gap-1 max-w-xs">
-              <h3 className="font-swarm text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 {t("diagram.missionSection")}
               </h3>
               <p className="text-sm text-center text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-3">
@@ -503,7 +503,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M2 4h12M2 8h12M2 12h8" />
                 </svg>
-                <span className="font-swarm font-semibold uppercase tracking-wide">
+                <span className="font-title font-semibold uppercase tracking-wide">
                   {t("diagram.dutiesSection", { count: role.duties.length })}
                 </span>
               </button>
@@ -558,7 +558,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           >
             {/* Header */}
             <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 z-10">
-              <h3 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+              <h3 className="text-lg font-semibold text-dark dark:text-light">
                 {t("diagram.dutiesSection", { count: role.duties.length })}
               </h3>
               <button

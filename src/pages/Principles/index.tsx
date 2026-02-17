@@ -54,7 +54,7 @@ const SectionRenderer = ({ section }: { section: Section }) => {
                   {i + 1}.
                 </span>
                 <div className="flex flex-col gap-1">
-                  <h3 className="font-swarm text-lg font-semibold">
+                  <h3 className="text-lg font-semibold">
                     {step.title.toLowerCase()}
                   </h3>
                   <p className="text-base leading-relaxed">
@@ -122,7 +122,7 @@ export const PrinciplesPage = () => {
         {/* Hero section */}
         <section className="flex flex-col items-center gap-6 text-center pt-8">
           <Logo size={64} begin={0} repeatCount={2} />
-          <h1 className="font-swarm text-4xl font-bold">{t("principles.title")}</h1>
+          <h1 className="text-4xl font-bold">{t("principles.title")}</h1>
           <p className="text-lg max-w-xl opacity-80">
             {renderBrandText(t("principles.subtitle"))}
           </p>

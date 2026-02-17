@@ -163,7 +163,7 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
           ) : isEmpty ? (
             <>
               <Logo size={48} begin={0} repeatCount={2} />
-              <h3 className="font-swarm text-xl font-bold text-dark dark:text-light">
+              <h3 className="text-xl font-bold text-dark dark:text-light">
                 {t("diagram.noRolesYet")}
               </h3>
               <p className="text-gray-400 text-center max-w-xs">
@@ -462,7 +462,7 @@ function TeamNameText({
         fill="var(--diagram-node-text)"
         fontSize={fontSize}
         fontWeight={600}
-        fontFamily="'Montserrat Alternates', sans-serif"
+        fontFamily="var(--org-title-font, Arial, Helvetica, sans-serif)"
         style={{
           paintOrder: "stroke",
           stroke: "var(--diagram-bg)",

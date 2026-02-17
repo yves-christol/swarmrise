@@ -68,7 +68,7 @@ export function NotFound({
         <Logo size={64} begin={0} repeatCount={1} />
 
         <div className="flex flex-col gap-2">
-          <h1 className="font-swarm text-2xl font-bold text-dark dark:text-light">
+          <h1 className="text-2xl font-bold text-dark dark:text-light">
             {getMessage()}
           </h1>
           <p className="text-gray-500 dark:text-gray-400">

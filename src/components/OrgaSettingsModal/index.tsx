@@ -550,7 +550,7 @@ export const OrgaSettingsModal = ({
         <div className="flex flex-col gap-6">
           {/* General Settings Section */}
           <section>
-            <h3 className="font-swarm text-lg font-semibold text-dark dark:text-light mb-4">
+            <h3 className="text-lg font-semibold text-dark dark:text-light mb-4">
               {t("settings.generalSection")}
             </h3>
 
@@ -765,7 +765,7 @@ export const OrgaSettingsModal = ({
 
           {/* Customisation Section */}
           <section>
-            <h3 className="font-swarm text-lg font-semibold text-dark dark:text-light mb-4">
+            <h3 className="text-lg font-semibold text-dark dark:text-light mb-4">
               {t("settings.customisationSection")}
             </h3>
 
@@ -917,7 +917,7 @@ export const OrgaSettingsModal = ({
 
           {/* Access Settings Section */}
           <section>
-            <h3 className="font-swarm text-lg font-semibold text-dark dark:text-light mb-4">
+            <h3 className="text-lg font-semibold text-dark dark:text-light mb-4">
               {t("settings.accessSection")}
             </h3>
             <EmailDomainsInput
@@ -929,7 +929,7 @@ export const OrgaSettingsModal = ({
 
           {/* Danger Zone Section */}
           <section className="pt-4 border-t border-red-200 dark:border-red-900/50">
-            <h3 className="font-swarm text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
+            <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
               {t("dangerZone")}
             </h3>
 

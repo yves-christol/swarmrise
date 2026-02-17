@@ -25,7 +25,7 @@ export const DetailsPanel = memo(function DetailsPanel({
       {node && (
         <div className="p-6 flex flex-col gap-4">
           <div className="flex justify-between items-start">
-            <h2 className="font-swarm text-xl font-bold text-dark dark:text-light">
+            <h2 className="text-xl font-bold text-dark dark:text-light">
               {node.name}
             </h2>
             <button

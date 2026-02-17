@@ -364,13 +364,13 @@ export function MemberVisualView({
               />
             ) : (
               <div className="w-24 h-24 rounded-full flex items-center justify-center bg-slate-200 dark:bg-gray-800 border-3 border-[#a2dbed] hover:shadow-lg transition-shadow">
-                <span className="font-swarm text-2xl font-semibold text-dark dark:text-light">
+                <span className="font-title text-2xl font-semibold text-dark dark:text-light">
                   {member.firstname[0] || ""}{member.surname[0] || ""}
                 </span>
               </div>
             )}
           </button>
-          <h2 className="font-swarm text-xl font-semibold text-dark dark:text-light">
+          <h2 className="text-xl font-semibold text-dark dark:text-light">
             {member.firstname} {member.surname}
           </h2>
           <Logo size={36} begin={0} repeatCount={2} />
@@ -681,7 +681,7 @@ export function MemberVisualView({
                 fill="var(--diagram-node-text)"
                 fontSize={22}
                 fontWeight={600}
-                fontFamily="'Montserrat Alternates', sans-serif"
+                fontFamily="var(--org-title-font, Arial, Helvetica, sans-serif)"
                 style={{ pointerEvents: "none", userSelect: "none" }}
               >
                 {initials}
@@ -700,7 +700,7 @@ export function MemberVisualView({
           fill="var(--diagram-node-text)"
           fontSize={14}
           fontWeight={600}
-          fontFamily="'Montserrat Alternates', sans-serif"
+          fontFamily="var(--org-title-font, Arial, Helvetica, sans-serif)"
           style={{
             pointerEvents: "none",
             userSelect: "none",

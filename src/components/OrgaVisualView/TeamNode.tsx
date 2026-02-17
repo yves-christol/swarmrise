@@ -254,7 +254,7 @@ export const TeamNode = memo(function TeamNode({
         dominantBaseline="central"
         fill={textColor}
         fontSize={fontSize}
-        fontFamily="'Montserrat Alternates', sans-serif"
+        fontFamily="var(--org-title-font, Arial, Helvetica, sans-serif)"
         fontWeight={isSelected ? 700 : 400}
         style={{
           pointerEvents: "none",

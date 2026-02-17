@@ -668,7 +668,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                 autoFocus
                 aria-label="Role name"
                 className="
-                  font-swarm text-3xl font-bold
+                  font-title text-3xl font-bold
                   text-dark dark:text-light
                   bg-transparent
                   border-b-2 border-highlight
@@ -702,7 +702,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             </div>
           ) : (
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">
+              <h1 className="text-3xl font-bold text-dark dark:text-light">
                 {role.title}
               </h1>
               {role.roleType && (
@@ -752,7 +752,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
         {/* Mission Section */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+            <h2 className="text-lg font-semibold text-dark dark:text-light">
               Mission
             </h2>
             {!isLinkedRole && !isEditingMission && (
@@ -819,7 +819,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
         {/* Duties Section */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+            <h2 className="text-lg font-semibold text-dark dark:text-light">
               Duties
             </h2>
             {!isLinkedRole && !isEditingDuties && (
@@ -945,7 +945,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
 
         {/* Assigned Member Section */}
         <section className="mb-8">
-          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+          <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
             Assigned Member
           </h2>
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
@@ -1011,7 +1011,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
         {/* Actions Section - only for regular roles that can become teams and don't already have one */}
         {!role.roleType && !isLinkedRole && hasLinkedChild === false && (
           <section className="mb-8">
-            <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+            <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
               {t("roleManage.actions")}
             </h2>
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
@@ -1045,7 +1045,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
         {/* Danger Zone - only for non-mandatory, non-linked roles */}
         {!role.roleType && !isLinkedRole && (
           <section className="mb-8 pt-6 border-t border-red-200 dark:border-red-900/50">
-            <h2 className="font-swarm text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
+            <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
               {t("roleManage.dangerZone")}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">

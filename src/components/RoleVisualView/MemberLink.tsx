@@ -134,7 +134,7 @@ export function MemberLink({
           fill="var(--diagram-node-text)"
           fontSize={14}
           fontWeight={600}
-          fontFamily="'Montserrat Alternates', sans-serif"
+          fontFamily="var(--org-title-font, Arial, Helvetica, sans-serif)"
           style={{ pointerEvents: "none", userSelect: "none" }}
         >
           {initials}

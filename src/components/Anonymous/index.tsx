@@ -7,7 +7,7 @@ export const Anonymous = () => {
 
   return (
     <div className="flex flex-col gap-8 max-w-lg mx-auto">
-      <h1 className="font-swarm text-4xl font-bold text-center">
+      <h1 className="text-4xl font-bold text-center">
         welcome!
       </h1>
       <p>

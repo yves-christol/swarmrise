@@ -147,7 +147,7 @@ export const EmptyState = () => {
       <Logo size={64} begin={0} repeatCount={2} />
 
       <div className="text-center">
-        <h1 className="font-swarm text-3xl mb-2">{t("welcome")}</h1>
+        <h1 className="text-3xl mb-2">{t("welcome")}</h1>
         <p className="text-gray-600 dark:text-gray-400">
           {t("noBelongYet")}
         </p>

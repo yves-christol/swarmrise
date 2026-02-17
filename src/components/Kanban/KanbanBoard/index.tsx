@@ -318,7 +318,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     <div>
       {/* Board header + search */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+        <h2 className="text-lg font-semibold text-dark dark:text-light">
           {t("board.title")}
         </h2>
 

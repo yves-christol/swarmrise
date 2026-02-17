@@ -97,7 +97,7 @@ export function DecisionJournal(props: DecisionJournalProps) {
       {/* Section header with filter toggle */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+          <h2 className="text-lg font-semibold text-dark dark:text-light">
             {t("journal")}
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">

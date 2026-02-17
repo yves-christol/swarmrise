@@ -15,7 +15,7 @@ export const GlossaryCard = ({ title, description, example, index }: GlossaryCar
         <span className="text-xs opacity-50 font-mono w-6">
           {String(index + 1).padStart(2, "0")}
         </span>
-        <h2 className="font-swarm text-xl font-bold group-hover:text-gold transition-colors duration-200">
+        <h2 className="text-xl font-bold group-hover:text-gold transition-colors duration-200">
           {title.toLowerCase()}
         </h2>
       </div>

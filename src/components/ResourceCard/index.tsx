@@ -9,7 +9,7 @@ export const ResourceCard = ({
 }) => {
   return (
     <div className="flex flex-col gap-2 bg-slate-200 dark:bg-slate-800 p-4 rounded-md h-28 overflow-auto">
-      <a href={href} className="font-swarm text-sm underline hover:no-underline">
+      <a href={href} className="font-title text-sm underline hover:no-underline">
         {title}
       </a>
       <p className="text-xs">{description}</p>

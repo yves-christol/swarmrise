@@ -177,7 +177,7 @@ export const RoleLink = memo(function RoleLink({
             textAnchor="middle"
             fill="var(--diagram-node-text)"
             fontSize={10}
-            fontFamily="'Montserrat Alternates', sans-serif"
+            fontFamily="var(--org-title-font, Arial, Helvetica, sans-serif)"
             fontWeight={500}
             style={{
               pointerEvents: "none",

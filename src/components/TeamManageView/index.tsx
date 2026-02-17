@@ -204,7 +204,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                 }}
                 autoFocus
                 className="
-                  font-swarm text-3xl font-bold
+                  font-title text-3xl font-bold
                   text-dark dark:text-light
                   bg-transparent
                   border-b-2 border-highlight
@@ -239,7 +239,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
           ) : (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">
+                <h1 className="text-3xl font-bold text-dark dark:text-light">
                   {team.name}
                 </h1>
                 <button
@@ -291,7 +291,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
 
         {/* Overview section */}
         <section className="mb-8">
-          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+          <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
             {t("manage.overview")}
           </h2>
           {/* Mission reminder */}
@@ -305,7 +305,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
         {/* Team Connections */}
         {(parentTeam || (linkedLeaderRoles && linkedLeaderRoles.length > 0)) && (
           <section className="mb-8">
-            <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+            <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
               {t("manage.teamConnections")}
             </h2>
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4">
@@ -347,7 +347,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
         {/* Roles Section */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
+            <h2 className="text-lg font-semibold text-dark dark:text-light">
               {t("manage.roles")}
             </h2>
             <button
@@ -484,7 +484,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
 
         {/* Team Members Section */}
         <section className="mb-8">
-          <h2 className="font-swarm text-lg font-semibold mb-4 text-dark dark:text-light">
+          <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
             {t("manage.teamMembers")}
           </h2>
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">

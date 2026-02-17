@@ -284,7 +284,7 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
         <div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col gap-6">
           {/* Send invitation form */}
           <section>
-            <h3 className="font-swarm text-sm font-semibold text-dark dark:text-light mb-3">
+            <h3 className="text-sm font-semibold text-dark dark:text-light mb-3">
               {t("sendInvitation")}
             </h3>
             <div className="flex gap-2">
@@ -358,7 +358,7 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
 
           {/* Pending invitations list */}
           <section>
-            <h3 className="font-swarm text-sm font-semibold text-dark dark:text-light mb-3">
+            <h3 className="text-sm font-semibold text-dark dark:text-light mb-3">
               {t("pendingInvitations")}
             </h3>
 

@@ -57,9 +57,9 @@ Customisation operates at three hierarchical levels: **Organisation**, **Team**,
   - Selected/active states (selected team node stroke, active tab)
   - Interactive affordances (buttons, focus rings)
   - Brand accent moments (the gold glow around nodes, save buttons)
-- Currently hardcoded as `#eac840` throughout the codebase (both in Tailwind classes like `bg-[#eac840]` and in inline SVG styles)
-- Must be abstracted into CSS custom properties so that each organisation can provide its own accent colour
-- Two variants are needed: one for light mode, one for dark mode (some accent colours need adjustment for adequate contrast on dark backgrounds)
+- Abstracted into CSS custom properties (`--org-highlight-color`, `--org-highlight-hover`) so that each organisation can provide its own accent colour
+- Two variants are stored: one for light mode, one for dark mode (some accent colours need adjustment for adequate contrast on dark backgrounds)
+- Default: `#eac840` (bee gold), applied via Tailwind utilities (`bg-highlight`, `text-highlight`, etc.) and CSS `var()` fallbacks
 
 ### 2.2 Team-level Customisation
 
@@ -480,74 +480,82 @@ Things that are intentionally NOT customisable, and why.
 - **BrandText helper:** `renderBrandText()` correctly isolates the "swarmrise" brand font.
 - **Icon dictionary:** 441 SVG icons available in `src/components/Icons/icons.ts`.
 
-### 7.2 What Needs Implementation
+### 7.2 Implementation Status
 
-- **Paper colour fields** on the orga document (schema change)
-- **Highlight colour fields** on the orga document (schema change)
-- **Title font field** on the orga document (schema change)
-- **Team colour field** -- migrate from dual `colorLight`/`colorDark` (RGB) to single `color` (hex string) with HSL validation
-- **Role icon field** on the role document (schema change)
-- **OrgCustomisationProvider** component to inject CSS custom properties
-- **Refactor hardcoded `#eac840`** references across the codebase to use `var(--org-highlight-color)`
-- **Refactor `font-swarm` usage** on headings to only apply to "swarmrise" (currently applied to all h1-h6 in global CSS)
-- **Icon picker UI** for role management
-- **Team colour picker UI** for team management (with HSL validation and feedback)
-- **Hex-to-HSL validation utility** (shared between frontend picker and Convex mutation)
-- **Paper/highlight colour pickers** in the org settings modal
+All items previously listed as "needs implementation" are now complete:
 
-### 7.3 Hardcoded Values to Refactor
+- [x] **Paper colour fields** on the orga document (schema change)
+- [x] **Highlight colour fields** on the orga document (schema change)
+- [x] **Title font field** on the orga document (schema change)
+- [x] **Team colour field** -- migrated from dual `colorLight`/`colorDark` (RGB) to single `color` (hex string) with HSL validation
+- [x] **Role icon field** on the role document (schema change)
+- [x] **OrgCustomisationProvider** component to inject CSS custom properties
+- [x] **Refactored hardcoded `#eac840`** references across the codebase to use `var(--org-highlight-color)` with fallback
+- [x] **Refactored `font-swarm` usage** on headings -- Montserrat Alternates now only applies to "swarmrise" via `BrandText`; headings use `font-title` (org-customisable)
+- [x] **Icon picker UI** for role management
+- [x] **Team colour picker UI** for team management (with HSL validation and feedback)
+- [x] **Hex-to-HSL validation utility** (shared between frontend picker and Convex mutation)
+- [x] **Paper/highlight colour pickers** in the org settings modal
 
-The following patterns appear across the codebase and need to be replaced with custom property references:
+### 7.3 Hardcoded Highlight Colour Audit
 
-- `bg-[#eac840]` and `hover:bg-[#d4af37]` -- buttons and highlights (replace with `var(--org-highlight-color)`)
-- `text-[#eac840]` and `focus:ring-[#eac840]` -- text accents and focus rings
-- `stroke="#eac840"` and `fill="#eac840"` in SVG -- diagram interaction highlights
-- `rgba(234, 200, 64, ...)` in inline styles -- glow effects on nodes
-- Heading font rules in `src/index.css` (`:root.dark h1, ...` and `:root.light h1, ...`) that apply Montserrat Alternates to all headings
+The refactor of hardcoded `#eac840` / `#d4af37` values is **complete**. All components now use either Tailwind utilities (`bg-highlight`, `text-highlight`, etc.) or CSS custom properties with fallback (`var(--org-highlight-color, #eac840)`).
+
+Remaining references to these hex values in the codebase are all **legitimate and intentional**:
+
+| Location | Reason |
+|---|---|
+| `src/index.css` | Defines the CSS custom property system itself (theme tokens, fallback values) |
+| `src/components/Logo/index.tsx` | Swarmrise bee logo -- hardcoded brand colours, intentionally not customisable (see Section 6) |
+| `src/components/OrgaSettingsModal/index.tsx` | Default values for the highlight colour pickers |
+| SVG components (`TeamNode`, `RoleManageView`, etc.) | Use `var(--org-highlight-color, ...)` / `var(--org-highlight-hover, ...)` with hex fallbacks |
+| `convex/emails/sendInvitationEmail.ts` | HTML email template -- CSS custom properties are not supported in email clients; brand gold is appropriate |
+
+The heading font refactor is also complete: global CSS no longer applies Montserrat Alternates to `h1`-`h6`. Headings use `font-title` (the org-customisable title font), and Montserrat Alternates is reserved for the `font-swarm` class used exclusively by `BrandText`.
 
 ---
 
 ## 8. Roadmap
 
-### Phase 1: Foundation (Schema + CSS Variable Infrastructure)
+### Phase 1: Foundation (Schema + CSS Variable Infrastructure) -- COMPLETE
 
-- Add new fields to Convex schema (orga, team, role)
-- Create `OrgCustomisationProvider` component
-- Define CSS custom property naming convention
-- Refactor global CSS to separate "swarmrise" brand font from heading font
+- [x] Add new fields to Convex schema (orga, team, role)
+- [x] Create `OrgCustomisationProvider` component
+- [x] Define CSS custom property naming convention
+- [x] Refactor global CSS to separate "swarmrise" brand font from heading font
 
-### Phase 2: Organisation Colours
+### Phase 2: Organisation Colours -- COMPLETE
 
-- Implement paper colour customisation (light + dark)
-- Implement highlight colour customisation (light + dark)
-- Refactor all hardcoded `#eac840` references to use `var(--org-highlight-color)`
-- Update `OrgaSettingsModal` with new colour pickers
-- Add contrast ratio warnings
+- [x] Implement paper colour customisation (light + dark)
+- [x] Implement highlight colour customisation (light + dark)
+- [x] Refactor all hardcoded `#eac840` references to use `var(--org-highlight-color)`
+- [x] Update `OrgaSettingsModal` with new colour pickers
+- [x] Add contrast ratio warnings
 
-### Phase 3: Team Colours
+### Phase 3: Team Colours -- COMPLETE
 
-- Migrate team schema from dual `colorLight`/`colorDark` (RGB objects) to single `color` (hex string)
-- Implement hex-to-HSL validation utility (shared between frontend and Convex)
-- Add HSL bounds enforcement in the Convex mutation (lightness 25-75%, saturation >= 30%)
-- Build team colour picker UI with live preview and validation feedback
-- Update `TeamNode` in `OrgaVisualView` to use `team.color` hex string
-- Update team background in `TeamVisualView` and `RoleVisualView`
-- Update `TeamManageView` with colour picker
-- Handle `MemberVisualView` team nodes
+- [x] Migrate team schema from dual `colorLight`/`colorDark` (RGB objects) to single `color` (hex string)
+- [x] Implement hex-to-HSL validation utility (shared between frontend and Convex)
+- [x] Add HSL bounds enforcement in the Convex mutation (lightness 25-75%, saturation >= 30%)
+- [x] Build team colour picker UI with live preview and validation feedback
+- [x] Update `TeamNode` in `OrgaVisualView` to use `team.color` hex string
+- [x] Update team background in `TeamVisualView` and `RoleVisualView`
+- [x] Update `TeamManageView` with colour picker
+- [x] Handle `MemberVisualView` team nodes
 
-### Phase 4: Role Icons
+### Phase 4: Role Icons -- COMPLETE
 
-- Add `iconKey` field to roles schema
-- Build icon picker component (grid of 441 icons, searchable)
-- Render icons in `TeamVisualView/RoleNode` and `RoleVisualView`
-- Update `RoleManageView` with icon picker
+- [x] Add `iconKey` field to roles schema
+- [x] Build icon picker component (grid of 441 icons, searchable)
+- [x] Render icons in `TeamVisualView/RoleNode` and `RoleVisualView`
+- [x] Update `RoleManageView` with icon picker
 
-### Phase 5: Title Font
+### Phase 5: Title Font -- COMPLETE
 
-- Define supported font list (system fonts + selected web fonts)
-- Implement font loading for web fonts
-- Apply per-org title font to headings
-- Update `OrgaSettingsModal` with font picker
+- [x] Define supported font list (system fonts + curated Google Fonts)
+- [x] Implement dynamic font loading for Google Fonts
+- [x] Apply per-org title font to headings via `font-title` utility
+- [x] Update `OrgaSettingsModal` with font picker
 
 ---
 

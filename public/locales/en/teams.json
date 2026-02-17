@@ -32,7 +32,8 @@
     "lightMode": "Light mode",
     "darkMode": "Dark mode",
     "resetColor": "Reset",
-    "teamColorUpdated": "Team colour updated"
+    "teamColorUpdated": "Team colour updated",
+    "settings": "Settings"
   },
   "createRole": {
     "title": "Create a new role",

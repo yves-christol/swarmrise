@@ -32,7 +32,8 @@
     "lightMode": "Світла тема",
     "darkMode": "Темна тема",
     "resetColor": "Скинути",
-    "teamColorUpdated": "Колір команди оновлено"
+    "teamColorUpdated": "Колір команди оновлено",
+    "settings": "Налаштування"
   },
   "createRole": {
     "title": "Створити нову роль",

@@ -32,7 +32,8 @@
     "lightMode": "Mode clair",
     "darkMode": "Mode sombre",
     "resetColor": "Réinitialiser",
-    "teamColorUpdated": "Couleur de l'équipe mise à jour"
+    "teamColorUpdated": "Couleur de l'équipe mise à jour",
+    "settings": "Paramètres"
   },
   "createRole": {
     "title": "Créer un nouveau rôle",

@@ -5,25 +5,12 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { DecisionJournal } from "../DecisionJournal";
 import { CreateRoleModal } from "../CreateRoleModal";
+import { TeamSettingsModal } from "../TeamSettingsModal";
 import { MemberListItem, MemberListItemMember } from "../MemberListItem";
 import { MissionReminder } from "../MissionReminder";
 import { NotFound } from "../NotFound";
 import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
 import { ContactInfo } from "../../utils/contacts";
-
-type RGB = { r: number; g: number; b: number };
-
-const rgbToHex = (rgb: RGB): string => {
-  const toHex = (n: number) => n.toString(16).padStart(2, "0");
-  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
-};
-
-const hexToRgb = (hex: string): RGB => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-    : { r: 0, g: 0, b: 0 };
-};
 
 
 type TeamManageViewProps = {
@@ -111,16 +98,12 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState(false);
-  const [colorLight, setColorLight] = useState<RGB | null>(null);
-  const [colorDark, setColorDark] = useState<RGB | null>(null);
-  const [isEditingColor, setIsEditingColor] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Initialize local state when team loads
   useEffect(() => {
     if (team) {
       setTeamName(team.name);
-      setColorLight(team.colorLight ?? null);
-      setColorDark(team.colorDark ?? null);
     }
   }, [team]);
 
@@ -178,29 +161,6 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
     } catch (error) {
       setSaveMessage({ type: "error", text: error instanceof Error ? error.message : t("manage.failedToUpdate") });
       setTeamName(team.name);
-    } finally {
-      setIsSaving(false);
-      setTimeout(() => setSaveMessage(null), 3000);
-    }
-  };
-
-  const handleSaveColor = async () => {
-    if (!team) return;
-
-    setIsSaving(true);
-    setSaveMessage(null);
-    try {
-      await updateTeam({
-        teamId,
-        colorLight: colorLight ?? null,
-        colorDark: colorDark ?? null,
-      });
-      setIsEditingColor(false);
-      setSaveMessage({ type: "success", text: t("manage.teamColorUpdated") });
-    } catch (error) {
-      setSaveMessage({ type: "error", text: error instanceof Error ? error.message : t("manage.failedToUpdate") });
-      setColorLight(team.colorLight ?? null);
-      setColorDark(team.colorDark ?? null);
     } finally {
       setIsSaving(false);
       setTimeout(() => setSaveMessage(null), 3000);
@@ -277,21 +237,37 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3">
-              {(colorLight || colorDark) && (
-                <span
-                  className="w-5 h-5 rounded-full border border-gray-300 dark:border-gray-600 flex-shrink-0"
-                  style={{ backgroundColor: colorLight ? rgbToHex(colorLight) : colorDark ? rgbToHex(colorDark) : undefined }}
-                />
-              )}
-              <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">
-                {team.name}
-              </h1>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <h1 className="font-swarm text-3xl font-bold text-dark dark:text-light">
+                  {team.name}
+                </h1>
+                <button
+                  onClick={() => setIsEditingName(true)}
+                  className="text-sm text-highlight-hover dark:text-highlight hover:underline"
+                >
+                  {t("manage.edit")}
+                </button>
+              </div>
               <button
-                onClick={() => setIsEditingName(true)}
-                className="text-sm text-highlight-hover dark:text-highlight hover:underline"
+                onClick={() => setIsSettingsOpen(true)}
+                className="
+                  flex items-center gap-2
+                  px-3 py-1.5
+                  text-sm
+                  text-gray-600 dark:text-gray-400
+                  hover:text-dark dark:hover:text-light
+                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  rounded-md
+                  transition-colors duration-75
+                  focus:outline-none focus:ring-2 focus:ring-highlight
+                "
+                aria-label={t("manage.settings")}
               >
-                {t("manage.edit")}
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M8.34 1.804A1 1 0 019.32 1h1.36a1 1 0 01.98.804l.295 1.473c.497.144.971.342 1.416.587l1.25-.834a1 1 0 011.262.125l.962.962a1 1 0 01.125 1.262l-.834 1.25c.245.445.443.919.587 1.416l1.473.295a1 1 0 01.804.98v1.36a1 1 0 01-.804.98l-1.473.295a6.95 6.95 0 01-.587 1.416l.834 1.25a1 1 0 01-.125 1.262l-.962.962a1 1 0 01-1.262.125l-1.25-.834a6.953 6.953 0 01-1.416.587l-.295 1.473a1 1 0 01-.98.804H9.32a1 1 0 01-.98-.804l-.295-1.473a6.957 6.957 0 01-1.416-.587l-1.25.834a1 1 0 01-1.262-.125l-.962-.962a1 1 0 01-.125-1.262l.834-1.25a6.957 6.957 0 01-.587-1.416l-1.473-.295A1 1 0 011 10.68V9.32a1 1 0 01.804-.98l1.473-.295c.144-.497.342-.971.587-1.416l-.834-1.25a1 1 0 01.125-1.262l.962-.962A1 1 0 015.38 3.03l1.25.834a6.957 6.957 0 011.416-.587l.295-1.473zM13 10a3 3 0 11-6 0 3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
+                <span>{t("manage.settings")}</span>
               </button>
             </div>
           )}
@@ -324,135 +300,6 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
             <StatCard value={roles?.length || 0} label={t("manage.rolesCount")} color="purple" />
             <StatCard value={uniqueMembers.length} label={t("manage.membersCount")} color="blue" />
           </div>
-        </section>
-
-        {/* Team Colour */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-swarm text-lg font-semibold text-dark dark:text-light">
-              {t("manage.teamColor")}
-            </h2>
-            {!isEditingColor && (
-              <button
-                onClick={() => setIsEditingColor(true)}
-                className="text-sm text-highlight-hover dark:text-highlight hover:underline"
-              >
-                {t("manage.edit")}
-              </button>
-            )}
-          </div>
-          {isEditingColor ? (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {t("manage.teamColorHint")}
-              </p>
-              <div className="flex gap-4">
-                <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="team-color-light" className="text-xs text-gray-500 dark:text-gray-400">
-                    {t("manage.lightMode")}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      id="team-color-light"
-                      type="color"
-                      value={colorLight ? rgbToHex(colorLight) : "#888888"}
-                      onChange={(e) => setColorLight(hexToRgb(e.target.value))}
-                      disabled={isSaving}
-                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    {colorLight && (
-                      <button
-                        type="button"
-                        onClick={() => setColorLight(null)}
-                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                      >
-                        {t("manage.resetColor")}
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="team-color-dark" className="text-xs text-gray-500 dark:text-gray-400">
-                    {t("manage.darkMode")}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      id="team-color-dark"
-                      type="color"
-                      value={colorDark ? rgbToHex(colorDark) : "#888888"}
-                      onChange={(e) => setColorDark(hexToRgb(e.target.value))}
-                      disabled={isSaving}
-                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    {colorDark && (
-                      <button
-                        type="button"
-                        onClick={() => setColorDark(null)}
-                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                      >
-                        {t("manage.resetColor")}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => void handleSaveColor()}
-                  disabled={isSaving}
-                  className="
-                    px-3 py-1.5 text-sm
-                    bg-highlight hover:bg-highlight-hover
-                    text-dark
-                    rounded-lg
-                    transition-colors
-                    disabled:opacity-50
-                  "
-                >
-                  {isSaving ? "..." : t("manage.save")}
-                </button>
-                <button
-                  onClick={() => {
-                    setColorLight(team.colorLight ?? null);
-                    setColorDark(team.colorDark ?? null);
-                    setIsEditingColor(false);
-                  }}
-                  className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                >
-                  {t("manage.cancel")}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-              {colorLight || colorDark ? (
-                <div className="flex items-center gap-4">
-                  {colorLight && (
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600"
-                        style={{ backgroundColor: rgbToHex(colorLight) }}
-                      />
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{t("manage.lightMode")}</span>
-                    </div>
-                  )}
-                  {colorDark && (
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600"
-                        style={{ backgroundColor: rgbToHex(colorDark) }}
-                      />
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{t("manage.darkMode")}</span>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {t("manage.teamColorHint")}
-                </p>
-              )}
-            </div>
-          )}
         </section>
 
         {/* Team Connections */}
@@ -667,6 +514,11 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
       <CreateRoleModal
         isOpen={isCreateRoleModalOpen}
         onClose={() => setIsCreateRoleModalOpen(false)}
+        teamId={teamId}
+      />
+      <TeamSettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
         teamId={teamId}
       />
     </div>

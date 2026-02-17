@@ -32,7 +32,8 @@
     "lightMode": "淺色模式",
     "darkMode": "深色模式",
     "resetColor": "重置",
-    "teamColorUpdated": "團隊顏色已更新"
+    "teamColorUpdated": "團隊顏色已更新",
+    "settings": "設定"
   },
   "createRole": {
     "title": "建立新角色",

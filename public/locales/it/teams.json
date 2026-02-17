@@ -32,7 +32,8 @@
     "lightMode": "Modalità chiara",
     "darkMode": "Modalità scura",
     "resetColor": "Ripristina",
-    "teamColorUpdated": "Colore della squadra aggiornato"
+    "teamColorUpdated": "Colore della squadra aggiornato",
+    "settings": "Impostazioni"
   },
   "createRole": {
     "title": "Crea un nuovo ruolo",

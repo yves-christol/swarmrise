@@ -416,7 +416,7 @@ export function MemberVisualView({
         @keyframes flowArrowReveal {
           from {
             opacity: 0;
-            stroke-dashoffset: 60;
+            stroke-dashoffset: 500;
           }
           to {
             opacity: 1;
@@ -445,7 +445,7 @@ export function MemberVisualView({
         }
 
         .flow-arrow {
-          stroke-dasharray: 60;
+          stroke-dasharray: 500;
           animation: flowArrowReveal 400ms ease-out both;
         }
 

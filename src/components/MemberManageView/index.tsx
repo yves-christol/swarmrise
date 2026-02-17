@@ -11,6 +11,7 @@ import { type ContactInfo, CONTACT_TYPES, getContactLink, getContactPlaceholderK
 import { LeaveOrgConfirmModal } from "./LeaveOrgConfirmModal";
 import { StatCard } from "./StatCard";
 import { getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
+import { getRoleIconPath } from "../../utils/roleIconDefaults";
 
 type MemberManageViewProps = {
   memberId: Id<"members">;
@@ -268,7 +269,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
     if (!masterRoles.length || !teams) return [];
 
     const teamMap = new Map(teams.map((t) => [t._id, t]));
-    const grouped: { team: { _id: Id<"teams">; name: string }; roles: typeof masterRoles }[] = [];
+    const grouped: { team: { _id: Id<"teams">; name: string; color?: string }; roles: typeof masterRoles }[] = [];
 
     // Group roles by teamId
     const roleGroups = new Map<string, typeof masterRoles>();
@@ -290,7 +291,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
           if (aOrder !== bOrder) return aOrder - bOrder;
           return a.title.localeCompare(b.title);
         });
-        grouped.push({ team: { _id: team._id, name: team.name }, roles: sortedRoles });
+        grouped.push({ team: { _id: team._id, name: team.name, color: team.color }, roles: sortedRoles });
       }
     }
 
@@ -574,20 +575,10 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                     aria-label={`${team.name} ${tTeams("team")}. ${tMembers("clickToViewTeam")}`}
                   >
                     <div className="flex items-center gap-2">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        className="text-gray-400"
-                      >
-                        <circle cx="8" cy="8" r="6" />
-                        <circle cx="8" cy="5" r="1.5" />
-                        <circle cx="5" cy="10" r="1.5" />
-                        <circle cx="11" cy="10" r="1.5" />
-                      </svg>
+                      <span
+                        className="w-3 h-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: team.color || "#9ca3af" }}
+                      />
                       <span className="font-medium text-dark dark:text-light">{team.name}</span>
                       <span className="text-xs text-gray-500 dark:text-gray-400">
                         ({tMembers("roleCount", { count: teamRoles.length })})
@@ -634,12 +625,12 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                             {/* Left: Role info */}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                {role.roleType && (
-                                  <span
-                                    className="w-2 h-2 rounded-full flex-shrink-0"
-                                    style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
+                                <svg width="20" height="20" viewBox="0 0 40 40" className="flex-shrink-0 text-gray-400 dark:text-gray-500">
+                                  <path
+                                    d={getRoleIconPath(role.iconKey, role.roleType)}
+                                    fill="currentColor"
                                   />
-                                )}
+                                </svg>
                                 <span className="font-medium text-dark dark:text-light">
                                   {role.title}
                                 </span>

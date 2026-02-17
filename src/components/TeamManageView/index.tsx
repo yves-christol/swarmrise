@@ -12,6 +12,7 @@ import { NotFound } from "../NotFound";
 import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
 import { ContactInfo } from "../../utils/contacts";
 import { getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
+import { getRoleIconPath } from "../../utils/roleIconDefaults";
 
 
 type TeamManageViewProps = {
@@ -382,14 +383,13 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                       aria-label={t("manage.viewRoleDetails", { title: role.title, type: role.roleType ? `, ${tMembers(`roleTypes.${role.roleType}`)}` : "" })}
                     >
                       <div className="flex items-center gap-3">
-                        {/* Role type badge */}
-                        {role.roleType && (
-                          <span
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) }}
-                            title={tMembers(`roleTypes.${role.roleType}`)}
+                        {/* Role icon */}
+                        <svg width="20" height="20" viewBox="0 0 40 40" className="flex-shrink-0 text-gray-400 dark:text-gray-500">
+                          <path
+                            d={getRoleIconPath(role.iconKey, role.roleType)}
+                            fill="currentColor"
                           />
-                        )}
+                        </svg>
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-dark dark:text-light">

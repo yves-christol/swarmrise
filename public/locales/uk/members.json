@@ -86,6 +86,7 @@
     "textRoles": "Ролі:",
     "textTeams": "Команди:",
     "textRoleList": "Список ролей:",
-    "manageAccount": "Керувати обліковим записом"
+    "manageAccount": "Керувати обліковим записом",
+    "closeContactModal": "Закрити (Esc/C)"
   }
 }

@@ -1,10 +1,8 @@
 import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "convex/react";
-import { useClerk } from "@clerk/clerk-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import { useSelectedOrga } from "../../tools/orgaStore";
 import { RoleLink } from "./RoleLink";
 import { TeamNode } from "./TeamNode";
 import { ContactInfo } from "./ContactInfo";
@@ -42,10 +40,6 @@ export function MemberVisualView({
     setSvgElement(node);
   }, []);
   const { viewport, handlers: viewportHandlers } = useViewport(svgElement);
-  const { myMember } = useSelectedOrga();
-  const clerk = useClerk();
-  const isOwnPage = myMember?._id === memberId;
-
   // Fetch member data
   const member = useQuery(api.members.functions.getMemberById, { memberId });
 
@@ -83,7 +77,11 @@ export function MemberVisualView({
 
       switch (e.key) {
         case "Escape":
-          onZoomOut();
+          if (showContactInfo) {
+            setShowContactInfo(false);
+          } else {
+            onZoomOut();
+          }
           break;
         case "c":
         case "C":
@@ -93,7 +91,7 @@ export function MemberVisualView({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onZoomOut]);
+  }, [onZoomOut, showContactInfo]);
 
   // Filter out replica roles (linked roles) - only show master roles
   const masterRoles = useMemo(() => {
@@ -352,22 +350,26 @@ export function MemberVisualView({
     return (
       <div ref={containerRef} className="absolute inset-0 bg-light dark:bg-dark overflow-hidden">
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
-          {/* Member avatar */}
-          <div className="relative">
+          {/* Member avatar - clickable to show contact info */}
+          <button
+            className="relative cursor-pointer bg-transparent border-none p-0 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#a2dbed] focus-visible:ring-offset-2 focus-visible:ring-offset-light dark:focus-visible:ring-offset-dark"
+            onClick={() => setShowContactInfo((prev) => !prev)}
+            aria-label={t("viewContactInfo")}
+          >
             {member.pictureURL ? (
               <img
                 src={member.pictureURL}
                 alt={`${member.firstname} ${member.surname}`}
-                className="w-24 h-24 rounded-full object-cover border-3 border-[#a2dbed]"
+                className="w-24 h-24 rounded-full object-cover border-3 border-[#a2dbed] hover:shadow-lg transition-shadow"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-slate-200 dark:bg-gray-800 border-3 border-[#a2dbed]">
+              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-slate-200 dark:bg-gray-800 border-3 border-[#a2dbed] hover:shadow-lg transition-shadow">
                 <span className="font-swarm text-2xl font-semibold text-dark dark:text-light">
                   {member.firstname[0] || ""}{member.surname[0] || ""}
                 </span>
               </div>
             )}
-          </div>
+          </button>
           <h2 className="font-swarm text-xl font-semibold text-dark dark:text-light">
             {member.firstname} {member.surname}
           </h2>
@@ -385,7 +387,7 @@ export function MemberVisualView({
           </span>
         </div>
 
-        {showContactInfo && <ContactInfo member={member} />}
+        {showContactInfo && <ContactInfo member={member} onClose={() => setShowContactInfo(false)} />}
       </div>
     );
   }
@@ -480,9 +482,9 @@ export function MemberVisualView({
         </span>
       </div>
 
-      {/* Contact info */}
+      {/* Contact info modal */}
       {showContactInfo && (
-        <ContactInfo member={member} />
+        <ContactInfo member={member} onClose={() => setShowContactInfo(false)} />
       )}
 
       {/* SVG Diagram */}
@@ -618,18 +620,18 @@ export function MemberVisualView({
         {/* === MEMBER AVATAR (left column) === */}
         <g
           className="flow-avatar"
-          role={isOwnPage ? "button" : undefined}
-          tabIndex={isOwnPage ? 0 : undefined}
-          aria-label={isOwnPage ? t("diagram.manageAccount") : undefined}
-          style={{ cursor: isOwnPage ? "pointer" : "default", outline: "none" }}
-          onClick={isOwnPage ? () => clerk.openUserProfile() : undefined}
-          onKeyDown={isOwnPage ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); clerk.openUserProfile(); } } : undefined}
-          onMouseEnter={isOwnPage ? () => setIsAvatarHovered(true) : undefined}
-          onMouseLeave={isOwnPage ? () => setIsAvatarHovered(false) : undefined}
-          onFocus={isOwnPage ? () => setIsAvatarHovered(true) : undefined}
-          onBlur={isOwnPage ? () => setIsAvatarHovered(false) : undefined}
+          role="button"
+          tabIndex={0}
+          aria-label={t("viewContactInfo")}
+          style={{ cursor: "pointer", outline: "none" }}
+          onClick={() => setShowContactInfo((prev) => !prev)}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setShowContactInfo((prev) => !prev); } }}
+          onMouseEnter={() => setIsAvatarHovered(true)}
+          onMouseLeave={() => setIsAvatarHovered(false)}
+          onFocus={() => setIsAvatarHovered(true)}
+          onBlur={() => setIsAvatarHovered(false)}
         >
-          {isOwnPage && <title>{t("diagram.manageAccount")}</title>}
+          <title>{t("viewContactInfo")}</title>
 
           {/* Hover glow ring */}
           {isAvatarHovered && (

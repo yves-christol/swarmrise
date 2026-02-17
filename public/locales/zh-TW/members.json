@@ -86,6 +86,7 @@
     "textRoles": "角色：",
     "textTeams": "團隊：",
     "textRoleList": "角色列表：",
-    "manageAccount": "管理帳戶"
+    "manageAccount": "管理帳戶",
+    "closeContactModal": "關閉 (Esc/C)"
   }
 }

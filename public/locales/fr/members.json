@@ -86,6 +86,7 @@
     "textRoles": "Rôles :",
     "textTeams": "Équipes :",
     "textRoleList": "Liste des rôles :",
-    "manageAccount": "Gérer le compte"
+    "manageAccount": "Gérer le compte",
+    "closeContactModal": "Fermer (Esc/C)"
   }
 }

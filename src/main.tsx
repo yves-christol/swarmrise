@@ -14,7 +14,6 @@ import { OrgCustomisationProvider } from "./contexts/OrgCustomisationProvider.ts
 // Lazy-loaded route components
 const App = lazy(() => import("./components/App/index.tsx"));
 const ChatPanel = lazy(() => import("./components/Chat/ChatPanel/index.tsx").then(m => ({ default: m.ChatPanel })));
-const RawDataPage = lazy(() => import("./pages/RawData/index.tsx").then(m => ({ default: m.RawDataPage })));
 const PrinciplesPage = lazy(() => import("./pages/Principles/index.tsx").then(m => ({ default: m.PrinciplesPage })));
 const GlossaryPage = lazy(() => import("./pages/Glossary/index.tsx").then(m => ({ default: m.GlossaryPage })));
 const TermsPage = lazy(() => import("./pages/Terms/index.tsx").then(m => ({ default: m.TermsPage })));
@@ -36,7 +35,6 @@ createRoot(document.getElementById("root")!).render(
               <Routes>
                 <Route path="/" element={<App />} />
                 {/* Static pages */}
-                <Route path="/rawdata" element={<RawDataPage />} />
                 <Route path="/principles" element={<PrinciplesPage />} />
                 <Route path="/glossary" element={<GlossaryPage />} />
                 <Route path="/terms" element={<TermsPage />} />

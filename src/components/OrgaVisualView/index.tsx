@@ -5,7 +5,7 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useFocus } from "../../tools/orgaStore";
 import { useLayoutEngine } from "./useLayoutEngine";
-import { useViewport } from "./useViewport";
+import { useViewport } from "../shared/useViewport";
 import { TeamNode } from "./TeamNode";
 import { ConnectionLine } from "./ConnectionLine";
 import { ZoomControls } from "./ZoomControls";

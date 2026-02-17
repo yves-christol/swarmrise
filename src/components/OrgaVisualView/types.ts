@@ -1,7 +1,4 @@
 import { Id } from "../../../convex/_generated/dataModel";
-import { ViewportState } from "../shared/visualTypes";
-
-export type { ViewportState };
 
 export type TeamWithRoleCount = {
   _id: Id<"teams">;

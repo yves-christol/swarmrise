@@ -5,12 +5,14 @@ const MIN_SCALE = 0.25;
 const MAX_SCALE = 4;
 const ZOOM_FACTOR = 1.1;
 
+// Helper: compute distance between two touch points
 function getTouchDistance(t1: Touch, t2: Touch): number {
   const dx = t1.clientX - t2.clientX;
   const dy = t1.clientY - t2.clientY;
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+// Helper: compute midpoint between two touch points relative to an element
 function getTouchMidpoint(t1: Touch, t2: Touch, rect: DOMRect): { x: number; y: number } {
   return {
     x: (t1.clientX + t2.clientX) / 2 - rect.left,
@@ -33,6 +35,7 @@ export function useViewport(svgElement: SVGSVGElement | null) {
   const panStartRef = useRef({ x: 0, y: 0 });
   const viewportRef = useRef(viewport);
 
+  // Touch gesture state (refs to avoid re-renders during gesture)
   const touchStateRef = useRef<{
     isPinching: boolean;
     isPanning: boolean;
@@ -55,6 +58,7 @@ export function useViewport(svgElement: SVGSVGElement | null) {
     lastTouchY: 0,
   });
 
+  // Keep viewportRef in sync
   useEffect(() => {
     viewportRef.current = viewport;
   }, [viewport]);
@@ -72,6 +76,7 @@ export function useViewport(svgElement: SVGSVGElement | null) {
         Math.max(MIN_SCALE, currentViewport.scale * zoomFactor)
       );
 
+      // Zoom toward cursor position
       const rect = svgElement.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
@@ -83,10 +88,13 @@ export function useViewport(svgElement: SVGSVGElement | null) {
       }));
     };
 
+    // --- Touch handlers for pinch-to-zoom and single-finger pan ---
+
     const handleTouchStart = (e: TouchEvent) => {
       const ts = touchStateRef.current;
 
       if (e.touches.length === 2) {
+        // Two-finger pinch-to-zoom start
         e.preventDefault();
         const rect = svgElement.getBoundingClientRect();
         const t1 = e.touches[0];
@@ -101,9 +109,11 @@ export function useViewport(svgElement: SVGSVGElement | null) {
         ts.initialOffsetX = vp.offsetX;
         ts.initialOffsetY = vp.offsetY;
       } else if (e.touches.length === 1) {
+        // Single-finger pan start (only on SVG background, not on nodes)
         const target = e.target as Element;
         const isSvgBackground = target === svgElement || target.tagName === "svg";
         if (isSvgBackground) {
+          // Don't preventDefault here -- allow tap/click events to propagate
           const vp = viewportRef.current;
           ts.isPanning = true;
           ts.isPinching = false;
@@ -120,6 +130,7 @@ export function useViewport(svgElement: SVGSVGElement | null) {
       const ts = touchStateRef.current;
 
       if (ts.isPinching && e.touches.length === 2) {
+        // Pinch-to-zoom: scale toward the midpoint between the two fingers
         e.preventDefault();
         const rect = svgElement.getBoundingClientRect();
         const t1 = e.touches[0];
@@ -132,7 +143,11 @@ export function useViewport(svgElement: SVGSVGElement | null) {
           Math.max(MIN_SCALE, ts.initialScale * scaleFactor)
         );
 
+        // Current midpoint
         const midpoint = getTouchMidpoint(t1, t2, rect);
+
+        // Zoom toward the midpoint: adjust offset so the graph point under
+        // the initial midpoint stays under the current midpoint
         const scaleRatio = newScale / ts.initialScale;
         const newOffsetX = midpoint.x - (ts.initialMidpoint.x - ts.initialOffsetX) * scaleRatio;
         const newOffsetY = midpoint.y - (ts.initialMidpoint.y - ts.initialOffsetY) * scaleRatio;
@@ -143,6 +158,7 @@ export function useViewport(svgElement: SVGSVGElement | null) {
           offsetY: newOffsetY,
         });
       } else if (ts.isPanning && e.touches.length === 1) {
+        // Single-finger pan
         e.preventDefault();
         const touch = e.touches[0];
         const dx = touch.clientX - ts.lastTouchX;
@@ -168,6 +184,7 @@ export function useViewport(svgElement: SVGSVGElement | null) {
         ts.isPanning = false;
         setIsPanning(false);
       }
+      // If transitioning from pinch (2 fingers) to single finger, start panning
       if (e.touches.length === 1 && !ts.isPanning) {
         const vp = viewportRef.current;
         ts.isPanning = true;
@@ -195,6 +212,7 @@ export function useViewport(svgElement: SVGSVGElement | null) {
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<SVGSVGElement>) => {
+      // Only pan if clicking on the SVG background (not on nodes)
       if (e.target === svgElement || (e.target as Element).tagName === "svg") {
         setIsPanning(true);
         panStartRef.current = {
@@ -227,10 +245,34 @@ export function useViewport(svgElement: SVGSVGElement | null) {
     setIsPanning(false);
   }, []);
 
+  const zoomIn = useCallback(() => {
+    setViewport((prev) => ({
+      ...prev,
+      scale: Math.min(MAX_SCALE, prev.scale * 1.2),
+    }));
+  }, []);
+
+  const zoomOut = useCallback(() => {
+    setViewport((prev) => ({
+      ...prev,
+      scale: Math.max(MIN_SCALE, prev.scale / 1.2),
+    }));
+  }, []);
+
   const resetView = useCallback(() => {
     setViewport({ scale: 1, offsetX: 0, offsetY: 0 });
   }, []);
 
+  // Center the viewport on a specific point in graph coordinates
+  const centerOnPoint = useCallback((graphX: number, graphY: number, containerWidth: number, containerHeight: number) => {
+    setViewport((prev) => ({
+      ...prev,
+      offsetX: containerWidth / 2 - graphX * prev.scale,
+      offsetY: containerHeight / 2 - graphY * prev.scale,
+    }));
+  }, []);
+
+  // Memoize handlers and controls to prevent unnecessary re-renders
   const handlers = useMemo(() => ({
     onMouseDown: handleMouseDown,
     onMouseMove: handleMouseMove,
@@ -238,10 +280,17 @@ export function useViewport(svgElement: SVGSVGElement | null) {
     onMouseLeave: handleMouseLeave,
   }), [handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave]);
 
+  const controls = useMemo(() => ({
+    zoomIn,
+    zoomOut,
+    resetView,
+    centerOnPoint,
+  }), [zoomIn, zoomOut, resetView, centerOnPoint]);
+
   return {
     viewport,
     isPanning,
     handlers,
-    resetView,
+    controls,
   };
 }

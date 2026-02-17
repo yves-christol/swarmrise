@@ -1,7 +1,6 @@
 import { QueryCtx, MutationCtx } from "../_generated/server";
 import { Id } from "../_generated/dataModel";
-import { getMemberInOrga } from "../utils";
-import { memberHasTeamAccess } from "../chat/access";
+import { getMemberInOrga, memberHasTeamAccess } from "../utils";
 import type { KanbanBoard } from ".";
 import type { Member } from "../members";
 

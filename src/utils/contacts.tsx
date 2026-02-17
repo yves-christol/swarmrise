@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /**
  * Contact utilities for displaying and linking contact information
  */
@@ -88,6 +89,33 @@ function sanitizeUrl(url: string): string | null {
     return trimmed;
   }
   return null;
+}
+
+export const CONTACT_TYPES = [
+  "LinkedIn",
+  "Email",
+  "Mobile",
+  "Website",
+  "Twitter",
+  "Whatsapp",
+  "Facebook",
+  "Instagram",
+  "Address",
+] as const;
+
+export function getContactPlaceholderKey(type: string) {
+  const keyMap = {
+    LinkedIn: "contactPlaceholders.linkedin",
+    Email: "contactPlaceholders.email",
+    Mobile: "contactPlaceholders.mobile",
+    Website: "contactPlaceholders.website",
+    Twitter: "contactPlaceholders.twitter",
+    Whatsapp: "contactPlaceholders.whatsapp",
+    Facebook: "contactPlaceholders.facebook",
+    Instagram: "contactPlaceholders.instagram",
+    Address: "contactPlaceholders.address",
+  } as const;
+  return (keyMap[type as keyof typeof keyMap] ?? "contactPlaceholders.default") as any;
 }
 
 export function getContactLink(type: string, value: string): string | null {

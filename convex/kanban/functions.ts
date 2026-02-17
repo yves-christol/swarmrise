@@ -2,8 +2,7 @@ import { query, mutation, internalMutation } from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { kanbanBoardValidator, kanbanColumnValidator, kanbanCardValidator, DEFAULT_COLUMNS } from ".";
-import { getMemberInOrga } from "../utils";
-import { memberHasTeamAccess } from "../chat/access";
+import { getMemberInOrga, memberHasTeamAccess } from "../utils";
 import { requireBoardAccess } from "./access";
 
 // ============================================================

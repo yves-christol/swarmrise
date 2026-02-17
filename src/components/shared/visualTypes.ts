@@ -1,4 +1,7 @@
 import { Id } from "../../../convex/_generated/dataModel";
+import type { ContactInfo } from "../../utils/contacts";
+
+export type { ContactInfo };
 
 // Shared role data type used across visual views
 export type RoleData = {
@@ -36,12 +39,6 @@ export type MemberData = {
   pictureURL?: string;
   contactInfos: ContactInfo[];
   roleIds: Id<"roles">[];
-};
-
-// Contact info type
-export type ContactInfo = {
-  type: "LinkedIn" | "Email" | "Mobile" | "Website" | "Twitter" | "Whatsapp" | "Facebook" | "Instagram" | "Address";
-  value: string;
 };
 
 // Viewport state for pan/zoom interactions

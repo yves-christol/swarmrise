@@ -1,8 +1,10 @@
 import { QueryCtx, MutationCtx } from "../_generated/server";
 import { Id } from "../_generated/dataModel";
-import { getMemberInOrga } from "../utils";
+import { getMemberInOrga, memberHasTeamAccess } from "../utils";
 import type { Channel } from ".";
 import type { Member } from "../members";
+
+export { memberHasTeamAccess };
 
 /**
  * Verify that the authenticated user has access to a channel.
@@ -31,21 +33,6 @@ export async function requireChannelAccess(
   }
 
   return { channel, member };
-}
-
-/**
- * Check if a member has at least one role in a team.
- */
-export async function memberHasTeamAccess(
-  ctx: QueryCtx | MutationCtx,
-  member: Member,
-  teamId: Id<"teams">,
-): Promise<boolean> {
-  for (const roleId of member.roleIds) {
-    const role = await ctx.db.get(roleId);
-    if (role && role.teamId === teamId) return true;
-  }
-  return false;
 }
 
 /**

@@ -6,58 +6,10 @@ import { api } from "../../../convex/_generated/api";
 import { useOrgaStore } from "../../tools/orgaStore";
 import { Id } from "../../../convex/_generated/dataModel";
 import { EmailDomainsInput } from "../EmailDomainsInput";
+import { SpinnerIcon, CheckIcon, ErrorIcon } from "../Icons";
+import { COLOR_PRESETS } from "../../utils/colorPresets";
 
 type ColorScheme = { primary: string; secondary: string };
-
-// Color presets
-const COLOR_PRESETS: { id: string; primary: string; secondary: string }[] = [
-  // Gold/Blue (swarmrise default)
-  { id: "gold-blue", primary: "#eac840", secondary: "#a2dbed" },
-  // Forest Green/Stone Gray
-  { id: "green-gray", primary: "#228b22", secondary: "#a9a9a9" },
-  // Ocean Blue/Warm Gold
-  { id: "blue-gold", primary: "#1e90ff", secondary: "#ffc125" },
-  // Royal Purple/Sky Cyan
-  { id: "purple-cyan", primary: "#8a2be2", secondary: "#00ced1" },
-  // Coral Red/Cool Gray
-  { id: "red-gray", primary: "#ff6347", secondary: "#708090" },
-];
-
-const SpinnerIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={`animate-spin ${className}`}
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
-    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-    <path
-      className="opacity-75"
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-    />
-  </svg>
-);
-
-const ErrorIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-    <path
-      fillRule="evenodd"
-      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
-
-const CheckIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-    <path
-      fillRule="evenodd"
-      d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
 
 const ChevronDownIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

@@ -2,6 +2,7 @@ import { QueryCtx, MutationCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 import { Infer } from "convex/values";
 import { contactInfo } from "./users";
+import type { Member } from "./members";
 
 /**
  * Get the authenticated user's email or throw an error
@@ -172,6 +173,21 @@ export async function getRoleAndTeamInfo(
   }
   
   throw new Error("Could not determine role and team information");
+}
+
+/**
+ * Check if a member has at least one role in a team.
+ */
+export async function memberHasTeamAccess(
+  ctx: QueryCtx | MutationCtx,
+  member: Member,
+  teamId: Id<"teams">,
+): Promise<boolean> {
+  for (const roleId of member.roleIds) {
+    const role = await ctx.db.get(roleId);
+    if (role && role.teamId === teamId) return true;
+  }
+  return false;
 }
 
 /**

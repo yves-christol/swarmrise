@@ -7,7 +7,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { useSelectedOrga, useFocus } from "../../tools/orgaStore";
 import { useOrgaStore } from "../../tools/orgaStore";
 import { NotFound } from "../NotFound";
-import { type ContactInfo, CONTACT_TYPES, getContactLink, getContactPlaceholderKey } from "./contactUtils";
+import { type ContactInfo, CONTACT_TYPES, getContactLink, getContactPlaceholderKey } from "../../utils/contacts";
 import { LeaveOrgConfirmModal } from "./LeaveOrgConfirmModal";
 import { StatCard } from "./StatCard";
 

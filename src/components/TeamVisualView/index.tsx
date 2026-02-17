@@ -9,6 +9,7 @@ import { RoleNode } from "./RoleNode";
 import { NotFound } from "../NotFound";
 import { useViewport } from "../shared/useViewport";
 import type { RolePosition } from "./types";
+import type { RoleData } from "../shared/visualTypes";
 
 type TeamVisualViewProps = {
   teamId: Id<"teams">;
@@ -513,21 +514,6 @@ function TeamNameText({
     </g>
   );
 }
-
-// Role type definition for internal use
-type RoleData = {
-  _id: Id<"roles">;
-  _creationTime: number;
-  orgaId: Id<"orgas">;
-  teamId: Id<"teams">;
-  parentTeamId?: Id<"teams">;
-  linkedRoleId?: Id<"roles">; // For leader roles: points to source role in parent team (double role pattern)
-  title: string;
-  roleType?: "leader" | "secretary" | "referee";
-  mission: string;
-  duties: string[];
-  memberId: Id<"members">;
-};
 
 // Calculate role positions - all roles on a single outer ring (flat organization)
 function calculateRolePlacement(

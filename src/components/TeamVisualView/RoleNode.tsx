@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getRoleStroke, getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
+import { getRoleStroke } from "../../utils/roleTypeColors";
 import { getRoleIconPath } from "../../utils/roleIconDefaults";
 import type { RolePosition } from "./types";
 
@@ -100,44 +100,6 @@ export const RoleNode = memo(function RoleNode({
           opacity={0.6}
         />
       </g>
-
-      {/* Role type badge (for special roles) */}
-      {role.roleType && (
-        <g>
-          <circle
-            cx={x + radius * 0.7}
-            cy={y - radius * 0.7}
-            r={10}
-            fill={getRoleTypeBadgeColor(role.roleType)}
-          />
-          {/* Star icon for leader */}
-          {role.roleType === "leader" && (
-            <g transform={`translate(${x + radius * 0.7}, ${y - radius * 0.7}) scale(0.5)`}>
-              <path
-                d="M0,-8 L1.8,-2.5 L7.6,-2.5 L2.9,1.5 L4.7,7 L0,3.5 L-4.7,7 L-2.9,1.5 L-7.6,-2.5 L-1.8,-2.5 Z"
-                fill="white"
-              />
-            </g>
-          )}
-          {/* Feather/quill icon for secretary */}
-          {role.roleType === "secretary" && (
-            <g transform={`translate(${x + radius * 0.7}, ${y - radius * 0.7}) scale(0.45)`}>
-              <path
-                d="M-3,10 L-3,12 L5,12 L5,10 L-3,10 M5,-12 C5,-12 -7,0 -5,8 L-3,8 C-3,8 3,-4 5,-12 M-2,6 L-4,8 L-3,8 C-2.5,7.5 -2,7 -2,6"
-                fill="white"
-              />
-            </g>
-          )}
-          {/* Gavel/mallet icon for referee */}
-          {role.roleType === "referee" && (
-            <g transform={`translate(${x + radius * 0.7}, ${y - radius * 0.7}) scale(0.4)`}>
-              <rect x="-10" y="8" width="14" height="3" rx="1" fill="white" />
-              <rect x="-8" y="-8" width="16" height="6" rx="2" fill="white" transform="rotate(-45)" />
-              <rect x="-2" y="-2" width="4" height="10" rx="1" fill="white" transform="rotate(-45)" />
-            </g>
-          )}
-        </g>
-      )}
 
       {/* Linked role badge (for roles synced from parent team - double role pattern) */}
       {role.linkedRoleId && (

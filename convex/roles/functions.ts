@@ -51,21 +51,7 @@ export const listRolesInTeam = query({
   args: {
     teamId: v.id("teams"),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("roles"),
-      _creationTime: v.number(),
-      orgaId: v.id("orgas"),
-      teamId: v.id("teams"),
-      parentTeamId: v.optional(v.id("teams")),
-      linkedRoleId: v.optional(v.id("roles")),
-      title: v.string(),
-      roleType: v.optional(v.union(v.literal("leader"), v.literal("secretary"), v.literal("referee"))),
-      mission: v.string(),
-      duties: v.array(v.string()),
-      memberId: v.id("members"),
-    })
-  ),
+  returns: v.array(roleValidator),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
     await requireAuthAndMembership(ctx, orgaId);

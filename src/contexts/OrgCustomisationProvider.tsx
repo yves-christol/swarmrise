@@ -47,5 +47,5 @@ export function OrgCustomisationProvider({ children }: { children: ReactNode }) 
     return Object.keys(vars).length > 0 ? vars : undefined;
   }, [selectedOrga, resolvedTheme]);
 
-  return <div style={style}>{children}</div>;
+  return <div className="contents" style={style}>{children}</div>;
 }

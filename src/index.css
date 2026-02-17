@@ -98,9 +98,8 @@
 }
 
 :root.dark h1, :root.dark h2, :root.dark h3,
-:root.dark h4, :root.dark h5, :root.dark h6, :root.dark b {
+:root.dark h4, :root.dark h5, :root.dark h6 {
   font-family: var(--org-title-font, Arial, Helvetica, sans-serif);
-  font-weight: 400;
 }
 
 /* Light mode (class-based for manual override) */
@@ -117,9 +116,8 @@
 }
 
 :root.light h1, :root.light h2, :root.light h3,
-:root.light h4, :root.light h5, :root.light h6, :root.light b {
+:root.light h4, :root.light h5, :root.light h6 {
   font-family: var(--org-title-font, Arial, Helvetica, sans-serif);
-  font-weight: 400;
 }
 
 /* Smooth theme transitions */

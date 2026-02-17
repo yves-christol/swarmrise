@@ -101,16 +101,16 @@ export function MemberVisualView({
 
   // Build a map from master role ID -> child team info and roleType from replica
   const masterToChildTeam = useMemo(() => {
-    if (!roles || !teams) return new Map<string, { _id: Id<"teams">; name: string; roleType?: "leader" | "secretary" | "referee" }>();
+    if (!roles || !teams) return new Map<string, { _id: Id<"teams">; name: string; color?: string; roleType?: "leader" | "secretary" | "referee" }>();
 
     const teamMap = new Map(teams.map((t) => [t._id, t]));
-    const result = new Map<string, { _id: Id<"teams">; name: string; roleType?: "leader" | "secretary" | "referee" }>();
+    const result = new Map<string, { _id: Id<"teams">; name: string; color?: string; roleType?: "leader" | "secretary" | "referee" }>();
 
     for (const role of roles) {
       if (role.linkedRoleId) {
         const childTeam = teamMap.get(role.teamId);
         if (childTeam) {
-          result.set(role.linkedRoleId, { _id: childTeam._id, name: childTeam.name, roleType: role.roleType });
+          result.set(role.linkedRoleId, { _id: childTeam._id, name: childTeam.name, color: childTeam.color, roleType: role.roleType });
         }
       }
     }
@@ -158,7 +158,7 @@ export function MemberVisualView({
     }
 
     // Collect all unique teams (parent teams where roles live + child teams for master roles leading child teams)
-    const allTeamNodes = new Map<string, { team: { _id: Id<"teams">; _creationTime: number; orgaId: Id<"orgas">; name: string }; roles: RoleLinkPosition[] }>();
+    const allTeamNodes = new Map<string, { team: { _id: Id<"teams">; _creationTime: number; orgaId: Id<"orgas">; name: string; color?: string }; roles: RoleLinkPosition[] }>();
 
     // Calculate total height needed for all role groups
     let totalRolesHeight = 0;
@@ -195,7 +195,7 @@ export function MemberVisualView({
 
       // Create the parent team node position
       const parentTeamNode: TeamNodePosition = {
-        team: { _id: group.team._id, _creationTime: group.team._creationTime, orgaId: group.team.orgaId, name: group.team.name },
+        team: { _id: group.team._id, _creationTime: group.team._creationTime, orgaId: group.team.orgaId, name: group.team.name, color: group.team.color },
         x: teamX,
         y: groupCenterY,
         radius: TEAM_RADIUS,
@@ -241,7 +241,7 @@ export function MemberVisualView({
         if (childTeam && !allTeamNodes.has(childTeam._id)) {
           // Position child team slightly below the parent team, offset vertically
           const childTeamNode: TeamNodePosition = {
-            team: { _id: childTeam._id, _creationTime: 0, orgaId: "" as Id<"orgas">, name: childTeam.name },
+            team: { _id: childTeam._id, _creationTime: 0, orgaId: "" as Id<"orgas">, name: childTeam.name, color: childTeam.color },
             x: teamX,
             y: roleY + TEAM_RADIUS + ROLE_VERTICAL_GAP,
             radius: TEAM_RADIUS,

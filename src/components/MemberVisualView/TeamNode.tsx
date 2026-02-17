@@ -17,8 +17,13 @@ export const TeamNode = memo(function TeamNode({
   const { t } = useTranslation("teams");
   const { team, x, y, radius } = position;
 
-  // Resolve team colour
-  const teamFill = team.color ?? "var(--diagram-node-fill)";
+  // Resolve team colour – same pattern as OrgaVisualView/TeamNode:
+  // fill at 20 % opacity, stroke at full colour
+  const teamColorHex = team.color ?? null;
+  const fillColor = teamColorHex
+    ? teamColorHex + "33"
+    : "var(--diagram-node-fill)";
+  const defaultStroke = teamColorHex ?? "var(--diagram-node-stroke)";
 
   const handleClick = () => {
     onNavigate?.();
@@ -56,11 +61,13 @@ export const TeamNode = memo(function TeamNode({
           cy={y}
           r={radius + 3}
           fill="none"
-          stroke="#a2dbed"
+          stroke={teamColorHex ?? "#a2dbed"}
           strokeWidth={1}
           opacity={0.5}
           style={{
-            filter: "drop-shadow(0 0 6px rgba(162, 219, 237, 0.5))",
+            filter: teamColorHex
+              ? `drop-shadow(0 0 6px ${teamColorHex}80)`
+              : "drop-shadow(0 0 6px rgba(162, 219, 237, 0.5))",
           }}
         />
       )}
@@ -70,11 +77,11 @@ export const TeamNode = memo(function TeamNode({
         cx={x}
         cy={y}
         r={radius}
-        fill={teamFill}
-        stroke={isHovered ? "#a2dbed" : "var(--diagram-node-stroke)"}
+        fill={fillColor}
+        stroke={isHovered ? (teamColorHex ?? "#a2dbed") : defaultStroke}
         strokeWidth={2}
         style={{
-          transition: "stroke 150ms ease-out",
+          transition: "fill 150ms ease-out, stroke 150ms ease-out",
           filter: isHovered ? "drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2))" : "none",
         }}
       />

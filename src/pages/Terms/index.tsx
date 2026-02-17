@@ -11,7 +11,7 @@ export const TermsPage = () => {
   const lastUpdated = "February 1, 2026";
 
   return (
-    <>
+    <div className="swarmrise-page">
       <Header />
       <FloatingBackButton />
       <main className="p-8 flex flex-col gap-12 max-w-3xl mx-auto">
@@ -210,7 +210,7 @@ export const TermsPage = () => {
       </main>
 
       <LegalFooter />
-    </>
+    </div>
   );
 };
 

@@ -12,7 +12,7 @@ export const GlossaryPage = () => {
   const glossary = useGlossary();
 
   return (
-    <>
+    <div className="swarmrise-page">
       <Header />
       <FloatingBackButton />
       <main className="p-8 flex flex-col gap-16 max-w-3xl mx-auto">
@@ -40,6 +40,6 @@ export const GlossaryPage = () => {
       </main>
 
       <LegalFooter />
-    </>
+    </div>
   );
 };

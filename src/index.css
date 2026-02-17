@@ -161,6 +161,15 @@ body {
   --diagram-golden-bee: var(--org-highlight-color, #EAC840); /* golden-bee dark mode */
 }
 
+/* Swarmrise static pages: reset org customisation to brand defaults.
+   These pages (glossary, terms, privacy, principles) represent the Swarmrise
+   platform itself and must not inherit org-level title fonts or highlight colours. */
+.swarmrise-page {
+  --org-highlight-color: #eac840;
+  --org-highlight-hover: #d4af37;
+  --org-title-font: 'Montserrat Alternates', sans-serif;
+}
+
 /* Principles page animations */
 @keyframes fadeInUp {
   from {

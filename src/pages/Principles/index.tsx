@@ -115,7 +115,7 @@ export const PrinciplesPage = () => {
   const sections = useSections();
 
   return (
-    <>
+    <div className="swarmrise-page">
       <Header />
       <FloatingBackButton />
       <main className="p-8 flex flex-col gap-16 max-w-3xl mx-auto">
@@ -152,6 +152,6 @@ export const PrinciplesPage = () => {
       </main>
 
       <LegalFooter />
-    </>
+    </div>
   );
 };

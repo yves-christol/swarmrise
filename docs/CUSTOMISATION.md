@@ -8,7 +8,11 @@ Single source of truth for all customisation mechanics in Swarmrise.
 
 Swarmrise should be a canvas, not a billboard. When an organisation configures Swarmrise, the platform's own identity should gracefully recede to let the organisation's identity shine through. Customisation is not vanity -- it is a strategic lever for adoption. An organisation that sees its own logo, its own colours, and its own structure reflected back at it will invest emotionally and practically in using the platform.
 
-There is one exception: the word **"swarmrise"** itself. Wherever the platform name appears, it is always rendered in the Montserrat Alternates font (`font-swarm`). This is the only element that retains Swarmrise's own brand identity. Everything else -- titles, labels, colours, backgrounds -- belongs to the organisation.
+There are two exceptions:
+
+1. **The word "swarmrise"** itself. Wherever the platform name appears, it is always rendered in the Montserrat Alternates font (`font-swarm`). This is the only element within org-scoped pages that retains Swarmrise's own brand identity. Everything else -- titles, labels, colours, backgrounds -- belongs to the organisation.
+
+2. **Swarmrise platform pages** (glossary, terms of service, privacy policy, principles). These pages represent the Swarmrise platform itself, not any particular organisation. They must always use the Swarmrise brand identity: Montserrat Alternates for titles and bee gold (`#eac840` / `#d4af37`) for highlight colours. Org customisation must not leak into these pages, even when an org is currently selected. This is enforced via the `.swarmrise-page` CSS class (see Section 3.7).
 
 ---
 
@@ -370,6 +374,27 @@ const icon = role.iconKey ? iconDict[role.iconKey] : iconDict["rond"];
 
 The icon inherits its colour from the SVG context (`fill` or `currentColor`), so it automatically adapts to the theme.
 
+### 3.7 Swarmrise Platform Pages
+
+Swarmrise has several static pages that represent the platform itself rather than any organisation: `/principles`, `/glossary`, `/terms`, `/privacy`. These pages must **not** inherit org-level customisation (title font, highlight colour), even when an org is currently selected.
+
+**Mechanism:** Each static page wraps its content in a `<div className="swarmrise-page">`. The `.swarmrise-page` CSS class resets the org CSS custom properties to Swarmrise brand defaults:
+
+```css
+.swarmrise-page {
+  --org-highlight-color: #eac840;
+  --org-highlight-hover: #d4af37;
+  --org-title-font: 'Montserrat Alternates', sans-serif;
+}
+```
+
+This ensures that:
+- **Titles** on these pages use Montserrat Alternates (the Swarmrise brand font), not the org's custom title font
+- **Highlight colours** (links, accents, gold text) use bee gold, not the org's custom highlight
+- The `OrgCustomisationProvider` does not need restructuring -- the `.swarmrise-page` class simply overrides its CSS variables within its subtree
+
+**When adding new Swarmrise platform pages**, always wrap the page content with `<div className="swarmrise-page">` to maintain brand consistency.
+
 ---
 
 ## 4. Component Guidelines
@@ -457,6 +482,7 @@ Things that are intentionally NOT customisable, and why.
 | Constraint | Reason |
 |---|---|
 | The "swarmrise" word always uses Montserrat Alternates | Product identity -- ensures Swarmrise is always recognisable |
+| Swarmrise platform pages use brand fonts and colours, not org customisation | Pages like glossary, terms, privacy, and principles represent the platform, not any org. They use Montserrat Alternates for titles and bee gold for highlights (enforced via `.swarmrise-page` class) |
 | The Swarmrise bee logo colours are fixed | The bee is the product mascot, not the org's asset |
 | Layout structure (sidebar, header, visual view placement) is not customisable | Consistency of navigation and muscle memory across orgs |
 | Role type colours (leader gold, secretary blue, referee purple) are not customisable | These encode semantic meaning in the governance model; changing them would confuse users |

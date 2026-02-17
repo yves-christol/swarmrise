@@ -6,12 +6,11 @@ import { roleValidator } from "../roles";
 import { teamValidator } from "../teams";
 import { Id } from "../_generated/dataModel";
 import {
-  requireAuthAndMembership,
+  getMemberInOrga,
   getAuthenticatedUser,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getTeamLeaderMemberId,
-  getMemberInOrga,
   ensureEmailInContactInfos,
 } from "../utils";
 import { contactInfo } from "../users";
@@ -50,7 +49,7 @@ export const getMemberById = query({
     if (!member) {
       return null;
     }
-    await requireAuthAndMembership(ctx, member.orgaId);
+    await getMemberInOrga(ctx, member.orgaId);
     return member;
   },
 });
@@ -64,7 +63,7 @@ export const listMembers = query({
   },
   returns: v.array(memberValidator),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
     // Get all members of the organization, then get their users
     const members = await ctx.db
       .query("members")
@@ -88,7 +87,7 @@ export const listMemberTeams = query({
     if (!member) {
       throw new Error("Member not found");
     }
-    await requireAuthAndMembership(ctx, member.orgaId);
+    await getMemberInOrga(ctx, member.orgaId);
     
     // Get all roles for this member
     const roles = await ctx.db
@@ -128,7 +127,7 @@ export const listMemberRoles = query({
     if (!member) {
       throw new Error("Member not found");
     }
-    await requireAuthAndMembership(ctx, member.orgaId);
+    await getMemberInOrga(ctx, member.orgaId);
     return await ctx.db
       .query("roles")
       .withIndex("by_member", (q) => q.eq("memberId", args.memberId))
@@ -149,7 +148,7 @@ export const listMemberDecisions = query({
     if (!member) {
       throw new Error("Member not found");
     }
-    await requireAuthAndMembership(ctx, member.orgaId);
+    await getMemberInOrga(ctx, member.orgaId);
     
     // Get all decisions made by this member (by author email)
     return await ctx.db
@@ -209,7 +208,7 @@ export const leaveOrganization = mutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     const user = await getAuthenticatedUser(ctx);
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
     const orga = await ctx.db.get(args.orgaId);
     if (!orga) {
       throw new Error("Organization not found");

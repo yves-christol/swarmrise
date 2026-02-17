@@ -1,6 +1,6 @@
 import { QueryCtx, MutationCtx } from "../_generated/server";
 import { Id } from "../_generated/dataModel";
-import { requireAuthAndMembership } from "../utils";
+import { getMemberInOrga } from "../utils";
 import type { Channel } from ".";
 import type { Member } from "../members";
 
@@ -16,7 +16,7 @@ export async function requireChannelAccess(
   const channel = await ctx.db.get(channelId);
   if (!channel) throw new Error("Channel not found");
 
-  const member = await requireAuthAndMembership(ctx, channel.orgaId);
+  const member = await getMemberInOrga(ctx, channel.orgaId);
 
   if (channel.kind === "team") {
     if (!channel.teamId) throw new Error("Team channel has no teamId");

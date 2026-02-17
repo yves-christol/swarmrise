@@ -1,6 +1,6 @@
 import { QueryCtx, MutationCtx } from "../_generated/server";
 import { Id } from "../_generated/dataModel";
-import { requireAuthAndMembership } from "../utils";
+import { getMemberInOrga } from "../utils";
 import { memberHasTeamAccess } from "../chat/access";
 import type { KanbanBoard } from ".";
 import type { Member } from "../members";
@@ -17,7 +17,7 @@ export async function requireBoardAccess(
   const board = await ctx.db.get(boardId);
   if (!board) throw new Error("Board not found");
 
-  const member = await requireAuthAndMembership(ctx, board.orgaId);
+  const member = await getMemberInOrga(ctx, board.orgaId);
 
   const hasAccess = await memberHasTeamAccess(ctx, member, board.teamId);
   if (!hasAccess) throw new Error("Not a member of this team");

@@ -4,7 +4,7 @@ import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { roleValidator } from ".";
 import {
-  requireAuthAndMembership,
+  getMemberInOrga,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getOrgaFromRole,
@@ -24,7 +24,7 @@ export const getRoleById = query({
   returns: v.union(roleValidator, v.null()),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromRole(ctx, args.roleId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
     return await ctx.db.get(args.roleId);
   },
 });
@@ -36,7 +36,7 @@ export const listRolesInOrga = query({
   args: { orgaId: v.id("orgas") },
   returns: v.array(roleValidator),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
     return await ctx.db
       .query("roles")
       .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
@@ -54,7 +54,7 @@ export const listRolesInTeam = query({
   returns: v.array(roleValidator),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
     return await ctx.db
       .query("roles")
       .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
@@ -80,7 +80,7 @@ export const createRole = mutation({
   returns: v.id("roles"),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    const member = await requireAuthAndMembership(ctx, orgaId);
+    const member = await getMemberInOrga(ctx, orgaId);
     
     // Enforce one leader per team
     if (args.roleType === "leader") {
@@ -213,7 +213,7 @@ export const updateRole = mutation({
   returns: v.id("roles"),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromRole(ctx, args.roleId);
-    const member = await requireAuthAndMembership(ctx, orgaId);
+    const member = await getMemberInOrga(ctx, orgaId);
     
     const role = await ctx.db.get(args.roleId);
     if (!role) {
@@ -462,7 +462,7 @@ export const getLinkedLeaderRolesForTeam = query({
   ),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
 
     // Get all roles in the current team
     const teamRoles = await ctx.db
@@ -528,7 +528,7 @@ export const hasLinkedChildRole = query({
   returns: v.boolean(),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromRole(ctx, args.roleId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
 
     const linked = await ctx.db
       .query("roles")
@@ -549,7 +549,7 @@ export const deleteRole = mutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromRole(ctx, args.roleId);
-    const member = await requireAuthAndMembership(ctx, orgaId);
+    const member = await getMemberInOrga(ctx, orgaId);
     
     const role = await ctx.db.get(args.roleId);
     if (!role) {
@@ -624,7 +624,7 @@ export const getTeamMission = query({
   returns: v.union(v.string(), v.null()),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
 
     // Find the leader role for this team
     const leaderRole = await ctx.db
@@ -650,7 +650,7 @@ export const getOrgaMission = query({
   },
   returns: v.union(v.string(), v.null()),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
 
     // Get all teams in the organization
     const allTeams = await ctx.db

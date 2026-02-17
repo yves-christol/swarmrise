@@ -2,7 +2,7 @@ import { query, mutation, internalMutation } from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { kanbanBoardValidator, kanbanColumnValidator, kanbanCardValidator, DEFAULT_COLUMNS } from ".";
-import { requireAuthAndMembership } from "../utils";
+import { getMemberInOrga } from "../utils";
 import { memberHasTeamAccess } from "../chat/access";
 import { requireBoardAccess } from "./access";
 
@@ -22,7 +22,7 @@ export const checkTeamAccess = query({
     const team = await ctx.db.get(args.teamId);
     if (!team) return false;
 
-    const member = await requireAuthAndMembership(ctx, team.orgaId);
+    const member = await getMemberInOrga(ctx, team.orgaId);
     return await memberHasTeamAccess(ctx, member, args.teamId);
   },
 });
@@ -37,7 +37,7 @@ export const getBoard = query({
     const team = await ctx.db.get(args.teamId);
     if (!team) return null;
 
-    const member = await requireAuthAndMembership(ctx, team.orgaId);
+    const member = await getMemberInOrga(ctx, team.orgaId);
     const hasAccess = await memberHasTeamAccess(ctx, member, args.teamId);
     if (!hasAccess) return null;
 
@@ -66,7 +66,7 @@ export const getBoardWithData = query({
     const team = await ctx.db.get(args.teamId);
     if (!team) return null;
 
-    const member = await requireAuthAndMembership(ctx, team.orgaId);
+    const member = await getMemberInOrga(ctx, team.orgaId);
     const hasAccess = await memberHasTeamAccess(ctx, member, args.teamId);
     if (!hasAccess) return null;
 
@@ -102,7 +102,7 @@ export const getCardsByMember = query({
     const memberDoc = await ctx.db.get(args.memberId);
     if (!memberDoc) return [];
 
-    await requireAuthAndMembership(ctx, memberDoc.orgaId);
+    await getMemberInOrga(ctx, memberDoc.orgaId);
 
     return await ctx.db
       .query("kanbanCards")
@@ -294,8 +294,8 @@ export const ensureBoard = mutation({
     const team = await ctx.db.get(args.teamId);
     if (!team) throw new Error("Team not found");
 
-    await requireAuthAndMembership(ctx, team.orgaId);
-    const member = await requireAuthAndMembership(ctx, team.orgaId);
+    await getMemberInOrga(ctx, team.orgaId);
+    const member = await getMemberInOrga(ctx, team.orgaId);
     const hasAccess = await memberHasTeamAccess(ctx, member, args.teamId);
     if (!hasAccess) throw new Error("Not a member of this team");
 

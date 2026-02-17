@@ -1,7 +1,7 @@
 import { query } from "../_generated/server";
 import { v } from "convex/values";
 import { decisionValidator, targetType } from ".";
-import { requireAuthAndMembership } from "../utils";
+import { getMemberInOrga } from "../utils";
 
 const DECISIONS_PAGE_SIZE = 20;
 const DECISIONS_MAX_LIMIT = 100;
@@ -23,7 +23,7 @@ export const listDecisionsForOrga = query({
     hasMore: v.boolean(),
   }),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
 
     const limit = Math.min(args.limit ?? DECISIONS_PAGE_SIZE, DECISIONS_MAX_LIMIT);
 
@@ -75,7 +75,7 @@ export const listDecisionsForTeam = query({
     hasMore: v.boolean(),
   }),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
 
     const limit = Math.min(args.limit ?? DECISIONS_PAGE_SIZE, DECISIONS_MAX_LIMIT);
 

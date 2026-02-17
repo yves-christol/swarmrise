@@ -4,7 +4,7 @@ import { v } from "convex/values";
 import { paginationOptsValidator } from "convex/server";
 import { Id } from "../_generated/dataModel";
 import { channelValidator, embeddedToolType } from ".";
-import { requireAuthAndMembership, getAuthenticatedUserEmail, getRoleAndTeamInfo } from "../utils";
+import { getMemberInOrga, getAuthenticatedUserEmail, getRoleAndTeamInfo } from "../utils";
 import { requireChannelAccess, requireNotArchived } from "./access";
 import { canFacilitateTopic, requireTopicPhase } from "./topicHelpers";
 import { requireVotingOpen, validateChoices } from "./votingHelpers";
@@ -30,7 +30,7 @@ export const getChannelsForMember = query({
     name: v.string(),
   })),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
 
     type ChannelWithName = {
       _id: Id<"channels">;
@@ -203,7 +203,7 @@ export const getUnreadCounts = query({
     unreadCount: v.number(),
   })),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
 
     const channelIds: Id<"channels">[] = [];
 
@@ -615,7 +615,7 @@ export const getOrCreateDMChannel = mutation({
   },
   returns: v.id("channels"),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
 
     if (member._id === args.otherMemberId) {
       throw new Error("Cannot create a DM with yourself");
@@ -786,7 +786,7 @@ export const advanceTopicPhase = mutation({
       throw new Error("Can only go back to clarification from consent phase");
     }
 
-    const member = await requireAuthAndMembership(ctx, message.orgaId);
+    const member = await getMemberInOrga(ctx, message.orgaId);
     const isFacilitator = await canFacilitateTopic(ctx, args.messageId, member._id);
     if (!isFacilitator) throw new Error("Only facilitators can change the topic phase");
 
@@ -902,7 +902,7 @@ export const resolveTopicTool = mutation({
       throw new Error("Can only resolve a topic in the consent phase");
     }
 
-    const member = await requireAuthAndMembership(ctx, message.orgaId);
+    const member = await getMemberInOrga(ctx, message.orgaId);
     const isFacilitator = await canFacilitateTopic(ctx, args.messageId, member._id);
     if (!isFacilitator) throw new Error("Only facilitators can resolve a topic");
 
@@ -1294,7 +1294,7 @@ export const closeVote = mutation({
       throw new Error("Voting is already closed");
     }
 
-    const member = await requireAuthAndMembership(ctx, message.orgaId);
+    const member = await getMemberInOrga(ctx, message.orgaId);
     const isFacilitator = await canFacilitateTopic(ctx, args.messageId, member._id);
     if (!isFacilitator) throw new Error("Only facilitators can close voting");
 
@@ -1665,7 +1665,7 @@ export const advanceElectionPhase = mutation({
       throw new Error(`Cannot transition from "${currentPhase}" to "${args.newPhase}"`);
     }
 
-    const member = await requireAuthAndMembership(ctx, message.orgaId);
+    const member = await getMemberInOrga(ctx, message.orgaId);
     const isFacilitator = await canFacilitateElection(ctx, args.messageId, member._id);
     if (!isFacilitator) throw new Error("Only facilitators can advance the election phase");
 
@@ -1863,7 +1863,7 @@ export const resolveElection = mutation({
       throw new Error("Must specify the elected member when outcome is 'elected'");
     }
 
-    const member = await requireAuthAndMembership(ctx, message.orgaId);
+    const member = await getMemberInOrga(ctx, message.orgaId);
     const isFacilitator = await canFacilitateElection(ctx, args.messageId, member._id);
     if (!isFacilitator) throw new Error("Only facilitators can resolve an election");
 
@@ -1962,7 +1962,7 @@ export const cancelElection = mutation({
       throw new Error("Cannot cancel an election that is already resolved or cancelled");
     }
 
-    const member = await requireAuthAndMembership(ctx, message.orgaId);
+    const member = await getMemberInOrga(ctx, message.orgaId);
     if (message.authorId !== member._id) {
       throw new Error("Only the election creator can cancel it");
     }
@@ -2480,7 +2480,7 @@ export const searchMessages = query({
     isEdited: v.boolean(),
   })),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
 
     const trimmed = args.query.trim();
     if (trimmed.length < 2) return [];

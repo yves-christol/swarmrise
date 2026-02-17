@@ -54,16 +54,6 @@ export async function getMemberInOrga(
 }
 
 /**
- * Ensure the user is authenticated and a member of the organization
- */
-export async function requireAuthAndMembership(
-  ctx: QueryCtx | MutationCtx,
-  orgaId: Id<"orgas">
-) {
-  return await getMemberInOrga(ctx, orgaId);
-}
-
-/**
  * Get organization from a team ID
  */
 export async function getOrgaFromTeam(

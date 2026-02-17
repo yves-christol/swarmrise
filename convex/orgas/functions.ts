@@ -2,7 +2,7 @@ import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
 import { orgaValidator, ColorScheme, rgbColor, type RgbColor } from ".";
 import {
-  requireAuthAndMembership,
+  getMemberInOrga,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getAuthenticatedUser,
@@ -18,7 +18,7 @@ export const getOrgaById = query({
   },
   returns: v.union(orgaValidator, v.null()),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
     return await ctx.db.get(args.orgaId);
   },
 });
@@ -300,7 +300,7 @@ export const updateOrga = mutation({
   },
   returns: v.id("orgas"),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
     const orga = await ctx.db.get(args.orgaId);
     if (!orga) {
       throw new Error("Organization not found");
@@ -434,7 +434,7 @@ export const transferOwnership = mutation({
   },
   returns: v.id("orgas"),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
     const orga = await ctx.db.get(args.orgaId);
     if (!orga) {
       throw new Error("Organization not found");
@@ -498,7 +498,7 @@ export const deleteOrganization = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
     const orga = await ctx.db.get(args.orgaId);
     if (!orga) {
       throw new Error("Organization not found");

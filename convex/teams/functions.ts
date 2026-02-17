@@ -4,7 +4,7 @@ import { Id } from "../_generated/dataModel";
 import { teamValidator } from ".";
 import { DEFAULT_COLUMNS } from "../kanban";
 import {
-  requireAuthAndMembership,
+  getMemberInOrga,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getOrgaFromTeam,
@@ -85,7 +85,7 @@ export const getTeamById = query({
   returns: v.union(teamValidator, v.null()),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
     return await ctx.db.get(args.teamId);
   },
 });
@@ -99,7 +99,7 @@ export const listTeamsInOrga = query({
   },
   returns: v.array(teamValidator),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
     return await ctx.db
       .query("teams")
       .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
@@ -118,7 +118,7 @@ export const listChildTeams = query({
   returns: v.array(teamValidator),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.parentTeamId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
     
     // Find all leader roles that have this team as parent
     const leaderRoles = await ctx.db
@@ -154,7 +154,7 @@ export const listConnectedTeams = query({
   }),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
 
     // Find parent: this team's leader role with a parentTeamId
     const teamRoles = await ctx.db
@@ -201,7 +201,7 @@ export const createTeam = mutation({
   },
   returns: v.id("teams"),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
     
     // Validate the role
     const role = await ctx.db.get(args.roleId);
@@ -366,7 +366,7 @@ export const updateTeam = mutation({
   returns: v.id("teams"),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    const member = await requireAuthAndMembership(ctx, orgaId);
+    const member = await getMemberInOrga(ctx, orgaId);
 
     const team = await ctx.db.get(args.teamId);
     if (!team) {
@@ -446,7 +446,7 @@ export const listTeamsWithRoleCounts = query({
     })
   ),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
 
     // Get all teams in the organization
     const teams = await ctx.db
@@ -498,7 +498,7 @@ export const deleteTeam = mutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    const member = await requireAuthAndMembership(ctx, orgaId);
+    const member = await getMemberInOrga(ctx, orgaId);
     
     const team = await ctx.db.get(args.teamId);
     if (!team) {

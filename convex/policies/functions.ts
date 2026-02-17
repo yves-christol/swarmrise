@@ -4,7 +4,7 @@ import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { policyValidator, PolicyVisibility } from ".";
 import {
-  requireAuthAndMembership,
+  getMemberInOrga,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getOrgaFromRole,
@@ -30,7 +30,7 @@ export const getPolicyById = query({
     if (!policy) {
       return null;
     }
-    await requireAuthAndMembership(ctx, policy.orgaId);
+    await getMemberInOrga(ctx, policy.orgaId);
     return policy;
   },
 });
@@ -45,7 +45,7 @@ export const listPoliciesInOrga = query({
   },
   returns: v.array(policyValidator),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
     if (args.visibility) {
       return await ctx.db
         .query("policies")
@@ -72,7 +72,7 @@ export const listPoliciesInTeam = query({
   returns: v.array(policyValidator),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
     return await ctx.db
       .query("policies")
       .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
@@ -90,7 +90,7 @@ export const listPoliciesByRole = query({
   returns: v.array(policyValidator),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromRole(ctx, args.roleId);
-    await requireAuthAndMembership(ctx, orgaId);
+    await getMemberInOrga(ctx, orgaId);
     return await ctx.db
       .query("policies")
       .withIndex("by_role", (q) => q.eq("roleId", args.roleId))
@@ -113,7 +113,7 @@ export const createPolicy = mutation({
   },
   returns: v.id("policies"),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
     
     // Validate team belongs to organization
     const team = await ctx.db.get(args.teamId);
@@ -249,7 +249,7 @@ export const updatePolicy = mutation({
       throw new Error("Policy not found");
     }
     
-    const member = await requireAuthAndMembership(ctx, policy.orgaId);
+    const member = await getMemberInOrga(ctx, policy.orgaId);
     
     // Update policy
     const updates: {
@@ -342,7 +342,7 @@ export const deletePolicy = mutation({
       throw new Error("Policy not found");
     }
     
-    const member = await requireAuthAndMembership(ctx, policy.orgaId);
+    const member = await getMemberInOrga(ctx, policy.orgaId);
     
     // Store before state
     const before = {

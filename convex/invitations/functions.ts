@@ -3,7 +3,7 @@ import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { invitationValidator, invitationStatusType } from ".";
 import {
-  requireAuthAndMembership,
+  getMemberInOrga,
   getAuthenticatedUser,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
@@ -24,7 +24,7 @@ export const getInvitationById = query({
     if (!invitation) {
       return null;
     }
-    await requireAuthAndMembership(ctx, invitation.orgaId);
+    await getMemberInOrga(ctx, invitation.orgaId);
     return invitation;
   },
 });
@@ -39,7 +39,7 @@ export const listInvitationsInOrga = query({
   },
   returns: v.array(invitationValidator),
   handler: async (ctx, args) => {
-    await requireAuthAndMembership(ctx, args.orgaId);
+    await getMemberInOrga(ctx, args.orgaId);
     if (args.status) {
       return await ctx.db
         .query("invitations")
@@ -102,7 +102,7 @@ export const createInvitation = mutation({
   },
   returns: v.id("invitations"),
   handler: async (ctx, args) => {
-    const member = await requireAuthAndMembership(ctx, args.orgaId);
+    const member = await getMemberInOrga(ctx, args.orgaId);
 
     // Rate limit: max 50 invitations per member per 24 hours
     const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
@@ -243,7 +243,7 @@ export const updateInvitationStatus = mutation({
       throw new Error("Invitation not found");
     }
 
-    const member = await requireAuthAndMembership(ctx, invitation.orgaId);
+    const member = await getMemberInOrga(ctx, invitation.orgaId);
 
     // Only the emitter or org owner can change invitation status
     const orga = await ctx.db.get(invitation.orgaId);
@@ -320,7 +320,7 @@ export const deleteInvitation = mutation({
       throw new Error("Invitation not found");
     }
 
-    const member = await requireAuthAndMembership(ctx, invitation.orgaId);
+    const member = await getMemberInOrga(ctx, invitation.orgaId);
 
     // Store before state
     const before = {

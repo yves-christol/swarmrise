@@ -50,6 +50,21 @@
       "title": "Devoir",
       "description": "Une responsabilité spécifique et actionnable attribuée à un rôle. Alors qu'une mission définit l'objectif global, les devoirs la décomposent en tâches ou obligations concrètes que le titulaire du rôle est censé remplir. Un rôle peut avoir plusieurs devoirs.",
       "example": "Un rôle de Responsable du contenu pourrait avoir des devoirs comme 'Rédiger des articles de blog hebdomadaires', 'Examiner les contributions de la communauté' et 'Maintenir le calendrier éditorial'."
+    },
+    "topic": {
+      "title": "Sujet",
+      "description": "Une proposition soulevée dans le canal de discussion d'une équipe qui suit un processus structuré de décision par consentement. Un sujet passe par trois phases : proposition (l'auteur formule sa proposition), clarification (les membres posent des questions pour la comprendre) et tour de consentement (le groupe accepte ou soulève des objections argumentées). Les sujets transforment les discussions informelles en actes de gouvernance sans quitter la conversation.",
+      "example": "Un membre ouvre un sujet dans le canal de l'équipe Produit pour proposer une rotation du rôle de leader chaque trimestre. Après un tour de clarification et en l'absence d'objections majeures, la proposition est acceptée par consentement."
+    },
+    "consentDecision": {
+      "title": "Décision par consentement",
+      "description": "Une méthode de prise de décision où une proposition est acceptée sauf si un membre soulève une objection argumentée et majeure. Contrairement au vote majoritaire, le consentement ne demande pas si tout le monde est d'accord, mais si quelqu'un a une raison bien argumentée pour laquelle la proposition causerait du tort. Le silence vaut consentement. Cette approche permet aux décisions d'avancer efficacement tout en protégeant contre les risques négligés.",
+      "example": "Lors d'un tour de consentement sur une nouvelle politique de communication, un membre soulève une objection expliquant qu'elle exclurait les contributeurs à temps partiel. La proposition est amendée pour répondre à la préoccupation, puis adoptée sans objections supplémentaires."
+    },
+    "candidatelessElection": {
+      "title": "Élection sans candidat",
+      "description": "Une méthode d'élection sociocratique utilisée pour pourvoir des rôles sans candidats déclarés au préalable. Chaque membre nomme quelqu'un ouvertement et expose ses raisons. Après avoir entendu toutes les nominations, les membres peuvent changer leur choix en fonction de ce qu'ils ont appris. Le facilitateur propose le choix qui émerge, et un tour de consentement confirme ou ajuste le résultat. Cette méthode fait émerger la personne la plus adaptée grâce à l'intelligence collective du groupe plutôt que par l'autopromotion.",
+      "example": "Une équipe a besoin d'un nouvel arbitre. Chaque membre rédige une nomination et explique pourquoi. Après avoir entendu toutes les raisons, deux membres modifient leur nomination. Le facilitateur propose la personne ayant le soutien le plus solide, et le groupe consent."
     }
   }
 }

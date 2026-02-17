@@ -1,55 +1,70 @@
 {
   "title": "glosario",
-  "subtitle": "Conceptos y terminologia clave utilizados en swarmrise.",
+  "subtitle": "Conceptos y terminología clave utilizados en swarmrise.",
   "relatedDocuments": "documentos relacionados",
   "principlesLink": "Nuestros principios",
-  "principlesDescription": "las ideas que guian el funcionamiento de swarmrise",
+  "principlesDescription": "las ideas que guían el funcionamiento de swarmrise",
   "footer": "swarmrise es un trabajo en progreso.",
   "items": {
     "swarmrise": {
       "title": "swarmrise",
-      "description": "Una plataforma de gobernanza de codigo abierto que ayuda a las organizaciones a distribuir la autoridad, tomar decisiones transparentes y adaptar su estructura sin friccion. En lugar de jerarquias rigidas donde una sola persona manda, swarmrise otorga a cada miembro roles claramente definidos con proposito, equilibra el poder mediante una triada lider-secretario-arbitro en cada equipo, y registra cada cambio para que la rendicion de cuentas este integrada, no anadida a posteriori.",
-      "example": "Una cooperativa utiliza swarmrise para definir sus equipos, asignar roles con misiones y deberes, y llevar a cabo decisiones basadas en el consentimiento, todo sin una jerarquia de gestion tradicional."
+      "description": "Una plataforma de gobernanza de código abierto que ayuda a las organizaciones a distribuir la autoridad, tomar decisiones transparentes y adaptar su estructura sin fricción. En lugar de jerarquías rígidas donde una sola persona manda, swarmrise otorga a cada miembro roles claramente definidos con propósito, equilibra el poder mediante una tríada líder-secretario-árbitro en cada equipo, y registra cada cambio para que la rendición de cuentas esté integrada, no añadida a posteriori.",
+      "example": "Una cooperativa utiliza swarmrise para definir sus equipos, asignar roles con misiones y deberes, y llevar a cabo decisiones basadas en el consentimiento, todo sin una jerarquía de gestión tradicional."
     },
     "user": {
       "title": "Usuario",
-      "description": "Una persona que ha creado una cuenta en swarmrise. Los usuarios pueden unirse a multiples organizaciones y participar en la gobernanza de todas ellas.",
+      "description": "Una persona que ha creado una cuenta en swarmrise. Los usuarios pueden unirse a múltiples organizaciones y participar en la gobernanza de todas ellas.",
       "example": "Cuando te registras en swarmrise, te conviertes en usuario. Luego puedes crear o unirte a organizaciones."
     },
     "orga": {
-      "title": "Organizacion",
-      "description": "Un espacio de gobernanza autonomo donde se gestionan equipos, roles y decisiones. Cada organizacion tiene sus propios miembros, estructura y politicas, completamente aislados de otras organizaciones.",
-      "example": "Una empresa, una organizacion sin fines de lucro o un grupo comunitario pueden configurarse como una organizacion en swarmrise."
+      "title": "Organización",
+      "description": "Un espacio de gobernanza autónomo donde se gestionan equipos, roles y decisiones. Cada organización tiene sus propios miembros, estructura y políticas, completamente aislados de otras organizaciones.",
+      "example": "Una empresa, una organización sin fines de lucro o un grupo comunitario pueden configurarse como una organización en swarmrise."
     },
     "member": {
       "title": "Miembro",
-      "description": "La presencia de un usuario dentro de una organizacion especifica. Un miembro dado puede tener varios roles en el mismo equipo o en varios equipos de la organizacion. Esta es una diferencia significativa con las organizaciones tradicionales.",
-      "example": "Podrias ser miembro de la organizacion de tu empresa y tambien miembro de la organizacion de un grupo de voluntarios."
+      "description": "La presencia de un usuario dentro de una organización específica. Un miembro dado puede tener varios roles en el mismo equipo o en varios equipos de la organización. Esta es una diferencia significativa con las organizaciones tradicionales.",
+      "example": "Podrías ser miembro de la organización de tu empresa y también miembro de la organización de un grupo de voluntarios."
     },
     "team": {
       "title": "Equipo",
-      "description": "Un grupo dentro de una organizacion que trabaja hacia un proposito compartido. Los equipos contienen roles que definen responsabilidades y obligaciones especificas.",
-      "example": "Un equipo de Marketing podria contener roles como Lider de contenido, Gestor de redes sociales y Estratega de marca."
+      "description": "Un grupo dentro de una organización que trabaja hacia un propósito compartido. Los equipos contienen roles que definen responsabilidades y obligaciones específicas.",
+      "example": "Un equipo de Marketing podría contener roles como Líder de contenido, Gestor de redes sociales y Estratega de marca."
     },
     "role": {
       "title": "Rol",
-      "description": "Una posicion especifica dentro de un equipo que define las responsabilidades de alguien. Los roles pueden tener tipos especiales: lider (guia al equipo), secretario (maneja la documentacion) o arbitro (resuelve disputas).",
-      "example": "El rol de Product Owner podria tener la mision de definir las prioridades del producto y mantener el backlog."
+      "description": "Una posición específica dentro de un equipo que define las responsabilidades de alguien. Los roles pueden tener tipos especiales: líder (guía al equipo), secretario (maneja la documentación) o árbitro (resuelve disputas).",
+      "example": "El rol de Product Owner podría tener la misión de definir las prioridades del producto y mantener el backlog."
     },
     "decision": {
-      "title": "Decision",
-      "description": "Cualquier cambio o accion rastreada dentro de la organizacion. Las decisiones mantienen un registro de auditoria completo que muestra quien hizo que cambio y cuando, con los estados antes y despues.",
-      "example": "Cuando alguien actualiza la mision de un equipo o asigna un rol, se registra como una decision con historial completo."
+      "title": "Decisión",
+      "description": "Cualquier cambio o acción rastreada dentro de la organización. Las decisiones mantienen un registro de auditoría completo que muestra quién hizo qué cambio y cuándo, con los estados antes y después.",
+      "example": "Cuando alguien actualiza la misión de un equipo o asigna un rol, se registra como una decisión con historial completo."
     },
     "mission": {
-      "title": "Mision",
-      "description": "El proposito u objetivo que guia a un equipo o rol. Las misiones responden a la pregunta de por que algo existe y que pretende lograr.",
-      "example": "La mision de un equipo de Soporte podria ser asegurar que los clientes reciban asistencia oportuna y util."
+      "title": "Misión",
+      "description": "El propósito u objetivo que guía a un equipo o rol. Las misiones responden a la pregunta de por qué algo existe y qué pretende lograr.",
+      "example": "La misión de un equipo de Soporte podría ser asegurar que los clientes reciban asistencia oportuna y útil."
     },
     "duty": {
       "title": "Deber",
-      "description": "Una responsabilidad especifica y accionable asignada a un rol. Mientras que una mision define el proposito general, los deberes la descomponen en tareas u obligaciones concretas que se espera que el titular del rol cumpla. Un rol puede tener multiples deberes.",
-      "example": "Un rol de Lider de contenido podria tener deberes como 'Escribir publicaciones semanales en el blog', 'Revisar las contribuciones de la comunidad' y 'Mantener el calendario editorial'."
+      "description": "Una responsabilidad específica y accionable asignada a un rol. Mientras que una misión define el propósito general, los deberes la descomponen en tareas u obligaciones concretas que se espera que el titular del rol cumpla. Un rol puede tener múltiples deberes.",
+      "example": "Un rol de Líder de contenido podría tener deberes como 'Escribir publicaciones semanales en el blog', 'Revisar las contribuciones de la comunidad' y 'Mantener el calendario editorial'."
+    },
+    "topic": {
+      "title": "Tema",
+      "description": "Una propuesta planteada en el canal de conversación de un equipo que sigue un proceso estructurado de decisión por consentimiento. Un tema pasa por tres fases: proposición (el autor formula su propuesta), clarificación (los miembros hacen preguntas para comprenderla) y ronda de consentimiento (el grupo acepta o plantea objeciones argumentadas). Los temas transforman las discusiones informales en actos de gobernanza sin salir de la conversación.",
+      "example": "Un miembro abre un tema en el canal del equipo de Producto proponiendo rotar el rol de líder cada trimestre. Tras una ronda de clarificación y en ausencia de objeciones mayores, la propuesta es aceptada por consentimiento."
+    },
+    "consentDecision": {
+      "title": "Decisión por consentimiento",
+      "description": "Un método de toma de decisiones en el que una propuesta es aceptada salvo que un miembro plantee una objeción argumentada y de peso. A diferencia de la votación por mayoría, el consentimiento no pregunta si todos están de acuerdo, sino si alguien tiene una razón bien argumentada por la cual la propuesta causaría un perjuicio. El silencio equivale a consentimiento. Este enfoque permite que las decisiones avancen eficientemente, al tiempo que protege contra riesgos inadvertidos.",
+      "example": "Durante una ronda de consentimiento sobre una nueva política de comunicación, un miembro plantea una objeción explicando que excluiría a los colaboradores a tiempo parcial. La propuesta se modifica para atender la preocupación y luego se aprueba sin objeciones adicionales."
+    },
+    "candidatelessElection": {
+      "title": "Elección sin candidatos",
+      "description": "Un método de elección sociocrático utilizado para cubrir roles sin candidatos declarados previamente. Cada miembro nomina a alguien abiertamente y expone sus razones. Tras escuchar todas las nominaciones, los miembros pueden cambiar su elección en función de lo que han aprendido. El facilitador propone la opción que emerge, y una ronda de consentimiento confirma o ajusta el resultado. Este método hace emerger a la persona más adecuada gracias a la inteligencia colectiva del grupo, en lugar de la autopromoción.",
+      "example": "Un equipo necesita un nuevo árbitro. Cada miembro redacta una nominación y explica por qué. Tras escuchar todas las razones, dos miembros modifican su nominación. El facilitador propone a la persona con el apoyo más sólido, y el grupo consiente."
     }
   }
 }

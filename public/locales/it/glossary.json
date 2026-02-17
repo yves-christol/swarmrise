@@ -4,37 +4,37 @@
   "relatedDocuments": "documenti correlati",
   "principlesLink": "I nostri principi",
   "principlesDescription": "le idee che guidano il funzionamento di swarmrise",
-  "footer": "swarmrise e un lavoro in corso.",
+  "footer": "swarmrise è un lavoro in corso.",
   "items": {
     "swarmrise": {
       "title": "swarmrise",
-      "description": "Una piattaforma di governance open source che aiuta le organizzazioni a distribuire l'autorita, prendere decisioni trasparenti e adattare la propria struttura senza attriti. Invece di gerarchie rigide in cui una sola persona comanda, swarmrise assegna a ogni membro ruoli chiaramente definiti con uno scopo, bilancia il potere attraverso una triade leader-segretario-arbitro in ogni team, e registra ogni cambiamento in modo che la responsabilita sia integrata, non aggiunta in seguito.",
+      "description": "Una piattaforma di governance open source che aiuta le organizzazioni a distribuire l'autorità, prendere decisioni trasparenti e adattare la propria struttura senza attriti. Invece di gerarchie rigide in cui una sola persona comanda, swarmrise assegna a ogni membro ruoli chiaramente definiti con uno scopo, bilancia il potere attraverso una triade leader-segretario-arbitro in ogni team, e registra ogni cambiamento in modo che la responsabilità sia integrata, non aggiunta in seguito.",
       "example": "Una cooperativa utilizza swarmrise per definire i propri team, assegnare ruoli con missioni e doveri, e condurre decisioni basate sul consenso, il tutto senza una gerarchia gestionale tradizionale."
     },
     "user": {
       "title": "Utente",
-      "description": "Una persona che ha creato un account su swarmrise. Gli utenti possono unirsi a piu organizzazioni e partecipare alla governance di ciascuna di esse.",
+      "description": "Una persona che ha creato un account su swarmrise. Gli utenti possono unirsi a più organizzazioni e partecipare alla governance di ciascuna di esse.",
       "example": "Quando ti registri su swarmrise, diventi un utente. Puoi quindi creare o unirti a organizzazioni."
     },
     "orga": {
       "title": "Organizzazione",
       "description": "Uno spazio di governance autonomo dove vengono gestiti team, ruoli e decisioni. Ogni organizzazione ha i propri membri, struttura e politiche, completamente isolati dalle altre organizzazioni.",
-      "example": "Un'azienda, un'organizzazione no-profit o un gruppo della comunita possono essere configurati come organizzazione in swarmrise."
+      "example": "Un'azienda, un'organizzazione no-profit o un gruppo della comunità possono essere configurati come organizzazione in swarmrise."
     },
     "member": {
       "title": "Membro",
-      "description": "La presenza di un utente all'interno di un'organizzazione specifica. Un dato membro puo ricoprire piu ruoli nello stesso team o in piu team dell'organizzazione. Questa e una differenza significativa rispetto alle organizzazioni tradizionali.",
+      "description": "La presenza di un utente all'interno di un'organizzazione specifica. Un dato membro può ricoprire più ruoli nello stesso team o in più team dell'organizzazione. Questa è una differenza significativa rispetto alle organizzazioni tradizionali.",
       "example": "Potresti essere membro dell'organizzazione della tua azienda e anche membro dell'organizzazione di un gruppo di volontari."
     },
     "team": {
       "title": "Team",
-      "description": "Un gruppo all'interno di un'organizzazione che lavora verso uno scopo condiviso. I team contengono ruoli che definiscono responsabilita e obblighi specifici.",
+      "description": "Un gruppo all'interno di un'organizzazione che lavora verso uno scopo condiviso. I team contengono ruoli che definiscono responsabilità e obblighi specifici.",
       "example": "Un team di Marketing potrebbe contenere ruoli come Responsabile contenuti, Social media manager e Brand strategist."
     },
     "role": {
       "title": "Ruolo",
-      "description": "Una posizione specifica all'interno di un team che definisce le responsabilita di qualcuno. I ruoli possono avere tipi speciali: leader (guida il team), segretario (gestisce la documentazione) o arbitro (risolve le dispute).",
-      "example": "Il ruolo di Product Owner potrebbe avere la missione di definire le priorita del prodotto e mantenere il backlog."
+      "description": "Una posizione specifica all'interno di un team che definisce le responsabilità di qualcuno. I ruoli possono avere tipi speciali: leader (guida il team), segretario (gestisce la documentazione) o arbitro (risolve le dispute).",
+      "example": "Il ruolo di Product Owner potrebbe avere la missione di definire le priorità del prodotto e mantenere il backlog."
     },
     "decision": {
       "title": "Decisione",
@@ -43,13 +43,28 @@
     },
     "mission": {
       "title": "Missione",
-      "description": "Lo scopo o l'obiettivo che guida un team o un ruolo. Le missioni rispondono alla domanda del perche qualcosa esiste e cosa mira a raggiungere.",
+      "description": "Lo scopo o l'obiettivo che guida un team o un ruolo. Le missioni rispondono alla domanda del perché qualcosa esiste e cosa mira a raggiungere.",
       "example": "La missione di un team di Supporto potrebbe essere garantire che i clienti ricevano assistenza tempestiva e utile."
     },
     "duty": {
       "title": "Dovere",
-      "description": "Una responsabilita specifica e attuabile assegnata a un ruolo. Mentre una missione definisce lo scopo generale, i doveri la scompongono in compiti o obblighi concreti che il titolare del ruolo e tenuto a svolgere. Un ruolo puo avere piu doveri.",
-      "example": "Un ruolo di Responsabile contenuti potrebbe avere doveri come 'Scrivere articoli settimanali per il blog', 'Esaminare i contributi della comunita' e 'Mantenere il calendario editoriale'."
+      "description": "Una responsabilità specifica e attuabile assegnata a un ruolo. Mentre una missione definisce lo scopo generale, i doveri la scompongono in compiti o obblighi concreti che il titolare del ruolo è tenuto a svolgere. Un ruolo può avere più doveri.",
+      "example": "Un ruolo di Responsabile contenuti potrebbe avere doveri come 'Scrivere articoli settimanali per il blog', 'Esaminare i contributi della comunità' e 'Mantenere il calendario editoriale'."
+    },
+    "topic": {
+      "title": "Argomento",
+      "description": "Una proposta sollevata nel canale di discussione di un team che segue un processo strutturato di decisione per consenso. Un argomento attraversa tre fasi: proposizione (l'autore formula la proposta), chiarificazione (i membri pongono domande per comprenderla) e giro di consenso (il gruppo accetta o solleva obiezioni argomentate). Gli argomenti trasformano le discussioni informali in atti di governance senza uscire dalla conversazione.",
+      "example": "Un membro apre un argomento nel canale del team Prodotto proponendo di ruotare il ruolo di leader ogni trimestre. Dopo un giro di chiarificazione e in assenza di obiezioni rilevanti, la proposta è accettata per consenso."
+    },
+    "consentDecision": {
+      "title": "Decisione per consenso",
+      "description": "Un metodo decisionale in cui una proposta è accettata a meno che un membro sollevi un'obiezione argomentata e rilevante. A differenza del voto a maggioranza, il consenso non chiede se tutti sono d'accordo, ma se qualcuno ha una ragione ben argomentata per cui la proposta causerebbe un danno. Il silenzio equivale a consenso. Questo approccio consente alle decisioni di avanzare in modo efficiente, proteggendo al contempo contro i rischi trascurati.",
+      "example": "Durante un giro di consenso su una nuova politica di comunicazione, un membro solleva un'obiezione spiegando che escluderebbe i collaboratori part-time. La proposta viene modificata per affrontare la preoccupazione e poi approvata senza ulteriori obiezioni."
+    },
+    "candidatelessElection": {
+      "title": "Elezione senza candidati",
+      "description": "Un metodo elettorale sociocratico utilizzato per assegnare ruoli senza candidati dichiarati in precedenza. Ogni membro nomina qualcuno apertamente e ne espone le ragioni. Dopo aver ascoltato tutte le nomine, i membri possono cambiare la propria scelta in base a quanto appreso. Il facilitatore propone la scelta emergente, e un giro di consenso conferma o aggiusta il risultato. Questo metodo fa emergere la persona più adatta grazie all'intelligenza collettiva del gruppo, anziché attraverso l'autopromozione.",
+      "example": "Un team ha bisogno di un nuovo arbitro. Ogni membro redige una nomina e ne spiega le ragioni. Dopo aver ascoltato tutte le motivazioni, due membri modificano la propria nomina. Il facilitatore propone la persona con il sostegno più solido, e il gruppo acconsente."
     }
   }
 }

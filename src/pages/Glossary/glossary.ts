@@ -55,5 +55,20 @@ export const useGlossary = (): GlossaryEntry[] => {
       description: t("items.duty.description"),
       example: t("items.duty.example", { defaultValue: "" }),
     },
+    {
+      title: t("items.topic.title"),
+      description: t("items.topic.description"),
+      example: t("items.topic.example", { defaultValue: "" }),
+    },
+    {
+      title: t("items.consentDecision.title"),
+      description: t("items.consentDecision.description"),
+      example: t("items.consentDecision.example", { defaultValue: "" }),
+    },
+    {
+      title: t("items.candidatelessElection.title"),
+      description: t("items.candidatelessElection.description"),
+      example: t("items.candidatelessElection.example", { defaultValue: "" }),
+    },
   ];
 };

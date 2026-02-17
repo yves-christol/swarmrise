@@ -50,6 +50,21 @@
       "title": "Duty",
       "description": "A specific, actionable responsibility assigned to a role. While a mission defines the overarching purpose, duties break it down into concrete tasks or obligations that the role holder is expected to fulfill. A role can have multiple duties.",
       "example": "A Content Lead role might have duties like 'Write weekly blog posts', 'Review community submissions', and 'Maintain the editorial calendar'."
+    },
+    "topic": {
+      "title": "Topic",
+      "description": "A proposal raised within a team's chat channel that follows a structured consent-based decision process. A topic moves through three phases: proposition (the author states the proposal), clarification (members ask questions to understand it), and consent round (the group accepts or raises reasoned objections). Topics turn informal discussion into actionable governance without leaving the conversation.",
+      "example": "A member opens a topic in the Product team's channel proposing to rotate the leader role every quarter. After a clarification round and no paramount objections, the proposal is accepted by consent."
+    },
+    "consentDecision": {
+      "title": "Consent Decision",
+      "description": "A decision-making method where a proposal is accepted unless a member raises a reasoned, paramount objection. Unlike majority voting, consent does not ask whether everyone agrees, it asks whether anyone has a well-argued reason why the proposal would cause harm. Silence counts as consent. This approach ensures decisions move forward efficiently while still protecting against overlooked risks.",
+      "example": "During a consent round on a new communication policy, one member raises an objection explaining it would exclude part-time contributors. The proposal is amended to address the concern and then passes without further objections."
+    },
+    "candidatelessElection": {
+      "title": "Candidateless Election",
+      "description": "A sociocratic election method used to fill roles without pre-declared candidates. Each member nominates someone openly and states their reasons. After all nominations are heard, members may change their nomination based on what they learned. The facilitator proposes the emerging choice, and a consent round confirms or adjusts the outcome. This method surfaces the best fit based on the group's collective insight rather than self-promotion.",
+      "example": "A team needs a new referee. Each member writes a nomination and explains why. After hearing all reasons, two members shift their nominations. The facilitator proposes the person with the strongest support, and the group consents."
     }
   }
 }

@@ -1,13 +1,10 @@
 import { v, Infer }  from "convex/values"
 
-import { rgbColor } from "../orgas"
-
 export const teamType = v.object({
   orgaId: v.id("orgas"),
   name: v.string(),
-  // Customisation fields
-  colorLight: v.optional(rgbColor),
-  colorDark: v.optional(rgbColor),
+  // Hex color string (e.g. "#3B82F6"), validated for HSL bounds on write
+  color: v.optional(v.string()),
 })
 
 export const teamValidator = v.object({

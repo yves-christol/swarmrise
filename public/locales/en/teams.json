@@ -29,10 +29,12 @@
     "createRole": "Create role",
     "teamColor": "Team Colour",
     "teamColorHint": "Set a custom colour for this team. It will appear on team circles in diagrams.",
-    "lightMode": "Light mode",
-    "darkMode": "Dark mode",
     "resetColor": "Reset",
     "teamColorUpdated": "Team colour updated",
+    "colorValidation": {
+      "saturation": "Colour is too grey. Choose a more vivid colour (saturation must be at least 30%).",
+      "lightness": "Colour is too dark or too bright. Choose a mid-range colour (lightness must be between 25% and 75%)."
+    },
     "settings": "Settings"
   },
   "createRole": {

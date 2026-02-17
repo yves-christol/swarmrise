@@ -5,25 +5,52 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 
-type RGB = { r: number; g: number; b: number };
-
-const rgbToHex = (rgb: RGB): string => {
-  const toHex = (n: number) => n.toString(16).padStart(2, "0");
-  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
-};
-
-const hexToRgb = (hex: string): RGB => {
+/**
+ * Convert a hex color string to HSL values.
+ * Returns { h: 0-360, s: 0-100, l: 0-100 }.
+ */
+function hexToHsl(hex: string): { h: number; s: number; l: number } {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-    : { r: 0, g: 0, b: 0 };
-};
+  if (!result) return { h: 0, s: 0, l: 50 };
 
-const rgbEqual = (a: RGB | null | undefined, b: RGB | null | undefined): boolean => {
-  if (!a && !b) return true;
-  if (!a || !b) return false;
-  return a.r === b.r && a.g === b.g && a.b === b.b;
-};
+  const r = parseInt(result[1], 16) / 255;
+  const g = parseInt(result[2], 16) / 255;
+  const b = parseInt(result[3], 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+
+  if (max === min) {
+    return { h: 0, s: 0, l: Math.round(l * 100) };
+  }
+
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+  let h = 0;
+  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+  else if (max === g) h = ((b - r) / d + 2) / 6;
+  else h = ((r - g) / d + 4) / 6;
+
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100),
+  };
+}
+
+/**
+ * Validate that a hex color meets the HSL constraints:
+ * - Saturation >= 30%
+ * - Lightness between 25% and 75%
+ */
+function validateColor(hex: string): { valid: boolean; reason?: "saturation" | "lightness" } {
+  const { s, l } = hexToHsl(hex);
+  if (s < 30) return { valid: false, reason: "saturation" };
+  if (l < 25 || l > 75) return { valid: false, reason: "lightness" };
+  return { valid: true };
+}
 
 type TeamSettingsModalProps = {
   isOpen: boolean;
@@ -38,8 +65,7 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
   const team = useQuery(api.teams.functions.getTeamById, { teamId });
   const updateTeam = useMutation(api.teams.functions.updateTeam);
 
-  const [colorLight, setColorLight] = useState<RGB | null>(null);
-  const [colorDark, setColorDark] = useState<RGB | null>(null);
+  const [color, setColor] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,8 +75,7 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
   // Initialize from team data
   useEffect(() => {
     if (team && isOpen) {
-      setColorLight(team.colorLight ?? null);
-      setColorDark(team.colorDark ?? null);
+      setColor(team.color ?? null);
       setError(null);
     }
   }, [team, isOpen]);
@@ -65,8 +90,12 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
   }, [isOpen]);
 
   const hasChanges = team
-    ? !rgbEqual(colorLight, team.colorLight) || !rgbEqual(colorDark, team.colorDark)
+    ? color !== (team.color ?? null)
     : false;
+
+  // HSL validation for the current color
+  const colorValidation = color ? validateColor(color) : null;
+  const isColorInvalid = colorValidation !== null && !colorValidation.valid;
 
   // Handle escape key
   useEffect(() => {
@@ -108,12 +137,11 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
     try {
       await updateTeam({
         teamId,
-        colorLight: colorLight ?? null,
-        colorDark: colorDark ?? null,
+        color: color ?? null,
       });
       onClose();
     } catch (err) {
-      console.error("Failed to update team colors:", err);
+      console.error("Failed to update team color:", err);
       setError(err instanceof Error ? err.message : t("manage.failedToUpdate"));
     } finally {
       setIsSubmitting(false);
@@ -167,58 +195,44 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
             {t("manage.teamColorHint")}
           </p>
 
-          <div className="flex gap-4">
-            {/* Light mode */}
-            <div className="flex-1 flex flex-col gap-1">
-              <label htmlFor="team-color-light" className="text-xs text-gray-500 dark:text-gray-400">
-                {t("manage.lightMode")}
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  id="team-color-light"
-                  type="color"
-                  value={colorLight ? rgbToHex(colorLight) : "#888888"}
-                  onChange={(e) => setColorLight(hexToRgb(e.target.value))}
-                  disabled={isSubmitting}
-                  className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-                {colorLight && (
-                  <button
-                    type="button"
-                    onClick={() => setColorLight(null)}
-                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  >
-                    {t("manage.resetColor")}
-                  </button>
-                )}
-              </div>
+          {/* Single color picker */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <input
+                id="team-color"
+                type="color"
+                value={color ?? "#888888"}
+                onChange={(e) => setColor(e.target.value)}
+                disabled={isSubmitting}
+                className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-describedby={isColorInvalid ? "color-validation-message" : undefined}
+              />
+              <span className="text-sm font-mono text-gray-500 dark:text-gray-400">
+                {color ?? "--"}
+              </span>
+              {color && (
+                <button
+                  type="button"
+                  onClick={() => setColor(null)}
+                  className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  {t("manage.resetColor")}
+                </button>
+              )}
             </div>
 
-            {/* Dark mode */}
-            <div className="flex-1 flex flex-col gap-1">
-              <label htmlFor="team-color-dark" className="text-xs text-gray-500 dark:text-gray-400">
-                {t("manage.darkMode")}
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  id="team-color-dark"
-                  type="color"
-                  value={colorDark ? rgbToHex(colorDark) : "#888888"}
-                  onChange={(e) => setColorDark(hexToRgb(e.target.value))}
-                  disabled={isSubmitting}
-                  className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-                {colorDark && (
-                  <button
-                    type="button"
-                    onClick={() => setColorDark(null)}
-                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  >
-                    {t("manage.resetColor")}
-                  </button>
-                )}
-              </div>
-            </div>
+            {/* HSL validation message */}
+            {isColorInvalid && colorValidation.reason && (
+              <p
+                id="color-validation-message"
+                className="text-xs text-amber-600 dark:text-amber-400"
+                role="alert"
+              >
+                {colorValidation.reason === "saturation"
+                  ? t("manage.colorValidation.saturation")
+                  : t("manage.colorValidation.lightness")}
+              </p>
+            )}
           </div>
 
           {/* Error */}
@@ -241,7 +255,7 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
             <button
               type="button"
               onClick={() => void handleSave()}
-              disabled={isSubmitting || !hasChanges}
+              disabled={isSubmitting || !hasChanges || isColorInvalid}
               className="px-6 py-2 bg-highlight hover:bg-highlight-hover text-dark font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "..." : t("manage.save")}

@@ -29,10 +29,12 @@
     "createRole": "Crear rol",
     "teamColor": "Color del equipo",
     "teamColorHint": "Establece un color personalizado para este equipo. Aparecerá en los círculos del equipo en los diagramas.",
-    "lightMode": "Modo claro",
-    "darkMode": "Modo oscuro",
     "resetColor": "Restablecer",
     "teamColorUpdated": "Color del equipo actualizado",
+    "colorValidation": {
+      "saturation": "El color es demasiado gris. Elige un color mas vivo (saturacion minima del 30 %).",
+      "lightness": "El color es demasiado oscuro o brillante. Elige un color de luminosidad media (entre 25 % y 75 %)."
+    },
     "settings": "Configuración"
   },
   "createRole": {

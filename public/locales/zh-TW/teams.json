@@ -29,10 +29,12 @@
     "createRole": "建立角色",
     "teamColor": "團隊顏色",
     "teamColorHint": "為此團隊設定自訂顏色。它將顯示在圖表中的團隊圓圈上。",
-    "lightMode": "淺色模式",
-    "darkMode": "深色模式",
     "resetColor": "重置",
     "teamColorUpdated": "團隊顏色已更新",
+    "colorValidation": {
+      "saturation": "顏色太灰。請選擇更鮮豔的顏色（飽和度至少為 30%）。",
+      "lightness": "顏色太暗或太亮。請選擇中等亮度的顏色（亮度需在 25% 到 75% 之間）。"
+    },
     "settings": "設定"
   },
   "createRole": {

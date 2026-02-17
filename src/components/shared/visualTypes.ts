@@ -21,8 +21,7 @@ export type TeamData = {
   _creationTime: number;
   orgaId: Id<"orgas">;
   name: string;
-  colorLight?: { r: number; g: number; b: number };
-  colorDark?: { r: number; g: number; b: number };
+  color?: string;
 };
 
 // Shared member data type used across visual views

@@ -1,7 +1,6 @@
 import { memo, useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Id } from "../../../convex/_generated/dataModel";
-import { useTheme } from "../../contexts/ThemeContext";
 import type { GraphNode } from "./types";
 
 type TeamNodeProps = {
@@ -49,7 +48,6 @@ export const TeamNode = memo(function TeamNode({
   void _onSelect; // Reserved for future use (e.g., multi-select)
   const [isDragging, setIsDragging] = useState(false);
   const { t } = useTranslation("teams");
-  const { resolvedTheme } = useTheme();
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
   const hasMoved = useRef(false);
 
@@ -123,19 +121,16 @@ export const TeamNode = memo(function TeamNode({
     [node.id, node.isPinned, onUnpin]
   );
 
-  // Resolve team colour based on theme
-  const teamColor = resolvedTheme === "dark" ? node.colorDark : node.colorLight;
-  const teamColorRgb = teamColor
-    ? `rgb(${teamColor.r}, ${teamColor.g}, ${teamColor.b})`
-    : null;
-  // Fill: team color at 80% transparency (0.2 opacity), fallback to default
-  const fillColor = teamColor
-    ? `rgba(${teamColor.r}, ${teamColor.g}, ${teamColor.b}, 0.2)`
+  // Resolve team colour
+  const teamColorHex = node.color ?? null;
+  // Fill: team color at 20% opacity, fallback to default
+  const fillColor = teamColorHex
+    ? teamColorHex + "33"
     : "var(--diagram-node-fill)";
 
   // Determine stroke and fill based on state
   // Stroke: use the team color when available, thicker line
-  let strokeColor = teamColorRgb ?? "var(--diagram-node-stroke)";
+  let strokeColor = teamColorHex ?? "var(--diagram-node-stroke)";
   let strokeWidth = 3;
   const textColor = "var(--diagram-node-text)";
 
@@ -146,7 +141,7 @@ export const TeamNode = memo(function TeamNode({
     strokeColor = "var(--org-highlight-color, #eac840)"; // Selected accent
     strokeWidth = 4;
   } else if (isHovered) {
-    strokeColor = teamColorRgb ?? "var(--diagram-node-stroke-hover)";
+    strokeColor = teamColorHex ?? "var(--diagram-node-stroke-hover)";
   }
 
   // Scale and shadow for drag state

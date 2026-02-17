@@ -29,10 +29,12 @@
     "createRole": "Créer un rôle",
     "teamColor": "Couleur de l'équipe",
     "teamColorHint": "Définissez une couleur personnalisée pour cette équipe. Elle apparaîtra sur les cercles d'équipe dans les diagrammes.",
-    "lightMode": "Mode clair",
-    "darkMode": "Mode sombre",
     "resetColor": "Réinitialiser",
     "teamColorUpdated": "Couleur de l'équipe mise à jour",
+    "colorValidation": {
+      "saturation": "La couleur est trop grise. Choisissez une couleur plus vive (saturation minimale de 30 %).",
+      "lightness": "La couleur est trop sombre ou trop claire. Choisissez une couleur de luminosité moyenne (entre 25 % et 75 %)."
+    },
     "settings": "Paramètres"
   },
   "createRole": {

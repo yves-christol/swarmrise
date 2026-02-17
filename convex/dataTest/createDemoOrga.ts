@@ -64,7 +64,7 @@ const PHONE_PREFIXES = [
 // Helpers for synthetic data
 // ---------------------------------------------------------------------------
 
-function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: number } {
+function hslToHex(h: number, s: number, l: number): string {
   h = ((h % 360) + 360) % 360;
   const c = (1 - Math.abs(2 * l - 1)) * s;
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
@@ -76,21 +76,13 @@ function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: n
   else if (h < 240) { r1 = 0; g1 = x; b1 = c; }
   else if (h < 300) { r1 = x; g1 = 0; b1 = c; }
   else { r1 = c; g1 = 0; b1 = x; }
-  return {
-    r: Math.round((r1 + m) * 255),
-    g: Math.round((g1 + m) * 255),
-    b: Math.round((b1 + m) * 255),
-  };
+  const toHex = (v: number) => Math.round((v + m) * 255).toString(16).padStart(2, "0");
+  return `#${toHex(r1)}${toHex(g1)}${toHex(b1)}`.toUpperCase();
 }
 
-function generateTeamColors(hue: number): {
-  colorLight: { r: number; g: number; b: number };
-  colorDark: { r: number; g: number; b: number };
-} {
-  return {
-    colorLight: hslToRgb(hue, 0.65, 0.42),
-    colorDark: hslToRgb(hue, 0.55, 0.62),
-  };
+function generateTeamColor(hue: number): string {
+  // Use saturation 65% and lightness 42% (within the 25-75% L and >= 30% S bounds)
+  return hslToHex(hue, 0.65, 0.42);
 }
 
 function pickRandom<T>(arr: T[]): T {
@@ -508,13 +500,12 @@ export const seedDemoOrga = internalMutation({
       parentTeamId: Id<"teams"> | undefined,
       hue: number,
     ): Promise<{ teamId: Id<"teams">; sourceRoleId: Id<"roles"> | undefined }> => {
-      // Create the team with colors derived from its hue
-      const colors = generateTeamColors(hue);
+      // Create the team with a color derived from its hue
+      const color = generateTeamColor(hue);
       const teamId = await ctx.db.insert("teams", {
         orgaId,
         name: template.name,
-        colorLight: colors.colorLight,
-        colorDark: colors.colorDark,
+        color,
       });
       teamIds.push(teamId);
 

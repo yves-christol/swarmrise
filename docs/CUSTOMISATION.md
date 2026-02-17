@@ -65,24 +65,50 @@ Customisation operates at three hierarchical levels: **Organisation**, **Team**,
 
 | Property | Description | Storage | Default |
 |---|---|---|---|
-| **Team colour (light mode)** | Solid colour used for the team's circle in visual views. Also used at 80% transparency as the team's background fill. | `teams.colorLight` (planned) | `var(--diagram-node-fill)` (slate-200 light / gray-800 dark) |
-| **Team colour (dark mode)** | Same as above, for dark mode. | `teams.colorDark` (planned) | `var(--diagram-node-fill)` |
+| **Team colour** | A single hex colour string (e.g. `#3B82F6`) used for the team's circle outline, badge, channel indicator, and translucent background fill. The same value is used in both light and dark modes. | `teams.color` (hex string) | `null` -- falls back to `var(--diagram-node-fill)` |
 
-**Current state:** The `teams` table has no colour field. Team circles in the D3-force graph views (`OrgaVisualView/TeamNode.tsx`) use the generic diagram fill colour (`var(--diagram-node-fill)`), which is the same for all teams.
+**Current state:** The `teams` table has `colorLight` and `colorDark` fields (RGB objects). These will be replaced by a single `color` field (hex string) to simplify the model. One colour per team is sufficient because the colour is used primarily for identification (outlines, badges, indicators), not as a large background fill that would clash with mode-specific contrast requirements.
+
+#### Colour Validation Bounds
+
+To prevent teams from picking colours that are invisible, unreadable, or garish, the team colour must satisfy the following HSL constraints:
+
+| Constraint | Range | Reason |
+|---|---|---|
+| **Lightness** | 25% -- 75% | Colours below 25% are too dark to distinguish from dark-mode backgrounds. Colours above 75% are too light to distinguish from light-mode backgrounds. |
+| **Saturation** | >= 30% | Colours below 30% saturation appear grey and fail to provide meaningful team differentiation. |
+| **Hue** | 0 -- 360 (unrestricted) | All hues are acceptable. |
+
+These bounds are enforced at **input time** (in the team colour picker UI) and at **mutation time** (in the Convex mutation that updates the team colour). The validation function converts the hex value to HSL and checks against the bounds above.
+
+Example validation logic (reference implementation):
+
+```typescript
+function isTeamColorValid(hex: string): boolean {
+  const { h, s, l } = hexToHSL(hex);
+  return s >= 30 && l >= 25 && l <= 75;
+}
+```
+
+If a colour fails validation, the UI should display a clear message explaining which bound was violated (e.g. "This colour is too dark -- choose a lighter shade") rather than silently rejecting the input.
 
 #### How Team Colour Is Applied
 
-Team colour is used in two ways across the visual views:
+The single team colour is used in several contexts across the UI:
 
-1. **Team circle (solid):** The team's circle in `OrgaVisualView` and `MemberVisualView` is filled with the team's colour as a solid colour. This makes each team visually distinct.
+1. **Team circle outline (solid):** The team's circle in `OrgaVisualView` and `MemberVisualView` uses the colour as its stroke. This makes each team visually distinct.
 
-2. **Team background (80% transparent):** In `TeamVisualView`, `RoleVisualView`, and `MemberVisualView`, the team's colour is used at 80% transparency (`rgba(r, g, b, 0.2)`) as a background fill behind the roles/content. This provides a subtle team identity without overwhelming the content.
+2. **Team background (translucent):** In `TeamVisualView`, `RoleVisualView`, and `MemberVisualView`, the team's colour is used at 20% opacity as a background fill behind the roles/content. This provides a subtle team identity without overwhelming the content.
+
+3. **Team badge / pill:** Wherever a team name appears as a badge or tag (e.g. in member cards, role details), the team colour is used as the badge background at 20% opacity with the colour itself as the text/border.
+
+4. **Channel indicator:** Team channels in the chat sidebar can show a small colour dot or left-border accent using the team colour.
 
 The affected visual view components:
-- `src/components/OrgaVisualView/TeamNode.tsx` -- team circle fill
+- `src/components/OrgaVisualView/TeamNode.tsx` -- team circle outline
 - `src/components/TeamVisualView/index.tsx` -- background circle
 - `src/components/RoleVisualView/index.tsx` -- background
-- `src/components/MemberVisualView/TeamNode.tsx` -- team circle fill
+- `src/components/MemberVisualView/TeamNode.tsx` -- team circle outline
 - `src/components/MemberVisualView/index.tsx` -- background
 
 ### 2.3 Role-level Customisation
@@ -157,17 +183,18 @@ export const orgaType = v.object({
 });
 ```
 
-**Teams table** -- add colour fields:
+**Teams table** -- single colour field:
 
 ```typescript
 export const teamType = v.object({
   orgaId: v.id("orgas"),
   name: v.string(),
-  // New customisation fields:
-  colorLight: v.optional(rgbColor),  // Team colour (light mode)
-  colorDark: v.optional(rgbColor),   // Team colour (dark mode)
+  // Customisation field:
+  color: v.optional(v.string()),  // Hex colour string, e.g. "#3B82F6"
 });
 ```
+
+The `color` field stores a 7-character hex string (e.g. `"#3B82F6"`). When absent (`undefined`), components fall back to `var(--diagram-node-fill)`. The value must pass HSL validation (lightness 25-75%, saturation >= 30%) before being written to the database.
 
 **Roles table** -- add icon field:
 
@@ -294,27 +321,35 @@ The `ThemeProvider` in `src/contexts/ThemeContext.tsx` manages dark/light mode:
 - Applied via class on `document.documentElement` (either `.light` or `.dark`)
 - Tailwind v4 uses `@custom-variant dark (&:where(.dark, .dark *))` for dark mode styles
 
-Every customisation property that involves colour must provide **two variants**: one for light mode and one for dark mode. This is because:
+Organisation-level customisation properties that involve colour (paper colour, highlight colour) must provide **two variants**: one for light mode and one for dark mode. This is because:
 
 - A highlight colour that works on a light paper background may be illegible on a dark background
 - Paper colours must maintain adequate contrast with text in both modes
 - The user or org admin sets both variants explicitly; there is no automatic derivation
 
+**Exception -- team colours:** Teams use a **single colour** (one hex value, no light/dark variants). This works because team colours are used for identification (outlines, badges, small indicators) rather than as large background fills. The HSL validation bounds (lightness 25-75%, saturation >= 30%) ensure the colour remains distinguishable in both light and dark modes.
+
 ### 3.5 Team Colour in Visual Views
 
 Team colours are applied directly in SVG via inline styles, not via CSS custom properties (because each team has its own colour, unlike org-level properties which are scoped to one value per org).
 
-The team colour is used as:
+The team colour is a single hex string used as follows:
 
 ```tsx
-// Solid fill for team circle
-<circle fill={`rgb(${color.r}, ${color.g}, ${color.b})`} />
+// Solid stroke for team circle outline
+<circle stroke={team.color ?? "var(--diagram-node-stroke)"} strokeWidth={3} />
 
-// 80% transparent background
-<circle fill={`rgba(${color.r}, ${color.g}, ${color.b}, 0.2)`} />
+// 20% opacity background fill (append hex alpha channel)
+<circle fill={team.color ? `${team.color}33` : "var(--diagram-node-fill)"} />
 ```
 
-When no team colour is set (`colorLight` / `colorDark` is undefined), fall back to the diagram default: `var(--diagram-node-fill)`.
+The hex alpha suffix `33` corresponds to approximately 20% opacity (0x33 = 51/255 ~ 20%).
+
+When no team colour is set (`color` is `undefined`), fall back to the diagram defaults:
+- Outline: `var(--diagram-node-stroke)`
+- Fill: `var(--diagram-node-fill)`
+
+Because the colour is validated to the HSL range of 25-75% lightness and >= 30% saturation, it remains legible as an outline or indicator in both light and dark modes without needing separate per-mode values.
 
 ### 3.6 Role Icon Rendering
 
@@ -369,7 +404,7 @@ Rules for component authors to ensure customisation compliance.
 
 ### 4.4 SVG / D3 Visual Views
 
-- Team node fill colours should read from the team's `colorLight`/`colorDark` field, falling back to `var(--diagram-node-fill)`
+- Team node outline/fill colours should read from the team's `color` hex field, falling back to `var(--diagram-node-fill)` / `var(--diagram-node-stroke)`
 - Role circles should render the role's `iconKey` icon inside them
 - Team background areas (the large translucent circles) should use the team's colour at 20% opacity
 - Interactive highlights (selection glow, drag feedback) should use `var(--org-highlight-color)` instead of hardcoded `#eac840`
@@ -381,7 +416,7 @@ Every customisation value must have a sensible default. If a value is missing fr
 - Logo: placeholder icon
 - Paper colour: `#FAFAEE` (light) / `#1a1a1a` (dark)
 - Highlight colour: `#eac840` (bee gold)
-- Team colour: `var(--diagram-node-fill)`
+- Team colour: `var(--diagram-node-fill)` (fill) / `var(--diagram-node-stroke)` (outline)
 - Role icon: `"rond"` (simple circle)
 - Title font: system sans-serif stack
 
@@ -397,13 +432,14 @@ For any component that uses customisation values:
 2. **Test with custom values** -- component adapts correctly when customisation values are provided
 3. **Test both modes** -- switch between light and dark mode and verify both variants of each colour work
 4. **Test extreme values** -- try very light and very dark colours to ensure nothing becomes invisible
-5. **Test without data** -- verify that `undefined` / missing values fall back gracefully
+5. **Test team colour bounds** -- verify that the colour picker and the Convex mutation reject colours outside the HSL bounds (lightness < 25% or > 75%, saturation < 30%). Confirm the UI shows a clear explanation of which bound was violated
+6. **Test without data** -- verify that `undefined` / missing values fall back gracefully
 
 ### 5.2 Accessibility Checks
 
 - Every combination of highlight colour + paper colour must meet WCAG 2.1 AA contrast ratio (4.5:1 for normal text, 3:1 for large text)
 - The admin UI should warn (not block) when a chosen colour combination has poor contrast
-- Team colours at 20% opacity on the paper background must still allow readable text
+- Team colours at 20% opacity on the paper background must still allow readable text. The HSL validation bounds (lightness 25-75%, saturation >= 30%) are designed to ensure this, but edge cases near the bounds should be verified in both light and dark modes
 
 ### 5.3 Performance
 
@@ -428,6 +464,9 @@ Things that are intentionally NOT customisable, and why.
 | Body font is not customisable | Readability is paramount; system sans-serif is the most legible choice |
 | Chat UI styling is not customisable | Chat is a utility; it should be consistently familiar |
 | Notification styling is not customisable | Notifications are system-level; consistent styling builds trust |
+| Team colours must pass HSL bounds (lightness 25-75%, saturation >= 30%) | Prevents invisible, unreadable, or indistinguishable colours in either light or dark mode |
+| Team colours are a single value, not per-mode | Simplicity -- teams only need an identifying accent, not a full colour scheme. The HSL bounds ensure cross-mode legibility |
+| Team colour format is restricted to 7-character hex strings (`#RRGGBB`) | Consistency and simplicity -- no shorthand (`#RGB`), no named colours, no `rgb()` values |
 
 ---
 
@@ -446,13 +485,14 @@ Things that are intentionally NOT customisable, and why.
 - **Paper colour fields** on the orga document (schema change)
 - **Highlight colour fields** on the orga document (schema change)
 - **Title font field** on the orga document (schema change)
-- **Team colour fields** on the team document (schema change)
+- **Team colour field** -- migrate from dual `colorLight`/`colorDark` (RGB) to single `color` (hex string) with HSL validation
 - **Role icon field** on the role document (schema change)
 - **OrgCustomisationProvider** component to inject CSS custom properties
 - **Refactor hardcoded `#eac840`** references across the codebase to use `var(--org-highlight-color)`
 - **Refactor `font-swarm` usage** on headings to only apply to "swarmrise" (currently applied to all h1-h6 in global CSS)
 - **Icon picker UI** for role management
-- **Team colour picker UI** for team management
+- **Team colour picker UI** for team management (with HSL validation and feedback)
+- **Hex-to-HSL validation utility** (shared between frontend picker and Convex mutation)
 - **Paper/highlight colour pickers** in the org settings modal
 
 ### 7.3 Hardcoded Values to Refactor
@@ -486,8 +526,11 @@ The following patterns appear across the codebase and need to be replaced with c
 
 ### Phase 3: Team Colours
 
-- Implement team colour customisation (light + dark)
-- Update `TeamNode` in `OrgaVisualView` to use team colours
+- Migrate team schema from dual `colorLight`/`colorDark` (RGB objects) to single `color` (hex string)
+- Implement hex-to-HSL validation utility (shared between frontend and Convex)
+- Add HSL bounds enforcement in the Convex mutation (lightness 25-75%, saturation >= 30%)
+- Build team colour picker UI with live preview and validation feedback
+- Update `TeamNode` in `OrgaVisualView` to use `team.color` hex string
 - Update team background in `TeamVisualView` and `RoleVisualView`
 - Update `TeamManageView` with colour picker
 - Handle `MemberVisualView` team nodes

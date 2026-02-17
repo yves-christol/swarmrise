@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useFocus } from "../../tools/orgaStore";
-import { useTheme } from "../../contexts/ThemeContext";
 import { Logo } from "../Logo";
 import { RoleNode } from "./RoleNode";
 import { NotFound } from "../NotFound";
@@ -32,7 +31,6 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
 
   // Focus navigation for clicking into child teams and roles
   const { focusOnTeam, focusOnRole } = useFocus();
-  const { resolvedTheme } = useTheme();
 
   // Fetch team data
   const team = useQuery(api.teams.functions.getTeamById, { teamId });
@@ -236,21 +234,16 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
         <title>{t("diagram.teamStructureTitle", { name: team.name })}</title>
 
       <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
-        {/* Outer boundary circle: team color fill at 80% transparency, team color stroke */}
-        {(() => {
-          const tc = resolvedTheme === "dark" ? team.colorDark : team.colorLight;
-          return (
-            <circle
-              cx={centerX}
-              cy={centerY}
-              r={outerCircleRadius}
-              fill={tc ? `rgba(${tc.r}, ${tc.g}, ${tc.b}, 0.2)` : "none"}
-              stroke={tc ? `rgb(${tc.r}, ${tc.g}, ${tc.b})` : "var(--diagram-node-stroke)"}
-              strokeWidth={3}
-              opacity={tc ? 1 : 0.3}
-            />
-          );
-        })()}
+        {/* Outer boundary circle: team color fill at 20% opacity, team color stroke */}
+        <circle
+          cx={centerX}
+          cy={centerY}
+          r={outerCircleRadius}
+          fill={team.color ? team.color + "33" : "none"}
+          stroke={team.color ?? "var(--diagram-node-stroke)"}
+          strokeWidth={3}
+          opacity={team.color ? 1 : 0.3}
+        />
 
         {/* Team name and mission - centered inside the circle */}
         <TeamNameText

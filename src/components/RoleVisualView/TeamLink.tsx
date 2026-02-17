@@ -6,14 +6,12 @@ type TeamLinkProps = {
   team: {
     _id: Id<"teams">;
     name: string;
-    colorLight?: { r: number; g: number; b: number };
-    colorDark?: { r: number; g: number; b: number };
+    color?: string;
   };
   centerX: number;
   centerY: number;
   maxRadius: number;
   onTeamClick?: () => void;
-  resolvedTheme?: "light" | "dark";
 };
 
 export function TeamLink({
@@ -22,16 +20,12 @@ export function TeamLink({
   centerY,
   maxRadius,
   onTeamClick,
-  resolvedTheme,
 }: TeamLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation("teams");
 
   // Resolve team colour
-  const teamColor = resolvedTheme === "dark" ? team.colorDark : team.colorLight;
-  const teamFill = teamColor
-    ? `rgb(${teamColor.r}, ${teamColor.g}, ${teamColor.b})`
-    : "var(--diagram-node-fill)";
+  const teamFill = team.color ?? "var(--diagram-node-fill)";
 
   // Position at top of circle, symmetric to member link at bottom
   const linkX = centerX;

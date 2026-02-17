@@ -7,7 +7,7 @@
 - BrandText helper: `src/components/shared/BrandText.tsx` (isolates "swarmrise" word in Montserrat)
 - Icon dictionary: `src/components/Icons/icons.ts` (441 icons, type `Record<string, { path: string }>`, 40x40 viewBox)
 - Orga type: `convex/orgas/index.ts` (has `colorScheme: { primary: RGB, secondary: RGB }`, `logoUrl`)
-- Team type: `convex/teams/index.ts` (no colour fields yet)
+- Team type: `convex/teams/index.ts` (currently has `colorLight`/`colorDark` RGB objects -- to be migrated to single `color` hex string)
 - Role type: `convex/roles/index.ts` (no iconKey field yet)
 - Org settings UI: `src/components/OrgaSettingsModal/index.tsx`
 - Logo component: `src/components/Logo/index.tsx` (bee logo, NOT customisable)
@@ -25,7 +25,7 @@
 
 - `#eac840` is hardcoded across ~10+ files (buttons, SVG strokes, focus rings, glow effects)
 - `font-swarm` (Montserrat Alternates) is applied to ALL headings h1-h6 in global CSS -- should only be "swarmrise"
-- Teams have no colour field -- all use same `var(--diagram-node-fill)`
+- Teams have colorLight/colorDark RGB fields but need migration to single `color` hex string
 - Roles have no iconKey field -- no visual differentiation
 - No OrgCustomisationProvider to inject CSS vars from Convex data
 
@@ -38,7 +38,8 @@
 ## Customisation Decisions (User-Directed)
 
 - Orga-level: logo, title font, paper colour (light+dark), highlight colour (light+dark)
-- Team-level: team colour (light+dark) -- used solid for circles, 80% transparent for backgrounds
+- Team-level: SINGLE hex colour per team (no light/dark variants), HSL bounds: lightness 25-75%, saturation >= 30%
+- Team colour used for: circle outlines (solid), backgrounds (20% opacity), badges, channel indicators
 - Role-level: SVG icon key from icons.ts
 - Montserrat Alternates ONLY for the word "swarmrise", never for org titles
 - Role type colours (leader/secretary/referee) are NOT customisable (semantic meaning)

@@ -1,8 +1,7 @@
 import { query, mutation } from "../_generated/server";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { teamValidator } from ".";
-import { rgbColor } from "../orgas";
 import { DEFAULT_COLUMNS } from "../kanban";
 import {
   requireAuthAndMembership,
@@ -10,6 +9,71 @@ import {
   getRoleAndTeamInfo,
   getOrgaFromTeam,
 } from "../utils";
+
+/**
+ * Convert a 7-character hex color string (e.g. "#3B82F6") to HSL.
+ * Returns { h: 0-360, s: 0-100, l: 0-100 }.
+ */
+function hexToHsl(hex: string): { h: number; s: number; l: number } {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+
+  if (max === min) {
+    return { h: 0, s: 0, l: Math.round(l * 100) };
+  }
+
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+  let h: number;
+  if (max === r) {
+    h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+  } else if (max === g) {
+    h = ((b - r) / d + 2) / 6;
+  } else {
+    h = ((r - g) / d + 4) / 6;
+  }
+
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100),
+  };
+}
+
+/**
+ * Validate a team color hex string.
+ * - Must be a 7-character hex string matching /^#[0-9A-Fa-f]{6}$/
+ * - HSL lightness must be between 25% and 75%
+ * - HSL saturation must be >= 30%
+ * Throws a ConvexError if validation fails.
+ */
+export function validateTeamColor(hex: string): void {
+  if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+    throw new ConvexError(
+      `Invalid color format "${hex}". Expected a 7-character hex string like "#3B82F6".`
+    );
+  }
+
+  const { s, l } = hexToHsl(hex);
+
+  if (l < 25 || l > 75) {
+    throw new ConvexError(
+      `Color "${hex}" has lightness ${l}% which is outside the allowed range (25-75%).`
+    );
+  }
+
+  if (s < 30) {
+    throw new ConvexError(
+      `Color "${hex}" has saturation ${s}% which is below the minimum (30%).`
+    );
+  }
+}
 
 /**
  * Get a team by ID
@@ -297,8 +361,7 @@ export const updateTeam = mutation({
   args: {
     teamId: v.id("teams"),
     name: v.optional(v.string()),
-    colorLight: v.optional(v.union(rgbColor, v.null())),
-    colorDark: v.optional(v.union(rgbColor, v.null())),
+    color: v.optional(v.union(v.string(), v.null())),
   },
   returns: v.id("teams"),
   handler: async (ctx, args) => {
@@ -310,19 +373,20 @@ export const updateTeam = mutation({
       throw new Error("Team not found");
     }
 
+    // Validate color if provided
+    if (args.color !== undefined && args.color !== null) {
+      validateTeamColor(args.color);
+    }
+
     // Update team
     const updates: {
       name?: string;
-      colorLight?: { r: number; g: number; b: number };
-      colorDark?: { r: number; g: number; b: number };
+      color?: string;
     } = {};
 
     if (args.name !== undefined) updates.name = args.name;
-    if (args.colorLight !== undefined) {
-      updates.colorLight = args.colorLight ?? undefined;
-    }
-    if (args.colorDark !== undefined) {
-      updates.colorDark = args.colorDark ?? undefined;
+    if (args.color !== undefined) {
+      updates.color = args.color ?? undefined;
     }
 
     // Build before and after with only modified fields
@@ -333,21 +397,17 @@ export const updateTeam = mutation({
       before.name = team.name;
       after.name = args.name;
     }
-    if (args.colorLight !== undefined) {
-      before.colorLight = team.colorLight;
-      after.colorLight = args.colorLight;
-    }
-    if (args.colorDark !== undefined) {
-      before.colorDark = team.colorDark;
-      after.colorDark = args.colorDark;
+    if (args.color !== undefined) {
+      before.color = team.color;
+      after.color = args.color;
     }
 
     await ctx.db.patch(args.teamId, updates);
-    
+
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
     const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, orgaId);
-    
+
     await ctx.db.insert("decisions", {
       orgaId,
       authorEmail: email,
@@ -362,7 +422,7 @@ export const updateTeam = mutation({
         after: Object.keys(after).length > 0 ? after : undefined,
       },
     });
-    
+
     return args.teamId;
   },
 });
@@ -382,8 +442,7 @@ export const listTeamsWithRoleCounts = query({
       name: v.string(),
       roleCount: v.number(),
       parentTeamId: v.union(v.id("teams"), v.null()),
-      colorLight: v.optional(rgbColor),
-      colorDark: v.optional(rgbColor),
+      color: v.optional(v.string()),
     })
   ),
   handler: async (ctx, args) => {
@@ -424,8 +483,7 @@ export const listTeamsWithRoleCounts = query({
       name: team.name,
       roleCount: teamRoleCounts.get(team._id) || 0,
       parentTeamId: teamParentIds.get(team._id) ?? null,
-      colorLight: team.colorLight,
-      colorDark: team.colorDark,
+      color: team.color,
     }));
   },
 });

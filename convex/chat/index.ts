@@ -250,3 +250,50 @@ export const reactionValidator = v.object({
 });
 
 export type Reaction = Infer<typeof reactionValidator>;
+
+// --- Return type validators (used by domain function files) ---
+
+export const topicClarificationReturnType = v.object({
+  _id: v.id("topicClarifications"),
+  _creationTime: v.number(),
+  question: v.string(),
+  author: v.object({
+    _id: v.id("members"),
+    firstname: v.string(),
+    surname: v.string(),
+  }),
+  answers: v.array(v.object({
+    _id: v.id("topicAnswers"),
+    _creationTime: v.number(),
+    answer: v.string(),
+    author: v.object({
+      _id: v.id("members"),
+      firstname: v.string(),
+      surname: v.string(),
+    }),
+  })),
+});
+
+export const topicResponseReturnType = v.object({
+  _id: v.id("topicResponses"),
+  _creationTime: v.number(),
+  response: v.union(v.literal("consent"), v.literal("objection"), v.literal("stand_aside")),
+  reason: v.optional(v.string()),
+  member: v.object({
+    _id: v.id("members"),
+    firstname: v.string(),
+    surname: v.string(),
+  }),
+});
+
+export const voteOptionResultType = v.object({
+  optionId: v.string(),
+  label: v.string(),
+  count: v.number(),
+  score: v.number(),
+  voters: v.optional(v.array(v.object({
+    _id: v.id("members"),
+    firstname: v.string(),
+    surname: v.string(),
+  }))),
+});

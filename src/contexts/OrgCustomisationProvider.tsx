@@ -1,20 +1,21 @@
 import { useEffect, useMemo, type ReactNode } from "react";
 import { useSelectedOrga } from "../tools/orgaStore";
 import { useTheme } from "./ThemeContext";
-import type { RgbColor } from "../../convex/orgas";
 import { FONT_OPTIONS } from "../components/OrgaSettingsModal/fonts";
 
-function rgbToString(color: RgbColor): string {
-  return `${color.r}, ${color.g}, ${color.b}`;
+/** Parse hex "#RRGGBB" to {r,g,b} for CSS manipulation */
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
+    : { r: 0, g: 0, b: 0 };
 }
 
-/** Darken an RGB color by mixing with black (0-1 factor, 0.15 = 15% darker) */
-function darken(color: RgbColor, amount: number): RgbColor {
-  return {
-    r: Math.round(color.r * (1 - amount)),
-    g: Math.round(color.g * (1 - amount)),
-    b: Math.round(color.b * (1 - amount)),
-  };
+/** Darken a hex color by mixing with black (0-1 factor, 0.15 = 15% darker) */
+function darkenHex(hex: string, amount: number): string {
+  const { r, g, b } = hexToRgb(hex);
+  const toHex = (n: number) => Math.round(n * (1 - amount)).toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 export function OrgCustomisationProvider({ children }: { children: ReactNode }) {
@@ -35,11 +36,11 @@ export function OrgCustomisationProvider({ children }: { children: ReactNode }) 
     const vars: Record<string, string> = {};
 
     if (paperColor) {
-      vars["--org-paper-color"] = `rgb(${rgbToString(paperColor)})`;
+      vars["--org-paper-color"] = paperColor;
     }
     if (highlightColor) {
-      vars["--org-highlight-color"] = `rgb(${rgbToString(highlightColor)})`;
-      vars["--org-highlight-hover"] = `rgb(${rgbToString(darken(highlightColor, 0.15))})`;
+      vars["--org-highlight-color"] = highlightColor;
+      vars["--org-highlight-hover"] = darkenHex(highlightColor, 0.15);
     }
     if (selectedOrga.titleFont) {
       vars["--org-title-font"] = selectedOrga.titleFont;

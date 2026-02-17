@@ -1,5 +1,4 @@
 import { v, Infer } from "convex/values"
-import { colorScheme } from "../orgas";
 import { policyVisibilityType } from "../policies";
 import { invitationStatusType } from "../invitations";
 
@@ -25,17 +24,19 @@ export const targetIdType = v.union(
 )
 
 // Organization diff
+// colorScheme uses v.any() for backward compat: old records have RGB objects,
+// new records have hex strings.
 const organizationDiff = v.object({
   type: v.literal("Organization"),
   before: v.optional(v.object({
     name: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
-    colorScheme: v.optional(colorScheme),
+    colorScheme: v.optional(v.any()),
   })),
   after: v.optional(v.object({
     name: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
-    colorScheme: v.optional(colorScheme),
+    colorScheme: v.optional(v.any()),
   })),
 });
 

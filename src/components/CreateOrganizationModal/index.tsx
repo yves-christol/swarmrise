@@ -7,34 +7,21 @@ import { useOrgaStore } from "../../tools/orgaStore";
 import { Id } from "../../../convex/_generated/dataModel";
 import { EmailDomainsInput } from "../EmailDomainsInput";
 
-type RGB = { r: number; g: number; b: number };
-type ColorScheme = { primary: RGB; secondary: RGB };
+type ColorScheme = { primary: string; secondary: string };
 
 // Color presets
-const COLOR_PRESETS: { id: string; primary: RGB; secondary: RGB }[] = [
+const COLOR_PRESETS: { id: string; primary: string; secondary: string }[] = [
   // Gold/Blue (swarmrise default)
-  { id: "gold-blue", primary: { r: 234, g: 200, b: 64 }, secondary: { r: 162, g: 219, b: 237 } },
+  { id: "gold-blue", primary: "#eac840", secondary: "#a2dbed" },
   // Forest Green/Stone Gray
-  { id: "green-gray", primary: { r: 34, g: 139, b: 34 }, secondary: { r: 169, g: 169, b: 169 } },
+  { id: "green-gray", primary: "#228b22", secondary: "#a9a9a9" },
   // Ocean Blue/Warm Gold
-  { id: "blue-gold", primary: { r: 30, g: 144, b: 255 }, secondary: { r: 255, g: 193, b: 37 } },
+  { id: "blue-gold", primary: "#1e90ff", secondary: "#ffc125" },
   // Royal Purple/Sky Cyan
-  { id: "purple-cyan", primary: { r: 138, g: 43, b: 226 }, secondary: { r: 0, g: 206, b: 209 } },
+  { id: "purple-cyan", primary: "#8a2be2", secondary: "#00ced1" },
   // Coral Red/Cool Gray
-  { id: "red-gray", primary: { r: 255, g: 99, b: 71 }, secondary: { r: 112, g: 128, b: 144 } },
+  { id: "red-gray", primary: "#ff6347", secondary: "#708090" },
 ];
-
-const rgbToHex = (rgb: RGB): string => {
-  const toHex = (n: number) => n.toString(16).padStart(2, "0");
-  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
-};
-
-const hexToRgb = (hex: string): RGB => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-    : { r: 0, g: 0, b: 0 };
-};
 
 const SpinnerIcon = ({ className }: { className?: string }) => (
   <svg
@@ -104,8 +91,8 @@ export const CreateOrganizationModal = ({
 
   const [name, setName] = useState("");
   const [selectedPresetId, setSelectedPresetId] = useState("gold-blue");
-  const [customPrimary, setCustomPrimary] = useState<RGB>(COLOR_PRESETS[0].primary);
-  const [customSecondary, setCustomSecondary] = useState<RGB>(COLOR_PRESETS[0].secondary);
+  const [customPrimary, setCustomPrimary] = useState(COLOR_PRESETS[0].primary);
+  const [customSecondary, setCustomSecondary] = useState(COLOR_PRESETS[0].secondary);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -374,11 +361,10 @@ export const CreateOrganizationModal = ({
   };
 
   const handleCustomColorChange = (type: "primary" | "secondary", hex: string) => {
-    const rgb = hexToRgb(hex);
     if (type === "primary") {
-      setCustomPrimary(rgb);
+      setCustomPrimary(hex);
     } else {
-      setCustomSecondary(rgb);
+      setCustomSecondary(hex);
     }
     setSelectedPresetId("custom");
   };
@@ -481,11 +467,11 @@ export const CreateOrganizationModal = ({
                 >
                   <div
                     className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-500"
-                    style={{ backgroundColor: rgbToHex(preset.primary) }}
+                    style={{ backgroundColor: preset.primary }}
                   />
                   <div
                     className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-500"
-                    style={{ backgroundColor: rgbToHex(preset.secondary) }}
+                    style={{ backgroundColor: preset.secondary }}
                   />
                   {selectedPresetId === preset.id && (
                     <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
@@ -526,7 +512,7 @@ export const CreateOrganizationModal = ({
                   <input
                     id="primary-color"
                     type="color"
-                    value={rgbToHex(customPrimary)}
+                    value={customPrimary}
                     onChange={(e) => handleCustomColorChange("primary", e.target.value)}
                     disabled={isSubmitting}
                     className="w-full h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -539,7 +525,7 @@ export const CreateOrganizationModal = ({
                   <input
                     id="secondary-color"
                     type="color"
-                    value={rgbToHex(customSecondary)}
+                    value={customSecondary}
                     onChange={(e) => handleCustomColorChange("secondary", e.target.value)}
                     disabled={isSubmitting}
                     className="w-full h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -554,11 +540,11 @@ export const CreateOrganizationModal = ({
               <div className="flex-1 flex items-center gap-2">
                 <div
                   className="flex-1 h-3 rounded-full transition-colors"
-                  style={{ backgroundColor: rgbToHex(currentColors.primary) }}
+                  style={{ backgroundColor: currentColors.primary }}
                 />
                 <div
                   className="flex-1 h-3 rounded-full transition-colors"
-                  style={{ backgroundColor: rgbToHex(currentColors.secondary) }}
+                  style={{ backgroundColor: currentColors.secondary }}
                 />
               </div>
             </div>

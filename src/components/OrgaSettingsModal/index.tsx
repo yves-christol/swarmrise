@@ -7,34 +7,16 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { EmailDomainsInput } from "../EmailDomainsInput";
 import { FONT_OPTIONS, ALL_GOOGLE_FONTS_URL } from "./fonts";
 
-type RGB = { r: number; g: number; b: number };
-type ColorScheme = { primary: RGB; secondary: RGB };
+type ColorScheme = { primary: string; secondary: string };
 
 // Color presets (same as CreateOrganizationModal)
-const COLOR_PRESETS: { id: string; primary: RGB; secondary: RGB }[] = [
-  { id: "gold-blue", primary: { r: 234, g: 200, b: 64 }, secondary: { r: 162, g: 219, b: 237 } },
-  { id: "green-gray", primary: { r: 34, g: 139, b: 34 }, secondary: { r: 169, g: 169, b: 169 } },
-  { id: "blue-gold", primary: { r: 30, g: 144, b: 255 }, secondary: { r: 255, g: 193, b: 37 } },
-  { id: "purple-cyan", primary: { r: 138, g: 43, b: 226 }, secondary: { r: 0, g: 206, b: 209 } },
-  { id: "red-gray", primary: { r: 255, g: 99, b: 71 }, secondary: { r: 112, g: 128, b: 144 } },
+const COLOR_PRESETS: { id: string; primary: string; secondary: string }[] = [
+  { id: "gold-blue", primary: "#eac840", secondary: "#a2dbed" },
+  { id: "green-gray", primary: "#228b22", secondary: "#a9a9a9" },
+  { id: "blue-gold", primary: "#1e90ff", secondary: "#ffc125" },
+  { id: "purple-cyan", primary: "#8a2be2", secondary: "#00ced1" },
+  { id: "red-gray", primary: "#ff6347", secondary: "#708090" },
 ];
-
-const rgbToHex = (rgb: RGB): string => {
-  const toHex = (n: number) => n.toString(16).padStart(2, "0");
-  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
-};
-
-const hexToRgb = (hex: string): RGB => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-    : { r: 0, g: 0, b: 0 };
-};
-
-const rgbEqual = (a: RGB, b: RGB): boolean => a.r === b.r && a.g === b.g && a.b === b.b;
-
-const colorSchemesEqual = (a: ColorScheme, b: ColorScheme): boolean =>
-  rgbEqual(a.primary, b.primary) && rgbEqual(a.secondary, b.secondary);
 
 const arraysEqual = (a: string[], b: string[]): boolean =>
   a.length === b.length && a.every((v, i) => v === b[i]);
@@ -117,15 +99,15 @@ export const OrgaSettingsModal = ({
   // Form state
   const [name, setName] = useState("");
   const [selectedPresetId, setSelectedPresetId] = useState("custom");
-  const [customPrimary, setCustomPrimary] = useState<RGB>(COLOR_PRESETS[0].primary);
-  const [customSecondary, setCustomSecondary] = useState<RGB>(COLOR_PRESETS[0].secondary);
+  const [customPrimary, setCustomPrimary] = useState(COLOR_PRESETS[0].primary);
+  const [customSecondary, setCustomSecondary] = useState(COLOR_PRESETS[0].secondary);
   const [emailDomains, setEmailDomains] = useState<string[]>([]);
 
   // Customisation state
-  const [paperColorLight, setPaperColorLight] = useState<RGB | null>(null);
-  const [paperColorDark, setPaperColorDark] = useState<RGB | null>(null);
-  const [highlightColorLight, setHighlightColorLight] = useState<RGB | null>(null);
-  const [highlightColorDark, setHighlightColorDark] = useState<RGB | null>(null);
+  const [paperColorLight, setPaperColorLight] = useState<string | null>(null);
+  const [paperColorDark, setPaperColorDark] = useState<string | null>(null);
+  const [highlightColorLight, setHighlightColorLight] = useState<string | null>(null);
+  const [highlightColorDark, setHighlightColorDark] = useState<string | null>(null);
   const [titleFont, setTitleFont] = useState("");
 
   // Logo state
@@ -161,8 +143,8 @@ export const OrgaSettingsModal = ({
         // Check if it matches a preset
         const matchingPreset = COLOR_PRESETS.find(
           (p) =>
-            rgbEqual(p.primary, orga.colorScheme.primary) &&
-            rgbEqual(p.secondary, orga.colorScheme.secondary)
+            p.primary.toLowerCase() === orga.colorScheme.primary.toLowerCase() &&
+            p.secondary.toLowerCase() === orga.colorScheme.secondary.toLowerCase()
         );
         setSelectedPresetId(matchingPreset?.id ?? "custom");
       }
@@ -202,31 +184,25 @@ export const OrgaSettingsModal = ({
       : { primary: customPrimary, secondary: customSecondary };
   }, [selectedPresetId, customPrimary, customSecondary]);
 
-  // Helper to compare optional RGB values
-  const rgbOptionalEqual = (a: RGB | null | undefined, b: RGB | null | undefined): boolean => {
-    if (!a && !b) return true;
-    if (!a || !b) return false;
-    return rgbEqual(a, b);
-  };
-
   // Detect if form has changes
   const hasChanges = useMemo(() => {
     if (!orga) return false;
 
     const currentColorScheme = getColorScheme();
-    const originalColorScheme = orga.colorScheme ?? COLOR_PRESETS[0];
+    const originalColorScheme = orga.colorScheme ?? { primary: COLOR_PRESETS[0].primary, secondary: COLOR_PRESETS[0].secondary };
     const originalDomains = orga.authorizedEmailDomains ?? [];
 
     return (
       name !== orga.name ||
-      !colorSchemesEqual(currentColorScheme, originalColorScheme) ||
+      currentColorScheme.primary.toLowerCase() !== originalColorScheme.primary.toLowerCase() ||
+      currentColorScheme.secondary.toLowerCase() !== originalColorScheme.secondary.toLowerCase() ||
       !arraysEqual(emailDomains, originalDomains) ||
       logoFile !== null ||
       logoRemoved ||
-      !rgbOptionalEqual(paperColorLight, orga.paperColorLight) ||
-      !rgbOptionalEqual(paperColorDark, orga.paperColorDark) ||
-      !rgbOptionalEqual(highlightColorLight, orga.highlightColorLight) ||
-      !rgbOptionalEqual(highlightColorDark, orga.highlightColorDark) ||
+      (paperColorLight ?? null) !== (orga.paperColorLight ?? null) ||
+      (paperColorDark ?? null) !== (orga.paperColorDark ?? null) ||
+      (highlightColorLight ?? null) !== (orga.highlightColorLight ?? null) ||
+      (highlightColorDark ?? null) !== (orga.highlightColorDark ?? null) ||
       titleFont !== (orga.titleFont ?? "")
     );
   }, [orga, name, getColorScheme, emailDomains, logoFile, logoRemoved, paperColorLight, paperColorDark, highlightColorLight, highlightColorDark, titleFont]);
@@ -428,11 +404,10 @@ export const OrgaSettingsModal = ({
   };
 
   const handleCustomColorChange = (type: "primary" | "secondary", hex: string) => {
-    const rgb = hexToRgb(hex);
     if (type === "primary") {
-      setCustomPrimary(rgb);
+      setCustomPrimary(hex);
     } else {
-      setCustomSecondary(rgb);
+      setCustomSecondary(hex);
     }
     setSelectedPresetId("custom");
   };
@@ -465,17 +440,17 @@ export const OrgaSettingsModal = ({
       const colorScheme = getColorScheme();
 
       // Build customisation args (only send changed values)
-      const customisationArgs: Record<string, RGB | string | null> = {};
-      if (!rgbOptionalEqual(paperColorLight, orga?.paperColorLight)) {
+      const customisationArgs: Record<string, string | null> = {};
+      if ((paperColorLight ?? null) !== (orga?.paperColorLight ?? null)) {
         customisationArgs.paperColorLight = paperColorLight;
       }
-      if (!rgbOptionalEqual(paperColorDark, orga?.paperColorDark)) {
+      if ((paperColorDark ?? null) !== (orga?.paperColorDark ?? null)) {
         customisationArgs.paperColorDark = paperColorDark;
       }
-      if (!rgbOptionalEqual(highlightColorLight, orga?.highlightColorLight)) {
+      if ((highlightColorLight ?? null) !== (orga?.highlightColorLight ?? null)) {
         customisationArgs.highlightColorLight = highlightColorLight;
       }
-      if (!rgbOptionalEqual(highlightColorDark, orga?.highlightColorDark)) {
+      if ((highlightColorDark ?? null) !== (orga?.highlightColorDark ?? null)) {
         customisationArgs.highlightColorDark = highlightColorDark;
       }
       if (titleFont !== (orga?.titleFont ?? "")) {
@@ -636,11 +611,11 @@ export const OrgaSettingsModal = ({
                   >
                     <div
                       className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-500"
-                      style={{ backgroundColor: rgbToHex(preset.primary) }}
+                      style={{ backgroundColor: preset.primary }}
                     />
                     <div
                       className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-500"
-                      style={{ backgroundColor: rgbToHex(preset.secondary) }}
+                      style={{ backgroundColor: preset.secondary }}
                     />
                     {selectedPresetId === preset.id && (
                       <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
@@ -680,7 +655,7 @@ export const OrgaSettingsModal = ({
                     <input
                       id="primary-color"
                       type="color"
-                      value={rgbToHex(customPrimary)}
+                      value={customPrimary}
                       onChange={(e) => handleCustomColorChange("primary", e.target.value)}
                       disabled={isSubmitting}
                       className="w-full h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -693,7 +668,7 @@ export const OrgaSettingsModal = ({
                     <input
                       id="secondary-color"
                       type="color"
-                      value={rgbToHex(customSecondary)}
+                      value={customSecondary}
                       onChange={(e) => handleCustomColorChange("secondary", e.target.value)}
                       disabled={isSubmitting}
                       className="w-full h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -708,11 +683,11 @@ export const OrgaSettingsModal = ({
                 <div className="flex-1 flex items-center gap-2">
                   <div
                     className="flex-1 h-3 rounded-full transition-colors"
-                    style={{ backgroundColor: rgbToHex(currentColors.primary) }}
+                    style={{ backgroundColor: currentColors.primary }}
                   />
                   <div
                     className="flex-1 h-3 rounded-full transition-colors"
-                    style={{ backgroundColor: rgbToHex(currentColors.secondary) }}
+                    style={{ backgroundColor: currentColors.secondary }}
                   />
                 </div>
               </div>
@@ -810,8 +785,8 @@ export const OrgaSettingsModal = ({
                     <input
                       id="paper-color-light"
                       type="color"
-                      value={paperColorLight ? rgbToHex(paperColorLight) : "#ffffff"}
-                      onChange={(e) => setPaperColorLight(hexToRgb(e.target.value))}
+                      value={paperColorLight ?? "#ffffff"}
+                      onChange={(e) => setPaperColorLight(e.target.value)}
                       disabled={isSubmitting}
                       className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     />
@@ -834,8 +809,8 @@ export const OrgaSettingsModal = ({
                     <input
                       id="paper-color-dark"
                       type="color"
-                      value={paperColorDark ? rgbToHex(paperColorDark) : "#1a1a2e"}
-                      onChange={(e) => setPaperColorDark(hexToRgb(e.target.value))}
+                      value={paperColorDark ?? "#1a1a2e"}
+                      onChange={(e) => setPaperColorDark(e.target.value)}
                       disabled={isSubmitting}
                       className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     />
@@ -870,8 +845,8 @@ export const OrgaSettingsModal = ({
                     <input
                       id="highlight-color-light"
                       type="color"
-                      value={highlightColorLight ? rgbToHex(highlightColorLight) : "#eac840"}
-                      onChange={(e) => setHighlightColorLight(hexToRgb(e.target.value))}
+                      value={highlightColorLight ?? "#eac840"}
+                      onChange={(e) => setHighlightColorLight(e.target.value)}
                       disabled={isSubmitting}
                       className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     />
@@ -894,8 +869,8 @@ export const OrgaSettingsModal = ({
                     <input
                       id="highlight-color-dark"
                       type="color"
-                      value={highlightColorDark ? rgbToHex(highlightColorDark) : "#eac840"}
-                      onChange={(e) => setHighlightColorDark(hexToRgb(e.target.value))}
+                      value={highlightColorDark ?? "#eac840"}
+                      onChange={(e) => setHighlightColorDark(e.target.value)}
                       disabled={isSubmitting}
                       className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     />
@@ -919,7 +894,7 @@ export const OrgaSettingsModal = ({
                   <div
                     className="flex-1 h-8 rounded flex items-center justify-center text-xs font-bold"
                     style={{
-                      backgroundColor: highlightColorLight ? rgbToHex(highlightColorLight) : "#eac840",
+                      backgroundColor: highlightColorLight ?? "#eac840",
                       color: "#1a1a2e",
                     }}
                   >
@@ -928,7 +903,7 @@ export const OrgaSettingsModal = ({
                   <div
                     className="flex-1 h-8 rounded flex items-center justify-center text-xs font-bold"
                     style={{
-                      backgroundColor: highlightColorDark ? rgbToHex(highlightColorDark) : "#eac840",
+                      backgroundColor: highlightColorDark ?? "#eac840",
                       color: "#1a1a2e",
                     }}
                   >

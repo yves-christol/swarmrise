@@ -42,10 +42,10 @@ export interface TeamTemplate {
 export interface DemoOrgaConfig {
   /** Display name of the demo organization (used for lookup and deletion) */
   orgaName: string;
-  /** Primary brand color */
+  /** Color scheme (hex strings like "#RRGGBB") */
   colorScheme: {
-    primary: { r: number; g: number; b: number };
-    secondary: { r: number; g: number; b: number };
+    primary: string;
+    secondary: string;
   };
   /** Optional: restrict invitations to these email domains */
   authorizedEmailDomains?: string[];
@@ -350,8 +350,8 @@ export const ORGANIZATION_TREE: TeamTemplate = {
 export const DEMO_ORGA_CONFIG: DemoOrgaConfig = {
   orgaName: "Infomax Demo",
   colorScheme: {
-    primary: { r: 59, g: 130, b: 246 },   // Blue-500
-    secondary: { r: 168, g: 85, b: 247 },  // Purple-500
+    primary: "#3b82f6",   // Blue-500
+    secondary: "#a855f7",  // Purple-500
   },
   userCount: 100,
   organizationTree: ORGANIZATION_TREE,

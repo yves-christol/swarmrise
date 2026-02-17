@@ -72,8 +72,8 @@ export const createTestOrganization = internalMutation({
       name: testOrgaName,
       logoUrl: undefined,
       colorScheme: {
-        primary: { r: 100, g: 150, b: 200 },
-        secondary: { r: 200, g: 150, b: 100 },
+        primary: "#6496c8",
+        secondary: "#c89664",
       },
       owner: user._id,
     });

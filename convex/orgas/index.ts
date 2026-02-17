@@ -1,30 +1,22 @@
 import { v, Infer } from "convex/values"
 
-// RGB color validator (r, g, b values 0-255)
-export const rgbColor = v.object({
-  r: v.number(), // 0-255
-  g: v.number(), // 0-255
-  b: v.number(), // 0-255
-});
-
-// Color scheme validator (2 RGB colors)
+// Color scheme validator (hex strings like "#RRGGBB")
 export const colorScheme = v.object({
-  primary: rgbColor,
-  secondary: rgbColor,
+  primary: v.string(),
+  secondary: v.string(),
 });
 
-export type RgbColor = Infer<typeof rgbColor>;
 export type ColorScheme = Infer<typeof colorScheme>;
 
 export const orgaType = v.object({
   name: v.string(),
   logoUrl: v.optional(v.string()),
   colorScheme: colorScheme,
-  // Customisation fields
-  paperColorLight: v.optional(rgbColor),
-  paperColorDark: v.optional(rgbColor),
-  highlightColorLight: v.optional(rgbColor),
-  highlightColorDark: v.optional(rgbColor),
+  // Customisation fields (hex strings like "#RRGGBB")
+  paperColorLight: v.optional(v.string()),
+  paperColorDark: v.optional(v.string()),
+  highlightColorLight: v.optional(v.string()),
+  highlightColorDark: v.optional(v.string()),
   titleFont: v.optional(v.string()),
   owner: v.id("users"),
   // When set and non-empty, only emails with domains in this list can be invited

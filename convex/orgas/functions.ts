@@ -1,6 +1,6 @@
-import { query, mutation } from "../_generated/server";
+import { query, mutation, internalMutation } from "../_generated/server";
 import { v } from "convex/values";
-import { orgaValidator, ColorScheme, rgbColor, type RgbColor } from ".";
+import { orgaValidator, ColorScheme } from ".";
 import {
   getMemberInOrga,
   getAuthenticatedUserEmail,
@@ -83,16 +83,8 @@ export const createOrganization = mutation({
     name: v.string(),
     logoStorageId: v.optional(v.id("_storage")), // Storage ID for uploaded logo
     colorScheme: v.object({
-      primary: v.object({
-        r: v.number(),
-        g: v.number(),
-        b: v.number(),
-      }),
-      secondary: v.object({
-        r: v.number(),
-        g: v.number(),
-        b: v.number(),
-      }),
+      primary: v.string(),
+      secondary: v.string(),
     }),
     firstTeamName: v.optional(v.string()), // Optional name for the first team, defaults to organization name
     authorizedEmailDomains: v.optional(v.array(v.string())), // Optional: restrict invitations to these email domains
@@ -276,26 +268,18 @@ export const updateOrga = mutation({
     logoStorageId: v.optional(v.union(v.id("_storage"), v.null())), // Storage ID for uploaded logo, null to remove
     colorScheme: v.optional(
       v.object({
-        primary: v.object({
-          r: v.number(),
-          g: v.number(),
-          b: v.number(),
-        }),
-        secondary: v.object({
-          r: v.number(),
-          g: v.number(),
-          b: v.number(),
-        }),
+        primary: v.string(),
+        secondary: v.string(),
       })
     ),
     // Optional: list of authorized email domains for invitations (owner-only)
     // Pass null to remove the restriction, empty array is treated the same as null
     authorizedEmailDomains: v.optional(v.union(v.array(v.string()), v.null())),
-    // Customisation fields (pass null to clear)
-    paperColorLight: v.optional(v.union(rgbColor, v.null())),
-    paperColorDark: v.optional(v.union(rgbColor, v.null())),
-    highlightColorLight: v.optional(v.union(rgbColor, v.null())),
-    highlightColorDark: v.optional(v.union(rgbColor, v.null())),
+    // Customisation fields (hex strings like "#RRGGBB", pass null to clear)
+    paperColorLight: v.optional(v.union(v.string(), v.null())),
+    paperColorDark: v.optional(v.union(v.string(), v.null())),
+    highlightColorLight: v.optional(v.union(v.string(), v.null())),
+    highlightColorDark: v.optional(v.union(v.string(), v.null())),
     titleFont: v.optional(v.union(v.string(), v.null())),
   },
   returns: v.id("orgas"),
@@ -336,10 +320,10 @@ export const updateOrga = mutation({
       logoUrl?: string;
       colorScheme?: ColorScheme;
       authorizedEmailDomains?: string[];
-      paperColorLight?: RgbColor;
-      paperColorDark?: RgbColor;
-      highlightColorLight?: RgbColor;
-      highlightColorDark?: RgbColor;
+      paperColorLight?: string;
+      paperColorDark?: string;
+      highlightColorLight?: string;
+      highlightColorDark?: string;
       titleFont?: string;
     } = {};
 
@@ -596,6 +580,58 @@ export const deleteOrganization = mutation({
     await ctx.db.delete(args.orgaId);
 
     return null;
+  },
+});
+
+/**
+ * Migration: convert legacy RGB color objects to hex strings.
+ * Run once after deploying the hex color schema change.
+ */
+function rgbObjectToHex(rgb: { r: number; g: number; b: number }): string {
+  const toHex = (n: number) => Math.round(n).toString(16).padStart(2, "0");
+  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
+}
+
+function isRgbObject(val: unknown): val is { r: number; g: number; b: number } {
+  return typeof val === "object" && val !== null && "r" in val && "g" in val && "b" in val;
+}
+
+export const migrateColorsToHex = internalMutation({
+  args: {},
+  returns: v.object({ migrated: v.number(), skipped: v.number() }),
+  handler: async (ctx) => {
+    const orgas = await ctx.db.query("orgas").collect();
+    let migrated = 0;
+    let skipped = 0;
+
+    for (const orga of orgas) {
+      const updates: Record<string, unknown> = {};
+
+      // Migrate colorScheme
+      if (isRgbObject(orga.colorScheme?.primary)) {
+        updates.colorScheme = {
+          primary: rgbObjectToHex(orga.colorScheme.primary as { r: number; g: number; b: number }),
+          secondary: rgbObjectToHex(orga.colorScheme.secondary as { r: number; g: number; b: number }),
+        };
+      }
+
+      // Migrate customisation colors
+      for (const field of ["paperColorLight", "paperColorDark", "highlightColorLight", "highlightColorDark"] as const) {
+        const val = orga[field];
+        if (isRgbObject(val)) {
+          updates[field] = rgbObjectToHex(val as { r: number; g: number; b: number });
+        }
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await ctx.db.patch(orga._id, updates);
+        migrated++;
+      } else {
+        skipped++;
+      }
+    }
+
+    return { migrated, skipped };
   },
 });
 

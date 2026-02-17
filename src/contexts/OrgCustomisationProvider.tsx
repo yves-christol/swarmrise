@@ -1,7 +1,8 @@
-import { useMemo, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import { useSelectedOrga } from "../tools/orgaStore";
 import { useTheme } from "./ThemeContext";
 import type { RgbColor } from "../../convex/orgas";
+import { FONT_OPTIONS } from "../components/OrgaSettingsModal/fonts";
 
 function rgbToString(color: RgbColor): string {
   return `${color.r}, ${color.g}, ${color.b}`;
@@ -46,6 +47,26 @@ export function OrgCustomisationProvider({ children }: { children: ReactNode }) 
 
     return Object.keys(vars).length > 0 ? vars : undefined;
   }, [selectedOrga, resolvedTheme]);
+
+  // Load Google Font when titleFont changes
+  useEffect(() => {
+    if (!selectedOrga?.titleFont) return;
+    const font = FONT_OPTIONS.find((f) => f.value === selectedOrga.titleFont);
+    if (!font || font.source !== "google" || !font.googleFamily) return;
+
+    const linkId = `google-font-${font.googleFamily}`;
+    if (document.getElementById(linkId)) return;
+
+    const link = document.createElement("link");
+    link.id = linkId;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?family=${font.googleFamily}:wght@400;500;600;700&display=swap`;
+    document.head.appendChild(link);
+
+    return () => {
+      document.getElementById(linkId)?.remove();
+    };
+  }, [selectedOrga?.titleFont]);
 
   return <div className="contents" style={style}>{children}</div>;
 }

@@ -24,7 +24,11 @@
     "highlightColorHint": "Accent colour used for buttons, links, and interactive elements.",
     "lightMode": "Light",
     "darkMode": "Dark",
-    "resetColor": "Reset"
+    "resetColor": "Reset",
+    "titleFontLabel": "Title font",
+    "titleFontHint": "Font used for headings and entity names throughout the application.",
+    "titleFontPreview": "The quick brown fox jumps",
+    "titleFontDefault": "Default"
   },
   "orga": "orga",
   "noOrganization": "No organization",

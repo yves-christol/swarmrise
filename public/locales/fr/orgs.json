@@ -24,7 +24,11 @@
     "highlightColorHint": "Couleur d'accent utilisee pour les boutons, liens et elements interactifs.",
     "lightMode": "Clair",
     "darkMode": "Sombre",
-    "resetColor": "Reinitialiser"
+    "resetColor": "Reinitialiser",
+    "titleFontLabel": "Police des titres",
+    "titleFontHint": "Police utilisee pour les titres et noms d'entites dans l'application.",
+    "titleFontPreview": "Portez ce vieux whisky au juge",
+    "titleFontDefault": "Par defaut"
   },
   "orga": "orga",
   "noOrganization": "Aucune organisation",

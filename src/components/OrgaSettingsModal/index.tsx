@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { EmailDomainsInput } from "../EmailDomainsInput";
+import { FONT_OPTIONS, ALL_GOOGLE_FONTS_URL } from "./fonts";
 
 type RGB = { r: number; g: number; b: number };
 type ColorScheme = { primary: RGB; secondary: RGB };
@@ -125,6 +126,7 @@ export const OrgaSettingsModal = ({
   const [paperColorDark, setPaperColorDark] = useState<RGB | null>(null);
   const [highlightColorLight, setHighlightColorLight] = useState<RGB | null>(null);
   const [highlightColorDark, setHighlightColorDark] = useState<RGB | null>(null);
+  const [titleFont, setTitleFont] = useState("");
 
   // Logo state
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -170,6 +172,7 @@ export const OrgaSettingsModal = ({
       setPaperColorDark(orga.paperColorDark ?? null);
       setHighlightColorLight(orga.highlightColorLight ?? null);
       setHighlightColorDark(orga.highlightColorDark ?? null);
+      setTitleFont(orga.titleFont ?? "");
 
       // Reset logo state
       setLogoFile(null);
@@ -223,9 +226,27 @@ export const OrgaSettingsModal = ({
       !rgbOptionalEqual(paperColorLight, orga.paperColorLight) ||
       !rgbOptionalEqual(paperColorDark, orga.paperColorDark) ||
       !rgbOptionalEqual(highlightColorLight, orga.highlightColorLight) ||
-      !rgbOptionalEqual(highlightColorDark, orga.highlightColorDark)
+      !rgbOptionalEqual(highlightColorDark, orga.highlightColorDark) ||
+      titleFont !== (orga.titleFont ?? "")
     );
-  }, [orga, name, getColorScheme, emailDomains, logoFile, logoRemoved, paperColorLight, paperColorDark, highlightColorLight, highlightColorDark]);
+  }, [orga, name, getColorScheme, emailDomains, logoFile, logoRemoved, paperColorLight, paperColorDark, highlightColorLight, highlightColorDark, titleFont]);
+
+  // Preload Google Fonts for picker preview when modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+    const linkId = "google-fonts-picker-preview";
+    if (document.getElementById(linkId)) return;
+
+    const link = document.createElement("link");
+    link.id = linkId;
+    link.rel = "stylesheet";
+    link.href = ALL_GOOGLE_FONTS_URL;
+    document.head.appendChild(link);
+
+    return () => {
+      document.getElementById(linkId)?.remove();
+    };
+  }, [isOpen]);
 
   // Handle open/close animation
   useEffect(() => {
@@ -444,7 +465,7 @@ export const OrgaSettingsModal = ({
       const colorScheme = getColorScheme();
 
       // Build customisation args (only send changed values)
-      const customisationArgs: Record<string, RGB | null> = {};
+      const customisationArgs: Record<string, RGB | string | null> = {};
       if (!rgbOptionalEqual(paperColorLight, orga?.paperColorLight)) {
         customisationArgs.paperColorLight = paperColorLight;
       }
@@ -456,6 +477,9 @@ export const OrgaSettingsModal = ({
       }
       if (!rgbOptionalEqual(highlightColorDark, orga?.highlightColorDark)) {
         customisationArgs.highlightColorDark = highlightColorDark;
+      }
+      if (titleFont !== (orga?.titleFont ?? "")) {
+        customisationArgs.titleFont = titleFont || null;
       }
 
       await updateOrga({
@@ -911,6 +935,56 @@ export const OrgaSettingsModal = ({
                     {t("settings.darkMode")}
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Title Font */}
+            <div className="flex flex-col gap-3 mt-4">
+              <label htmlFor="title-font" className="text-sm font-bold text-dark dark:text-light">
+                {t("settings.titleFontLabel")}
+              </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {t("settings.titleFontHint")}
+              </p>
+              <div className="flex items-center gap-2">
+                <select
+                  id="title-font"
+                  value={titleFont}
+                  onChange={(e) => setTitleFont(e.target.value)}
+                  disabled={isSubmitting}
+                  className="flex-1 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
+                    bg-white dark:bg-gray-900 text-dark dark:text-light text-sm
+                    focus:outline-none focus:ring-2 focus:ring-highlight
+                    disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {FONT_OPTIONS.map((font) => (
+                    <option
+                      key={font.value}
+                      value={font.value}
+                      style={font.value ? { fontFamily: font.value } : undefined}
+                    >
+                      {font.value ? font.label : t("settings.titleFontDefault")}
+                    </option>
+                  ))}
+                </select>
+                {titleFont && (
+                  <button
+                    type="button"
+                    onClick={() => setTitleFont("")}
+                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  >
+                    {t("settings.resetColor")}
+                  </button>
+                )}
+              </div>
+              {/* Font preview */}
+              <div className="p-3 rounded-md bg-gray-100 dark:bg-gray-700/50">
+                <p
+                  className="text-lg font-semibold text-dark dark:text-light"
+                  style={titleFont ? { fontFamily: titleFont } : undefined}
+                >
+                  {t("settings.titleFontPreview")}
+                </p>
               </div>
             </div>
           </section>

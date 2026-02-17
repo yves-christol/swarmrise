@@ -625,7 +625,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                             {/* Left: Role info */}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <svg width="20" height="20" viewBox="0 0 40 40" className="flex-shrink-0 text-gray-400 dark:text-gray-500">
+                                <svg width="20" height="20" viewBox="0 0 40 40" className="flex-shrink-0 text-dark dark:text-light">
                                   <path
                                     d={getRoleIconPath(role.iconKey, role.roleType)}
                                     fill="currentColor"

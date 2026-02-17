@@ -396,7 +396,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                 <path
                   d={getRoleIconPath(role.iconKey, role.roleType)}
                   fill="currentColor"
-                  className="text-gray-600 dark:text-gray-300"
+                  className="text-dark dark:text-light"
                 />
               </svg>
               <span className="text-sm text-gray-500 dark:text-gray-400">

@@ -2,6 +2,7 @@ import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { teamValidator } from ".";
+import { rgbColor } from "../orgas";
 import { DEFAULT_COLUMNS } from "../kanban";
 import {
   requireAuthAndMembership,
@@ -325,39 +326,51 @@ export const updateTeam = mutation({
   args: {
     teamId: v.id("teams"),
     name: v.optional(v.string()),
+    colorLight: v.optional(v.union(rgbColor, v.null())),
+    colorDark: v.optional(v.union(rgbColor, v.null())),
   },
   returns: v.id("teams"),
   handler: async (ctx, args) => {
     const orgaId = await getOrgaFromTeam(ctx, args.teamId);
     const member = await requireAuthAndMembership(ctx, orgaId);
-    
+
     const team = await ctx.db.get(args.teamId);
     if (!team) {
       throw new Error("Team not found");
     }
-    
+
     // Update team
     const updates: {
       name?: string;
+      colorLight?: { r: number; g: number; b: number };
+      colorDark?: { r: number; g: number; b: number };
     } = {};
-    
+
     if (args.name !== undefined) updates.name = args.name;
-    
+    if (args.colorLight !== undefined) {
+      updates.colorLight = args.colorLight ?? undefined;
+    }
+    if (args.colorDark !== undefined) {
+      updates.colorDark = args.colorDark ?? undefined;
+    }
+
     // Build before and after with only modified fields
-    const before: {
-      orgaId?: Id<"orgas">;
-      name?: string;
-    } = {};
-    const after: {
-      orgaId?: Id<"orgas">;
-      name?: string;
-    } = {};
-    
+    const before: Record<string, unknown> = {};
+    const after: Record<string, unknown> = {};
+
     if (args.name !== undefined) {
       before.name = team.name;
       after.name = args.name;
     }
-    
+    if (args.colorLight !== undefined) {
+      before.colorLight = team.colorLight;
+      after.colorLight = args.colorLight;
+    }
+    if (args.colorDark !== undefined) {
+      before.colorDark = team.colorDark;
+      after.colorDark = args.colorDark;
+    }
+
     await ctx.db.patch(args.teamId, updates);
     
     // Create decision record
@@ -398,6 +411,8 @@ export const listTeamsWithRoleCounts = query({
       name: v.string(),
       roleCount: v.number(),
       parentTeamId: v.union(v.id("teams"), v.null()),
+      colorLight: v.optional(rgbColor),
+      colorDark: v.optional(rgbColor),
     })
   ),
   handler: async (ctx, args) => {
@@ -438,6 +453,8 @@ export const listTeamsWithRoleCounts = query({
       name: team.name,
       roleCount: teamRoleCounts.get(team._id) || 0,
       parentTeamId: teamParentIds.get(team._id) ?? null,
+      colorLight: team.colorLight,
+      colorDark: team.colorDark,
     }));
   },
 });

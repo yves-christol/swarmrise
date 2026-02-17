@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useFocus } from "../../tools/orgaStore";
+import { useTheme } from "../../contexts/ThemeContext";
 import { Logo } from "../Logo";
 import { RoleNode } from "./RoleNode";
 import { NotFound } from "../NotFound";
@@ -31,6 +32,7 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
 
   // Focus navigation for clicking into child teams and roles
   const { focusOnTeam, focusOnRole } = useFocus();
+  const { resolvedTheme } = useTheme();
 
   // Fetch team data
   const team = useQuery(api.teams.functions.getTeamById, { teamId });
@@ -234,6 +236,20 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
         <title>{t("diagram.teamStructureTitle", { name: team.name })}</title>
 
       <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
+        {/* Team colour background fill */}
+        {(() => {
+          const tc = resolvedTheme === "dark" ? team.colorDark : team.colorLight;
+          return tc ? (
+            <circle
+              cx={centerX}
+              cy={centerY}
+              r={outerCircleRadius}
+              fill={`rgba(${tc.r}, ${tc.g}, ${tc.b}, 0.2)`}
+              stroke="none"
+            />
+          ) : null;
+        })()}
+
         {/* Outer boundary circle (inner-tangent with role circles) */}
         <circle
           cx={centerX}
@@ -745,7 +761,7 @@ function ParentTeamNode({
           strokeWidth={1}
           opacity={0.5}
           style={{
-            filter: "drop-shadow(0 0 8px rgba(234, 200, 64, 0.5))",
+            filter: "drop-shadow(0 0 8px var(--diagram-golden-bee))",
           }}
         />
       )}
@@ -828,7 +844,7 @@ function DaughterTeamNode({
           strokeWidth={1}
           opacity={0.5}
           style={{
-            filter: "drop-shadow(0 0 8px rgba(234, 200, 64, 0.5))",
+            filter: "drop-shadow(0 0 8px var(--diagram-golden-bee))",
           }}
         />
       )}

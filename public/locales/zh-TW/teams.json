@@ -26,7 +26,13 @@
     "viewRoleDetails": "{{title}}{{type}}。檢視角色詳情。",
     "teamMembers": "團隊成員",
     "noMembersInTeam": "此團隊中沒有成員",
-    "createRole": "建立角色"
+    "createRole": "建立角色",
+    "teamColor": "團隊顏色",
+    "teamColorHint": "為此團隊設定自訂顏色。它將顯示在圖表中的團隊圓圈上。",
+    "lightMode": "淺色模式",
+    "darkMode": "深色模式",
+    "resetColor": "重置",
+    "teamColorUpdated": "團隊顏色已更新"
   },
   "createRole": {
     "title": "建立新角色",

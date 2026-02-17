@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "../../contexts/ThemeContext";
 import type { TeamNodePosition } from "./types";
 
 type TeamNodeProps = {
@@ -15,7 +16,14 @@ export const TeamNode = memo(function TeamNode({
 }: TeamNodeProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation("teams");
+  const { resolvedTheme } = useTheme();
   const { team, x, y, radius } = position;
+
+  // Resolve team colour
+  const teamColor = resolvedTheme === "dark" ? team.colorDark : team.colorLight;
+  const teamFill = teamColor
+    ? `rgb(${teamColor.r}, ${teamColor.g}, ${teamColor.b})`
+    : "var(--diagram-node-fill)";
 
   const handleClick = () => {
     onNavigate?.();
@@ -67,7 +75,7 @@ export const TeamNode = memo(function TeamNode({
         cx={x}
         cy={y}
         r={radius}
-        fill="var(--diagram-node-fill)"
+        fill={teamFill}
         stroke={isHovered ? "#a2dbed" : "var(--diagram-node-stroke)"}
         strokeWidth={2}
         style={{

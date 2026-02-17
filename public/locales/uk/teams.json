@@ -26,7 +26,13 @@
     "viewRoleDetails": "{{title}}{{type}}. Переглянути деталі ролі.",
     "teamMembers": "Учасники команди",
     "noMembersInTeam": "У цій команді немає учасників",
-    "createRole": "Створити роль"
+    "createRole": "Створити роль",
+    "teamColor": "Колір команди",
+    "teamColorHint": "Встановіть власний колір для цієї команди. Він з'явиться на колах команди в діаграмах.",
+    "lightMode": "Світла тема",
+    "darkMode": "Темна тема",
+    "resetColor": "Скинути",
+    "teamColorUpdated": "Колір команди оновлено"
   },
   "createRole": {
     "title": "Створити нову роль",

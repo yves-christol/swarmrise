@@ -26,7 +26,13 @@
     "viewRoleDetails": "{{title}}{{type}}. Visualizza dettagli del ruolo.",
     "teamMembers": "Membri della squadra",
     "noMembersInTeam": "Nessun membro in questa squadra",
-    "createRole": "Crea ruolo"
+    "createRole": "Crea ruolo",
+    "teamColor": "Colore della squadra",
+    "teamColorHint": "Imposta un colore personalizzato per questa squadra. Apparirà sui cerchi della squadra nei diagrammi.",
+    "lightMode": "Modalità chiara",
+    "darkMode": "Modalità scura",
+    "resetColor": "Ripristina",
+    "teamColorUpdated": "Colore della squadra aggiornato"
   },
   "createRole": {
     "title": "Crea un nuovo ruolo",

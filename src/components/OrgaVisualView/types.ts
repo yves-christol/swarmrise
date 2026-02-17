@@ -10,6 +10,8 @@ export type TeamWithRoleCount = {
   name: string;
   roleCount: number;
   parentTeamId: Id<"teams"> | null;
+  colorLight?: { r: number; g: number; b: number };
+  colorDark?: { r: number; g: number; b: number };
 };
 
 export type GraphNode = {
@@ -24,6 +26,8 @@ export type GraphNode = {
   fx?: number | null;
   fy?: number | null;
   isPinned?: boolean;
+  colorLight?: { r: number; g: number; b: number };
+  colorDark?: { r: number; g: number; b: number };
 };
 
 export type GraphEdge = {

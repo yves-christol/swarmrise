@@ -55,6 +55,8 @@ export function useLayoutEngine(
         radius: calculateRadius(team.roleCount),
         x: width / 2 + Math.cos(angle) * spiralRadius,
         y: height / 2 + Math.sin(angle) * spiralRadius,
+        colorLight: team.colorLight,
+        colorDark: team.colorDark,
       };
       nodeMap.set(team._id, node);
       return node;
@@ -138,6 +140,8 @@ export function useLayoutEngine(
         x: n.x ?? 0,
         y: n.y ?? 0,
         isPinned: n.fx != null && n.fy != null,
+        colorLight: n.colorLight,
+        colorDark: n.colorDark,
       }));
 
     setNodes(snapshotNodes());

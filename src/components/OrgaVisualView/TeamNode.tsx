@@ -1,6 +1,7 @@
 import { memo, useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Id } from "../../../convex/_generated/dataModel";
+import { useTheme } from "../../contexts/ThemeContext";
 import type { GraphNode } from "./types";
 
 type TeamNodeProps = {
@@ -48,6 +49,7 @@ export const TeamNode = memo(function TeamNode({
   void _onSelect; // Reserved for future use (e.g., multi-select)
   const [isDragging, setIsDragging] = useState(false);
   const { t } = useTranslation("teams");
+  const { resolvedTheme } = useTheme();
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
   const hasMoved = useRef(false);
 
@@ -121,17 +123,22 @@ export const TeamNode = memo(function TeamNode({
     [node.id, node.isPinned, onUnpin]
   );
 
+  // Resolve team colour based on theme
+  const teamColor = resolvedTheme === "dark" ? node.colorDark : node.colorLight;
+  const fillColor = teamColor
+    ? `rgb(${teamColor.r}, ${teamColor.g}, ${teamColor.b})`
+    : "var(--diagram-node-fill)";
+
   // Determine stroke and fill based on state
   let strokeColor = "var(--diagram-node-stroke)";
   let strokeWidth = 2;
-  const fillColor = "var(--diagram-node-fill)";
   const textColor = "var(--diagram-node-text)";
 
   if (isDragging) {
-    strokeColor = "rgba(234, 200, 64, 0.7)"; // Gold during drag
+    strokeColor = "var(--org-highlight-color, #eac840)"; // Highlight during drag
     strokeWidth = 3;
   } else if (isSelected) {
-    strokeColor = "#eac840"; // Bee Gold - brand accent
+    strokeColor = "var(--org-highlight-color, #eac840)"; // Selected accent
     strokeWidth = 3;
   } else if (isHovered) {
     strokeColor = "var(--diagram-node-stroke-hover)";
@@ -183,15 +190,15 @@ export const TeamNode = memo(function TeamNode({
           cy={node.y}
           r={node.radius + 4}
           fill="none"
-          stroke={isSelected || isDragging ? "#eac840" : "transparent"}
+          stroke={isSelected || isDragging ? "var(--org-highlight-color, #eac840)" : "transparent"}
           strokeWidth={isSelected || isDragging ? 1 : 0}
           opacity={isSelected || isDragging ? 0.3 : 0}
           style={{
             filter:
               isDragging
-                ? "drop-shadow(0 0 12px rgba(234, 200, 64, 0.5))"
+                ? "drop-shadow(0 0 12px var(--diagram-golden-bee))"
                 : isSelected
-                ? "drop-shadow(0 0 8px rgba(234, 200, 64, 0.4))"
+                ? "drop-shadow(0 0 8px var(--diagram-golden-bee))"
                 : isHovered
                 ? "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))"
                 : "none",
@@ -222,7 +229,7 @@ export const TeamNode = memo(function TeamNode({
             cx={node.x - node.radius * 0.7}
             cy={node.y - node.radius * 0.7}
             r={8}
-            fill="#eac840"
+            fill="var(--org-highlight-color, #eac840)"
             opacity={0.8}
           />
           <text

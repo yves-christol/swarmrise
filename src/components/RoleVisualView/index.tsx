@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
+import { useTheme } from "../../contexts/ThemeContext";
 import { TeamLink } from "./TeamLink";
 import { MemberLink } from "./MemberLink";
 import { NotFound } from "../NotFound";
@@ -49,6 +50,8 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
     setSvgElement(node);
   }, []);
   const { viewport, handlers: viewportHandlers } = useViewport(svgElement);
+
+  const { resolvedTheme } = useTheme();
 
   // Fetch role data
   const role = useQuery(api.roles.functions.getRoleById, { roleId });
@@ -348,6 +351,20 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
         <title>{t("diagram.roleDetailsTitle", { name: role.title })}</title>
 
       <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
+        {/* Team colour background fill */}
+        {(() => {
+          const tc = team && (resolvedTheme === "dark" ? team.colorDark : team.colorLight);
+          return tc ? (
+            <circle
+              cx={centerX}
+              cy={centerY}
+              r={maxRadius}
+              fill={`rgba(${tc.r}, ${tc.g}, ${tc.b}, 0.2)`}
+              stroke="none"
+            />
+          ) : null;
+        })()}
+
         {/* Outer boundary circle */}
         <circle
           className="role-outer-circle"
@@ -508,6 +525,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             centerY={centerY}
             maxRadius={maxRadius}
             onTeamClick={onZoomOut}
+            resolvedTheme={resolvedTheme}
           />
         )}
 

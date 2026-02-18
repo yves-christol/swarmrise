@@ -19,13 +19,13 @@ type TeamNodeProps = {
 };
 
 /**
- * Wrap a team name into up to two lines that fit within the circle.
- * Returns { lines } where lines is an array of 1-2 strings.
+ * Wrap a team name into up to three lines that fit within the circle.
+ * Returns { lines } where lines is an array of 1-3 strings.
  *
  * Strategy:
  * 1. If the full name fits on one line, use it as-is.
- * 2. Otherwise, split at the best word boundary to produce two lines.
- * 3. If the name still does not fit on two lines, truncate the second line.
+ * 2. Otherwise, split at word boundaries to produce up to three lines.
+ * 3. If the name still does not fit on three lines, truncate the last line.
  */
 function wrapTeamName(
   name: string,
@@ -40,53 +40,51 @@ function wrapTeamName(
     return { lines: [name] };
   }
 
-  // Try to split at a word boundary near the middle or at maxCharsPerLine
   const words = name.split(/\s+/);
 
-  // If it is a single long word, hard-split it across two lines
+  // If it is a single long word, hard-split it across lines
   if (words.length === 1) {
-    const firstLine = name.slice(0, maxCharsPerLine);
-    const remainder = name.slice(maxCharsPerLine);
-    if (remainder.length <= maxCharsPerLine) {
-      return { lines: [firstLine, remainder] };
+    if (name.length <= maxCharsPerLine * 2) {
+      const mid = Math.ceil(name.length / 2);
+      return { lines: [name.slice(0, mid), name.slice(mid)] };
     }
     return {
-      lines: [firstLine, remainder.slice(0, maxCharsPerLine - 1) + "\u2026"],
+      lines: [
+        name.slice(0, maxCharsPerLine),
+        name.slice(maxCharsPerLine, maxCharsPerLine * 2 - 1) + "\u2026",
+      ],
     };
   }
 
-  // Build the first line word by word, stopping before we exceed maxCharsPerLine
-  let firstLine = "";
-  let splitIndex = 0;
+  // Build lines word by word, up to 3 lines
+  const lines: string[] = [];
+  let currentLine = "";
 
   for (let i = 0; i < words.length; i++) {
-    const candidate = firstLine ? firstLine + " " + words[i] : words[i];
-    if (candidate.length > maxCharsPerLine && firstLine.length > 0) {
-      // Adding this word would overflow -- stop here
-      splitIndex = i;
-      break;
+    const candidate = currentLine ? `${currentLine} ${words[i]}` : words[i];
+    if (candidate.length > maxCharsPerLine && currentLine.length > 0) {
+      lines.push(currentLine);
+      if (lines.length === 2) {
+        // 3rd line - take all remaining words (including current)
+        const remaining = words.slice(i).join(" ");
+        if (remaining.length > maxCharsPerLine) {
+          lines.push(remaining.slice(0, maxCharsPerLine - 1) + "\u2026");
+        } else {
+          lines.push(remaining);
+        }
+        return { lines };
+      }
+      currentLine = words[i];
+    } else {
+      currentLine = candidate;
     }
-    firstLine = candidate;
-    splitIndex = i + 1;
   }
 
-  // If all words ended up on the first line (each word is short but total is long),
-  // that means the first word alone exceeds maxCharsPerLine. Fall back to hard split.
-  if (splitIndex >= words.length) {
-    // All words on line 1, nothing left for line 2 -- name fit on one line after all
-    // (shouldn't normally reach here, but safety check)
-    return { lines: [firstLine] };
+  if (currentLine) {
+    lines.push(currentLine);
   }
 
-  const secondLine = words.slice(splitIndex).join(" ");
-
-  if (secondLine.length <= maxCharsPerLine) {
-    return { lines: [firstLine, secondLine] };
-  }
-
-  return {
-    lines: [firstLine, secondLine.slice(0, maxCharsPerLine - 1) + "\u2026"],
-  };
+  return { lines };
 }
 
 function getFontSize(radius: number): number {
@@ -311,7 +309,7 @@ export const TeamNode = memo(function TeamNode({
         </g>
       )}
 
-      {/* Team name (up to two lines) */}
+      {/* Team name (up to three lines) */}
       <text
         x={node.x}
         textAnchor="middle"
@@ -330,13 +328,25 @@ export const TeamNode = memo(function TeamNode({
           <tspan x={node.x} y={node.y}>
             {nameLines[0]}
           </tspan>
-        ) : (
+        ) : nameLines.length === 2 ? (
           <>
             <tspan x={node.x} y={node.y - fontSize * 0.6}>
               {nameLines[0]}
             </tspan>
             <tspan x={node.x} y={node.y + fontSize * 0.6}>
               {nameLines[1]}
+            </tspan>
+          </>
+        ) : (
+          <>
+            <tspan x={node.x} y={node.y - fontSize * 1.2}>
+              {nameLines[0]}
+            </tspan>
+            <tspan x={node.x} y={node.y}>
+              {nameLines[1]}
+            </tspan>
+            <tspan x={node.x} y={node.y + fontSize * 1.2}>
+              {nameLines[2]}
             </tspan>
           </>
         )}

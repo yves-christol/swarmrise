@@ -459,8 +459,21 @@ export const migrateOwnerToRole = internalMutation({
       const teamRoles = memberRoles.filter((r) => r.teamId === board.teamId);
 
       if (teamRoles.length === 0) {
-        // No matching role found — flag for manual review
-        flagged++;
+        // Fallback: assign any role in the team
+        const anyTeamRole = await ctx.db
+          .query("roles")
+          .withIndex("by_team", (q) => q.eq("teamId", board.teamId))
+          .first();
+        if (anyTeamRole) {
+          await ctx.db.patch(card._id, {
+            roleId: anyTeamRole._id,
+          } as Record<string, unknown>);
+          migrated++;
+        } else {
+          // No roles in the team at all — delete orphaned card
+          await ctx.db.delete(card._id);
+          flagged++;
+        }
         continue;
       }
 

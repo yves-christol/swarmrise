@@ -140,9 +140,6 @@ body {
   --diagram-node-stroke-hover: #6b7280; /* gray-500 */
   --diagram-node-text: #1f2937;        /* gray-800 */
   --diagram-muted-text: #6b7280;       /* gray-500 */
-  --diagram-tooltip-bg: #ffffff;       /* white */
-  --diagram-tooltip-border: #d1d5db;   /* gray-300 */
-  --diagram-tooltip-text: #1f2937;     /* gray-800 */
   --diagram-arrow: #6b7280;            /* gray-500 */
   --diagram-golden-bee: var(--org-highlight-hover, #D4AF37); /* golden-bee light mode */
 }
@@ -154,9 +151,6 @@ body {
   --diagram-node-stroke-hover: #6b7280; /* gray-500 */
   --diagram-node-text: #e5e7eb;        /* gray-200 */
   --diagram-muted-text: #9ca3af;       /* gray-400 */
-  --diagram-tooltip-bg: #111827;       /* gray-900 */
-  --diagram-tooltip-border: #4b5563;   /* gray-600 */
-  --diagram-tooltip-text: #e5e7eb;     /* gray-200 */
   --diagram-arrow: #6b7280;            /* gray-500 */
   --diagram-golden-bee: var(--org-highlight-color, #EAC840); /* golden-bee dark mode */
 }

@@ -20,7 +20,7 @@ type TeamNodeProps = {
 
 /**
  * Wrap a team name into up to two lines that fit within the circle.
- * Returns { lines, isTruncated } where lines is an array of 1-2 strings.
+ * Returns { lines } where lines is an array of 1-2 strings.
  *
  * Strategy:
  * 1. If the full name fits on one line, use it as-is.
@@ -30,14 +30,14 @@ type TeamNodeProps = {
 function wrapTeamName(
   name: string,
   radius: number
-): { lines: string[]; isTruncated: boolean } {
+): { lines: string[] } {
   // Characters that fit on one line inside the circle (conservative estimate
   // based on average character width relative to the node radius).
   const maxCharsPerLine = Math.floor(radius / 5);
 
   // Single line: name fits entirely
   if (name.length <= maxCharsPerLine) {
-    return { lines: [name], isTruncated: false };
+    return { lines: [name] };
   }
 
   // Try to split at a word boundary near the middle or at maxCharsPerLine
@@ -48,11 +48,10 @@ function wrapTeamName(
     const firstLine = name.slice(0, maxCharsPerLine);
     const remainder = name.slice(maxCharsPerLine);
     if (remainder.length <= maxCharsPerLine) {
-      return { lines: [firstLine, remainder], isTruncated: false };
+      return { lines: [firstLine, remainder] };
     }
     return {
       lines: [firstLine, remainder.slice(0, maxCharsPerLine - 1) + "\u2026"],
-      isTruncated: true,
     };
   }
 
@@ -76,18 +75,17 @@ function wrapTeamName(
   if (splitIndex >= words.length) {
     // All words on line 1, nothing left for line 2 -- name fit on one line after all
     // (shouldn't normally reach here, but safety check)
-    return { lines: [firstLine], isTruncated: false };
+    return { lines: [firstLine] };
   }
 
   const secondLine = words.slice(splitIndex).join(" ");
 
   if (secondLine.length <= maxCharsPerLine) {
-    return { lines: [firstLine, secondLine], isTruncated: false };
+    return { lines: [firstLine, secondLine] };
   }
 
   return {
     lines: [firstLine, secondLine.slice(0, maxCharsPerLine - 1) + "\u2026"],
-    isTruncated: true,
   };
 }
 
@@ -119,7 +117,7 @@ export const TeamNode = memo(function TeamNode({
   const hasMoved = useRef(false);
 
   const fontSize = getFontSize(node.radius);
-  const { lines: nameLines, isTruncated } = wrapTeamName(node.name, node.radius);
+  const { lines: nameLines } = wrapTeamName(node.name, node.radius);
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -344,35 +342,6 @@ export const TeamNode = memo(function TeamNode({
         )}
       </text>
 
-      {/* Full name tooltip on hover (only when text was truncated) */}
-      {isHovered && !isDragging && isTruncated && (
-        <g>
-          <rect
-            x={node.x - node.name.length * 4}
-            y={node.y + node.radius + 10}
-            width={node.name.length * 8 + 16}
-            height={24}
-            rx={4}
-            fill="var(--diagram-tooltip-bg)"
-            stroke="var(--diagram-tooltip-border)"
-            strokeWidth={1}
-          />
-          <text
-            x={node.x}
-            y={node.y + node.radius + 22}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill="var(--diagram-tooltip-text)"
-            fontSize={12}
-            style={{
-              pointerEvents: "none",
-              userSelect: "none",
-            }}
-          >
-            {node.name}
-          </text>
-        </g>
-      )}
     </g>
   );
 });

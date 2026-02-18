@@ -27,8 +27,11 @@
     "deleteConfirm": "\u4f60\u78ba\u5b9a\u8981\u522a\u9664\u9019\u5f35\u5361\u7247\u55ce\uff1f",
     "titleRequired": "\u6a19\u984c\u70ba\u5fc5\u586b\u6b04\u4f4d",
     "roleRequired": "\u89d2\u8272\u70ba\u5fc5\u586b\u6b04\u4f4d",
+    "selectRole": "\u9078\u64c7\u89d2\u8272...",
+    "column": "\u6b04\u4f4d",
     "dueDateRequired": "\u5230\u671f\u65e5\u70ba\u5fc5\u586b\u6b04\u4f4d",
-    "noComments": "\u7121\u7559\u8a00"
+    "noComments": "\u7121\u7559\u8a00",
+    "genericError": "\u767c\u751f\u932f\u8aa4"
   },
   "actions": {
     "save": "\u5132\u5b58",

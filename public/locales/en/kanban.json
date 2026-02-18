@@ -27,8 +27,11 @@
     "deleteConfirm": "Are you sure you want to delete this card?",
     "titleRequired": "Title is required",
     "roleRequired": "Role is required",
+    "selectRole": "Select a role...",
+    "column": "Column",
     "dueDateRequired": "Due date is required",
-    "noComments": "No comments"
+    "noComments": "No comments",
+    "genericError": "An error occurred"
   },
   "actions": {
     "save": "Save",

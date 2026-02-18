@@ -27,8 +27,11 @@
     "deleteConfirm": "\u00bfEst\u00e1s seguro de que quieres eliminar esta tarjeta?",
     "titleRequired": "El t\u00edtulo es obligatorio",
     "roleRequired": "El rol es obligatorio",
+    "selectRole": "Seleccionar un rol...",
+    "column": "Columna",
     "dueDateRequired": "La fecha l\u00edmite es obligatoria",
-    "noComments": "Sin comentarios"
+    "noComments": "Sin comentarios",
+    "genericError": "Se produjo un error"
   },
   "actions": {
     "save": "Guardar",

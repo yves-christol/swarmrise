@@ -180,7 +180,7 @@ export function KanbanCardModal({
       }
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : t("card.genericError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -193,7 +193,7 @@ export function KanbanCardModal({
       await deleteCard({ cardId: card._id });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : t("card.genericError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -266,7 +266,7 @@ export function KanbanCardModal({
           {!isEditMode && (
             <div className="flex flex-col gap-1.5">
               <label htmlFor="card-column" className="text-sm font-bold text-dark dark:text-light">
-                Column
+                {t("card.column")}
               </label>
               <select
                 id="card-column"
@@ -303,7 +303,7 @@ export function KanbanCardModal({
                 focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option value="" disabled>{t("card.roleRequired")}</option>
+              <option value="" disabled>{t("card.selectRole")}</option>
               {sortedRoles.map((r) => {
                 const holder = memberMap.get(r.memberId);
                 const holderName = holder ? `${holder.firstname} ${holder.surname}` : "";

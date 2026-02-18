@@ -832,7 +832,7 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | Frontend: `KanbanBoard` fetches roles for the team | Pending | Add `useQuery(listRolesInTeam)` |
 | Frontend: `KanbanColumn` passes roleMap | Pending | Thread role data to card components |
 | Frontend: update search to filter by role title + holder name | Pending | Extend client-side filter logic |
-| i18n: update `owner` -> `role` keys in all 6 languages | Pending | `card.owner` -> `card.role`, `card.ownerRequired` -> `card.roleRequired` |
+| i18n: update `owner` -> `role` keys in all 6 languages | Done | `card.owner` -> `card.role`, `card.ownerRequired` -> `card.roleRequired`; added `card.selectRole`, `card.column`, `card.genericError` |
 
 ---
 

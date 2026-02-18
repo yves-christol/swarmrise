@@ -27,8 +27,11 @@
     "deleteConfirm": "\u00cates-vous s\u00fbr de vouloir supprimer cette carte ?",
     "titleRequired": "Le titre est requis",
     "roleRequired": "Le r\u00f4le est requis",
+    "selectRole": "S\u00e9lectionnez un r\u00f4le...",
+    "column": "Colonne",
     "dueDateRequired": "La date d'\u00e9ch\u00e9ance est requise",
-    "noComments": "Aucun commentaire"
+    "noComments": "Aucun commentaire",
+    "genericError": "Une erreur est survenue"
   },
   "actions": {
     "save": "Enregistrer",

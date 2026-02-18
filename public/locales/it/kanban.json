@@ -27,8 +27,11 @@
     "deleteConfirm": "Sei sicuro di voler eliminare questa scheda?",
     "titleRequired": "Il titolo \u00e8 obbligatorio",
     "roleRequired": "Il ruolo \u00e8 obbligatorio",
+    "selectRole": "Seleziona un ruolo...",
+    "column": "Colonna",
     "dueDateRequired": "La data di scadenza \u00e8 obbligatoria",
-    "noComments": "Nessun commento"
+    "noComments": "Nessun commento",
+    "genericError": "Si \u00e8 verificato un errore"
   },
   "actions": {
     "save": "Salva",

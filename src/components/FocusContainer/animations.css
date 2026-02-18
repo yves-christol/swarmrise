@@ -119,9 +119,15 @@
 .flip-card.visual {
   transform: rotateY(0deg);
 }
+.flip-card.visual .flip-face-manage {
+  pointer-events: none;
+}
 
 .flip-card.manage {
   transform: rotateY(180deg);
+}
+.flip-card.manage .flip-face-visual {
+  pointer-events: none;
 }
 
 /* All faces share common positioning and hide when facing away */
@@ -154,13 +160,25 @@
 .flip-card.prism.visual {
   transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(0deg);
 }
+.flip-card.prism.visual .flip-face-manage,
+.flip-card.prism.visual .flip-face-kanban {
+  pointer-events: none;
+}
 
 .flip-card.prism.manage {
   transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(-120deg);
 }
+.flip-card.prism.manage .flip-face-visual,
+.flip-card.prism.manage .flip-face-kanban {
+  pointer-events: none;
+}
 
 .flip-card.prism.kanban {
   transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(-240deg);
+}
+.flip-card.prism.kanban .flip-face-visual,
+.flip-card.prism.kanban .flip-face-manage {
+  pointer-events: none;
 }
 
 /* Override face positioning: push each face out to the prism surface */
@@ -287,28 +305,36 @@
   }
   .flip-face-manage {
     opacity: 0;
+    pointer-events: none;
   }
   .flip-face-kanban {
     opacity: 0;
+    pointer-events: none;
   }
   /* Manage mode: only manage face visible */
   .flip-card.manage .flip-face-visual {
     opacity: 0;
+    pointer-events: none;
   }
   .flip-card.manage .flip-face-manage {
     opacity: 1;
+    pointer-events: auto;
   }
   .flip-card.manage .flip-face-kanban {
     opacity: 0;
+    pointer-events: none;
   }
   /* Kanban mode: only kanban face visible */
   .flip-card.kanban .flip-face-visual {
     opacity: 0;
+    pointer-events: none;
   }
   .flip-card.kanban .flip-face-manage {
     opacity: 0;
+    pointer-events: none;
   }
   .flip-card.kanban .flip-face-kanban {
     opacity: 1;
+    pointer-events: auto;
   }
 }

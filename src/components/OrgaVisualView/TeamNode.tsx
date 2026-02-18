@@ -18,10 +18,77 @@ type TeamNodeProps = {
   onZoomIn: (teamId: Id<"teams">, x: number, y: number, radius: number) => void;
 };
 
-function truncateTeamName(name: string, radius: number): string {
-  const maxChars = Math.floor(radius / 5);
-  if (name.length <= maxChars) return name;
-  return name.slice(0, maxChars - 1) + "...";
+/**
+ * Wrap a team name into up to two lines that fit within the circle.
+ * Returns { lines, isTruncated } where lines is an array of 1-2 strings.
+ *
+ * Strategy:
+ * 1. If the full name fits on one line, use it as-is.
+ * 2. Otherwise, split at the best word boundary to produce two lines.
+ * 3. If the name still does not fit on two lines, truncate the second line.
+ */
+function wrapTeamName(
+  name: string,
+  radius: number
+): { lines: string[]; isTruncated: boolean } {
+  // Characters that fit on one line inside the circle (conservative estimate
+  // based on average character width relative to the node radius).
+  const maxCharsPerLine = Math.floor(radius / 5);
+
+  // Single line: name fits entirely
+  if (name.length <= maxCharsPerLine) {
+    return { lines: [name], isTruncated: false };
+  }
+
+  // Try to split at a word boundary near the middle or at maxCharsPerLine
+  const words = name.split(/\s+/);
+
+  // If it is a single long word, hard-split it across two lines
+  if (words.length === 1) {
+    const firstLine = name.slice(0, maxCharsPerLine);
+    const remainder = name.slice(maxCharsPerLine);
+    if (remainder.length <= maxCharsPerLine) {
+      return { lines: [firstLine, remainder], isTruncated: false };
+    }
+    return {
+      lines: [firstLine, remainder.slice(0, maxCharsPerLine - 1) + "\u2026"],
+      isTruncated: true,
+    };
+  }
+
+  // Build the first line word by word, stopping before we exceed maxCharsPerLine
+  let firstLine = "";
+  let splitIndex = 0;
+
+  for (let i = 0; i < words.length; i++) {
+    const candidate = firstLine ? firstLine + " " + words[i] : words[i];
+    if (candidate.length > maxCharsPerLine && firstLine.length > 0) {
+      // Adding this word would overflow -- stop here
+      splitIndex = i;
+      break;
+    }
+    firstLine = candidate;
+    splitIndex = i + 1;
+  }
+
+  // If all words ended up on the first line (each word is short but total is long),
+  // that means the first word alone exceeds maxCharsPerLine. Fall back to hard split.
+  if (splitIndex >= words.length) {
+    // All words on line 1, nothing left for line 2 -- name fit on one line after all
+    // (shouldn't normally reach here, but safety check)
+    return { lines: [firstLine], isTruncated: false };
+  }
+
+  const secondLine = words.slice(splitIndex).join(" ");
+
+  if (secondLine.length <= maxCharsPerLine) {
+    return { lines: [firstLine, secondLine], isTruncated: false };
+  }
+
+  return {
+    lines: [firstLine, secondLine.slice(0, maxCharsPerLine - 1) + "\u2026"],
+    isTruncated: true,
+  };
 }
 
 function getFontSize(radius: number): number {
@@ -52,7 +119,7 @@ export const TeamNode = memo(function TeamNode({
   const hasMoved = useRef(false);
 
   const fontSize = getFontSize(node.radius);
-  const displayName = truncateTeamName(node.name, node.radius);
+  const { lines: nameLines, isTruncated } = wrapTeamName(node.name, node.radius);
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -246,10 +313,9 @@ export const TeamNode = memo(function TeamNode({
         </g>
       )}
 
-      {/* Team name */}
+      {/* Team name (up to two lines) */}
       <text
         x={node.x}
-        y={node.y}
         textAnchor="middle"
         dominantBaseline="central"
         fill={textColor}
@@ -262,11 +328,24 @@ export const TeamNode = memo(function TeamNode({
           transition: "font-weight 150ms ease-out",
         }}
       >
-        {displayName}
+        {nameLines.length === 1 ? (
+          <tspan x={node.x} y={node.y}>
+            {nameLines[0]}
+          </tspan>
+        ) : (
+          <>
+            <tspan x={node.x} y={node.y - fontSize * 0.6}>
+              {nameLines[0]}
+            </tspan>
+            <tspan x={node.x} y={node.y + fontSize * 0.6}>
+              {nameLines[1]}
+            </tspan>
+          </>
+        )}
       </text>
 
-      {/* Full name tooltip on hover */}
-      {isHovered && !isDragging && displayName !== node.name && (
+      {/* Full name tooltip on hover (only when text was truncated) */}
+      {isHovered && !isDragging && isTruncated && (
         <g>
           <rect
             x={node.x - node.name.length * 4}

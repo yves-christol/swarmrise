@@ -1,6 +1,57 @@
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TeamNodePosition } from "./types";
+
+/**
+ * Wrap a team name into up to three lines that fit within the circle.
+ */
+function wrapTeamName(name: string, radius: number): string[] {
+  const maxCharsPerLine = Math.max(Math.floor((radius * 1.4) / 5), 4);
+
+  if (name.length <= maxCharsPerLine) return [name];
+
+  const words = name.split(/\s+/);
+
+  if (words.length === 1) {
+    if (name.length <= maxCharsPerLine * 2) {
+      const mid = Math.ceil(name.length / 2);
+      return [name.slice(0, mid), name.slice(mid)];
+    }
+    if (name.length <= maxCharsPerLine * 3) {
+      const third = Math.ceil(name.length / 3);
+      return [name.slice(0, third), name.slice(third, third * 2), name.slice(third * 2)];
+    }
+    return [
+      name.slice(0, maxCharsPerLine),
+      name.slice(maxCharsPerLine, maxCharsPerLine * 2 - 1) + "\u2026",
+    ];
+  }
+
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (let i = 0; i < words.length; i++) {
+    const candidate = currentLine ? `${currentLine} ${words[i]}` : words[i];
+    if (candidate.length > maxCharsPerLine && currentLine.length > 0) {
+      lines.push(currentLine);
+      if (lines.length === 2) {
+        const remaining = words.slice(i).join(" ");
+        lines.push(
+          remaining.length > maxCharsPerLine
+            ? remaining.slice(0, maxCharsPerLine - 1) + "\u2026"
+            : remaining
+        );
+        return lines;
+      }
+      currentLine = words[i];
+    } else {
+      currentLine = candidate;
+    }
+  }
+
+  if (currentLine) lines.push(currentLine);
+  return lines;
+}
 
 type TeamNodeProps = {
   position: TeamNodePosition;
@@ -16,6 +67,8 @@ export const TeamNode = memo(function TeamNode({
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation("teams");
   const { team, x, y, radius } = position;
+  const nameLines = useMemo(() => wrapTeamName(team.name, radius), [team.name, radius]);
+  const fontSize = 9;
 
   // Resolve team colour – same pattern as OrgaVisualView/TeamNode:
   // fill at 20 % opacity, stroke at full colour
@@ -86,19 +139,43 @@ export const TeamNode = memo(function TeamNode({
         }}
       />
 
-      {/* Team name truncated */}
+      {/* Team name (up to 3 lines) */}
       <text
         x={x}
-        y={y}
         textAnchor="middle"
         dominantBaseline="central"
         fill="var(--diagram-node-text)"
-        fontSize={9}
+        fontSize={fontSize}
         fontFamily="var(--org-title-font, Arial, Helvetica, sans-serif)"
         fontWeight={500}
         style={{ pointerEvents: "none", userSelect: "none" }}
       >
-        {team.name.length > 12 ? team.name.slice(0, 11) + "..." : team.name}
+        {nameLines.length === 1 ? (
+          <tspan x={x} y={y}>
+            {nameLines[0]}
+          </tspan>
+        ) : nameLines.length === 2 ? (
+          <>
+            <tspan x={x} y={y - fontSize * 0.6}>
+              {nameLines[0]}
+            </tspan>
+            <tspan x={x} y={y + fontSize * 0.6}>
+              {nameLines[1]}
+            </tspan>
+          </>
+        ) : (
+          <>
+            <tspan x={x} y={y - fontSize * 1.2}>
+              {nameLines[0]}
+            </tspan>
+            <tspan x={x} y={y}>
+              {nameLines[1]}
+            </tspan>
+            <tspan x={x} y={y + fontSize * 1.2}>
+              {nameLines[2]}
+            </tspan>
+          </>
+        )}
       </text>
     </g>
   );

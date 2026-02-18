@@ -51,6 +51,7 @@ import type * as policies_functions from "../policies/functions.js";
 import type * as policies_index from "../policies/index.js";
 import type * as roles_functions from "../roles/functions.js";
 import type * as roles_iconDefaults from "../roles/iconDefaults.js";
+import type * as roles_iconKeys from "../roles/iconKeys.js";
 import type * as roles_index from "../roles/index.js";
 import type * as storage from "../storage.js";
 import type * as teams_functions from "../teams/functions.js";
@@ -113,6 +114,7 @@ declare const fullApi: ApiFromModules<{
   "policies/index": typeof policies_index;
   "roles/functions": typeof roles_functions;
   "roles/iconDefaults": typeof roles_iconDefaults;
+  "roles/iconKeys": typeof roles_iconKeys;
   "roles/index": typeof roles_index;
   storage: typeof storage;
   "teams/functions": typeof teams_functions;

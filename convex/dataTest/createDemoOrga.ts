@@ -18,21 +18,13 @@ import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { DEMO_ORGA_CONFIG, TeamTemplate, RoleTemplate } from "./demoOrgaConfig";
 import { getDefaultIconKey } from "../roles/iconDefaults";
+import { ALL_ICON_KEYS } from "../roles/iconKeys";
 
 // Email domain used for all synthetic demo users
 const DEMO_EMAIL_DOMAIN = "@demo-infomax.test";
 
-// Icon keys suitable for random assignment to regular roles (no roleType)
-const RANDOM_ICON_KEYS = [
-  "rond", "cross", "square", "diamond", "diamondcurve", "morningstar",
-  "heightstar", "triangle", "starship", "chevron", "tranchoir", "moon",
-  "octogon", "diamondband", "diamondstar", "blur", "tunnel", "clouds",
-  "round", "sphere", "world", "spiral", "star", "sun", "pyramid",
-  "heart", "moon2", "brightness", "allergen", "3d",
-];
-
 function getRandomIconKey(): string {
-  return RANDOM_ICON_KEYS[Math.floor(Math.random() * RANDOM_ICON_KEYS.length)];
+  return ALL_ICON_KEYS[Math.floor(Math.random() * ALL_ICON_KEYS.length)];
 }
 
 // ---------------------------------------------------------------------------

@@ -119,7 +119,7 @@ export const RoleLink = memo(function RoleLink({
 
       {/* Role icon (inside circle, above title) */}
       <g
-        transform={`translate(${x - 8}, ${y - radius * 0.6}) scale(0.4)`}
+        transform={`translate(${x - 8}, ${y - radius * 0.75}) scale(0.4)`}
         style={{ pointerEvents: "none" }}
       >
         <path

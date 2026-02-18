@@ -1,9 +1,12 @@
 import { v, Infer } from "convex/values"
 
-// Legacy color scheme validator (kept for migration backward compat)
+// Legacy color scheme validator – accepts both old RGB objects and string hex values
+// so that `convex deploy` passes schema validation against production data.
+// Run `internal.orgas.migrations.stripLegacyColorFields` after deploy, then remove.
+const rgbObject = v.object({ r: v.number(), g: v.number(), b: v.number() });
 export const colorScheme = v.object({
-  primary: v.string(),
-  secondary: v.string(),
+  primary: v.union(v.string(), rgbObject),
+  secondary: v.union(v.string(), rgbObject),
 });
 
 export type ColorScheme = Infer<typeof colorScheme>;

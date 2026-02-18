@@ -30,7 +30,7 @@ export function DecisionRow({ decision, showTeamName }: DecisionRowProps) {
       className="
         w-full text-left
         px-4 py-3
-        hover:bg-gray-50 dark:hover:bg-gray-700/50
+        hover:bg-surface-hover-subtle
         transition-colors duration-75
         focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
       "
@@ -56,7 +56,7 @@ export function DecisionRow({ decision, showTeamName }: DecisionRowProps) {
           <p className="text-sm font-medium text-dark dark:text-light">
             {summary}
           </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+          <p className="text-xs text-text-secondary mt-0.5">
             {decision.authorEmail}
             <span className="mx-1 text-gray-300 dark:text-gray-600">&mdash;</span>
             {decision.roleName}
@@ -70,7 +70,7 @@ export function DecisionRow({ decision, showTeamName }: DecisionRowProps) {
 
         {/* Timestamp + expand indicator */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
+          <span className="text-xs text-text-tertiary whitespace-nowrap">
             {relativeTime}
           </span>
           <svg
@@ -81,7 +81,7 @@ export function DecisionRow({ decision, showTeamName }: DecisionRowProps) {
             stroke="currentColor"
             strokeWidth="1.5"
             className={`
-              text-gray-400 dark:text-gray-500
+              text-text-tertiary
               transition-transform duration-150
               ${isExpanded ? "rotate-180" : ""}
             `}
@@ -110,19 +110,19 @@ function DiffPanel({ decision }: { decision: Decision }) {
 
   return (
     <div
-      className="mt-3 px-3 py-2 bg-gray-50 dark:bg-gray-800/50 rounded-md text-xs"
+      className="mt-3 px-3 py-2 bg-surface-secondary/50 rounded-md text-xs"
       role="region"
       onClick={(e) => e.stopPropagation()}
     >
       {isCreation || isDeletion ? (
         <div>
-          <span className="font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-[11px]">
+          <span className="font-medium text-text-secondary uppercase tracking-wide text-[11px]">
             {isCreation ? t("created") : t("removed")}
           </span>
           <div className="mt-1 space-y-1">
             {fields.map((f) => (
               <div key={f.field} className="flex gap-2">
-                <span className="text-gray-400 dark:text-gray-500 min-w-20">
+                <span className="text-text-tertiary min-w-20">
                   {f.field}
                 </span>
                 <span className={isCreation
@@ -138,13 +138,13 @@ function DiffPanel({ decision }: { decision: Decision }) {
       ) : (
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <span className="font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-[11px]">
+            <span className="font-medium text-text-secondary uppercase tracking-wide text-[11px]">
               {t("diffBefore")}
             </span>
             <div className="mt-1 space-y-1">
               {fields.map((f) => (
                 <div key={f.field} className="flex gap-2">
-                  <span className="text-gray-400 dark:text-gray-500 min-w-16">
+                  <span className="text-text-tertiary min-w-16">
                     {f.field}
                   </span>
                   <span className="text-red-500/60">
@@ -155,13 +155,13 @@ function DiffPanel({ decision }: { decision: Decision }) {
             </div>
           </div>
           <div>
-            <span className="font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide text-[11px]">
+            <span className="font-medium text-text-secondary uppercase tracking-wide text-[11px]">
               {t("diffAfter")}
             </span>
             <div className="mt-1 space-y-1">
               {fields.map((f) => (
                 <div key={f.field} className="flex gap-2">
-                  <span className="text-gray-400 dark:text-gray-500 min-w-16">
+                  <span className="text-text-tertiary min-w-16">
                     {f.field}
                   </span>
                   <span className="text-green-600 dark:text-green-400">

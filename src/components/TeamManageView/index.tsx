@@ -35,13 +35,13 @@ function StatCard({
       className="
         flex flex-col items-center
         p-2.5
-        bg-white dark:bg-gray-800
-        border border-gray-200 dark:border-gray-700
+        bg-surface-primary
+        border border-border-default
         rounded-lg
       "
     >
-      <span className="text-xl font-semibold text-gray-700 dark:text-gray-300">{value}</span>
-      <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</span>
+      <span className="text-xl font-semibold text-text-description">{value}</span>
+      <span className="text-xs text-text-secondary mt-0.5">{label}</span>
     </div>
   );
 }
@@ -164,7 +164,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
   if (team === undefined) {
     return (
       <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
-        <div className="text-gray-500 dark:text-gray-400">{tCommon("loading")}</div>
+        <div className="text-text-secondary">{tCommon("loading")}</div>
       </div>
     );
   }
@@ -224,7 +224,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                   setTeamName(team.name);
                   setIsEditingName(false);
                 }}
-                className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                className="px-3 py-1.5 text-sm text-text-description hover:text-gray-800 dark:hover:text-gray-200"
               >
                 {t("manage.cancel")}
               </button>
@@ -248,9 +248,9 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                   flex items-center gap-2
                   px-3 py-1.5
                   text-sm
-                  text-gray-600 dark:text-gray-400
+                  text-text-description
                   hover:text-dark dark:hover:text-light
-                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  hover:bg-surface-hover
                   rounded-md
                   transition-colors duration-75
                   focus:outline-none focus:ring-2 focus:ring-highlight
@@ -264,7 +264,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
               </button>
             </div>
           )}
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm text-text-description mt-1">
             {t("manage.teamSettingsAndStructure")}
           </p>
         </header>
@@ -301,11 +301,11 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
             <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
               {t("manage.teamConnections")}
             </h2>
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4">
+            <div className="bg-surface-primary border border-border-default rounded-lg p-4 space-y-4">
               {/* Parent team */}
               {parentTeam && (
                 <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                  <span className="text-xs font-medium text-text-secondary uppercase tracking-wide">
                     {t("manage.parentTeam")}
                   </span>
                   <div className="mt-1 text-dark dark:text-light">
@@ -326,7 +326,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
               {/* Child teams */}
               {linkedLeaderRoles && linkedLeaderRoles.length > 0 && (
                 <div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                  <span className="text-xs font-medium text-text-secondary uppercase tracking-wide">
                     {t("manage.childTeams", { count: linkedLeaderRoles.length })}
                   </span>
                   <div className="mt-1 text-dark dark:text-light">
@@ -375,13 +375,13 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
               {t("manage.createRole")}
             </button>
           </div>
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div className="bg-surface-primary border border-border-default rounded-lg overflow-hidden">
             {!roles || roles.length === 0 ? (
-              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-8 text-center text-text-secondary">
                 {t("manage.noRolesInTeam")}
               </div>
             ) : (
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="divide-y divide-border-default">
                 {sortedRoles.map((role) => {
                   const member = memberMap.get(role.memberId);
                   return (
@@ -392,7 +392,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                         group
                         w-full flex items-center justify-between
                         px-4 py-3
-                        hover:bg-gray-50 dark:hover:bg-gray-700/50
+                        hover:bg-surface-hover-subtle
                         transition-colors duration-75
                         focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
                         text-left
@@ -424,13 +424,13 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                               </span>
                             )}
                             {role.linkedRoleId && (
-                              <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+                              <span className="text-xs px-1.5 py-0.5 rounded bg-surface-tertiary text-text-secondary">
                                 {t("manage.synced")}
                               </span>
                             )}
                           </div>
                           {role.mission && (
-                            <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-md mt-0.5">
+                            <p className="text-sm text-text-secondary truncate max-w-md mt-0.5">
                               {role.mission}
                             </p>
                           )}
@@ -442,7 +442,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                         {/* Assigned member */}
                         {member && (
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                            <div className="w-8 h-8 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0">
                               {member.pictureURL ? (
                                 <img
                                   src={member.pictureURL}
@@ -450,13 +450,13 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-xs font-medium">
+                                <div className="w-full h-full flex items-center justify-center text-text-secondary text-xs font-medium">
                                   {member.firstname.charAt(0)}
                                   {member.surname.charAt(0)}
                                 </div>
                               )}
                             </div>
-                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                            <span className="text-sm text-text-description">
                               {member.firstname} {member.surname}
                             </span>
                           </div>
@@ -471,7 +471,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                           stroke="currentColor"
                           strokeWidth="1.5"
                           className="
-                            text-gray-400 dark:text-gray-500
+                            text-text-tertiary
                             opacity-0 group-hover:opacity-100
                             transition-opacity duration-75
                             flex-shrink-0
@@ -494,13 +494,13 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
           <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
             {t("manage.teamMembers")}
           </h2>
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div className="bg-surface-primary border border-border-default rounded-lg overflow-hidden">
             {uniqueMembers.length === 0 ? (
-              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-8 text-center text-text-secondary">
                 {t("manage.noMembersInTeam")}
               </div>
             ) : (
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="divide-y divide-border-default">
                 {uniqueMembers.map((member) => (
                   <MemberListItem
                     key={member._id}

@@ -28,7 +28,7 @@ function getContactIcon(type: string) {
       );
     case "Email":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <rect x="1" y="3" width="14" height="10" rx="2" />
           <path d="M1 5l7 4 7-4" />
         </svg>
@@ -53,14 +53,14 @@ function getContactIcon(type: string) {
       );
     case "Mobile":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <rect x="4" y="1" width="8" height="14" rx="2" />
           <line x1="7" y1="12" x2="9" y2="12" />
         </svg>
       );
     case "Website":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <circle cx="8" cy="8" r="6" />
           <ellipse cx="8" cy="8" rx="2.5" ry="6" />
           <line x1="2" y1="8" x2="14" y2="8" />
@@ -74,14 +74,14 @@ function getContactIcon(type: string) {
       );
     case "Address":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <path d="M8 1C5.2 1 3 3.2 3 6c0 4 5 9 5 9s5-5 5-9c0-2.8-2.2-5-5-5z" />
           <circle cx="8" cy="6" r="2" />
         </svg>
       );
     default:
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <circle cx="8" cy="8" r="6" />
         </svg>
       );
@@ -302,7 +302,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
   if (member === undefined) {
     return (
       <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
-        <div className="text-gray-500 dark:text-gray-400">{t("loading")}</div>
+        <div className="text-text-secondary">{t("loading")}</div>
       </div>
     );
   }
@@ -320,7 +320,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
         <header className="mb-8">
           <div className="flex items-center gap-4">
             {/* Avatar */}
-            <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0 border-2 border-gray-300 dark:border-gray-600">
+            <div className="w-20 h-20 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0 border-2 border-border-strong">
               {member.pictureURL ? (
                 <img
                   src={member.pictureURL}
@@ -328,7 +328,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-2xl font-medium">
+                <div className="w-full h-full flex items-center justify-center text-text-secondary text-2xl font-medium">
                   {member.firstname.charAt(0)}
                   {member.surname.charAt(0)}
                 </div>
@@ -349,7 +349,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
               </div>
               <a
                 href={`mailto:${member.email}`}
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                className="text-sm text-text-description hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
               >
                 {member.email}
               </a>
@@ -398,7 +398,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
           </div>
 
           {isEditingContacts ? (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <div className="bg-surface-primary border border-border-default rounded-lg p-4">
               {/* Existing items - editable */}
               {editedContacts.length > 0 && (
                 <ul className="space-y-3 mb-4">
@@ -407,7 +407,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                       <select
                         value={contact.type}
                         onChange={(e) => handleContactTypeChange(index, e.target.value)}
-                        className="w-28 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-highlight"
+                        className="w-28 px-2 py-2 border border-border-strong rounded-lg bg-surface-primary text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-highlight"
                       >
                         {CONTACT_TYPES.map((type) => (
                           <option key={type} value={type}>
@@ -420,7 +420,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                         value={contact.value}
                         onChange={(e) => handleContactValueChange(index, e.target.value)}
                         placeholder={tMembers(getContactPlaceholderKey(contact.type))}
-                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-highlight"
+                        className="flex-1 px-3 py-2 border border-border-strong rounded-lg bg-surface-primary text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-highlight"
                       />
                       <button
                         onClick={() => handleRemoveContact(index)}
@@ -444,11 +444,11 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
               )}
 
               {/* Add new contact */}
-              <div className="flex items-center gap-2 mb-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-4 pt-3 border-t border-border-default">
                 <select
                   value={newContactType}
                   onChange={(e) => setNewContactType(e.target.value)}
-                  className="w-28 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-highlight"
+                  className="w-28 px-2 py-2 border border-border-strong rounded-lg bg-surface-primary text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-highlight"
                 >
                   {CONTACT_TYPES.map((type) => (
                     <option key={type} value={type}>
@@ -467,12 +467,12 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                     }
                   }}
                   placeholder={tMembers(getContactPlaceholderKey(newContactType))}
-                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-highlight"
+                  className="flex-1 px-3 py-2 border border-border-strong rounded-lg bg-surface-primary text-dark dark:text-light focus:outline-none focus:ring-2 focus:ring-highlight"
                 />
                 <button
                   onClick={handleAddContact}
                   disabled={!newContactValue.trim()}
-                  className="px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors duration-75 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 bg-surface-tertiary hover:bg-surface-hover-strong text-text-description rounded-lg transition-colors duration-75 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {tMembers("addContact")}
                 </button>
@@ -482,7 +482,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
               <div className="flex justify-end gap-2">
                 <button
                   onClick={handleCancelEditingContacts}
-                  className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                  className="px-3 py-1.5 text-sm text-text-description hover:text-gray-800 dark:hover:text-gray-200"
                 >
                   {tMembers("cancelEditContacts")}
                 </button>
@@ -496,15 +496,15 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
               </div>
             </div>
           ) : member.contactInfos && member.contactInfos.length > 0 ? (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            <div className="bg-surface-primary border border-border-default rounded-lg overflow-hidden">
+              <div className="divide-y divide-border-default">
                 {member.contactInfos.map((contact, index) => {
                   const link = getContactLink(contact.type, contact.value);
                   return (
                     <div key={index} className="flex items-center gap-3 px-4 py-3">
                       {getContactIcon(contact.type)}
                       <div className="flex-1 min-w-0">
-                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                        <span className="text-xs font-medium text-text-secondary uppercase tracking-wide">
                           {contact.type}
                         </span>
                         {link ? (
@@ -526,8 +526,8 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
               </div>
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-8 text-center">
-              <p className="text-gray-500 dark:text-gray-400">
+            <div className="bg-surface-primary border border-border-default rounded-lg px-4 py-8 text-center">
+              <p className="text-text-secondary">
                 {isCurrentUser ? tMembers("noContactInfoYet") : tMembers("noContactInfo")}
               </p>
               {isCurrentUser && (
@@ -548,7 +548,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
             {tTeams("roles")}
           </h2>
           {rolesByTeam.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+            <div className="bg-surface-primary border border-border-default rounded-lg px-4 py-8 text-center text-text-secondary">
               {tMembers("noRolesAssigned")}
             </div>
           ) : (
@@ -556,7 +556,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
               {rolesByTeam.map(({ team, roles: teamRoles }) => (
                 <div
                   key={team._id}
-                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+                  className="bg-surface-primary border border-border-default rounded-lg overflow-hidden"
                 >
                   {/* Team header - clickable */}
                   <button
@@ -564,10 +564,10 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                     className="
                       group
                       w-full px-4 py-2
-                      bg-gray-50 dark:bg-gray-700/50
-                      border-b border-gray-200 dark:border-gray-700
+                      bg-surface-secondary
+                      border-b border-border-default
                       flex items-center justify-between
-                      hover:bg-gray-100 dark:hover:bg-gray-600/50
+                      hover:bg-surface-hover/50
                       transition-colors duration-75
                       focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
                       text-left
@@ -580,7 +580,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                         style={{ backgroundColor: team.color || "#9ca3af" }}
                       />
                       <span className="font-medium text-dark dark:text-light">{team.name}</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-text-secondary">
                         ({tMembers("roleCount", { count: teamRoles.length })})
                       </span>
                     </div>
@@ -593,7 +593,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                       stroke="currentColor"
                       strokeWidth="1.5"
                       className="
-                        text-gray-400 dark:text-gray-500
+                        text-text-tertiary
                         opacity-0 group-hover:opacity-100
                         transition-opacity duration-75
                       "
@@ -604,7 +604,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                   </button>
 
                   {/* Roles list */}
-                  <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  <div className="divide-y divide-border-default">
                     {teamRoles.map((role) => {
                       const childTeam = masterToChildTeam.get(role._id);
                       return (
@@ -614,7 +614,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                           className="
                             group
                             w-full px-4 py-3
-                            hover:bg-gray-50 dark:hover:bg-gray-700/50
+                            hover:bg-surface-hover-subtle
                             transition-colors duration-75
                             focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
                             text-left
@@ -648,7 +648,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                               </div>
                               {/* Show child team link for master roles that lead a child team */}
                               {childTeam && (
-                                <div className="flex items-center gap-1.5 mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+                                <div className="flex items-center gap-1.5 mt-1.5 text-sm text-text-secondary">
                                   <svg
                                     width="14"
                                     height="14"
@@ -688,7 +688,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                                 </div>
                               )}
                               {role.mission && (
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                                <p className="text-sm text-text-secondary mt-1 line-clamp-2">
                                   {role.mission}
                                 </p>
                               )}
@@ -702,7 +702,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                               stroke="currentColor"
                               strokeWidth="1.5"
                               className="
-                                text-gray-400 dark:text-gray-500
+                                text-text-tertiary
                                 opacity-0 group-hover:opacity-100
                                 transition-opacity duration-75
                                 flex-shrink-0
@@ -729,7 +729,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
             <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
               {tMembers("dangerZone")}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            <p className="text-sm text-text-description mb-3">
               {canLeave
                 ? tMembers("leaveOrgWarning")
                 : leaveDisabledReason === "owner"
@@ -742,7 +742,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
               disabled={!canLeave}
               className={canLeave
                 ? "px-4 py-2 text-sm border border-red-600 dark:border-red-400 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                : "px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 rounded-lg cursor-not-allowed opacity-50"
+                : "px-4 py-2 text-sm border border-border-strong text-text-tertiary rounded-lg cursor-not-allowed opacity-50"
               }
             >
               {tMembers("leaveOrg", { orgName: selectedOrga?.name ?? "" })}

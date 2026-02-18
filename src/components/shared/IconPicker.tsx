@@ -25,9 +25,9 @@ export function IconPicker({ selectedIconKey, onSelect }: IconPickerProps) {
         placeholder="Search icons..."
         className="
           w-full px-3 py-2 text-sm
-          border border-gray-300 dark:border-gray-600
+          border border-border-strong
           rounded-lg
-          bg-white dark:bg-gray-800
+          bg-surface-primary
           text-dark dark:text-light
           focus:outline-none focus:ring-2 focus:ring-highlight
         "
@@ -52,7 +52,7 @@ export function IconPicker({ selectedIconKey, onSelect }: IconPickerProps) {
                 cursor-pointer border-none
                 ${isSelected
                   ? "bg-highlight/20 ring-2 ring-highlight"
-                  : "bg-gray-50 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  : "bg-surface-secondary hover:bg-surface-hover-strong"
                 }
               `}
             >
@@ -63,7 +63,7 @@ export function IconPicker({ selectedIconKey, onSelect }: IconPickerProps) {
                   className={
                     isSelected
                       ? "text-highlight-hover dark:text-highlight"
-                      : "text-gray-500 dark:text-gray-400"
+                      : "text-text-secondary"
                   }
                 />
               </svg>
@@ -71,7 +71,7 @@ export function IconPicker({ selectedIconKey, onSelect }: IconPickerProps) {
           );
         })}
         {filteredIcons.length === 0 && (
-          <p className="col-span-8 text-center text-sm text-gray-400 dark:text-gray-500 py-4">
+          <p className="col-span-8 text-center text-sm text-text-tertiary py-4">
             No icons found
           </p>
         )}

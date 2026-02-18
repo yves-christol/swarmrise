@@ -13,12 +13,12 @@ export const MemberIndicator = () => {
 
   if (!member) {
     return (
-      <span className="px-3 py-1.5 rounded-md text-sm font-medium bg-slate-100 dark:bg-slate-800 text-transparent animate-pulse w-24 h-7" />
+      <span className="px-3 py-1.5 rounded-md text-sm font-medium bg-surface-secondary text-transparent animate-pulse w-24 h-7" />
     );
   }
 
   return (
-    <span className="px-3 py-1.5 rounded-md text-sm font-medium bg-slate-100 dark:bg-slate-800 text-dark dark:text-light truncate max-w-[180px]">
+    <span className="px-3 py-1.5 rounded-md text-sm font-medium bg-surface-secondary text-dark dark:text-light truncate max-w-[180px]">
       {member.firstname} {member.surname}
     </span>
   );

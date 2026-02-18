@@ -47,9 +47,9 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
   }, [messageId, advancePhase]);
 
   return (
-    <div className="border-t border-slate-200 dark:border-slate-700">
+    <div className="border-t border-border-default">
       {/* Info */}
-      <div className="px-3 py-1.5 text-xs text-gray-500 dark:text-gray-400 italic">
+      <div className="px-3 py-1.5 text-xs text-text-secondary italic">
         {t("electionNominationInfo")}
       </div>
 
@@ -65,7 +65,7 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
       {/* Already nominated indicator */}
       {hasNominated && myNomination && (
         <div className="px-3 pb-2">
-          <span className="text-xs text-gray-500 dark:text-gray-400 italic">
+          <span className="text-xs text-text-secondary italic">
             {t("electionYourNomination")}: {myNomination.nominee.firstname} {myNomination.nominee.surname}
           </span>
         </div>
@@ -73,7 +73,7 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
 
       {hasNominated && !myNomination && nominations?.phase === "secret" && (
         <div className="px-3 pb-2">
-          <span className="text-xs text-gray-500 dark:text-gray-400 italic">
+          <span className="text-xs text-text-secondary italic">
             {t("electionNominatedAlready")}
           </span>
         </div>
@@ -84,7 +84,7 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
         <div className="px-3 pb-2 space-y-2">
           {/* Nominee selector */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-medium text-text-description mb-1">
               {t("electionNominateLabel")}
             </label>
             <input
@@ -92,10 +92,10 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t("electionSearchMembers")}
-              className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
+              className="w-full text-xs bg-surface-primary border border-border-strong rounded px-2 py-1 text-dark dark:text-light placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-highlight"
             />
             {searchTerm && filteredNominees && filteredNominees.length > 0 && !selectedNominee && (
-              <div className="mt-1 max-h-32 overflow-y-auto border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700">
+              <div className="mt-1 max-h-32 overflow-y-auto border border-border-strong rounded bg-surface-primary">
                 {filteredNominees.map((m) => (
                   <button
                     key={m._id}
@@ -103,13 +103,13 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
                       setSelectedNominee(m._id);
                       setSearchTerm(`${m.firstname} ${m.surname}`);
                     }}
-                    className="w-full text-left px-2 py-1 text-xs text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2"
+                    className="w-full text-left px-2 py-1 text-xs text-dark dark:text-light hover:bg-surface-hover flex items-center gap-2"
                   >
                     <div className="w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-500 flex items-center justify-center overflow-hidden shrink-0">
                       {m.pictureURL ? (
                         <img src={m.pictureURL} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-[8px] font-medium text-gray-600 dark:text-gray-300">
+                        <span className="text-[8px] font-medium text-text-description">
                           {m.firstname[0]}{m.surname[0]}
                         </span>
                       )}
@@ -134,7 +134,7 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
 
           {/* Reason */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-medium text-text-description mb-1">
               {t("electionNominateReason")}
             </label>
             <input
@@ -143,7 +143,7 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
               onChange={(e) => setReason(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
               placeholder={t("electionNominateReasonPlaceholder")}
-              className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
+              className="w-full text-xs bg-surface-primary border border-border-strong rounded px-2 py-1 text-dark dark:text-light placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-highlight"
             />
           </div>
 
@@ -159,7 +159,7 @@ export const NominationPhase = ({ messageId }: NominationPhaseProps) => {
 
       {/* Facilitator controls */}
       {isFacilitator && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex justify-end">
+        <div className="px-3 py-2 border-t border-border-default flex justify-end">
           <button
             onClick={handleAdvance}
             className="text-xs px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover transition-colors"

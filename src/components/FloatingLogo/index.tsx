@@ -5,7 +5,7 @@ import { Logo } from "../Logo";
 import { useSelectedOrga } from "../../tools/orgaStore/hooks";
 
 const BUTTON_CLASS =
-  "fixed bottom-4 left-4 z-20 w-10 h-10 rounded-full bg-light dark:bg-dark border border-slate-300 dark:border-slate-700 shadow-md flex items-center justify-center hover:scale-110 transition-transform";
+  "fixed bottom-4 left-4 z-20 w-10 h-10 rounded-full bg-light dark:bg-dark border border-border-strong shadow-md flex items-center justify-center hover:scale-110 transition-transform";
 
 export const FloatingLogo = () => {
   const { isSignedIn } = useAuth();

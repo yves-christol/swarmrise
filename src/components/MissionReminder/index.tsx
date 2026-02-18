@@ -27,7 +27,7 @@ export function MissionReminder({ mission, isLoading }: MissionReminderProps) {
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
-            className="text-gray-400 dark:text-gray-500"
+            className="text-text-tertiary"
             aria-hidden="true"
           >
             <circle cx="8" cy="8" r="6" />
@@ -35,7 +35,7 @@ export function MissionReminder({ mission, isLoading }: MissionReminderProps) {
           </svg>
         </div>
         <div className="flex-1">
-          <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          <div className="h-4 w-48 bg-surface-tertiary rounded animate-pulse" />
         </div>
       </div>
     );
@@ -55,7 +55,7 @@ export function MissionReminder({ mission, isLoading }: MissionReminderProps) {
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
-          className={hasMission ? "text-gray-500 dark:text-gray-400" : "text-gray-400 dark:text-gray-500"}
+          className={hasMission ? "text-text-secondary" : "text-text-tertiary"}
           aria-hidden="true"
         >
           {/* Compass/target icon */}
@@ -67,11 +67,11 @@ export function MissionReminder({ mission, isLoading }: MissionReminderProps) {
 
       <div className="flex-1 min-w-0">
         {hasMission ? (
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          <p className="text-sm text-text-description leading-relaxed">
             {displayMission}
           </p>
         ) : (
-          <p className="text-sm text-gray-400 dark:text-gray-500 italic">
+          <p className="text-sm text-text-tertiary italic">
             {t("noMissionDefined")}
           </p>
         )}

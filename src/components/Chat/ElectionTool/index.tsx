@@ -61,9 +61,9 @@ export const ElectionTool = ({ messageId, tool, isAuthor }: ElectionToolProps) =
   const phaseColor = phaseColors[tool.phase];
 
   return (
-    <div className="mt-2 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-800/50">
+    <div className="mt-2 border border-border-default rounded-lg overflow-hidden bg-surface-secondary">
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-border-default bg-surface-primary">
         <svg className="w-4 h-4 text-highlight shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
           <circle cx="12" cy="7" r="4" />
@@ -98,7 +98,7 @@ export const ElectionTool = ({ messageId, tool, isAuthor }: ElectionToolProps) =
           </button>
           <button
             onClick={() => setShowConfirm(false)}
-            className="text-xs px-3 py-1 rounded-md bg-slate-200 dark:bg-slate-600 text-dark dark:text-light font-medium hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"
+            className="text-xs px-3 py-1 rounded-md bg-surface-tertiary text-dark dark:text-light font-medium hover:bg-surface-hover-strong transition-colors"
           >
             {t("electionCancelNo")}
           </button>

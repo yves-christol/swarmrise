@@ -17,10 +17,10 @@ export const ZoomControls = memo(function ZoomControls({
     w-10 h-10 rounded-lg shadow-lg
     flex items-center justify-center text-xl
     transition-colors
-    bg-white dark:bg-gray-800
+    bg-surface-primary
     text-gray-700 dark:text-gray-200
-    border border-gray-300 dark:border-gray-700
-    hover:bg-gray-100 dark:hover:bg-gray-700
+    border border-border-strong
+    hover:bg-surface-hover
     focus:outline-none focus:ring-2 focus:ring-[#a2dbed]
   `;
 

@@ -6,7 +6,7 @@ export function SignInForm() {
 
   return (
     <div className="flex flex-col gap-6 w-96 mx-auto">
-      <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+      <p className="text-sm text-text-description text-center">
         {t("earlyDevelopment")}
       </p>
       <div className="flex gap-4 justify-center">

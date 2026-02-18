@@ -31,9 +31,9 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
         className={`
           w-full text-left
           p-3 rounded-lg
-          bg-white dark:bg-gray-800
+          bg-surface-primary
           border
-          ${isOverdue ? "border-red-300 dark:border-red-700" : "border-gray-200 dark:border-gray-700"}
+          ${isOverdue ? "border-red-300 dark:border-red-700" : "border-border-default"}
           ${onClick ? "hover:shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-highlight" : "shadow-lg"}
           transition-shadow duration-75
         `}
@@ -50,7 +50,7 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
           {/* Owner */}
           {owner && (
             <div className="flex items-center gap-1.5 min-w-0">
-              <div className="w-5 h-5 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+              <div className="w-5 h-5 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0">
                 {owner.pictureURL ? (
                   <img
                     src={owner.pictureURL}
@@ -58,12 +58,12 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[10px] font-medium text-gray-500 dark:text-gray-400">
+                  <div className="w-full h-full flex items-center justify-center text-[10px] font-medium text-text-secondary">
                     {owner.firstname.charAt(0)}{owner.surname.charAt(0)}
                   </div>
                 )}
               </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              <span className="text-xs text-text-secondary truncate">
                 {owner.firstname}
               </span>
             </div>
@@ -75,7 +75,7 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
               text-xs flex-shrink-0
               ${isOverdue
                 ? "text-red-600 dark:text-red-400 font-medium"
-                : "text-gray-400 dark:text-gray-500"
+                : "text-text-tertiary"
               }
             `}
             title={isOverdue ? t("card.overdue") : t("card.dueIn", { date: dueDateStr })}

@@ -14,7 +14,7 @@ export const Anonymous = () => {
         <span className="font-swarm text-gold">swarmrise</span> is a light governance model, providing clarity and traceability in the organization and decision process without the burden of bureaucracy.
       </p>
       <SignInForm />
-      <div className="flex flex-col items-center gap-4 pt-4 border-t border-slate-300 dark:border-slate-700">
+      <div className="flex flex-col items-center gap-4 pt-4 border-t border-border-strong">
         <Link
           to="/glossary"
           className="text-sm underline hover:no-underline text-dark dark:text-light transition-opacity hover:opacity-80"

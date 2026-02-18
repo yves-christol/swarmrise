@@ -16,8 +16,8 @@ export const DetailsPanel = memo(function DetailsPanel({
     <aside
       className={`
         absolute top-0 right-0 h-full w-80
-        bg-white dark:bg-gray-800
-        shadow-xl border-l border-gray-300 dark:border-gray-700
+        bg-surface-primary
+        shadow-xl border-l border-border-strong
         transform transition-transform duration-200
         ${node ? "translate-x-0" : "translate-x-full"}
       `}
@@ -30,7 +30,7 @@ export const DetailsPanel = memo(function DetailsPanel({
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors p-1"
+              className="text-text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors p-1"
               aria-label={t("diagram.close")}
             >
               <svg
@@ -50,17 +50,17 @@ export const DetailsPanel = memo(function DetailsPanel({
           </div>
 
           <div className="flex gap-4">
-            <div className="text-center px-4 py-2 bg-slate-200 dark:bg-gray-700 rounded-lg">
+            <div className="text-center px-4 py-2 bg-surface-tertiary rounded-lg">
               <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                 {node.roleCount}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">{t("diagram.rolesLabel")}</div>
+              <div className="text-xs text-text-description">{t("diagram.rolesLabel")}</div>
             </div>
           </div>
 
-          <div className="border-t border-gray-300 dark:border-gray-700 pt-4">
-            <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">{t("diagram.teamInfoHeading")}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="border-t border-border-strong pt-4">
+            <h3 className="text-sm font-bold text-text-description mb-2">{t("diagram.teamInfoHeading")}</h3>
+            <p className="text-sm text-text-description">
               {t("diagram.teamRolesAssigned", { count: node.roleCount })}
             </p>
           </div>

@@ -64,15 +64,15 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="bg-light dark:bg-dark rounded-lg shadow-xl w-[90vw] max-w-md border border-slate-200 dark:border-slate-700 max-h-[80vh] flex flex-col">
+      <div className="bg-light dark:bg-dark rounded-lg shadow-xl w-[90vw] max-w-md border border-border-default max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700 shrink-0">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border-default shrink-0">
           <h3 className="text-sm font-semibold text-dark dark:text-light">
             {t("votingCreate")}
           </h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-gray-500 dark:text-gray-400"
+            className="p-1 rounded-md hover:bg-surface-hover-strong transition-colors text-text-secondary"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -85,7 +85,7 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
         <div className="px-4 py-3 space-y-3 overflow-y-auto min-h-0 flex-1">
           {/* Question */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-medium text-text-description mb-1">
               {t("votingQuestion")}
             </label>
             <input
@@ -94,13 +94,13 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
               onChange={(e) => setQuestion(e.target.value)}
               placeholder={t("votingQuestionPlaceholder")}
               autoFocus
-              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-2 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+              className="w-full text-sm bg-surface-secondary text-dark dark:text-light rounded-md px-3 py-2 placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             />
           </div>
 
           {/* Options */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-medium text-text-description mb-1">
               {t("votingOptions")}
             </label>
             <div className="space-y-1.5">
@@ -111,12 +111,12 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
                     value={opt.label}
                     onChange={(e) => updateOption(i, e.target.value)}
                     placeholder={`${t("votingOptionPlaceholder")} ${i + 1}`}
-                    className="flex-1 text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-1.5 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+                    className="flex-1 text-sm bg-surface-secondary text-dark dark:text-light rounded-md px-3 py-1.5 placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
                   />
                   {options.length > 2 && (
                     <button
                       onClick={() => removeOption(i)}
-                      className="p-1 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 text-gray-400 hover:text-red-500 transition-colors"
+                      className="p-1 rounded-md hover:bg-surface-hover-strong text-gray-400 hover:text-red-500 transition-colors"
                     >
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -137,7 +137,7 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
 
           {/* Mode */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-medium text-text-description mb-1">
               {t("votingMode")}
             </label>
             <div className="flex flex-col gap-1">
@@ -169,23 +169,23 @@ export const CreateVotingModal = ({ channelId, onClose }: CreateVotingModalProps
 
           {/* Deadline */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-medium text-text-description mb-1">
               {t("votingDeadline")}
             </label>
             <input
               type="datetime-local"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+              className="w-full text-sm bg-surface-secondary text-dark dark:text-light rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-slate-200 dark:border-slate-700 shrink-0">
+        <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border-default shrink-0">
           <button
             onClick={onClose}
-            className="text-sm px-3 py-1.5 rounded-md bg-slate-200 dark:bg-slate-700 text-dark dark:text-light hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            className="text-sm px-3 py-1.5 rounded-md bg-surface-tertiary text-dark dark:text-light hover:bg-surface-hover-strong transition-colors"
           >
             {t("votingCancel")}
           </button>

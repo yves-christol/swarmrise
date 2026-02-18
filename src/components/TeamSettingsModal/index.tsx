@@ -168,7 +168,7 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
         role="dialog"
         aria-modal="true"
         aria-labelledby="team-settings-title"
-        className={`w-full max-w-md mx-4 p-6 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-xl
+        className={`w-full max-w-md mx-4 p-6 bg-surface-primary border-2 border-border-strong rounded-lg shadow-xl
           transition-all duration-150 ease-out
           ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
       >
@@ -191,7 +191,7 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
         </div>
 
         <div className="flex flex-col gap-4">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-text-secondary">
             {t("manage.teamColorHint")}
           </p>
 
@@ -207,7 +207,7 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
                 className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-describedby={isColorInvalid ? "color-validation-message" : undefined}
               />
-              <span className="text-sm font-mono text-gray-500 dark:text-gray-400">
+              <span className="text-sm font-mono text-text-secondary">
                 {color ?? "--"}
               </span>
               {color && (
@@ -248,7 +248,7 @@ export function TeamSettingsModal({ isOpen, onClose, teamId }: TeamSettingsModal
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-text-secondary hover:text-gray-700  dark:hover:text-gray-200 transition-colors disabled:opacity-50"
             >
               {t("manage.cancel")}
             </button>

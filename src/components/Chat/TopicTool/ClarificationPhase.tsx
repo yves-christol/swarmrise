@@ -39,16 +39,16 @@ export const ClarificationPhase = ({ messageId }: ClarificationPhaseProps) => {
   }, [messageId, advanceTopicPhase]);
 
   return (
-    <div className="border-t border-slate-200 dark:border-slate-700">
+    <div className="border-t border-border-default">
       {/* Info */}
-      <div className="px-3 py-1.5 text-xs text-gray-500 dark:text-gray-400 italic">
+      <div className="px-3 py-1.5 text-xs text-text-secondary italic">
         {t("topicClarificationInfo")}
       </div>
 
       {/* Clarification Q&A list */}
       <div className="px-3 pb-2 space-y-3">
         {clarifications === undefined ? null : clarifications.length === 0 ? (
-          <p className="text-xs text-gray-400 dark:text-gray-500">{t("topicNoClarifications")}</p>
+          <p className="text-xs text-text-tertiary">{t("topicNoClarifications")}</p>
         ) : (
           clarifications.map((c) => (
             <div key={c._id} className="space-y-1">
@@ -82,12 +82,12 @@ export const ClarificationPhase = ({ messageId }: ClarificationPhaseProps) => {
                   onChange={(e) => setAnswerInputs((prev) => ({ ...prev, [c._id]: e.target.value }))}
                   onKeyDown={(e) => { if (e.key === "Enter") handleAnswer(c._id); }}
                   placeholder={t("topicAnswerPlaceholder")}
-                  className="flex-1 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
+                  className="flex-1 text-xs bg-surface-primary border border-border-strong rounded px-2 py-1 text-dark dark:text-light placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-highlight"
                 />
                 <button
                   onClick={() => handleAnswer(c._id)}
                   disabled={!answerInputs[c._id]?.trim()}
-                  className="text-xs px-2 py-1 rounded bg-slate-200 dark:bg-slate-600 text-dark dark:text-light hover:bg-slate-300 dark:hover:bg-slate-500 disabled:opacity-40 transition-colors"
+                  className="text-xs px-2 py-1 rounded bg-surface-tertiary text-dark dark:text-light hover:bg-surface-hover-strong disabled:opacity-40 transition-colors"
                 >
                   {t("topicAnswer")}
                 </button>
@@ -104,7 +104,7 @@ export const ClarificationPhase = ({ messageId }: ClarificationPhaseProps) => {
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") handleAsk(); }}
             placeholder={t("topicAskPlaceholder")}
-            className="flex-1 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
+            className="flex-1 text-xs bg-surface-primary border border-border-strong rounded px-2 py-1 text-dark dark:text-light placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-highlight"
           />
           <button
             onClick={handleAsk}
@@ -118,7 +118,7 @@ export const ClarificationPhase = ({ messageId }: ClarificationPhaseProps) => {
 
       {/* Facilitator controls */}
       {isFacilitator && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex justify-end">
+        <div className="px-3 py-2 border-t border-border-default flex justify-end">
           <button
             onClick={handleAdvance}
             className="text-xs px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover transition-colors"

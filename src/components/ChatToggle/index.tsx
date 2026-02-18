@@ -45,13 +45,13 @@ export const ChatToggle = () => {
       onClick={toggleChat}
       className={`relative p-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark ${
         isChatOpen
-          ? "bg-slate-200 dark:bg-slate-700"
-          : "hover:bg-slate-200 dark:hover:bg-slate-700"
+          ? "bg-surface-tertiary"
+          : "hover:bg-surface-hover-strong"
       }`}
       aria-label={ariaLabel}
       aria-pressed={isChatOpen}
     >
-      <ChatIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+      <ChatIcon className="w-5 h-5 text-text-description" />
       {totalUnread > 0 && (
         <span
           className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center text-xs font-bold bg-highlight text-dark rounded-full px-1.5 ring-2 ring-white dark:ring-dark"

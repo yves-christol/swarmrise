@@ -172,7 +172,7 @@ export const NotificationItem = ({
       case "policy_team":
         return {
           icon: <FileTextIcon className="w-5 h-5" />,
-          color: "text-gray-500 dark:text-gray-400",
+          color: "text-text-secondary",
         };
       case "message":
         return {
@@ -187,7 +187,7 @@ export const NotificationItem = ({
       default:
         return {
           icon: <InfoIcon className="w-5 h-5" />,
-          color: "text-gray-500 dark:text-gray-400",
+          color: "text-text-secondary",
         };
     }
   };
@@ -229,7 +229,7 @@ export const NotificationItem = ({
             orgaName: payload.orgaName,
           })}
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+        <p className="text-sm text-text-secondary truncate">
           {t("notifications:invitedBy", "Invited by {{inviterName}}", {
             inviterName: payload.inviterName,
           })}
@@ -243,7 +243,7 @@ export const NotificationItem = ({
           </button>
           <button
             onClick={() => void handleDecline()}
-            className="px-3 py-1.5 text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+            className="px-3 py-1.5 text-sm font-medium border border-border-strong text-text-description hover:bg-surface-hover rounded transition-colors"
           >
             {t("notifications:decline", "Decline")}
           </button>
@@ -263,7 +263,7 @@ export const NotificationItem = ({
             roleTitle: payload.roleTitle,
           })}
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+        <p className="text-sm text-text-secondary truncate">
           {t("notifications:roleAssignmentSubtitle", "In {{teamName}} at {{orgaName}}", {
             teamName: payload.teamName,
             orgaName: payload.orgaName,
@@ -294,7 +294,7 @@ export const NotificationItem = ({
             policyTitle: payload.policyTitle,
           })}
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{subtitle}</p>
+        <p className="text-sm text-text-secondary truncate">{subtitle}</p>
       </>
     );
   };
@@ -308,7 +308,7 @@ export const NotificationItem = ({
         <p className={`font-medium text-dark dark:text-light ${!isRead ? "font-semibold" : ""}`}>
           {payload.title}
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{payload.message}</p>
+        <p className="text-sm text-text-secondary truncate">{payload.message}</p>
       </>
     );
   };
@@ -324,7 +324,7 @@ export const NotificationItem = ({
             channelName: payload.channelName,
           })}
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+        <p className="text-sm text-text-secondary truncate">
           {t("notifications:messagePreview", "{{senderName}}: {{preview}}", {
             senderName: payload.senderName,
             preview: payload.preview,
@@ -343,7 +343,7 @@ export const NotificationItem = ({
         <p className={`font-medium text-dark dark:text-light ${!isRead ? "font-semibold" : ""}`}>
           {payload.eventDescription}
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+        <p className="text-sm text-text-secondary truncate">
           {t("notifications:toolEventSubtitle", "In {{channelName}}", {
             channelName: payload.channelName,
           })}
@@ -375,7 +375,7 @@ export const NotificationItem = ({
 
   return (
     <div
-      className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer ${
+      className={`px-4 py-3 hover:bg-surface-hover-subtle transition-colors cursor-pointer ${
         !isRead ? "bg-blue-50/50 dark:bg-blue-900/10" : ""
       }`}
       onClick={() => void handleClick()}
@@ -399,7 +399,7 @@ export const NotificationItem = ({
 
         {/* Timestamp and unread indicator */}
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
-          <span className="text-xs text-gray-400 dark:text-gray-500">
+          <span className="text-xs text-text-tertiary">
             {formatRelativeTime(_creationTime)}
           </span>
           {!isRead && (

@@ -78,7 +78,7 @@ export function LeaveOrgConfirmModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="leave-org-confirm-title"
-        className={`w-full max-w-md mx-4 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-xl
+        className={`w-full max-w-md mx-4 bg-surface-primary border-2 border-border-strong rounded-lg shadow-xl
           transition-all duration-150 ease-out
           ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
       >
@@ -105,11 +105,11 @@ export function LeaveOrgConfirmModal({
 
         {/* Content */}
         <div className="p-6 space-y-4">
-          <p className="text-sm text-gray-700 dark:text-gray-300">
+          <p className="text-sm text-text-description">
             {tMembers("leaveOrgConfirmDescription")}
           </p>
 
-          <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+          <ul className="space-y-2 text-sm text-text-description">
             <li className="flex items-start gap-2">
               <span className="text-red-500 dark:text-red-400 mt-0.5">-</span>
               <span>{tMembers("leaveOrgBullet1", { count: rolesCount })}</span>
@@ -124,7 +124,7 @@ export function LeaveOrgConfirmModal({
             </li>
           </ul>
 
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-text-secondary">
             {tMembers("leaveOrgDecisionNote")}
           </p>
 
@@ -148,7 +148,7 @@ export function LeaveOrgConfirmModal({
               type="button"
               onClick={onCancel}
               disabled={isLeaving}
-              className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm text-text-secondary hover:text-gray-700  dark:hover:text-gray-200 transition-colors disabled:opacity-50"
             >
               {tCommon("cancel")}
             </button>

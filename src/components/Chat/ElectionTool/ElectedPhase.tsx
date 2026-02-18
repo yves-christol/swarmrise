@@ -22,7 +22,7 @@ export const ElectedPhase = ({ messageId, tool }: ElectedPhaseProps) => {
   const isElected = tool.outcome === "elected";
 
   return (
-    <div className="border-t border-slate-200 dark:border-slate-700 px-3 py-2 space-y-2">
+    <div className="border-t border-border-default px-3 py-2 space-y-2">
       {isElected && electedMember ? (
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -46,7 +46,7 @@ export const ElectedPhase = ({ messageId, tool }: ElectedPhaseProps) => {
       ) : (
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+            <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-surface-secondary text-text-description">
               {t("electionOutcomeNoElection")}
             </span>
           </div>
@@ -55,7 +55,7 @@ export const ElectedPhase = ({ messageId, tool }: ElectedPhaseProps) => {
           </p>
         </div>
       )}
-      <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+      <p className="text-xs text-text-secondary italic">
         {t("electionDecisionRecorded")}
       </p>
     </div>

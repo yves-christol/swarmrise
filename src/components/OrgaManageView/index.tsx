@@ -28,13 +28,13 @@ function StatCard({
       className="
         flex flex-col items-center
         p-2.5
-        bg-white dark:bg-gray-800
-        border border-gray-200 dark:border-gray-700
+        bg-surface-primary
+        border border-border-default
         rounded-lg
       "
     >
-      <span className="text-xl font-semibold text-gray-700 dark:text-gray-300">{value}</span>
-      <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</span>
+      <span className="text-xl font-semibold text-text-description">{value}</span>
+      <span className="text-xs text-text-secondary mt-0.5">{label}</span>
     </div>
   );
 }
@@ -178,7 +178,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
   if (!orga || !selectedOrga) {
     return (
       <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
-        <div className="text-gray-500 dark:text-gray-400">{tCommon("loading")}</div>
+        <div className="text-text-secondary">{tCommon("loading")}</div>
       </div>
     );
   }
@@ -198,9 +198,9 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                   flex items-center gap-2
                   px-3 py-1.5
                   text-sm
-                  text-gray-600 dark:text-gray-400
+                  text-text-description
                   hover:text-dark dark:hover:text-light
-                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  hover:bg-surface-hover
                   rounded-md
                   transition-colors duration-75
                   focus:outline-none focus:ring-2 focus:ring-highlight
@@ -214,7 +214,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
               </button>
             )}
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm text-text-description mt-1">
             {t("settingsAndDirectory")}
           </p>
         </header>
@@ -246,9 +246,9 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                   flex items-center gap-1.5
                   px-3 py-1.5
                   text-sm
-                  text-gray-600 dark:text-gray-400
+                  text-text-description
                   hover:text-dark dark:hover:text-light
-                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  hover:bg-surface-hover
                   rounded-md
                   transition-colors duration-75
                   focus:outline-none focus:ring-2 focus:ring-highlight
@@ -268,9 +268,9 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                 onChange={(e) => setMemberSearchQuery(e.target.value)}
                 className="
                   px-3 py-1.5 text-sm
-                  border border-gray-300 dark:border-gray-600
+                  border border-border-strong
                   rounded-lg
-                  bg-white dark:bg-gray-800
+                  bg-surface-primary
                   text-dark dark:text-light
                   placeholder:text-gray-400
                   focus:outline-none focus:ring-2 focus:ring-highlight
@@ -280,18 +280,18 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
           </div>
 
           {/* Member list */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div className="bg-surface-primary border border-border-default rounded-lg overflow-hidden">
             {membersLoading ? (
-              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-8 text-center text-text-secondary">
                 {tMembers("loadingMembers")}
               </div>
             ) : displayedMembers.length === 0 ? (
-              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-8 text-center text-text-secondary">
                 {memberSearchQuery ? tMembers("noMembersMatchSearch") : tMembers("noMembersFound")}
               </div>
             ) : (
               <>
-                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                <div className="divide-y divide-border-default">
                   {displayedMembers.map((member) => (
                     <MemberListItem
                       key={member._id}
@@ -304,7 +304,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
 
                 {/* Count indicator - only show if paginated */}
                 {totalMemberCount > MEMBERS_PAGE_SIZE && (
-                  <div className="px-4 py-2 text-xs text-gray-400 dark:text-gray-500 text-center border-t border-gray-100 dark:border-gray-700">
+                  <div className="px-4 py-2 text-xs text-text-tertiary text-center border-t border-border-default">
                     {tMembers("showingCount", {
                       shown: displayedMembers.length,
                       total: totalMemberCount,
@@ -318,11 +318,11 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                     onClick={handleLoadMoreMembers}
                     className="
                       w-full py-3
-                      text-sm text-gray-500 dark:text-gray-400
+                      text-sm text-text-secondary
                       hover:text-gray-700 dark:hover:text-gray-300
-                      hover:bg-gray-50 dark:hover:bg-gray-700/50
+                      hover:bg-surface-hover-subtle
                       transition-colors duration-75
-                      border-t border-gray-200 dark:border-gray-700
+                      border-t border-border-default
                       focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
                     "
                   >
@@ -347,9 +347,9 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
               onChange={(e) => setTeamSearchQuery(e.target.value)}
               className="
                 px-3 py-1.5 text-sm
-                border border-gray-300 dark:border-gray-600
+                border border-border-strong
                 rounded-lg
-                bg-white dark:bg-gray-800
+                bg-surface-primary
                 text-dark dark:text-light
                 placeholder:text-gray-400
                 focus:outline-none focus:ring-2 focus:ring-highlight
@@ -358,18 +358,18 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
           </div>
 
           {/* Team list */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div className="bg-surface-primary border border-border-default rounded-lg overflow-hidden">
             {teamsLoading ? (
-              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-8 text-center text-text-secondary">
                 {t("loadingTeams")}
               </div>
             ) : displayedTeams.length === 0 ? (
-              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-8 text-center text-text-secondary">
                 {teamSearchQuery ? t("noTeamsMatchSearch") : t("noTeamsFound")}
               </div>
             ) : (
               <>
-                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                <div className="divide-y divide-border-default">
                   {displayedTeams.map((team) => (
                     <TeamListItem
                       key={team._id}
@@ -381,7 +381,7 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
 
                 {/* Count indicator - only show if paginated */}
                 {totalTeamCount > TEAMS_PAGE_SIZE && (
-                  <div className="px-4 py-2 text-xs text-gray-400 dark:text-gray-500 text-center border-t border-gray-100 dark:border-gray-700">
+                  <div className="px-4 py-2 text-xs text-text-tertiary text-center border-t border-border-default">
                     {t("showingTeamsCount", {
                       shown: displayedTeams.length,
                       total: totalTeamCount,
@@ -395,11 +395,11 @@ export function OrgaManageView({ orgaId }: OrgaManageViewProps) {
                     onClick={handleLoadMoreTeams}
                     className="
                       w-full py-3
-                      text-sm text-gray-500 dark:text-gray-400
+                      text-sm text-text-secondary
                       hover:text-gray-700 dark:hover:text-gray-300
-                      hover:bg-gray-50 dark:hover:bg-gray-700/50
+                      hover:bg-surface-hover-subtle
                       transition-colors duration-75
-                      border-t border-gray-200 dark:border-gray-700
+                      border-t border-border-default
                       focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
                     "
                   >

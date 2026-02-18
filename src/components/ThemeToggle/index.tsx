@@ -43,7 +43,7 @@ export const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark"
+      className="p-2 rounded-md hover:bg-surface-hover-strong transition-colors focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark"
       aria-label={
         isDark
           ? t("common:switchToLightMode", "Switch to light mode")
@@ -52,12 +52,12 @@ export const ThemeToggle = () => {
     >
       <div className="relative w-5 h-5">
         <SunIcon
-          className={`absolute inset-0 w-5 h-5 text-gray-600 dark:text-gray-400 transition-opacity duration-150 ${
+          className={`absolute inset-0 w-5 h-5 text-text-description transition-opacity duration-150 ${
             isDark ? "opacity-100" : "opacity-0"
           }`}
         />
         <MoonIcon
-          className={`absolute inset-0 w-5 h-5 text-gray-600 dark:text-gray-400 transition-opacity duration-150 ${
+          className={`absolute inset-0 w-5 h-5 text-text-description transition-opacity duration-150 ${
             isDark ? "opacity-0" : "opacity-100"
           }`}
         />

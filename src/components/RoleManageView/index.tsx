@@ -272,7 +272,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
   if (role === undefined) {
     return (
       <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
-        <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+        <div className="text-text-secondary">Loading...</div>
       </div>
     );
   }
@@ -333,7 +333,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                   setRoleName(role.title);
                   setIsEditingName(false);
                 }}
-                className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                className="px-3 py-1.5 text-sm text-text-description hover:text-gray-800 dark:hover:text-gray-200"
               >
                 Cancel
               </button>
@@ -389,7 +389,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
               </button>
             )}
           </div>
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="bg-surface-primary border border-border-default rounded-lg p-4">
             {/* Current icon preview */}
             <div className="flex items-center gap-3 mb-2">
               <svg width="40" height="40" viewBox="0 0 40 40" className="shrink-0">
@@ -399,13 +399,13 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                   className="text-dark dark:text-light"
                 />
               </svg>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-text-secondary">
                 {role.iconKey ?? getDefaultIconKey(role.roleType)}
               </span>
             </div>
             {/* Icon picker (expandable) */}
             {showIconPicker && !isLinkedRole && (
-              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+              <div className="mt-3 pt-3 border-t border-border-default">
                 <IconPicker
                   selectedIconKey={role.iconKey ?? getDefaultIconKey(role.roleType)}
                   onSelect={(key) => void handleIconChange(key)}
@@ -413,7 +413,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                 <div className="flex justify-end mt-3">
                   <button
                     onClick={() => setShowIconPicker(false)}
-                    className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                    className="px-3 py-1.5 text-sm text-text-description hover:text-gray-800 dark:hover:text-gray-200"
                   >
                     Cancel
                   </button>
@@ -451,7 +451,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
               </button>
             )}
           </div>
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="bg-surface-primary border border-border-default rounded-lg p-4">
             {isEditingMission ? (
               <div>
                 <textarea
@@ -460,9 +460,9 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                   rows={4}
                   className="
                     w-full px-3 py-2
-                    border border-gray-300 dark:border-gray-600
+                    border border-border-strong
                     rounded-lg
-                    bg-white dark:bg-gray-800
+                    bg-surface-primary
                     text-dark dark:text-light
                     focus:outline-none focus:ring-2 focus:ring-highlight
                     resize-none
@@ -475,7 +475,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                       setMission(role.mission || "");
                       setIsEditingMission(false);
                     }}
-                    className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                    className="px-3 py-1.5 text-sm text-text-description hover:text-gray-800 dark:hover:text-gray-200"
                   >
                     Cancel
                   </button>
@@ -496,7 +496,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+              <p className="text-text-description whitespace-pre-wrap">
                 {role.mission || "No mission defined"}
               </p>
             )}
@@ -518,7 +518,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
               </button>
             )}
           </div>
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="bg-surface-primary border border-border-default rounded-lg p-4">
             {isEditingDuties ? (
               <div>
                 <ul className="space-y-2 mb-4">
@@ -530,9 +530,9 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                         onChange={(e) => handleDutyChange(index, e.target.value)}
                         className="
                           flex-1 px-3 py-2
-                          border border-gray-300 dark:border-gray-600
+                          border border-border-strong
                           rounded-lg
-                          bg-white dark:bg-gray-800
+                          bg-surface-primary
                           text-dark dark:text-light
                           focus:outline-none focus:ring-2 focus:ring-highlight
                         "
@@ -565,9 +565,9 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                     placeholder="Add a new duty..."
                     className="
                       flex-1 px-3 py-2
-                      border border-gray-300 dark:border-gray-600
+                      border border-border-strong
                       rounded-lg
-                      bg-white dark:bg-gray-800
+                      bg-surface-primary
                       text-dark dark:text-light
                       focus:outline-none focus:ring-2 focus:ring-highlight
                     "
@@ -577,9 +577,9 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                     disabled={!newDuty.trim()}
                     className="
                       px-3 py-2
-                      bg-gray-200 dark:bg-gray-700
-                      hover:bg-gray-300 dark:hover:bg-gray-600
-                      text-gray-700 dark:text-gray-300
+                      bg-surface-tertiary
+                      hover:bg-surface-hover-strong
+                      text-text-description
                       rounded-lg
                       transition-colors
                       disabled:opacity-50 disabled:cursor-not-allowed
@@ -595,7 +595,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                       setDuties(role.duties || []);
                       setIsEditingDuties(false);
                     }}
-                    className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                    className="px-3 py-1.5 text-sm text-text-description hover:text-gray-800 dark:hover:text-gray-200"
                   >
                     Cancel
                   </button>
@@ -618,14 +618,14 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             ) : duties.length > 0 ? (
               <ul className="space-y-2">
                 {duties.map((duty, index) => (
-                  <li key={index} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                  <li key={index} className="flex items-start gap-2 text-text-description">
                     <span className="text-gray-400 mt-0.5">-</span>
                     <span>{duty}</span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500 dark:text-gray-400">No duties defined</p>
+              <p className="text-text-secondary">No duties defined</p>
             )}
           </div>
         </section>
@@ -635,11 +635,11 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
           <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
             Assigned Member
           </h2>
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="bg-surface-primary border border-border-default rounded-lg p-4">
             {/* Current member display */}
             {currentMember && (
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0">
                   {currentMember.pictureURL ? (
                     <img
                       src={currentMember.pictureURL}
@@ -647,7 +647,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium">
+                    <div className="w-full h-full flex items-center justify-center text-text-secondary font-medium">
                       {currentMember.firstname.charAt(0)}
                       {currentMember.surname.charAt(0)}
                     </div>
@@ -657,7 +657,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                   <p className="font-medium text-dark dark:text-light">
                     {currentMember.firstname} {currentMember.surname}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-text-secondary">
                     {currentMember.email}
                   </p>
                 </div>
@@ -667,7 +667,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             {/* Member selector */}
             {!isLinkedRole && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-text-description mb-2">
                   Reassign to another member
                 </label>
                 <select
@@ -676,9 +676,9 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                   disabled={isSaving || isLinkedRole}
                   className="
                     w-full px-3 py-2
-                    border border-gray-300 dark:border-gray-600
+                    border border-border-strong
                     rounded-lg
-                    bg-white dark:bg-gray-800
+                    bg-surface-primary
                     text-dark dark:text-light
                     focus:outline-none focus:ring-2 focus:ring-highlight
                     disabled:opacity-50 disabled:cursor-not-allowed
@@ -701,8 +701,8 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
               {t("roleManage.actions")}
             </h2>
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            <div className="bg-surface-primary border border-border-default rounded-lg p-4">
+              <p className="text-sm text-text-description mb-3">
                 {t("roleManage.createTeamDescription")}
               </p>
               <button
@@ -735,7 +735,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
             <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
               {t("roleManage.dangerZone")}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            <p className="text-sm text-text-description mb-3">
               {t("roleManage.deleteRoleWarning")}
             </p>
             {showDeleteConfirm ? (
@@ -779,9 +779,9 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                   disabled={isDeleting}
                   className="
                     px-4 py-2 text-sm
-                    bg-gray-200 dark:bg-gray-700
-                    hover:bg-gray-300 dark:hover:bg-gray-600
-                    text-gray-700 dark:text-gray-300
+                    bg-surface-tertiary
+                    hover:bg-surface-hover-strong
+                    text-text-description
                     rounded-lg
                     transition-colors
                     disabled:opacity-50

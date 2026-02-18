@@ -211,7 +211,7 @@ export function KanbanCardModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="kanban-card-modal-title"
-        className={`w-full max-w-md mx-4 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-xl
+        className={`w-full max-w-md mx-4 bg-surface-primary border-2 border-border-strong rounded-lg shadow-xl
           transition-all duration-150 ease-out max-h-[90vh] flex flex-col
           ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
       >
@@ -252,11 +252,11 @@ export function KanbanCardModal({
                 if (error) setError(null);
               }}
               disabled={isSubmitting}
-              className={`px-3 py-2 text-sm rounded-md border bg-white dark:bg-gray-900 text-dark dark:text-light
+              className={`px-3 py-2 text-sm rounded-md border bg-surface-primary text-dark dark:text-light
                 placeholder:text-gray-400
                 focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                 disabled:opacity-50 disabled:cursor-not-allowed
-                ${error && !title.trim() ? "border-red-400" : "border-gray-300 dark:border-gray-600"}`}
+                ${error && !title.trim() ? "border-red-400" : "border-border-strong"}`}
             />
           </div>
 
@@ -271,8 +271,8 @@ export function KanbanCardModal({
                 value={selectedColumnId}
                 onChange={(e) => setSelectedColumnId(e.target.value)}
                 disabled={isSubmitting}
-                className="px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600
-                  bg-white dark:bg-gray-900 text-dark dark:text-light
+                className="px-3 py-2 text-sm rounded-md border border-border-strong
+                  bg-surface-primary text-dark dark:text-light
                   focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -296,8 +296,8 @@ export function KanbanCardModal({
                 if (error) setError(null);
               }}
               disabled={isSubmitting}
-              className="px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600
-                bg-white dark:bg-gray-900 text-dark dark:text-light
+              className="px-3 py-2 text-sm rounded-md border border-border-strong
+                bg-surface-primary text-dark dark:text-light
                 focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -324,8 +324,8 @@ export function KanbanCardModal({
                 if (error) setError(null);
               }}
               disabled={isSubmitting}
-              className="px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600
-                bg-white dark:bg-gray-900 text-dark dark:text-light
+              className="px-3 py-2 text-sm rounded-md border border-border-strong
+                bg-surface-primary text-dark dark:text-light
                 focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                 disabled:opacity-50 disabled:cursor-not-allowed"
             />
@@ -342,8 +342,8 @@ export function KanbanCardModal({
               onChange={(e) => setComments(e.target.value)}
               rows={3}
               disabled={isSubmitting}
-              className="px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600
-                bg-white dark:bg-gray-900 text-dark dark:text-light
+              className="px-3 py-2 text-sm rounded-md border border-border-strong
+                bg-surface-primary text-dark dark:text-light
                 placeholder:text-gray-400
                 focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                 resize-none
@@ -383,7 +383,7 @@ export function KanbanCardModal({
                 <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                  className="px-3 py-1.5 text-sm text-text-description hover:text-gray-800 dark:hover:text-gray-200"
                 >
                   {t("actions.cancel")}
                 </button>
@@ -413,7 +413,7 @@ export function KanbanCardModal({
                 type="button"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-sm text-text-secondary hover:text-gray-700  dark:hover:text-gray-200 transition-colors disabled:opacity-50"
               >
                 {t("actions.cancel")}
               </button>

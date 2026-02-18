@@ -114,8 +114,8 @@ const LanguagePage = () => {
             onClick={() => void i18n.changeLanguage(lang)}
             className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors text-left ${
               currentLanguage === lang
-                ? "bg-gray-100 dark:bg-gray-700 font-medium"
-                : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                ? "bg-surface-secondary font-medium"
+                : "hover:bg-surface-hover"
             }`}
           >
             <span>{languageNames[lang]}</span>
@@ -201,7 +201,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="flex-shrink-0 z-30 bg-light dark:bg-dark px-4 py-2 border-b-2 border-slate-300 dark:border-slate-800 relative flex items-center gap-2">
+    <header className="flex-shrink-0 z-30 bg-light dark:bg-dark px-4 py-2 border-b-2 border-border-strong relative flex items-center gap-2">
       {/* LEFT: Logo */}
       {!selectedOrga ? (
         <Link
@@ -219,7 +219,7 @@ export const Header = () => {
           disabled={isSwitchingOrga}
           className={`flex items-center justify-center flex-shrink-0 w-8 h-8 transition-colors
             focus:outline-none focus:ring-2 focus:ring-highlight
-            ${focus.type === "orga" ? "" : "hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"}`}
+            ${focus.type === "orga" ? "" : "hover:bg-surface-hover-strong cursor-pointer"}`}
           aria-label={selectedOrga.name}
         >
           {selectedOrga.logoUrl ? (
@@ -248,8 +248,8 @@ export const Header = () => {
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="p-1.5 rounded-md transition-colors
                 focus:outline-none focus:ring-2 focus:ring-highlight
-                hover:bg-slate-200 dark:hover:bg-slate-700
-                text-gray-500 dark:text-gray-400"
+                hover:bg-surface-hover-strong
+                text-text-secondary"
               aria-label={t("search")}
               aria-haspopup="dialog"
               aria-expanded={isSearchOpen}

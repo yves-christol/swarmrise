@@ -18,6 +18,13 @@ function darkenHex(hex: string, amount: number): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+/** Lighten a hex color by mixing with white (0-1 factor, 0.15 = 15% lighter) */
+function lightenHex(hex: string, amount: number): string {
+  const { r, g, b } = hexToRgb(hex);
+  const toHex = (n: number) => Math.round(n + (255 - n) * amount).toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 export function OrgCustomisationProvider({ children }: { children: ReactNode }) {
   const { selectedOrga } = useSelectedOrga();
   const { resolvedTheme } = useTheme();
@@ -37,6 +44,12 @@ export function OrgCustomisationProvider({ children }: { children: ReactNode }) 
 
     if (paperColor) {
       vars["--org-paper-color"] = paperColor;
+      vars["--org-paper-color-secondary"] = isDark
+        ? lightenHex(paperColor, 0.08)
+        : darkenHex(paperColor, 0.04);
+      vars["--org-paper-color-tertiary"] = isDark
+        ? lightenHex(paperColor, 0.15)
+        : darkenHex(paperColor, 0.08);
     }
     if (highlightColor) {
       vars["--org-highlight-color"] = highlightColor;

@@ -18,7 +18,7 @@ export function getContactIcon(type: string) {
       );
     case "Email":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <rect x="1" y="3" width="14" height="10" rx="2" />
           <path d="M1 5l7 4 7-4" />
         </svg>
@@ -43,14 +43,14 @@ export function getContactIcon(type: string) {
       );
     case "Mobile":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <rect x="4" y="1" width="8" height="14" rx="2" />
           <line x1="7" y1="12" x2="9" y2="12" />
         </svg>
       );
     case "Website":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <circle cx="8" cy="8" r="6" />
           <ellipse cx="8" cy="8" rx="2.5" ry="6" />
           <line x1="2" y1="8" x2="14" y2="8" />
@@ -64,14 +64,14 @@ export function getContactIcon(type: string) {
       );
     case "Address":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <path d="M8 1C5.2 1 3 3.2 3 6c0 4 5 9 5 9s5-5 5-9c0-2.8-2.2-5-5-5z" />
           <circle cx="8" cy="6" r="2" />
         </svg>
       );
     default:
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <circle cx="8" cy="8" r="6" />
         </svg>
       );

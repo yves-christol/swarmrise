@@ -314,7 +314,7 @@ export function MemberVisualView({
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
               <svg
-                className="animate-spin h-8 w-8 text-gray-500 dark:text-gray-400"
+                className="animate-spin h-8 w-8 text-text-secondary"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -333,7 +333,7 @@ export function MemberVisualView({
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              <span className="text-gray-600 dark:text-gray-400 text-sm">
+              <span className="text-text-description text-sm">
                 {t("diagram.loadingMember")}
               </span>
             </div>
@@ -363,7 +363,7 @@ export function MemberVisualView({
                 className="w-24 h-24 rounded-full object-cover border-3 border-[#a2dbed] hover:shadow-lg transition-shadow"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-slate-200 dark:bg-gray-800 border-3 border-[#a2dbed] hover:shadow-lg transition-shadow">
+              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-surface-tertiary border-3 border-[#a2dbed] hover:shadow-lg transition-shadow">
                 <span className="font-title text-2xl font-semibold text-dark dark:text-light">
                   {member.firstname[0] || ""}{member.surname[0] || ""}
                 </span>
@@ -374,15 +374,15 @@ export function MemberVisualView({
             {member.firstname} {member.surname}
           </h2>
           <Logo size={36} begin={0} repeatCount={2} />
-          <p className="text-gray-500 dark:text-gray-400 text-sm text-center max-w-xs">
+          <p className="text-text-secondary text-sm text-center max-w-xs">
             {t("noRolesAssigned")}
           </p>
         </div>
 
         {/* Keyboard hints */}
-        <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-gray-400 dark:text-gray-500">
+        <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-text-tertiary">
           <span className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">C</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-surface-tertiary text-text-description font-mono text-[10px]">C</kbd>
             <span>{t("diagram.keyboardContact")}</span>
           </span>
         </div>
@@ -475,9 +475,9 @@ export function MemberVisualView({
       `}</style>
 
       {/* Keyboard hints */}
-      <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-gray-400 dark:text-gray-500">
+      <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-text-tertiary">
         <span className="flex items-center gap-1">
-          <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">C</kbd>
+          <kbd className="px-1.5 py-0.5 rounded bg-surface-tertiary text-text-description font-mono text-[10px]">C</kbd>
           <span>{t("diagram.keyboardContact")}</span>
         </span>
       </div>
@@ -746,7 +746,7 @@ export function MemberVisualView({
         <summary className="cursor-pointer text-gray-700 dark:text-gray-200">
           {t("diagram.viewMemberDetailsAsText")}
         </summary>
-        <div className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-2">
+        <div className="mt-2 text-sm text-text-description space-y-2">
           <p><strong>{t("diagram.textName")}</strong> {member.firstname} {member.surname}</p>
           <p><strong>{t("diagram.textEmail")}</strong> {member.email}</p>
           <p><strong>{t("diagram.textRoles")}</strong> {masterRoles.length}</p>

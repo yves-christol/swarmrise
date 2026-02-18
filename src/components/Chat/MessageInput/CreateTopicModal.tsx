@@ -34,15 +34,15 @@ export const CreateTopicModal = ({ channelId, onClose }: CreateTopicModalProps) 
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="bg-light dark:bg-dark rounded-lg shadow-xl w-[90vw] max-w-md border border-slate-200 dark:border-slate-700">
+      <div className="bg-light dark:bg-dark rounded-lg shadow-xl w-[90vw] max-w-md border border-border-default">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border-default">
           <h3 className="text-sm font-semibold text-dark dark:text-light">
             {t("topicCreate")}
           </h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-gray-500 dark:text-gray-400"
+            className="p-1 rounded-md hover:bg-surface-hover-strong transition-colors text-text-secondary"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -54,7 +54,7 @@ export const CreateTopicModal = ({ channelId, onClose }: CreateTopicModalProps) 
         {/* Body */}
         <div className="px-4 py-3 space-y-3">
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-medium text-text-description mb-1">
               {t("topicTitle")}
             </label>
             <input
@@ -63,12 +63,12 @@ export const CreateTopicModal = ({ channelId, onClose }: CreateTopicModalProps) 
               onChange={(e) => setTitle(e.target.value)}
               placeholder={t("topicTitlePlaceholder")}
               autoFocus
-              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-2 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+              className="w-full text-sm bg-surface-secondary text-dark dark:text-light rounded-md px-3 py-2 placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label className="block text-xs font-medium text-text-description mb-1">
               {t("topicDescription")}
             </label>
             <textarea
@@ -76,16 +76,16 @@ export const CreateTopicModal = ({ channelId, onClose }: CreateTopicModalProps) 
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t("topicDescriptionPlaceholder")}
               rows={4}
-              className="w-full text-sm bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-md px-3 py-2 resize-none placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+              className="w-full text-sm bg-surface-secondary text-dark dark:text-light rounded-md px-3 py-2 resize-none placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-slate-200 dark:border-slate-700">
+        <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border-default">
           <button
             onClick={onClose}
-            className="text-sm px-3 py-1.5 rounded-md bg-slate-200 dark:bg-slate-700 text-dark dark:text-light hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            className="text-sm px-3 py-1.5 rounded-md bg-surface-tertiary text-dark dark:text-light hover:bg-surface-hover-strong transition-colors"
           >
             {t("topicCancel")}
           </button>

@@ -42,20 +42,20 @@ export const NotificationPanel = ({
 
   return (
     <div
-      className="absolute top-full right-0 mt-2 w-80 max-h-[28rem] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 flex flex-col overflow-hidden"
+      className="absolute top-full right-0 mt-2 w-80 max-h-[28rem] bg-surface-primary border border-border-default rounded-lg shadow-xl z-50 flex flex-col overflow-hidden"
       role="dialog"
       aria-label={t("notifications:panel", "Notifications")}
       onKeyDown={onKeyDown}
     >
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between flex-shrink-0">
+      <div className="px-4 py-3 border-b border-border-default flex items-center justify-between flex-shrink-0">
         <h2 className="font-medium text-dark dark:text-light">
           {t("notifications:title", "Notifications")}
         </h2>
         {unreadCount > 0 && (
           <button
             onClick={() => void handleMarkAllAsRead()}
-            className="text-sm text-gray-500 dark:text-gray-400 hover:text-highlight dark:hover:text-highlight transition-colors"
+            className="text-sm text-text-secondary hover:text-highlight dark:hover:text-highlight transition-colors"
           >
             {t("notifications:markAllAsRead", "Mark all as read")}
           </button>
@@ -67,18 +67,18 @@ export const NotificationPanel = ({
         {isLoading ? (
           <div className="px-4 py-8 text-center">
             <div className="animate-pulse flex flex-col gap-3">
-              <div className="h-16 bg-gray-100 dark:bg-gray-700 rounded" />
-              <div className="h-16 bg-gray-100 dark:bg-gray-700 rounded" />
+              <div className="h-16 bg-surface-secondary rounded" />
+              <div className="h-16 bg-surface-secondary rounded" />
             </div>
           </div>
         ) : isEmpty ? (
           <div className="px-4 py-8 text-center">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+            <p className="text-text-secondary text-sm">
               {t("notifications:empty", "No notifications")}
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          <div className="divide-y divide-border-default">
             {sortedNotifications.map((notification: Notification) => (
               <NotificationItem
                 key={notification._id}

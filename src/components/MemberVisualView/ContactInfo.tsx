@@ -17,7 +17,7 @@ function getContactIcon(type: string) {
       );
     case "Email":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <rect x="1" y="3" width="14" height="10" rx="2" />
           <path d="M1 5l7 4 7-4" />
         </svg>
@@ -42,14 +42,14 @@ function getContactIcon(type: string) {
       );
     case "Mobile":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <rect x="4" y="1" width="8" height="14" rx="2" />
           <line x1="7" y1="12" x2="9" y2="12" />
         </svg>
       );
     case "Website":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <circle cx="8" cy="8" r="6" />
           <ellipse cx="8" cy="8" rx="2.5" ry="6" />
           <line x1="2" y1="8" x2="14" y2="8" />
@@ -63,14 +63,14 @@ function getContactIcon(type: string) {
       );
     case "Address":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <path d="M8 1C5.2 1 3 3.2 3 6c0 4 5 9 5 9s5-5 5-9c0-2.8-2.2-5-5-5z" />
           <circle cx="8" cy="6" r="2" />
         </svg>
       );
     default:
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500 dark:text-gray-400">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary">
           <circle cx="8" cy="8" r="6" />
         </svg>
       );
@@ -153,11 +153,11 @@ export function ContactInfo({ member, onClose }: ContactInfoProps) {
 
       {/* Modal content */}
       <div
-        className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-sm mx-6"
+        className="relative bg-surface-primary rounded-xl shadow-xl border border-border-default w-full max-w-sm mx-6"
         style={{ maxHeight: "70vh", overflowY: "auto", animation: "contactModalSlideIn 250ms ease-out" }}
       >
         {/* Header */}
-        <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 z-10">
+        <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-border-default bg-surface-primary z-10">
           <div className="flex items-center gap-3">
             {/* Member avatar in header */}
             {member.pictureURL ? (
@@ -167,7 +167,7 @@ export function ContactInfo({ member, onClose }: ContactInfoProps) {
                 className="w-8 h-8 rounded-full object-cover border-2 border-[#a2dbed]"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-200 dark:bg-gray-700 border-2 border-[#a2dbed]">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-surface-tertiary border-2 border-[#a2dbed]">
                 <span className="font-title text-xs font-semibold text-dark dark:text-light">
                   {member.firstname[0] || ""}{member.surname[0] || ""}
                 </span>
@@ -177,14 +177,14 @@ export function ContactInfo({ member, onClose }: ContactInfoProps) {
               <h3 className="text-sm font-semibold text-dark dark:text-light leading-tight">
                 {member.firstname} {member.surname}
               </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-text-secondary">
                 {t("contactInformation")}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer border-none bg-transparent text-gray-500 dark:text-gray-400"
+            className="p-1 rounded-md hover:bg-surface-hover transition-colors cursor-pointer border-none bg-transparent text-text-secondary"
             title={t("diagram.closeContactModal")}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
@@ -195,14 +195,14 @@ export function ContactInfo({ member, onClose }: ContactInfoProps) {
 
         {/* Contact list */}
         {hasContacts ? (
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          <div className="divide-y divide-border-default">
             {allContacts.map((contact, index) => {
               const link = getContactLink(contact.type, contact.value);
               return (
                 <div key={`${contact.type}-${index}`} className="flex items-center gap-3 px-5 py-3">
                   <span className="shrink-0">{getContactIcon(contact.type)}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-tight">
+                    <p className="text-[11px] text-text-tertiary leading-tight">
                       {contact.type}
                     </p>
                     {link ? (
@@ -226,7 +226,7 @@ export function ContactInfo({ member, onClose }: ContactInfoProps) {
           </div>
         ) : (
           <div className="px-5 py-8 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-text-secondary">
               {t("noContactInfo")}
             </p>
           </div>

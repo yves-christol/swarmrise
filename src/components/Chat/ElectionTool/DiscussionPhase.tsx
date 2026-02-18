@@ -44,9 +44,9 @@ export const DiscussionPhase = ({ messageId, tool }: DiscussionPhaseProps) => {
   }, [messageId, advancePhase]);
 
   return (
-    <div className="border-t border-slate-200 dark:border-slate-700">
+    <div className="border-t border-border-default">
       {/* Info */}
-      <div className="px-3 py-1.5 text-xs text-gray-500 dark:text-gray-400 italic">
+      <div className="px-3 py-1.5 text-xs text-text-secondary italic">
         {t("electionDiscussionInfo")}
       </div>
 
@@ -56,7 +56,7 @@ export const DiscussionPhase = ({ messageId, tool }: DiscussionPhaseProps) => {
           {/* Tally */}
           {nominations.tally.length > 0 && (
             <div>
-              <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+              <div className="text-xs font-medium text-text-description mb-1">
                 {t("electionNominationTally")}
               </div>
               <div className="space-y-1">
@@ -76,11 +76,11 @@ export const DiscussionPhase = ({ messageId, tool }: DiscussionPhaseProps) => {
 
           {/* Detailed nominations */}
           <div>
-            <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <div className="text-xs font-medium text-text-description mb-1">
               {t("electionNominations")}
             </div>
             {nominations.nominations.length === 0 ? (
-              <p className="text-xs text-gray-400 dark:text-gray-500">{t("electionNoNominations")}</p>
+              <p className="text-xs text-text-tertiary">{t("electionNoNominations")}</p>
             ) : (
               <div className="space-y-1">
                 {nominations.nominations.map((n) => (
@@ -88,7 +88,7 @@ export const DiscussionPhase = ({ messageId, tool }: DiscussionPhaseProps) => {
                     <span className="font-medium text-purple-600 dark:text-purple-400">
                       {n.nominee.firstname} {n.nominee.surname}
                     </span>
-                    <span className="text-gray-500 dark:text-gray-400">
+                    <span className="text-text-secondary">
                       {" "}{t("electionNominatedBy", {
                         name: `${n.nominator.firstname} ${n.nominator.surname}`,
                         reason: n.reason,
@@ -116,7 +116,7 @@ export const DiscussionPhase = ({ messageId, tool }: DiscussionPhaseProps) => {
 
       {/* Facilitator controls */}
       {isFacilitator && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 space-y-2">
+        <div className="px-3 py-2 border-t border-border-default space-y-2">
           {/* Propose candidate with search */}
           {!showCandidateSelect ? (
             <div className="flex items-center gap-2 justify-end">
@@ -137,7 +137,7 @@ export const DiscussionPhase = ({ messageId, tool }: DiscussionPhaseProps) => {
             </div>
           ) : (
             <div className="space-y-2">
-              <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
+              <div className="text-xs font-medium text-text-description">
                 {t("electionSetCandidate")}
               </div>
               <input
@@ -148,10 +148,10 @@ export const DiscussionPhase = ({ messageId, tool }: DiscussionPhaseProps) => {
                   setSelectedCandidateId(null);
                 }}
                 placeholder={t("electionSearchMembers")}
-                className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
+                className="w-full text-xs bg-surface-primary border border-border-strong rounded px-2 py-1 text-dark dark:text-light placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-highlight"
               />
               {searchTerm && filteredNominees && filteredNominees.length > 0 && !selectedCandidateId && (
-                <div className="max-h-32 overflow-y-auto border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700">
+                <div className="max-h-32 overflow-y-auto border border-border-strong rounded bg-surface-primary">
                   {filteredNominees.map((m) => (
                     <button
                       key={m._id}
@@ -159,13 +159,13 @@ export const DiscussionPhase = ({ messageId, tool }: DiscussionPhaseProps) => {
                         setSelectedCandidateId(m._id);
                         setSearchTerm(`${m.firstname} ${m.surname}`);
                       }}
-                      className="w-full text-left px-2 py-1 text-xs text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2"
+                      className="w-full text-left px-2 py-1 text-xs text-dark dark:text-light hover:bg-surface-hover flex items-center gap-2"
                     >
                       <div className="w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-500 flex items-center justify-center overflow-hidden shrink-0">
                         {m.pictureURL ? (
                           <img src={m.pictureURL} alt="" className="w-full h-full object-cover" />
                         ) : (
-                          <span className="text-[8px] font-medium text-gray-600 dark:text-gray-300">
+                          <span className="text-[8px] font-medium text-text-description">
                             {m.firstname[0]}{m.surname[0]}
                           </span>
                         )}
@@ -200,7 +200,7 @@ export const DiscussionPhase = ({ messageId, tool }: DiscussionPhaseProps) => {
                     setSearchTerm("");
                     setSelectedCandidateId(null);
                   }}
-                  className="text-xs px-3 py-1.5 rounded-md bg-slate-200 dark:bg-slate-600 text-dark dark:text-light font-medium hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-md bg-surface-tertiary text-dark dark:text-light font-medium hover:bg-surface-hover-strong transition-colors"
                 >
                   {t("electionCancel")}
                 </button>

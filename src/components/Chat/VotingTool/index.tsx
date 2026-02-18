@@ -31,9 +31,9 @@ export const VotingTool = ({ messageId, tool }: VotingToolProps) => {
   const isEffectivelyClosed = tool.isClosed || isPastDeadline;
 
   return (
-    <div className="mt-2 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-800/50">
+    <div className="mt-2 border border-border-default rounded-lg overflow-hidden bg-surface-secondary">
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-border-default bg-surface-primary">
         <svg className="w-4 h-4 text-highlight shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="2" y="3" width="20" height="18" rx="2" />
           <path d="M9 12l2 2 4-4" />
@@ -41,12 +41,12 @@ export const VotingTool = ({ messageId, tool }: VotingToolProps) => {
         <span className="text-sm font-semibold text-dark dark:text-light truncate flex-1">
           {tool.question}
         </span>
-        <span className="text-xs px-2 py-0.5 rounded-full font-medium shrink-0 bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+        <span className="text-xs px-2 py-0.5 rounded-full font-medium shrink-0 bg-surface-tertiary text-text-description">
           {t(modeLabelKeys[tool.mode])}
         </span>
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
           isEffectivelyClosed
-            ? "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+            ? "bg-surface-secondary text-text-description"
             : "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
         }`}>
           {isEffectivelyClosed ? t("votingClosed") : t("votingOpen")}
@@ -54,7 +54,7 @@ export const VotingTool = ({ messageId, tool }: VotingToolProps) => {
       </div>
 
       {/* Indicators */}
-      <div className="px-3 py-1.5 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+      <div className="px-3 py-1.5 flex items-center gap-3 text-xs text-text-secondary">
         {tool.isAnonymous && (
           <span className="flex items-center gap-1">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

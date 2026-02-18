@@ -217,7 +217,7 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
         role="dialog"
         aria-modal="true"
         aria-labelledby="invitation-modal-title"
-        className={`w-full max-w-lg mx-4 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-xl
+        className={`w-full max-w-lg mx-4 bg-surface-primary border-2 border-border-strong rounded-lg shadow-xl
           transition-all duration-150 ease-out max-h-[90vh] flex flex-col
           ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
       >
@@ -259,11 +259,11 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
                 onKeyDown={handleKeyDown}
                 placeholder={t("emailPlaceholder")}
                 disabled={isSending}
-                className={`flex-1 px-3 py-2 text-sm rounded-md border bg-white dark:bg-gray-900 text-dark dark:text-light
+                className={`flex-1 px-3 py-2 text-sm rounded-md border bg-surface-primary text-dark dark:text-light
                   placeholder:text-gray-400
                   focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed
-                  ${sendError ? "border-red-400 focus:ring-red-400" : "border-gray-300 dark:border-gray-600"}`}
+                  ${sendError ? "border-red-400 focus:ring-red-400" : "border-border-strong"}`}
                 aria-invalid={!!sendError}
                 aria-describedby={sendError ? "send-error" : sendSuccess ? "send-success" : undefined}
               />
@@ -322,25 +322,25 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
             </h3>
 
             {pendingInvitations === undefined ? (
-              <div className="py-4 text-center text-sm text-gray-400 dark:text-gray-500">
+              <div className="py-4 text-center text-sm text-text-tertiary">
                 {tCommon("loading")}
               </div>
             ) : pendingInvitations.length === 0 ? (
-              <div className="py-4 text-center text-sm text-gray-400 dark:text-gray-500">
+              <div className="py-4 text-center text-sm text-text-tertiary">
                 {t("noPendingSent")}
               </div>
             ) : (
-              <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="border border-border-default rounded-lg overflow-hidden divide-y divide-border-default">
                 {pendingInvitations.map((invitation) => (
                   <div
                     key={invitation._id}
-                    className="flex items-center justify-between px-3 py-2.5 bg-white dark:bg-gray-800"
+                    className="flex items-center justify-between px-3 py-2.5 bg-surface-primary"
                   >
                     <div className="flex flex-col min-w-0">
                       <span className="text-sm text-dark dark:text-light truncate">
                         {invitation.email}
                       </span>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                      <span className="text-xs text-text-tertiary">
                         {t("sentOn", { date: formatRelativeDate(invitation.sentDate) })}
                       </span>
                     </div>

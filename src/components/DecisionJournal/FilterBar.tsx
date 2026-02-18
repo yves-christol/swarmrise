@@ -35,7 +35,7 @@ export function FilterBar({ filterType, onFilterTypeChange }: FilterBarProps) {
             ${
               filterType === type
                 ? "bg-highlight/20 text-highlight-hover dark:text-highlight font-medium"
-                : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                : "bg-surface-secondary text-text-description hover:bg-surface-hover-strong"
             }
           `}
         >

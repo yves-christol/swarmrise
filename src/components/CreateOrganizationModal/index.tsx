@@ -337,7 +337,7 @@ export const CreateOrganizationModal = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className={`w-full max-w-md mx-4 p-6 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-xl
+        className={`w-full max-w-md mx-4 p-6 bg-surface-primary border-2 border-border-strong rounded-lg shadow-xl
           transition-all duration-150 ease-out max-h-[90vh] overflow-y-auto
           ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
       >
@@ -370,13 +370,13 @@ export const CreateOrganizationModal = ({
               }}
               onBlur={handleBlur}
               disabled={isSubmitting}
-              className={`px-4 py-3 rounded-md border bg-white dark:bg-gray-900 text-dark dark:text-light
+              className={`px-4 py-3 rounded-md border bg-surface-primary text-dark dark:text-light
                 focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                 disabled:opacity-50 disabled:cursor-not-allowed
                 ${
                   validationError
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 dark:border-gray-600"
+                    : "border-border-strong"
                 }`}
               aria-invalid={!!validationError}
               aria-describedby={validationError ? "name-error" : undefined}
@@ -412,7 +412,7 @@ export const CreateOrganizationModal = ({
                     ${
                       selectedPresetId === preset.id
                         ? "border-highlight ring-2 ring-highlight/30"
-                        : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+                        : "border-border-default hover:border-gray-400 dark:hover:border-gray-500"
                     }`}
                   aria-pressed={selectedPresetId === preset.id}
                   aria-label={t(`presets.${preset.id}` as any)}
@@ -426,7 +426,7 @@ export const CreateOrganizationModal = ({
                     style={{ backgroundColor: preset.secondary }}
                   />
                   {selectedPresetId === preset.id && (
-                    <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
+                    <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-surface-primary rounded-full" />
                   )}
                 </button>
               ))}
@@ -441,15 +441,15 @@ export const CreateOrganizationModal = ({
                   ${
                     selectedPresetId === "custom"
                       ? "border-highlight ring-2 ring-highlight/30"
-                      : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+                      : "border-border-default hover:border-gray-400 dark:hover:border-gray-500"
                   }`}
                 aria-pressed={selectedPresetId === "custom"}
               >
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-xs text-text-secondary">
                   {t("customColors")}
                 </span>
                 {selectedPresetId === "custom" && (
-                  <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
+                  <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-surface-primary rounded-full" />
                 )}
               </button>
             </div>
@@ -458,7 +458,7 @@ export const CreateOrganizationModal = ({
             {selectedPresetId === "custom" && (
               <div className="flex gap-4 pt-2">
                 <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="primary-color" className="text-xs text-gray-500 dark:text-gray-400">
+                  <label htmlFor="primary-color" className="text-xs text-text-secondary">
                     {t("primaryColorLabel")}
                   </label>
                   <input
@@ -471,7 +471,7 @@ export const CreateOrganizationModal = ({
                   />
                 </div>
                 <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="secondary-color" className="text-xs text-gray-500 dark:text-gray-400">
+                  <label htmlFor="secondary-color" className="text-xs text-text-secondary">
                     {t("secondaryColorLabel")}
                   </label>
                   <input
@@ -487,8 +487,8 @@ export const CreateOrganizationModal = ({
             )}
 
             {/* Live preview */}
-            <div className="flex items-center gap-3 p-3 rounded-md bg-gray-100 dark:bg-gray-700/50">
-              <span className="text-xs text-gray-500 dark:text-gray-400">{t("preview")}</span>
+            <div className="flex items-center gap-3 p-3 rounded-md bg-surface-secondary/50">
+              <span className="text-xs text-text-secondary">{t("preview")}</span>
               <div className="flex-1 flex items-center gap-2">
                 <div
                   className="flex-1 h-3 rounded-full transition-colors"
@@ -507,7 +507,7 @@ export const CreateOrganizationModal = ({
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
             disabled={isSubmitting}
-            className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 text-sm text-text-secondary hover:text-gray-700 dark:hover:text-gray-300 transition-colors disabled:opacity-50"
           >
             <ChevronDownIcon
               className={`w-4 h-4 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
@@ -517,7 +517,7 @@ export const CreateOrganizationModal = ({
 
           {/* Advanced options section */}
           {showAdvanced && (
-            <div className="flex flex-col gap-4 p-4 rounded-md bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600">
+            <div className="flex flex-col gap-4 p-4 rounded-md bg-surface-secondary border border-border-default">
               {/* Logo upload */}
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-dark dark:text-light">
@@ -525,7 +525,7 @@ export const CreateOrganizationModal = ({
                 </label>
                 <div className="flex items-center gap-3">
                   {/* Logo preview */}
-                  <div className="w-14 h-14 rounded-md bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-300 dark:border-gray-500">
+                  <div className="w-14 h-14 rounded-md bg-surface-tertiary flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-300 dark:border-gray-500">
                     {logoPreviewUrl ? (
                       <img
                         src={logoPreviewUrl}
@@ -551,9 +551,9 @@ export const CreateOrganizationModal = ({
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={isSubmitting || isUploadingLogo}
-                        className="px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-600
-                          bg-white dark:bg-gray-800 text-dark dark:text-light
-                          hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors
+                        className="px-3 py-1.5 text-sm rounded-md border border-border-strong
+                          bg-surface-primary text-dark dark:text-light
+                          hover:bg-surface-hover transition-colors
                           disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {logoFile ? t("logoChangeButton") : t("logoUploadButton")}
@@ -572,7 +572,7 @@ export const CreateOrganizationModal = ({
                       )}
                     </div>
                     {logoFile && (
-                      <span className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">
+                      <span className="text-xs text-text-secondary truncate max-w-[200px]">
                         {logoFile.name}
                       </span>
                     )}
@@ -602,8 +602,8 @@ export const CreateOrganizationModal = ({
                   onChange={(e) => setFirstTeamName(e.target.value)}
                   disabled={isSubmitting}
                   placeholder={name || t("firstTeamNamePlaceholder")}
-                  className="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
-                    bg-white dark:bg-gray-900 text-dark dark:text-light text-sm
+                  className="px-3 py-2 rounded-md border border-border-strong
+                    bg-surface-primary text-dark dark:text-light text-sm
                     focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                     disabled:opacity-50 disabled:cursor-not-allowed"
                 />
@@ -637,7 +637,7 @@ export const CreateOrganizationModal = ({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200
+              className="px-4 py-2 text-text-secondary hover:text-gray-700  dark:hover:text-gray-200
                 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t("cancelButton")}

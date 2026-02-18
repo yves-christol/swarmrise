@@ -53,11 +53,11 @@ const InvitationCard = ({ data }: { data: InvitationWithOrga }) => {
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="p-4 bg-surface-primary rounded-lg border border-border-default">
       <div className="flex items-start justify-between mb-3">
         <div className="min-w-0 flex-1">
           <h3 className="font-bold text-dark dark:text-light truncate">{data.orga.name}</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+          <p className="text-sm text-text-description truncate">
             {t("invitedBy", { name: data.emitterName })}
           </p>
         </div>
@@ -68,7 +68,7 @@ const InvitationCard = ({ data }: { data: InvitationWithOrga }) => {
             className="w-10 h-10 rounded object-contain ml-3 flex-shrink-0"
           />
         ) : (
-          <div className="w-10 h-10 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center ml-3 flex-shrink-0">
+          <div className="w-10 h-10 rounded bg-surface-tertiary flex items-center justify-center ml-3 flex-shrink-0">
             <OrgPlaceholderIcon className="w-6 h-6 text-gray-500" />
           </div>
         )}
@@ -88,8 +88,8 @@ const InvitationCard = ({ data }: { data: InvitationWithOrga }) => {
           onClick={handleReject}
           disabled={isProcessing}
           className="flex items-center justify-center gap-1.5 px-3 py-1.5
-            border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 disabled:opacity-50
-            text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded transition-colors"
+            border border-border-strong hover:border-gray-400 dark:hover:border-gray-500 disabled:opacity-50
+            text-text-secondary hover:text-gray-600 dark:hover:text-gray-300 rounded transition-colors"
         >
           <XIcon className="w-4 h-4" />
           {t("decline")}
@@ -136,7 +136,7 @@ export const EmptyState = () => {
 
       <div className="text-center">
         <h1 className="text-3xl mb-2">{t("welcome")}</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-text-description">
           {t("noBelongYet")}
         </p>
       </div>
@@ -144,7 +144,7 @@ export const EmptyState = () => {
       {isLoading && (
         <div className="w-full">
           <div className="animate-pulse space-y-3">
-            <div className="h-24 bg-gray-200 dark:bg-gray-800 rounded-lg" />
+            <div className="h-24 bg-surface-tertiary rounded-lg" />
           </div>
         </div>
       )}
@@ -164,9 +164,9 @@ export const EmptyState = () => {
 
       {hasInvitations && (
         <div className="flex items-center gap-4 w-full">
-          <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
+          <div className="flex-1 border-t border-border-default" />
           <span className="text-gray-500 text-sm">{tCommon("or")}</span>
-          <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
+          <div className="flex-1 border-t border-border-default" />
         </div>
       )}
 
@@ -184,9 +184,9 @@ export const EmptyState = () => {
 
       {/* Divider between the two CTAs */}
       <div className="flex items-center gap-4 w-full">
-        <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
+        <div className="flex-1 border-t border-border-default" />
         <span className="text-gray-500 text-sm">{tCommon("or")}</span>
-        <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
+        <div className="flex-1 border-t border-border-default" />
       </div>
 
       {/* Secondary CTA: Request demo invitation */}
@@ -213,7 +213,7 @@ export const EmptyState = () => {
           </p>
         )}
         {demoRequestState !== "success" && demoRequestState !== "error" && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+          <p className="text-sm text-text-secondary text-center">
             {t("requestDemoInvitationDescription")}
           </p>
         )}

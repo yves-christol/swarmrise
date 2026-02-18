@@ -72,18 +72,18 @@ export function KanbanColumn({ column, cards, memberMap, onCardClick, onAddCard 
       className="
         flex flex-col
         w-72 flex-shrink-0
-        bg-gray-50 dark:bg-gray-900/50
-        border border-gray-200 dark:border-gray-700
+        bg-surface-secondary/50
+        border border-border-default
         rounded-xl
         max-h-full
       "
     >
       {/* Column header */}
-      <div className="flex items-center justify-between px-3 py-2.5 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between px-3 py-2.5 border-b border-border-default">
         <h3 className="text-sm font-semibold text-dark dark:text-light">
           {column.name}
         </h3>
-        <span className="text-xs text-gray-400 dark:text-gray-500 tabular-nums">
+        <span className="text-xs text-text-tertiary tabular-nums">
           {t("board.cardCount", { count: cards.length })}
         </span>
       </div>
@@ -106,15 +106,15 @@ export function KanbanColumn({ column, cards, memberMap, onCardClick, onAddCard 
       </SortableContext>
 
       {/* Add card button */}
-      <div className="p-2 border-t border-gray-200 dark:border-gray-700">
+      <div className="p-2 border-t border-border-default">
         <button
           onClick={() => onAddCard(column._id)}
           className="
             w-full flex items-center justify-center gap-1.5
             px-3 py-1.5 text-sm
-            text-gray-500 dark:text-gray-400
+            text-text-secondary
             hover:text-dark dark:hover:text-light
-            hover:bg-gray-100 dark:hover:bg-gray-800
+            hover:bg-surface-hover
             rounded-lg
             transition-colors duration-75
           "

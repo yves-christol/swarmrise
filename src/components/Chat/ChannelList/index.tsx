@@ -71,7 +71,7 @@ export const ChannelList = () => {
 
   if (!channels) {
     return (
-      <div className="p-3 text-sm text-gray-500 dark:text-gray-400">
+      <div className="p-3 text-sm text-text-secondary">
         {t("loadingMessages")}
       </div>
     );
@@ -92,7 +92,7 @@ export const ChannelList = () => {
   return (
     <div className="flex flex-col" role="listbox" aria-label={t("channels")}>
       {/* Channels section */}
-      <div className="px-3 py-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 tracking-wider">
+      <div className="px-3 py-2 text-xs font-semibold uppercase text-text-secondary tracking-wider">
         {t("channels")}
       </div>
       {orgaAndTeamChannels.map((channel) => (
@@ -110,12 +110,12 @@ export const ChannelList = () => {
 
       {/* DM section */}
       <div className="flex items-center justify-between px-3 py-2 mt-2">
-        <span className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 tracking-wider">
+        <span className="text-xs font-semibold uppercase text-text-secondary tracking-wider">
           {t("directMessages")}
         </span>
         <button
           onClick={() => setShowMemberPicker((v) => !v)}
-          className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-gray-500 dark:text-gray-400 transition-colors"
+          className="p-1.5 rounded hover:bg-surface-hover-strong text-text-secondary transition-colors"
           aria-label={t("newConversation")}
           title={t("newConversation")}
         >
@@ -185,12 +185,12 @@ const ChannelButton = ({
     onClick={() => onSelect(channelId)}
     className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors ${
       isSelected
-        ? "bg-slate-200 dark:bg-slate-700 text-dark dark:text-light font-medium"
-        : "text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+        ? "bg-surface-tertiary text-dark dark:text-light font-medium"
+        : "text-text-description hover:bg-surface-hover"
     } ${isArchived ? "italic opacity-60" : ""}`}
   >
     <span className="flex items-center gap-2 min-w-0">
-      <span className="text-gray-400 dark:text-gray-500 shrink-0">{prefix}</span>
+      <span className="text-text-tertiary shrink-0">{prefix}</span>
       <span className="truncate">{displayName}</span>
     </span>
     {unread > 0 && (
@@ -238,32 +238,32 @@ const MemberPicker = ({
   }, [onClose]);
 
   return (
-    <div ref={containerRef} className="mx-2 mb-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-light dark:bg-dark shadow-md overflow-hidden">
+    <div ref={containerRef} className="mx-2 mb-2 rounded-lg border border-border-default bg-light dark:bg-dark shadow-md overflow-hidden">
       <input
         ref={inputRef}
         type="text"
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
         placeholder={searchPlaceholder}
-        className="w-full px-3 py-2 text-xs bg-transparent text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none border-b border-slate-200 dark:border-slate-700"
+        className="w-full px-3 py-2 text-xs bg-transparent text-dark dark:text-light placeholder-text-tertiary focus:outline-none border-b border-border-default"
       />
       <div className="max-h-[120px] overflow-y-auto">
         {members === undefined ? (
-          <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400">...</div>
+          <div className="px-3 py-2 text-xs text-text-secondary">...</div>
         ) : members.length === 0 ? (
-          <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400">-</div>
+          <div className="px-3 py-2 text-xs text-text-secondary">-</div>
         ) : (
           members.map((m) => (
             <button
               key={m._id}
               onClick={() => onSelect(m._id)}
-              className="w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 hover:bg-surface-hover transition-colors"
             >
               <div className="w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-600 flex items-center justify-center overflow-hidden shrink-0">
                 {m.pictureURL ? (
                   <img src={m.pictureURL} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-[9px] font-medium text-gray-600 dark:text-gray-300">
+                  <span className="text-[9px] font-medium text-text-description">
                     {`${m.firstname[0] ?? ""}${m.surname[0] ?? ""}`.toUpperCase()}
                   </span>
                 )}

@@ -474,7 +474,7 @@ export const OrgaSettingsModal = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="settings-title"
-        className={`w-full max-w-lg mx-4 p-6 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-xl
+        className={`w-full max-w-lg mx-4 p-6 bg-surface-primary border-2 border-border-strong rounded-lg shadow-xl
           transition-all duration-150 ease-out max-h-[90vh] overflow-y-auto
           ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
       >
@@ -522,10 +522,10 @@ export const OrgaSettingsModal = ({
                 }}
                 onBlur={handleNameBlur}
                 disabled={isSubmitting}
-                className={`px-4 py-3 rounded-md border bg-white dark:bg-gray-900 text-dark dark:text-light
+                className={`px-4 py-3 rounded-md border bg-surface-primary text-dark dark:text-light
                   focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed
-                  ${validationError ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600"}`}
+                  ${validationError ? "border-red-500 focus:ring-red-500" : "border-border-strong"}`}
                 aria-invalid={!!validationError}
                 aria-describedby={validationError ? "name-error" : undefined}
               />
@@ -555,7 +555,7 @@ export const OrgaSettingsModal = ({
                       disabled:opacity-50 disabled:cursor-not-allowed
                       ${selectedPresetId === preset.id
                         ? "border-highlight ring-2 ring-highlight/30"
-                        : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+                        : "border-border-default hover:border-gray-400 dark:hover:border-gray-500"
                       }`}
                     aria-pressed={selectedPresetId === preset.id}
                     aria-label={t(`presets.${preset.id}` as any)}
@@ -569,7 +569,7 @@ export const OrgaSettingsModal = ({
                       style={{ backgroundColor: preset.secondary }}
                     />
                     {selectedPresetId === preset.id && (
-                      <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
+                      <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-surface-primary rounded-full" />
                     )}
                   </button>
                 ))}
@@ -583,15 +583,15 @@ export const OrgaSettingsModal = ({
                     disabled:opacity-50 disabled:cursor-not-allowed
                     ${selectedPresetId === "custom"
                       ? "border-highlight ring-2 ring-highlight/30"
-                      : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+                      : "border-border-default hover:border-gray-400 dark:hover:border-gray-500"
                     }`}
                   aria-pressed={selectedPresetId === "custom"}
                 >
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-xs text-text-secondary">
                     {t("customColors")}
                   </span>
                   {selectedPresetId === "custom" && (
-                    <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-white dark:bg-gray-800 rounded-full" />
+                    <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-surface-primary rounded-full" />
                   )}
                 </button>
               </div>
@@ -600,7 +600,7 @@ export const OrgaSettingsModal = ({
               {selectedPresetId === "custom" && (
                 <div className="flex gap-4 pt-2">
                   <div className="flex-1 flex flex-col gap-1">
-                    <label htmlFor="primary-color" className="text-xs text-gray-500 dark:text-gray-400">
+                    <label htmlFor="primary-color" className="text-xs text-text-secondary">
                       {t("primaryColorLabel")}
                     </label>
                     <input
@@ -613,7 +613,7 @@ export const OrgaSettingsModal = ({
                     />
                   </div>
                   <div className="flex-1 flex flex-col gap-1">
-                    <label htmlFor="secondary-color" className="text-xs text-gray-500 dark:text-gray-400">
+                    <label htmlFor="secondary-color" className="text-xs text-text-secondary">
                       {t("secondaryColorLabel")}
                     </label>
                     <input
@@ -629,8 +629,8 @@ export const OrgaSettingsModal = ({
               )}
 
               {/* Live preview */}
-              <div className="flex items-center gap-3 p-3 rounded-md bg-gray-100 dark:bg-gray-700/50">
-                <span className="text-xs text-gray-500 dark:text-gray-400">{t("preview")}</span>
+              <div className="flex items-center gap-3 p-3 rounded-md bg-surface-secondary/50">
+                <span className="text-xs text-text-secondary">{t("preview")}</span>
                 <div className="flex-1 flex items-center gap-2">
                   <div
                     className="flex-1 h-3 rounded-full transition-colors"
@@ -650,7 +650,7 @@ export const OrgaSettingsModal = ({
                 {t("logoLabel")}
               </label>
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-md bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-300 dark:border-gray-500">
+                <div className="w-14 h-14 rounded-md bg-surface-tertiary flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-300 dark:border-gray-500">
                   {displayLogoUrl ? (
                     <img
                       src={displayLogoUrl}
@@ -676,9 +676,9 @@ export const OrgaSettingsModal = ({
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isSubmitting || isUploadingLogo}
-                      className="px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-600
-                        bg-white dark:bg-gray-800 text-dark dark:text-light
-                        hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors
+                      className="px-3 py-1.5 text-sm rounded-md border border-border-strong
+                        bg-surface-primary text-dark dark:text-light
+                        hover:bg-surface-hover transition-colors
                         disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {displayLogoUrl ? t("logoChangeButton") : t("logoUploadButton")}
@@ -697,7 +697,7 @@ export const OrgaSettingsModal = ({
                     )}
                   </div>
                   {logoFile && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">
+                    <span className="text-xs text-text-secondary truncate max-w-[200px]">
                       {logoFile.name}
                     </span>
                   )}
@@ -724,12 +724,12 @@ export const OrgaSettingsModal = ({
               <label className="text-sm font-bold text-dark dark:text-light">
                 {t("settings.paperColorLabel")}
               </label>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-text-secondary">
                 {t("settings.paperColorHint")}
               </p>
               <div className="flex gap-4">
                 <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="paper-color-light" className="text-xs text-gray-500 dark:text-gray-400">
+                  <label htmlFor="paper-color-light" className="text-xs text-text-secondary">
                     {t("settings.lightMode")}
                   </label>
                   <div className="flex items-center gap-2">
@@ -753,7 +753,7 @@ export const OrgaSettingsModal = ({
                   </div>
                 </div>
                 <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="paper-color-dark" className="text-xs text-gray-500 dark:text-gray-400">
+                  <label htmlFor="paper-color-dark" className="text-xs text-text-secondary">
                     {t("settings.darkMode")}
                   </label>
                   <div className="flex items-center gap-2">
@@ -784,12 +784,12 @@ export const OrgaSettingsModal = ({
               <label className="text-sm font-bold text-dark dark:text-light">
                 {t("settings.highlightColorLabel")}
               </label>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-text-secondary">
                 {t("settings.highlightColorHint")}
               </p>
               <div className="flex gap-4">
                 <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="highlight-color-light" className="text-xs text-gray-500 dark:text-gray-400">
+                  <label htmlFor="highlight-color-light" className="text-xs text-text-secondary">
                     {t("settings.lightMode")}
                   </label>
                   <div className="flex items-center gap-2">
@@ -813,7 +813,7 @@ export const OrgaSettingsModal = ({
                   </div>
                 </div>
                 <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="highlight-color-dark" className="text-xs text-gray-500 dark:text-gray-400">
+                  <label htmlFor="highlight-color-dark" className="text-xs text-text-secondary">
                     {t("settings.darkMode")}
                   </label>
                   <div className="flex items-center gap-2">
@@ -839,8 +839,8 @@ export const OrgaSettingsModal = ({
               </div>
 
               {/* Live preview */}
-              <div className="flex items-center gap-3 p-3 rounded-md bg-gray-100 dark:bg-gray-700/50">
-                <span className="text-xs text-gray-500 dark:text-gray-400">{t("preview")}</span>
+              <div className="flex items-center gap-3 p-3 rounded-md bg-surface-secondary/50">
+                <span className="text-xs text-text-secondary">{t("preview")}</span>
                 <div className="flex-1 flex items-center gap-2">
                   <div
                     className="flex-1 h-8 rounded flex items-center justify-center text-xs font-bold"
@@ -869,7 +869,7 @@ export const OrgaSettingsModal = ({
               <label htmlFor="title-font" className="text-sm font-bold text-dark dark:text-light">
                 {t("settings.titleFontLabel")}
               </label>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-text-secondary">
                 {t("settings.titleFontHint")}
               </p>
               <div className="flex items-center gap-2">
@@ -878,8 +878,8 @@ export const OrgaSettingsModal = ({
                   value={titleFont}
                   onChange={(e) => setTitleFont(e.target.value)}
                   disabled={isSubmitting}
-                  className="flex-1 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
-                    bg-white dark:bg-gray-900 text-dark dark:text-light text-sm
+                  className="flex-1 px-3 py-2 rounded-md border border-border-strong
+                    bg-surface-primary text-dark dark:text-light text-sm
                     focus:outline-none focus:ring-2 focus:ring-highlight
                     disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -904,7 +904,7 @@ export const OrgaSettingsModal = ({
                 )}
               </div>
               {/* Font preview */}
-              <div className="p-3 rounded-md bg-gray-100 dark:bg-gray-700/50">
+              <div className="p-3 rounded-md bg-surface-secondary/50">
                 <p
                   className="text-lg font-semibold text-dark dark:text-light"
                   style={titleFont ? { fontFamily: titleFont } : undefined}
@@ -938,12 +938,12 @@ export const OrgaSettingsModal = ({
               <h4 className="text-sm font-semibold text-dark dark:text-light mb-2">
                 {t("settings.transferOwnership")}
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              <p className="text-sm text-text-description mb-3">
                 {t("settings.transferOwnershipDescription")}
               </p>
 
               {otherMembers.length === 0 ? (
-                <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                <p className="text-sm text-text-secondary italic">
                   {t("settings.noOtherMembers")}
                 </p>
               ) : showTransferConfirm ? (
@@ -952,8 +952,8 @@ export const OrgaSettingsModal = ({
                     value={selectedNewOwnerId ?? ""}
                     onChange={(e) => setSelectedNewOwnerId(e.target.value as Id<"members">)}
                     disabled={isSubmitting}
-                    className="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
-                      bg-white dark:bg-gray-900 text-dark dark:text-light text-sm
+                    className="px-3 py-2 rounded-md border border-border-strong
+                      bg-surface-primary text-dark dark:text-light text-sm
                       focus:outline-none focus:ring-2 focus:ring-red-500
                       disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -978,7 +978,7 @@ export const OrgaSettingsModal = ({
                         setSelectedNewOwnerId(null);
                       }}
                       disabled={isSubmitting}
-                      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+                      className="px-4 py-2 bg-surface-tertiary hover:bg-surface-hover-strong text-text-description rounded-lg transition-colors disabled:opacity-50"
                     >
                       {tCommon("cancel")}
                     </button>
@@ -1000,7 +1000,7 @@ export const OrgaSettingsModal = ({
               <h4 className="text-sm font-semibold text-dark dark:text-light mb-2">
                 {t("deleteOrganization")}
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              <p className="text-sm text-text-description mb-3">
                 {canDelete ? t("deleteOrgWarning") : t("settings.deleteOrgDisabledReason")}
               </p>
 
@@ -1016,7 +1016,7 @@ export const OrgaSettingsModal = ({
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
                     disabled={isSubmitting}
-                    className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-surface-tertiary hover:bg-surface-hover-strong text-text-description rounded-lg transition-colors disabled:opacity-50"
                   >
                     {tCommon("cancel")}
                   </button>
@@ -1047,7 +1047,7 @@ export const OrgaSettingsModal = ({
               type="button"
               onClick={handleClose}
               disabled={isSubmitting}
-              className="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200
+              className="px-4 py-2 text-text-secondary hover:text-gray-700  dark:hover:text-gray-200
                 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t("cancelButton")}

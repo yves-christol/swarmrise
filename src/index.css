@@ -3,12 +3,57 @@
 /* Enable class-based dark mode (Tailwind v4) */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Surface Token System ─────────────────────────────────────────────
+   Light/dark tokens consumed by Tailwind v4 via @theme integration.
+   Org paper color override flows through --org-paper-color vars set
+   by OrgCustomisationProvider. ──────────────────────────────────────── */
+
+:root.light {
+  /* Surface (background) */
+  --surface-primary: var(--org-paper-color, #ffffff);
+  --surface-secondary: var(--org-paper-color-secondary, #f1f5f9);
+  --surface-tertiary: var(--org-paper-color-tertiary, #e2e8f0);
+
+  /* Hover */
+  --surface-hover-subtle: #f9fafb;
+  --surface-hover: #f3f4f6;
+  --surface-hover-strong: #e2e8f0;
+
+  /* Border */
+  --border-default: #e5e7eb;
+  --border-strong: #d1d5db;
+
+  /* Text */
+  --text-secondary: #6b7280;
+  --text-description: #4b5563;
+  --text-tertiary: #9ca3af;
+}
+
+:root.dark {
+  /* Surface (background) */
+  --surface-primary: var(--org-paper-color, #1f2937);
+  --surface-secondary: var(--org-paper-color-secondary, #334155);
+  --surface-tertiary: var(--org-paper-color-tertiary, #475569);
+
+  /* Hover */
+  --surface-hover-subtle: rgba(55, 65, 81, 0.5);
+  --surface-hover: #374151;
+  --surface-hover-strong: #475569;
+
+  /* Border */
+  --border-default: #374151;
+  --border-strong: #4b5563;
+
+  /* Text */
+  --text-secondary: #9ca3af;
+  --text-description: #9ca3af;
+  --text-tertiary: #6b7280;
+}
+
 @theme {
   /* Custom colors - these automatically generate bg-*, text-*, etc utilities */
   --color-light: #eeeeee;
   --color-dark: #212121;
-  --color-light-paper: #FAFAEE;
-  --color-dark-paper: #1a1a1a;
 
   /* Brand gold colors (kept for Logo component only) */
   --color-bee-gold: #eac840;
@@ -17,6 +62,19 @@
   /* Org-customisable highlight colors (overridden at runtime by OrgCustomisationProvider) */
   --color-highlight: var(--org-highlight-color, #eac840);
   --color-highlight-hover: var(--org-highlight-hover, #d4af37);
+
+  /* Surface token integration – auto-generates bg-surface-*, text-text-*, border-border-* */
+  --color-surface-primary: var(--surface-primary);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-tertiary: var(--surface-tertiary);
+  --color-surface-hover-subtle: var(--surface-hover-subtle);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-hover-strong: var(--surface-hover-strong);
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-description: var(--text-description);
+  --color-text-tertiary: var(--text-tertiary);
 
   /* Custom font family */
   --font-family-swarm: 'Montserrat Alternates', sans-serif;
@@ -49,14 +107,6 @@
 
   .text-dark {
     color: var(--color-dark);
-  }
-
-  .bg-light-paper {
-    background-color: var(--color-light-paper);
-  }
-
-  .bg-dark-paper {
-    background-color: var(--color-dark-paper);
   }
 
   /* Gold text - accessible in both themes */
@@ -162,6 +212,9 @@ body {
   --org-highlight-color: #eac840;
   --org-highlight-hover: #d4af37;
   --org-title-font: 'Montserrat Alternates', sans-serif;
+  --org-paper-color: initial;
+  --org-paper-color-secondary: initial;
+  --org-paper-color-tertiary: initial;
 }
 
 /* Principles page animations */

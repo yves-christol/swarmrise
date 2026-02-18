@@ -97,7 +97,7 @@ export const TeamSelector = () => {
           className={`flex items-center gap-1 px-3 py-1.5 transition-colors
             focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
             ${hasConnectedTeams ? 'rounded-l-md' : 'rounded-md'}
-            ${canGoBackToTeam ? 'hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer' : ''}`}
+            ${canGoBackToTeam ? 'hover:bg-surface-hover-strong cursor-pointer' : ''}`}
           aria-label={currentTeamName}
         >
           <span className="text-sm text-dark dark:text-light truncate max-w-[140px] font-medium">
@@ -109,7 +109,7 @@ export const TeamSelector = () => {
             onClick={() => setIsOpen(!isOpen)}
             className="flex items-center py-1.5 pr-2 pl-1 rounded-r-md transition-colors
               focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
-              hover:bg-slate-200 dark:hover:bg-slate-700"
+              hover:bg-surface-hover-strong"
             aria-haspopup="listbox"
             aria-expanded={isOpen}
           >
@@ -125,7 +125,7 @@ export const TeamSelector = () => {
           role="listbox"
           aria-label={t("selectTeam")}
           className="absolute top-full left-0 mt-1 w-56
-            bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50"
+            bg-surface-primary border border-border-default rounded-lg shadow-xl z-50"
         >
           <div className="py-1">
             {/* Parent team */}
@@ -140,7 +140,7 @@ export const TeamSelector = () => {
                 }}
                 className="w-full flex items-center gap-2 px-4 py-2
                   transition-colors text-left text-sm
-                  hover:bg-gray-100 dark:hover:bg-gray-700"
+                  hover:bg-surface-hover"
               >
                 <ChevronUpIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 <span className="text-dark dark:text-light truncate">{connected.parent.name}</span>
@@ -149,7 +149,7 @@ export const TeamSelector = () => {
 
             {/* Separator between parent and children */}
             {connected.parent && connected.children.length > 0 && (
-              <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
+              <div className="border-t border-border-default my-1" />
             )}
 
             {/* Child teams */}
@@ -165,7 +165,7 @@ export const TeamSelector = () => {
                 }}
                 className="w-full flex items-center gap-2 px-4 py-2
                   transition-colors text-left text-sm
-                  hover:bg-gray-100 dark:hover:bg-gray-700"
+                  hover:bg-surface-hover"
               >
                 <ChevronDownSmallIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 <span className="text-dark dark:text-light truncate">{child.name}</span>

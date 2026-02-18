@@ -77,14 +77,14 @@ const EmojiPickerPortal = ({
   return createPortal(
     <div
       ref={pickerRef}
-      className="fixed z-[9999] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 grid grid-cols-6 gap-1"
+      className="fixed z-[9999] bg-surface-primary border border-border-default rounded-lg shadow-lg p-2 grid grid-cols-6 gap-1"
       style={{ top: position.top, left: position.left, minWidth: `${PICKER_WIDTH}px` }}
     >
       {EMOJI_PALETTE.map((emoji) => (
         <button
           key={emoji}
           onClick={() => onSelect(emoji)}
-          className="w-10 h-10 flex items-center justify-center rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-lg transition-colors"
+          className="w-10 h-10 flex items-center justify-center rounded hover:bg-surface-hover text-lg transition-colors"
           title={emoji}
         >
           {emoji}
@@ -158,9 +158,9 @@ export const ReactionBar = ({ messageId, reactions, showAddButton = true }: Reac
             ${
               group.reacted
                 ? "bg-highlight/15 border-highlight/40 text-dark dark:text-light"
-                : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-gray-600 dark:text-gray-400"
+                : "bg-surface-secondary border-border-default text-text-description"
             }
-            hover:bg-slate-200 dark:hover:bg-slate-700
+            hover:bg-surface-hover-strong
           `}
         >
           <span className="text-sm leading-none">{group.emoji}</span>
@@ -174,7 +174,7 @@ export const ReactionBar = ({ messageId, reactions, showAddButton = true }: Reac
           <button
             ref={buttonRef}
             onClick={() => setPickerOpen(!pickerOpen)}
-            className="inline-flex items-center justify-center w-7 h-7 rounded-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors sm:opacity-0 sm:group-hover:opacity-100"
+            className="inline-flex items-center justify-center w-7 h-7 rounded-full text-text-tertiary hover:text-gray-600 dark:hover:text-gray-300 hover:bg-surface-hover-strong transition-colors sm:opacity-0 sm:group-hover:opacity-100"
             title={t("addReaction")}
             aria-label={t("addReaction")}
           >
@@ -238,7 +238,7 @@ export const ReactionButton = ({ messageId }: ReactionButtonProps) => {
       <button
         ref={buttonRef}
         onClick={() => setPickerOpen(!pickerOpen)}
-        className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+        className="text-xs text-text-tertiary hover:text-gray-600 dark:hover:text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
       >
         {t("react")}
       </button>

@@ -55,9 +55,9 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
   }, [messageId, tool.proposedCandidateId, advancePhase]);
 
   return (
-    <div className="border-t border-slate-200 dark:border-slate-700">
+    <div className="border-t border-border-default">
       {/* Info */}
-      <div className="px-3 py-1.5 text-xs text-gray-500 dark:text-gray-400 italic">
+      <div className="px-3 py-1.5 text-xs text-text-secondary italic">
         {t("electionChangeRoundInfo")}
       </div>
 
@@ -78,7 +78,7 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
       {/* Current nomination and change form */}
       {myNomination && (
         <div className="px-3 pb-2 space-y-2">
-          <div className="text-xs text-gray-500 dark:text-gray-400 italic">
+          <div className="text-xs text-text-secondary italic">
             {t("electionYourNomination")}: {myNomination.nominee.firstname} {myNomination.nominee.surname}
           </div>
 
@@ -106,10 +106,10 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
                     setNewNomineeId(null);
                   }}
                   placeholder={t("electionSearchMembers")}
-                  className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
+                  className="w-full text-xs bg-surface-primary border border-border-strong rounded px-2 py-1 text-dark dark:text-light placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-highlight"
                 />
                 {searchTerm && filteredNominees && filteredNominees.length > 0 && !newNomineeId && (
-                  <div className="mt-1 max-h-32 overflow-y-auto border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700">
+                  <div className="mt-1 max-h-32 overflow-y-auto border border-border-strong rounded bg-surface-primary">
                     {filteredNominees.map((m) => (
                       <button
                         key={m._id}
@@ -117,13 +117,13 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
                           setNewNomineeId(m._id);
                           setSearchTerm(`${m.firstname} ${m.surname}`);
                         }}
-                        className="w-full text-left px-2 py-1 text-xs text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-600 flex items-center gap-2"
+                        className="w-full text-left px-2 py-1 text-xs text-dark dark:text-light hover:bg-surface-hover flex items-center gap-2"
                       >
                         <div className="w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-500 flex items-center justify-center overflow-hidden shrink-0">
                           {m.pictureURL ? (
                             <img src={m.pictureURL} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            <span className="text-[8px] font-medium text-gray-600 dark:text-gray-300">
+                            <span className="text-[8px] font-medium text-text-description">
                               {m.firstname[0]}{m.surname[0]}
                             </span>
                           )}
@@ -142,7 +142,7 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
                 onChange={(e) => setNewReason(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") handleChange(); }}
                 placeholder={t("electionNominateReasonPlaceholder")}
-                className="w-full text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-highlight"
+                className="w-full text-xs bg-surface-primary border border-border-strong rounded px-2 py-1 text-dark dark:text-light placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-highlight"
               />
 
               <div className="flex items-center gap-2">
@@ -155,7 +155,7 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
                 </button>
                 <button
                   onClick={() => setIsChanging(false)}
-                  className="text-xs px-3 py-1.5 rounded-md bg-slate-200 dark:bg-slate-600 text-dark dark:text-light font-medium hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-md bg-surface-tertiary text-dark dark:text-light font-medium hover:bg-surface-hover-strong transition-colors"
                 >
                   {t("electionKeepNomination")}
                 </button>
@@ -168,7 +168,7 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
       {/* Updated nominations tally */}
       {nominations?.phase === "revealed" && nominations.tally.length > 0 && (
         <div className="px-3 pb-2">
-          <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+          <div className="text-xs font-medium text-text-description mb-1">
             {t("electionNominationTally")}
           </div>
           <div className="space-y-1">
@@ -188,7 +188,7 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
 
       {/* Facilitator controls */}
       {isFacilitator && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex justify-end">
+        <div className="px-3 py-2 border-t border-border-default flex justify-end">
           <button
             onClick={handleAdvance}
             disabled={!tool.proposedCandidateId}

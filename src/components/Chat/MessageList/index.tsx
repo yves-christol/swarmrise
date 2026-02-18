@@ -126,7 +126,7 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
 
   if (status === "LoadingFirstPage") {
     return (
-      <div className="flex-1 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex-1 flex items-center justify-center text-sm text-text-secondary">
         {t("loadingMessages")}
       </div>
     );
@@ -139,7 +139,7 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400 px-4 text-center">
+      <div className="flex-1 flex items-center justify-center text-sm text-text-secondary px-4 text-center">
         {t("noMessages")}
       </div>
     );
@@ -156,7 +156,7 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
         aria-label={t("messageList")}
       >
         {status === "LoadingMore" && (
-          <div className="py-2 text-center text-xs text-gray-400 dark:text-gray-500">
+          <div className="py-2 text-center text-xs text-text-tertiary">
             {t("loadingMessages")}
           </div>
         )}
@@ -177,11 +177,11 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
             <div key={msg._id}>
               {showDateSeparator && (
                 <div className="flex items-center gap-3 px-3 py-2">
-                  <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
-                  <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">
+                  <div className="flex-1 h-px bg-surface-tertiary" />
+                  <span className="text-xs text-text-tertiary font-medium">
                     {formatDateSeparator(msg._creationTime, t("today"), t("yesterday"))}
                   </span>
-                  <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                  <div className="flex-1 h-px bg-surface-tertiary" />
                 </div>
               )}
               <MessageItem

@@ -20,7 +20,7 @@ export function KanbanEmptyState() {
         <rect x="18" y="8" width="12" height="24" rx="2" />
         <rect x="32" y="8" width="12" height="16" rx="2" />
       </svg>
-      <p className="text-sm text-gray-500 dark:text-gray-400">
+      <p className="text-sm text-text-secondary">
         {t("board.empty")}
       </p>
     </div>

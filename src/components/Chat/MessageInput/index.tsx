@@ -134,7 +134,7 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
 
   if (isArchived) {
     return (
-      <div className="p-3 text-center text-sm text-gray-500 dark:text-gray-400 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
+      <div className="p-3 text-center text-sm text-text-secondary bg-surface-secondary border-t border-border-default">
         {t("archivedChannel")}
       </div>
     );
@@ -150,13 +150,13 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
 
   return (
     <>
-      <div className="p-3 border-t border-slate-200 dark:border-slate-700 bg-light dark:bg-dark">
+      <div className="p-3 border-t border-border-default bg-light dark:bg-dark">
         <div className="flex items-end gap-2">
           {/* Add tool button */}
           <div className="relative" ref={toolMenuRef}>
             <button
               onClick={() => setShowToolMenu((v) => !v)}
-              className="shrink-0 p-2 rounded-lg text-gray-400 dark:text-gray-500 hover:text-dark dark:hover:text-light hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="shrink-0 p-2 rounded-lg text-text-tertiary hover:text-dark dark:hover:text-light hover:bg-surface-hover transition-colors"
               aria-label={t("addTool")}
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -166,13 +166,13 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
             </button>
 
             {showToolMenu && (
-              <div className="absolute bottom-full left-0 mb-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 min-w-[180px] z-10">
+              <div className="absolute bottom-full left-0 mb-1 bg-surface-primary border border-border-default rounded-lg shadow-lg py-1 min-w-[180px] z-10">
                 <button
                   onClick={() => {
                     setShowToolMenu(false);
                     setShowTopicModal(true);
                   }}
-                  className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-surface-hover transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4 text-highlight shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10" />
@@ -185,7 +185,7 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
                     setShowToolMenu(false);
                     setShowVotingModal(true);
                   }}
-                  className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-surface-hover transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4 text-highlight shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="3" width="20" height="18" rx="2" />
@@ -198,7 +198,7 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
                     setShowToolMenu(false);
                     setShowElectionModal(true);
                   }}
-                  className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 text-sm text-dark dark:text-light hover:bg-surface-hover transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4 text-highlight shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -218,7 +218,7 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
             placeholder={t("typeMessage")}
             aria-label={t("typeMessage")}
             rows={1}
-            className="flex-1 resize-none bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+            className="flex-1 resize-none bg-surface-secondary text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             style={{ maxHeight: "80px" }}
           />
           {text.trim().length > 0 && (

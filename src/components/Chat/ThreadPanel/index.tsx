@@ -146,11 +146,11 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
   return (
     <div className="flex flex-col h-full bg-light dark:bg-dark">
       {/* Thread header */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200 dark:border-slate-700 shrink-0">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border-default shrink-0">
         <span className="text-sm font-semibold text-dark dark:text-light">{t("thread")}</span>
         <button
           onClick={onClose}
-          className="p-1 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-gray-500 dark:text-gray-400"
+          className="p-1 rounded-md hover:bg-surface-hover-strong transition-colors text-text-secondary"
           aria-label={t("closeThread")}
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -161,11 +161,11 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
       </div>
 
       {/* Parent message */}
-      <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30">
+      <div className="border-b border-border-default bg-surface-secondary">
         {parentMessage ? (
           <MessageItem message={parentMessage} isCompact={false} currentMemberId={currentMemberId} reactions={getReactions(parentMessage._id)} />
         ) : (
-          <div className="p-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+          <div className="p-3 text-sm text-text-secondary text-center">
             {t("loadingMessages")}
           </div>
         )}
@@ -174,11 +174,11 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
       {/* Replies */}
       <div className="flex-1 min-h-0 overflow-y-auto">
         {replies === undefined ? (
-          <div className="p-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+          <div className="p-3 text-sm text-text-secondary text-center">
             {t("loadingMessages")}
           </div>
         ) : replies.length === 0 ? (
-          <div className="p-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+          <div className="p-3 text-sm text-text-secondary text-center">
             {t("noReplies")}
           </div>
         ) : (
@@ -195,7 +195,7 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
       </div>
 
       {/* Reply input */}
-      <div className="p-3 border-t border-slate-200 dark:border-slate-700 shrink-0">
+      <div className="p-3 border-t border-border-default shrink-0">
         <div className="flex items-end gap-2">
           <textarea
             ref={textareaRef}
@@ -204,7 +204,7 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
             onKeyDown={handleKeyDown}
             placeholder={t("reply")}
             rows={1}
-            className="flex-1 resize-none bg-slate-100 dark:bg-slate-800 text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
+            className="flex-1 resize-none bg-surface-secondary text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             style={{ maxHeight: "80px" }}
           />
           {text.trim().length > 0 && (

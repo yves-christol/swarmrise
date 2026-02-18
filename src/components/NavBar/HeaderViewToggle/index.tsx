@@ -31,7 +31,7 @@ export const HeaderViewToggle = () => {
 
   return (
     <div
-      className="flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md overflow-hidden"
+      className="flex items-center bg-surface-primary border border-border-strong rounded-lg shadow-md overflow-hidden"
       role="tablist"
       aria-label={t("viewMode")}
     >

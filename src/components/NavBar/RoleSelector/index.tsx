@@ -73,7 +73,7 @@ export const RoleSelector = () => {
             onClick={() => setIsOpen(!isOpen)}
             className="flex items-center py-1.5 pr-2 pl-1 rounded-r-md transition-colors
               focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-2 focus:ring-offset-light dark:focus:ring-offset-dark
-              hover:bg-slate-200 dark:hover:bg-slate-700"
+              hover:bg-surface-hover-strong"
             aria-haspopup="listbox"
             aria-expanded={isOpen}
           >
@@ -89,7 +89,7 @@ export const RoleSelector = () => {
           role="listbox"
           aria-label={t("selectRole")}
           className="absolute top-full left-0 mt-1 w-56
-            bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50"
+            bg-surface-primary border border-border-default rounded-lg shadow-xl z-50"
         >
           <div className="py-1">
             {teamRoles?.map((role) => {
@@ -108,7 +108,7 @@ export const RoleSelector = () => {
                   }}
                   className={`w-full flex items-center justify-between px-4 py-2
                     transition-colors text-left text-sm
-                    ${isSelected ? "bg-gray-100 dark:bg-gray-700" : "hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                    ${isSelected ? "bg-surface-secondary" : "hover:bg-surface-hover"}`}
                 >
                   <span className="text-dark dark:text-light truncate">
                     {role.roleType === "leader" ? t("members:roleTypes.leader") : role.title}

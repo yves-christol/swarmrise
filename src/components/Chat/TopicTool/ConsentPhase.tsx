@@ -59,13 +59,13 @@ export const ConsentPhase = ({ messageId }: ConsentPhaseProps) => {
   const responseColor = (response: string) => {
     if (response === "consent") return "text-green-600 dark:text-green-400";
     if (response === "objection") return "text-red-600 dark:text-red-400";
-    return "text-gray-500 dark:text-gray-400";
+    return "text-text-secondary";
   };
 
   return (
-    <div className="border-t border-slate-200 dark:border-slate-700">
+    <div className="border-t border-border-default">
       {/* Info */}
-      <div className="px-3 py-1.5 text-xs text-gray-500 dark:text-gray-400 italic">
+      <div className="px-3 py-1.5 text-xs text-text-secondary italic">
         {t("topicConsentInfo")}
       </div>
 
@@ -77,7 +77,7 @@ export const ConsentPhase = ({ messageId }: ConsentPhaseProps) => {
         <span className="text-xs font-medium text-red-600 dark:text-red-400">
           {t("topicObjection")}: {objectionCount}
         </span>
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+        <span className="text-xs font-medium text-text-secondary">
           {t("topicStandAside")}: {standAsideCount}
         </span>
       </div>
@@ -93,7 +93,7 @@ export const ConsentPhase = ({ messageId }: ConsentPhaseProps) => {
               <span className="text-dark dark:text-light">
                 {r.member.firstname} {r.member.surname}
                 {r.reason && (
-                  <span className="text-gray-500 dark:text-gray-400"> — {r.reason}</span>
+                  <span className="text-text-secondary"> — {r.reason}</span>
                 )}
               </span>
             </div>
@@ -103,14 +103,14 @@ export const ConsentPhase = ({ messageId }: ConsentPhaseProps) => {
 
       {responses && responses.length === 0 && (
         <div className="px-3 pb-2">
-          <p className="text-xs text-gray-400 dark:text-gray-500">{t("topicNoResponses")}</p>
+          <p className="text-xs text-text-tertiary">{t("topicNoResponses")}</p>
         </div>
       )}
 
       {/* Current user's response indicator */}
       {myResponse && (
         <div className="px-3 pb-2">
-          <span className="text-xs text-gray-500 dark:text-gray-400 italic">
+          <span className="text-xs text-text-secondary italic">
             {t("topicYourResponse")}: {responseLabel(myResponse.response)}
           </span>
         </div>
@@ -128,7 +128,7 @@ export const ConsentPhase = ({ messageId }: ConsentPhaseProps) => {
             </button>
             <button
               onClick={handleStandAside}
-              className="text-xs px-3 py-1.5 rounded-md bg-slate-300 dark:bg-slate-600 text-dark dark:text-light font-medium hover:bg-slate-400 dark:hover:bg-slate-500 transition-colors"
+              className="text-xs px-3 py-1.5 rounded-md bg-slate-300 dark:bg-slate-600 text-dark dark:text-light font-medium hover:bg-surface-hover-strong transition-colors"
             >
               {t("topicStandAside")}
             </button>
@@ -142,7 +142,7 @@ export const ConsentPhase = ({ messageId }: ConsentPhaseProps) => {
               onChange={(e) => setObjectionReason(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") handleObject(); }}
               placeholder={t("topicObjectionPlaceholder")}
-              className="flex-1 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-dark dark:text-light placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-red-400"
+              className="flex-1 text-xs bg-surface-primary border border-border-strong rounded px-2 py-1 text-dark dark:text-light placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-red-400"
             />
             <button
               onClick={handleObject}
@@ -157,10 +157,10 @@ export const ConsentPhase = ({ messageId }: ConsentPhaseProps) => {
 
       {/* Facilitator controls */}
       {isFacilitator && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex items-center gap-2 justify-end">
+        <div className="px-3 py-2 border-t border-border-default flex items-center gap-2 justify-end">
           <button
             onClick={handleBack}
-            className="text-xs px-3 py-1.5 rounded-md bg-slate-200 dark:bg-slate-600 text-dark dark:text-light font-medium hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"
+            className="text-xs px-3 py-1.5 rounded-md bg-surface-tertiary text-dark dark:text-light font-medium hover:bg-surface-hover-strong transition-colors"
           >
             {t("topicBackToClarification")}
           </button>

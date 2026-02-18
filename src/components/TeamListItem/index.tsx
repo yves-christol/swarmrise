@@ -30,7 +30,7 @@ export function TeamListItem({ team, onNavigate }: TeamListItemProps) {
         <span className="font-medium text-dark dark:text-light truncate block">
           {team.name}
         </span>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
+        <span className="text-sm text-text-secondary">
           {team.roleCount === 1
             ? tTeams("diagram.roleCountLabel", { count: team.roleCount })
             : tTeams("diagram.roleCountLabel_other", { count: team.roleCount })}
@@ -47,7 +47,7 @@ export function TeamListItem({ team, onNavigate }: TeamListItemProps) {
           stroke="currentColor"
           strokeWidth="1.5"
           className="
-            text-gray-400 dark:text-gray-500
+            text-text-tertiary
             opacity-0 group-hover:opacity-100
             transition-opacity duration-75
             flex-shrink-0
@@ -68,7 +68,7 @@ export function TeamListItem({ team, onNavigate }: TeamListItemProps) {
         className="
           group
           w-full flex items-center gap-3 px-4 py-3
-          hover:bg-gray-50 dark:hover:bg-gray-700/50
+          hover:bg-surface-hover-subtle
           transition-colors duration-75
           focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
           text-left
@@ -85,7 +85,7 @@ export function TeamListItem({ team, onNavigate }: TeamListItemProps) {
       className="
         group
         w-full flex items-center gap-3 px-4 py-3
-        hover:bg-gray-50 dark:hover:bg-gray-700/50
+        hover:bg-surface-hover-subtle
         transition-colors duration-75
       "
     >

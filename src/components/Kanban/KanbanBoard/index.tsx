@@ -262,7 +262,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   // Loading (access check still pending)
   if (hasAccess === undefined) {
     return (
-      <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+      <div className="py-8 text-center text-text-secondary">
         {tCommon("loading")}
       </div>
     );
@@ -271,7 +271,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   // User is not a member of this team — show nothing (the Kanban view is inaccessible)
   if (!hasAccess) {
     return (
-      <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+      <div className="py-8 text-center text-text-secondary">
         {t("board.noAccess")}
       </div>
     );
@@ -280,7 +280,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   // Board data still loading
   if (boardData === undefined) {
     return (
-      <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+      <div className="py-8 text-center text-text-secondary">
         {tCommon("loading")}
       </div>
     );
@@ -289,7 +289,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   // No board yet (ensureBoard is creating it)
   if (boardData === null) {
     return (
-      <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+      <div className="py-8 text-center text-text-secondary">
         {tCommon("loading")}
       </div>
     );
@@ -345,8 +345,8 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
               className="
                 pl-8 pr-8 py-1.5 text-sm
                 w-full sm:w-56
-                rounded-lg border border-gray-300 dark:border-gray-600
-                bg-white dark:bg-gray-900
+                rounded-lg border border-border-strong
+                bg-surface-primary
                 text-dark dark:text-light
                 placeholder:text-gray-400
                 focus:outline-none focus:ring-2 focus:ring-highlight

@@ -73,17 +73,17 @@ export const ChatPanel = () => {
 
   const panel = (
     <div
-      className={`fixed top-0 right-0 h-full ${panelWidthClass} z-40 flex flex-col bg-light dark:bg-dark border-l border-slate-200 dark:border-slate-700 shadow-xl animate-slide-in-right`}
+      className={`fixed top-0 right-0 h-full ${panelWidthClass} z-40 flex flex-col bg-light dark:bg-dark border-l border-border-default shadow-xl animate-slide-in-right`}
       role="complementary"
       aria-label={t("chat")}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700 shrink-0">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border-default shrink-0">
         <div className="flex items-center gap-1 min-w-0">
           {selectedChannelId && (
             <button
               onClick={deselectChannel}
-              className="sm:hidden p-2 -ml-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-gray-500 dark:text-gray-400 shrink-0"
+              className="sm:hidden p-2 -ml-2 rounded-md hover:bg-surface-hover-strong transition-colors text-text-secondary shrink-0"
               aria-label={t("backToChannels")}
             >
               <svg
@@ -110,7 +110,7 @@ export const ChatPanel = () => {
             className={`p-1.5 rounded-md transition-colors ${
               isSearchOpen
                 ? "bg-highlight text-dark"
-                : "hover:bg-slate-200 dark:hover:bg-slate-700 text-gray-500 dark:text-gray-400"
+                : "hover:bg-surface-hover-strong text-text-secondary"
             }`}
             aria-label={t("searchMessages")}
             title={t("searchMessages")}
@@ -131,7 +131,7 @@ export const ChatPanel = () => {
           {/* Expand / Collapse toggle (hidden on mobile where panel is always full-width) */}
           <button
             onClick={toggleChatExpand}
-            className="hidden sm:inline-flex p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-gray-500 dark:text-gray-400"
+            className="hidden sm:inline-flex p-1.5 rounded-md hover:bg-surface-hover-strong transition-colors text-text-secondary"
             aria-label={isChatExpanded ? t("collapseChat") : t("expandChat")}
             title={isChatExpanded ? t("collapseChat") : t("expandChat")}
           >
@@ -171,7 +171,7 @@ export const ChatPanel = () => {
           </button>
           <button
             onClick={closeChat}
-            className="p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-gray-500 dark:text-gray-400"
+            className="p-1.5 rounded-md hover:bg-surface-hover-strong transition-colors text-text-secondary"
             aria-label={t("closeChat")}
           >
             <svg
@@ -193,7 +193,7 @@ export const ChatPanel = () => {
       {/* Body: Channel list + Messages */}
       <div className="flex-1 flex min-h-0">
         {/* Channel sidebar */}
-        <div className={`${isChatExpanded ? "w-[220px]" : "w-[160px]"} shrink-0 border-r border-slate-200 dark:border-slate-700 overflow-y-auto hidden sm:block`}>
+        <div className={`${isChatExpanded ? "w-[220px]" : "w-[160px]"} shrink-0 border-r border-border-default overflow-y-auto hidden sm:block`}>
           <ChannelList />
         </div>
 
@@ -218,7 +218,7 @@ export const ChatPanel = () => {
               />
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex-1 flex items-center justify-center text-sm text-text-secondary">
               {t("channels")}
             </div>
           )}

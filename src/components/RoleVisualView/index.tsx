@@ -146,7 +146,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
               <svg
-                className="animate-spin h-8 w-8 text-gray-500 dark:text-gray-400"
+                className="animate-spin h-8 w-8 text-text-secondary"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -165,7 +165,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              <span className="text-gray-600 dark:text-gray-400 text-sm">
+              <span className="text-text-description text-sm">
                 {t("diagram.loadingRole")}
               </span>
             </div>
@@ -283,28 +283,28 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
       `}</style>
 
       {/* Keyboard hints (shown in corner) */}
-      <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-gray-400 dark:text-gray-500">
+      <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1 text-xs text-text-tertiary">
         {role.duties && role.duties.length > 0 && (
           <span className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">D</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-surface-tertiary text-text-description font-mono text-[10px]">D</kbd>
             <span>{t("diagram.keyboardDuties")}</span>
           </span>
         )}
         {role.linkedRoleId && linkedRole && (
           <span className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">L</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-surface-tertiary text-text-description font-mono text-[10px]">L</kbd>
             <span>{t("diagram.keyboardSource")}</span>
           </span>
         )}
         {team && (
           <span className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">T</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-surface-tertiary text-text-description font-mono text-[10px]">T</kbd>
             <span>{t("diagram.keyboardTeam")}</span>
           </span>
         )}
         {member && (
           <span className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-mono text-[10px]">M</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-surface-tertiary text-text-description font-mono text-[10px]">M</kbd>
             <span>{t("diagram.keyboardMember")}</span>
           </span>
         )}
@@ -415,21 +415,21 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             {/* Standalone linked role badge (when no roleType) */}
             {!role.roleType && role.linkedRoleId && linkedRole && (
               <button
-                className="role-content-badge flex items-center gap-1.5 px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors cursor-pointer border-none"
+                className="role-content-badge flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-tertiary hover:bg-surface-hover-strong transition-colors cursor-pointer border-none"
                 onClick={() => onNavigateToRole?.(linkedRole._id, linkedRole.teamId)}
                 title="Go to source role in parent team (L)"
               >
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500 dark:text-gray-400">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-secondary">
                   <path d="M6.5,9.5 L9.5,6.5 M5,11 L3.5,12.5 C2.5,13.5 2.5,15 3.5,15 L4,15 C5,15 5.5,14 4.5,13 M11,5 L12.5,3.5 C13.5,2.5 13.5,1 12.5,1 L12,1 C11,1 10.5,2 11.5,3" />
                 </svg>
-                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-500">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-tertiary">
                   <path d="M6 4l4 4-4 4" />
                 </svg>
               </button>
             )}
             {!role.roleType && role.linkedRoleId && !linkedRole && (
-              <div className="role-content-badge flex items-center gap-1.5 px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700">
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500 dark:text-gray-400">
+              <div className="role-content-badge flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-tertiary">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-secondary">
                   <path d="M6.5,9.5 L9.5,6.5 M5,11 L3.5,12.5 C2.5,13.5 2.5,15 3.5,15 L4,15 C5,15 5.5,14 4.5,13 M11,5 L12.5,3.5 C13.5,2.5 13.5,1 12.5,1 L12,1 C11,1 10.5,2 11.5,3" />
                 </svg>
               </div>
@@ -440,10 +440,10 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
 
             {/* Mission Section */}
             <div className="role-content-mission flex flex-col items-center gap-1 max-w-xs">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wide">
                 {t("diagram.missionSection")}
               </h3>
-              <p className="text-sm text-center text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-3">
+              <p className="text-sm text-center text-text-description leading-relaxed line-clamp-3">
                 {role.mission || t("diagram.noMissionDefined")}
               </p>
             </div>
@@ -452,7 +452,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
             {role.duties && role.duties.length > 0 && (
               <button
                 onClick={() => setShowDuties(true)}
-                className="role-content-duties flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-700/60 hover:bg-gray-200 dark:hover:bg-gray-600/60 text-xs text-gray-600 dark:text-gray-300 transition-colors cursor-pointer border-none"
+                className="role-content-duties flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-secondary/60 hover:bg-surface-hover-strong/60 text-xs text-text-description transition-colors cursor-pointer border-none"
                 title={t("diagram.keyboardDuties") + " (D)"}
               >
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
@@ -508,17 +508,17 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
           />
           {/* Modal content */}
           <div
-            className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-md mx-6"
+            className="relative bg-surface-primary rounded-xl shadow-xl border border-border-default w-full max-w-md mx-6"
             style={{ maxHeight: "70vh", overflowY: "auto", animation: "modalSlideIn 250ms ease-out" }}
           >
             {/* Header */}
-            <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 z-10">
+            <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-border-default bg-surface-primary z-10">
               <h3 className="text-lg font-semibold text-dark dark:text-light">
                 {t("diagram.dutiesSection", { count: role.duties.length })}
               </h3>
               <button
                 onClick={() => setShowDuties(false)}
-                className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer border-none bg-transparent text-gray-500 dark:text-gray-400"
+                className="p-1 rounded-md hover:bg-surface-hover transition-colors cursor-pointer border-none bg-transparent text-text-secondary"
                 title="Close (Esc/D)"
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
@@ -527,10 +527,10 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
               </button>
             </div>
             {/* Duties list */}
-            <ul className="px-5 py-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
+            <ul className="px-5 py-4 space-y-3 text-sm text-text-description">
               {role.duties.map((duty, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <span className="text-gray-400 dark:text-gray-500 mt-0.5 shrink-0">-</span>
+                  <span className="text-text-tertiary mt-0.5 shrink-0">-</span>
                   <span className="leading-relaxed">{duty}</span>
                 </li>
               ))}
@@ -554,7 +554,7 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
         <summary className="cursor-pointer text-gray-700 dark:text-gray-200">
           {t("diagram.viewRoleDetailsAsText")}
         </summary>
-        <div className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-2">
+        <div className="mt-2 text-sm text-text-description space-y-2">
           <p><strong>{t("diagram.textRole")}</strong> {role.title}</p>
           {team && <p><strong>{t("diagram.textTeam")}</strong> {team.name}</p>}
           {role.roleType && <p><strong>{t("diagram.textType")}</strong> {t(`roleTypes.${role.roleType}`, { ns: "members" })}</p>}

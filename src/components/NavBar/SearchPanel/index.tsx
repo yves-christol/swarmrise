@@ -141,7 +141,7 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
       role="dialog"
       aria-label={t("search")}
       className="absolute top-full left-0 mt-1 w-80
-        bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
+        bg-surface-primary border border-border-default
         rounded-lg shadow-xl z-50 overflow-hidden"
     >
       <div className="p-3 flex flex-col gap-3">
@@ -156,8 +156,8 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
               onChange={(e) => setTeamQuery(e.target.value)}
               placeholder={t("searchTeams")}
               className="w-full pl-8 pr-3 py-2 text-sm rounded-md
-                bg-gray-50 dark:bg-gray-900
-                border border-gray-200 dark:border-gray-700
+                bg-surface-secondary
+                border border-border-default
                 text-dark dark:text-light
                 placeholder:text-gray-400
                 focus:outline-none focus:ring-2 focus:ring-highlight focus:border-transparent"
@@ -175,7 +175,7 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
                       onClick={() => handleSelectTeam(team._id)}
                       className="w-full text-left px-3 py-1.5 text-sm
                         text-dark dark:text-light
-                        hover:bg-gray-100 dark:hover:bg-gray-700
+                        hover:bg-surface-hover
                         rounded-md transition-colors truncate"
                     >
                       {team.name}
@@ -197,8 +197,8 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
               onChange={(e) => setRoleQuery(e.target.value)}
               placeholder={t("searchRoles")}
               className="w-full pl-8 pr-3 py-2 text-sm rounded-md
-                bg-gray-50 dark:bg-gray-900
-                border border-gray-200 dark:border-gray-700
+                bg-surface-secondary
+                border border-border-default
                 text-dark dark:text-light
                 placeholder:text-gray-400
                 focus:outline-none focus:ring-2 focus:ring-highlight focus:border-transparent"
@@ -216,7 +216,7 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
                       onClick={() => handleSelectRole(role._id, role.teamId)}
                       className="w-full text-left px-3 py-1.5 text-sm
                         text-dark dark:text-light
-                        hover:bg-gray-100 dark:hover:bg-gray-700
+                        hover:bg-surface-hover
                         rounded-md transition-colors"
                     >
                       <span className="block truncate">{role.title}</span>
@@ -241,8 +241,8 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
               onChange={(e) => setMemberQuery(e.target.value)}
               placeholder={t("searchMembers")}
               className="w-full pl-8 pr-3 py-2 text-sm rounded-md
-                bg-gray-50 dark:bg-gray-900
-                border border-gray-200 dark:border-gray-700
+                bg-surface-secondary
+                border border-border-default
                 text-dark dark:text-light
                 placeholder:text-gray-400
                 focus:outline-none focus:ring-2 focus:ring-highlight focus:border-transparent"
@@ -260,7 +260,7 @@ export const SearchPanel = ({ isOpen, onClose }: SearchPanelProps) => {
                       onClick={() => handleSelectMember(member._id)}
                       className="w-full text-left px-3 py-1.5 text-sm
                         text-dark dark:text-light
-                        hover:bg-gray-100 dark:hover:bg-gray-700
+                        hover:bg-surface-hover
                         rounded-md transition-colors truncate"
                     >
                       {member.firstname} {member.surname}

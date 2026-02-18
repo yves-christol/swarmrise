@@ -10,13 +10,13 @@ export function StatCard({
       className="
         flex flex-col items-center
         p-2.5
-        bg-white dark:bg-gray-800
-        border border-gray-200 dark:border-gray-700
+        bg-surface-primary
+        border border-border-default
         rounded-lg
       "
     >
-      <span className="text-xl font-semibold text-gray-700 dark:text-gray-300">{value}</span>
-      <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</span>
+      <span className="text-xl font-semibold text-text-description">{value}</span>
+      <span className="text-xs text-text-secondary mt-0.5">{label}</span>
     </div>
   );
 }

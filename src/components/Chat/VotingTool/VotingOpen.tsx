@@ -80,25 +80,25 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
   const maxCount = results ? Math.max(...results.results.map((r) => r.count), 1) : 1;
 
   return (
-    <div className="border-t border-slate-200 dark:border-slate-700">
+    <div className="border-t border-border-default">
       {/* Live results bar chart */}
       {results && results.totalVotes > 0 && (
         <div className="px-3 py-2 space-y-1.5">
-          <div className="text-xs text-gray-500 dark:text-gray-400">
+          <div className="text-xs text-text-secondary">
             {t("votingVoterCount", { count: results.totalVotes })}
           </div>
           {results.results.map((r) => (
             <div key={r.optionId} className="space-y-0.5">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-dark dark:text-light">{r.label}</span>
-                <span className="text-gray-500 dark:text-gray-400">
+                <span className="text-text-secondary">
                   {r.count}
                   {tool.mode === "ranked" && r.score !== undefined && (
                     <span className="ml-1">({t("votingScore")}: {r.score})</span>
                   )}
                 </span>
               </div>
-              <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-surface-tertiary rounded-full overflow-hidden">
                 <div
                   className="h-full bg-highlight rounded-full transition-all"
                   style={{ width: `${(r.count / maxCount) * 100}%` }}
@@ -111,13 +111,13 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
 
       {results && results.totalVotes === 0 && (
         <div className="px-3 py-2">
-          <p className="text-xs text-gray-400 dark:text-gray-500">{t("votingNoVotes")}</p>
+          <p className="text-xs text-text-tertiary">{t("votingNoVotes")}</p>
         </div>
       )}
 
       {/* Voting form */}
       {showForm && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 space-y-2">
+        <div className="px-3 py-2 border-t border-border-default space-y-2">
           {tool.mode === "single" && (
             <div className="space-y-1">
               {tool.options.map((opt) => (
@@ -167,7 +167,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
                   <button
                     onClick={() => moveRanked(i, -1)}
                     disabled={i === 0}
-                    className="p-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30 transition-colors"
+                    className="p-0.5 rounded hover:bg-surface-hover-strong disabled:opacity-30 transition-colors"
                     aria-label={t("votingMoveUp")}
                   >
                     <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -177,7 +177,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
                   <button
                     onClick={() => moveRanked(i, 1)}
                     disabled={i === rankedOrder.length - 1}
-                    className="p-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30 transition-colors"
+                    className="p-0.5 rounded hover:bg-surface-hover-strong disabled:opacity-30 transition-colors"
                     aria-label={t("votingMoveDown")}
                   >
                     <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -203,7 +203,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
             {isEditing && (
               <button
                 onClick={() => setIsEditing(false)}
-                className="text-xs px-3 py-1.5 rounded-md bg-slate-200 dark:bg-slate-700 text-dark dark:text-light hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                className="text-xs px-3 py-1.5 rounded-md bg-surface-tertiary text-dark dark:text-light hover:bg-surface-hover-strong transition-colors"
               >
                 {t("votingCancel")}
               </button>
@@ -214,8 +214,8 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
 
       {/* Current vote indicator when not editing */}
       {hasVoted && !isEditing && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
-          <span className="text-xs text-gray-500 dark:text-gray-400 italic">
+        <div className="px-3 py-2 border-t border-border-default flex items-center justify-between">
+          <span className="text-xs text-text-secondary italic">
             {t("votingYourVote")}: {myVote.choices.map((c) => optionLabel(c)).join(", ")}
           </span>
           <button
@@ -229,7 +229,7 @@ export const VotingOpen = ({ messageId, tool }: VotingOpenProps) => {
 
       {/* Facilitator controls */}
       {isFacilitator && (
-        <div className="px-3 py-2 border-t border-slate-200 dark:border-slate-700 flex justify-end">
+        <div className="px-3 py-2 border-t border-border-default flex justify-end">
           <button
             onClick={handleClose}
             className="text-xs px-3 py-1.5 rounded-md bg-highlight text-dark font-medium hover:bg-highlight-hover transition-colors"

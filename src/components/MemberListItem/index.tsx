@@ -73,7 +73,7 @@ export function MemberListItem({
   const content = (
     <>
       {/* Avatar */}
-      <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+      <div className="w-10 h-10 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0">
         {member.pictureURL ? (
           <img
             src={member.pictureURL}
@@ -81,7 +81,7 @@ export function MemberListItem({
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium">
+          <div className="w-full h-full flex items-center justify-center text-text-secondary font-medium">
             {member.firstname.charAt(0)}
             {member.surname.charAt(0)}
           </div>
@@ -100,7 +100,7 @@ export function MemberListItem({
             </span>
           )}
         </div>
-        <span className="text-sm text-gray-500 dark:text-gray-400 truncate block">
+        <span className="text-sm text-text-secondary truncate block">
           {member.email}
         </span>
       </div>
@@ -117,7 +117,7 @@ export function MemberListItem({
             onBlur={() => setTimeout(() => setShowContacts(false), 150)}
             className="
               p-1.5 rounded-full
-              hover:bg-gray-200 dark:hover:bg-gray-600
+              hover:bg-surface-hover-strong
               transition-colors duration-75
               focus:outline-none focus:ring-2 focus:ring-[#a2dbed]
             "
@@ -130,7 +130,7 @@ export function MemberListItem({
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
-              className="text-gray-500 dark:text-gray-400"
+              className="text-text-secondary"
             >
               <rect x="1" y="3" width="14" height="10" rx="2" />
               <path d="M1 5l7 4 7-4" />
@@ -148,8 +148,8 @@ export function MemberListItem({
               }}
               className="
                 z-50
-                bg-white dark:bg-gray-800
-                border border-gray-200 dark:border-gray-700
+                bg-surface-primary
+                border border-border-default
                 rounded-lg shadow-lg
                 p-3 min-w-48
               "
@@ -196,7 +196,7 @@ export function MemberListItem({
           stroke="currentColor"
           strokeWidth="1.5"
           className="
-            text-gray-400 dark:text-gray-500
+            text-text-tertiary
             opacity-0 group-hover:opacity-100
             transition-opacity duration-75
             flex-shrink-0
@@ -225,7 +225,7 @@ export function MemberListItem({
         className="
           group
           w-full flex items-center gap-3 px-4 py-3
-          hover:bg-gray-50 dark:hover:bg-gray-700/50
+          hover:bg-surface-hover-subtle
           transition-colors duration-75
           focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#a2dbed]
           text-left cursor-pointer
@@ -242,7 +242,7 @@ export function MemberListItem({
       className="
         group
         w-full flex items-center gap-3 px-4 py-3
-        hover:bg-gray-50 dark:hover:bg-gray-700/50
+        hover:bg-surface-hover-subtle
         transition-colors duration-75
       "
     >

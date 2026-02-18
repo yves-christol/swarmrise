@@ -100,7 +100,7 @@ export function DecisionJournal(props: DecisionJournalProps) {
           <h2 className="text-lg font-semibold text-dark dark:text-light">
             {t("journal")}
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+          <p className="text-sm text-text-description mt-0.5">
             {props.scope === "orga"
               ? t("journalDescriptionOrga")
               : t("journalDescriptionTeam")}
@@ -114,8 +114,8 @@ export function DecisionJournal(props: DecisionJournalProps) {
             focus:outline-none focus:ring-2 focus:ring-[#a2dbed]
             ${
               showFilters
-                ? "bg-gray-200 dark:bg-gray-700 text-dark dark:text-light"
-                : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400"
+                ? "bg-surface-tertiary text-dark dark:text-light"
+                : "hover:bg-surface-hover text-text-secondary"
             }
           `}
           aria-label={t("toggleFilters")}
@@ -140,18 +140,18 @@ export function DecisionJournal(props: DecisionJournalProps) {
       )}
 
       {/* Decision list */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+      <div className="bg-surface-primary border border-border-default rounded-lg overflow-hidden">
         {isLoading ? (
-          <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+          <div className="px-4 py-8 text-center text-text-secondary">
             {t("loadingMore")}
           </div>
         ) : decisions.length === 0 ? (
           <div className="px-4 py-12 text-center">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+            <p className="text-text-secondary text-sm">
               {filterType !== "all" ? t("noDecisionsMatchFilter") : t("noDecisionsYet")}
             </p>
             {filterType === "all" && (
-              <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
+              <p className="text-text-tertiary text-xs mt-1">
                 {t("noDecisionsYetHint")}
               </p>
             )}
@@ -161,13 +161,13 @@ export function DecisionJournal(props: DecisionJournalProps) {
             {groupedDecisions.map((group) => (
               <div key={group.label}>
                 {/* Date group header */}
-                <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                <div className="px-4 py-2 bg-surface-secondary border-b border-border-default">
+                  <span className="text-xs font-medium text-text-secondary uppercase tracking-wide">
                     {group.label}
                   </span>
                 </div>
                 {/* Decision rows */}
-                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                <div className="divide-y divide-border-default">
                   {group.decisions.map((decision) => (
                     <DecisionRow
                       key={decision._id}
@@ -185,11 +185,11 @@ export function DecisionJournal(props: DecisionJournalProps) {
                 onClick={handleLoadMore}
                 className="
                   w-full py-3
-                  text-sm text-gray-500 dark:text-gray-400
+                  text-sm text-text-secondary
                   hover:text-gray-700 dark:hover:text-gray-300
-                  hover:bg-gray-50 dark:hover:bg-gray-700/50
+                  hover:bg-surface-hover-subtle
                   transition-colors duration-75
-                  border-t border-gray-200 dark:border-gray-700
+                  border-t border-border-default
                 "
               >
                 {t("loadMore")}

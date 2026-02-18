@@ -285,19 +285,19 @@ export const PrivacyPage = () => {
             </h3>
             <table className="w-full text-sm mt-2 border-collapse">
               <thead>
-                <tr className="border-b border-gray-300 dark:border-gray-600">
+                <tr className="border-b border-border-strong">
                   <th className="text-left py-2">{t("privacy.sections.cookiesLocalStorage.localStorage.tableHeaders.storageKey")}</th>
                   <th className="text-left py-2">{t("privacy.sections.cookiesLocalStorage.localStorage.tableHeaders.purpose")}</th>
                   <th className="text-left py-2">{t("privacy.sections.cookiesLocalStorage.localStorage.tableHeaders.duration")}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
+                <tr className="border-b border-border-default">
                   <td className="py-2 font-mono text-xs">{t("privacy.sections.cookiesLocalStorage.localStorage.items.locale.key")}</td>
                   <td className="py-2">{t("privacy.sections.cookiesLocalStorage.localStorage.items.locale.purpose")}</td>
                   <td className="py-2">{t("privacy.sections.cookiesLocalStorage.localStorage.items.locale.duration")}</td>
                 </tr>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
+                <tr className="border-b border-border-default">
                   <td className="py-2 font-mono text-xs">{t("privacy.sections.cookiesLocalStorage.localStorage.items.selectedOrga.key")}</td>
                   <td className="py-2">{t("privacy.sections.cookiesLocalStorage.localStorage.items.selectedOrga.purpose")}</td>
                   <td className="py-2">{t("privacy.sections.cookiesLocalStorage.localStorage.items.selectedOrga.duration")}</td>

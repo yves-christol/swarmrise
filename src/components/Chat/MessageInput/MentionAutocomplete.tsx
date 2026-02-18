@@ -87,10 +87,10 @@ export const MentionAutocomplete = ({
   if (visible.length === 0) {
     return (
       <div
-        className="fixed z-[9999] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-2 px-3 min-w-[200px]"
+        className="fixed z-[9999] bg-surface-primary border border-border-default rounded-lg shadow-lg py-2 px-3 min-w-[200px]"
         style={{ bottom: position.bottom, left: position.left }}
       >
-        <span className="text-xs text-gray-400 dark:text-gray-500">
+        <span className="text-xs text-text-tertiary">
           {t("mentionNoResults")}
         </span>
       </div>
@@ -100,7 +100,7 @@ export const MentionAutocomplete = ({
   return (
     <div
       ref={listRef}
-      className="fixed z-[9999] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 min-w-[220px] max-h-[240px] overflow-y-auto"
+      className="fixed z-[9999] bg-surface-primary border border-border-default rounded-lg shadow-lg py-1 min-w-[220px] max-h-[240px] overflow-y-auto"
       style={{ bottom: position.bottom, left: position.left }}
       role="listbox"
       aria-label={t("mentionMembers")}
@@ -115,7 +115,7 @@ export const MentionAutocomplete = ({
             className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm text-left transition-colors ${
               idx === selectedIndex
                 ? "bg-highlight/15 text-dark dark:text-light"
-                : "text-dark dark:text-light hover:bg-slate-100 dark:hover:bg-slate-700"
+                : "text-dark dark:text-light hover:bg-surface-hover"
             }`}
             onClick={() => onSelect(member)}
             onMouseEnter={() => setSelectedIndex(idx)}
@@ -128,7 +128,7 @@ export const MentionAutocomplete = ({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-[10px] font-medium text-gray-600 dark:text-gray-300">
+                <span className="text-[10px] font-medium text-text-description">
                   {initials}
                 </span>
               )}

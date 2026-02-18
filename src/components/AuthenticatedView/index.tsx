@@ -54,7 +54,7 @@ export const AuthenticatedView = () => {
       <main className="flex-1 min-h-0 p-8 overflow-auto">
         <div className="flex flex-col gap-8 max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-dark dark:text-light">{t("selectOrganization")}</h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-text-description">
             {t("selectOrgPrompt")}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -97,8 +97,8 @@ const OrgaCard = ({ orga, counts }: OrgaCardProps) => {
   return (
     <button
       onClick={() => selectOrga(orga._id as any)}
-      className="border-2 border-gray-300 dark:border-gray-700 rounded-lg p-6
-        bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow
+      className="border-2 border-border-strong rounded-lg p-6
+        bg-surface-primary shadow-lg hover:shadow-xl transition-shadow
         text-left w-full"
     >
       <div className="flex items-center gap-4 mb-4">
@@ -116,19 +116,19 @@ const OrgaCard = ({ orga, counts }: OrgaCardProps) => {
           <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
             {counts.members}
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">{t("metrics.members")}</div>
+          <div className="text-xs text-text-description">{t("metrics.members")}</div>
         </div>
         <div className="flex flex-col items-center">
           <div className="text-2xl font-bold text-green-600 dark:text-green-400">
             {counts.teams}
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">{t("metrics.teams")}</div>
+          <div className="text-xs text-text-description">{t("metrics.teams")}</div>
         </div>
         <div className="flex flex-col items-center">
           <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
             {counts.roles}
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">{t("metrics.roles")}</div>
+          <div className="text-xs text-text-description">{t("metrics.roles")}</div>
         </div>
       </div>
     </button>

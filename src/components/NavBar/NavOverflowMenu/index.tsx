@@ -79,8 +79,8 @@ export const NavOverflowMenu = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="p-1.5 rounded-md transition-colors
           focus:outline-none focus:ring-2 focus:ring-highlight
-          hover:bg-slate-200 dark:hover:bg-slate-700
-          text-gray-500 dark:text-gray-400"
+          hover:bg-surface-hover-strong
+          text-text-secondary"
         aria-label={t("moreOptions")}
         aria-haspopup="true"
         aria-expanded={isOpen}
@@ -94,7 +94,7 @@ export const NavOverflowMenu = () => {
 
       {isOpen && (
         <div className="absolute top-full right-0 mt-1 w-56
-          bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50">
+          bg-surface-primary border border-border-default rounded-lg shadow-xl z-50">
 
           {/* Team items */}
           {hasTeamItems && (
@@ -115,7 +115,7 @@ export const NavOverflowMenu = () => {
                     }}
                     className={`w-full flex items-center justify-between px-4 py-2
                       transition-colors text-left text-sm
-                      ${isSelected ? "bg-gray-100 dark:bg-gray-700" : "hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      ${isSelected ? "bg-surface-secondary" : "hover:bg-surface-hover"}`}
                   >
                     <span className="text-dark dark:text-light truncate">{team.name}</span>
                     {isSelected && (
@@ -132,7 +132,7 @@ export const NavOverflowMenu = () => {
           {/* Role items */}
           {hasRoleItems && focusedTeamId && (
             <>
-              {hasTeamItems && <div className="border-t border-gray-200 dark:border-gray-700" />}
+              {hasTeamItems && <div className="border-t border-border-default" />}
               <div className="py-1">
                 <div className="px-3 py-1 text-xs font-medium text-gray-400 uppercase tracking-wider">
                   {t("selectRole")}
@@ -150,7 +150,7 @@ export const NavOverflowMenu = () => {
                       }}
                       className={`w-full flex items-center justify-between px-4 py-2
                         transition-colors text-left text-sm
-                        ${isSelected ? "bg-gray-100 dark:bg-gray-700" : "hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                        ${isSelected ? "bg-surface-secondary" : "hover:bg-surface-hover"}`}
                     >
                       <span className="text-dark dark:text-light truncate">{role.title}</span>
                       {isSelected && (
@@ -166,7 +166,7 @@ export const NavOverflowMenu = () => {
           )}
 
           {/* View toggle */}
-          {(hasTeamItems || hasRoleItems) && <div className="border-t border-gray-200 dark:border-gray-700" />}
+          {(hasTeamItems || hasRoleItems) && <div className="border-t border-border-default" />}
           <div className="py-1">
             <div className="px-3 py-1 text-xs font-medium text-gray-400 uppercase tracking-wider">
               {t("viewMode")}
@@ -174,7 +174,7 @@ export const NavOverflowMenu = () => {
             <button
               onClick={() => handleViewChange("visual")}
               className={`w-full flex items-center gap-2 px-4 py-2 transition-colors text-left text-sm
-                ${viewMode === "visual" ? "bg-highlight/20 text-highlight-hover dark:text-highlight" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-dark dark:text-light"}`}
+                ${viewMode === "visual" ? "bg-highlight/20 text-highlight-hover dark:text-highlight" : "hover:bg-surface-hover text-dark dark:text-light"}`}
             >
               <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                 <circle cx="9" cy="9" r="7" /><circle cx="9" cy="5" r="2" /><circle cx="5" cy="12" r="2" /><circle cx="13" cy="12" r="2" />
@@ -184,7 +184,7 @@ export const NavOverflowMenu = () => {
             <button
               onClick={() => handleViewChange("manage")}
               className={`w-full flex items-center gap-2 px-4 py-2 transition-colors text-left text-sm
-                ${viewMode === "manage" ? "bg-highlight/20 text-highlight-hover dark:text-highlight" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-dark dark:text-light"}`}
+                ${viewMode === "manage" ? "bg-highlight/20 text-highlight-hover dark:text-highlight" : "hover:bg-surface-hover text-dark dark:text-light"}`}
             >
               <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                 <rect x="3" y="3" width="12" height="3" rx="1" /><rect x="3" y="8" width="12" height="3" rx="1" /><rect x="3" y="13" width="8" height="3" rx="1" />
@@ -195,7 +195,7 @@ export const NavOverflowMenu = () => {
               <button
                 onClick={() => handleViewChange("kanban")}
                 className={`w-full flex items-center gap-2 px-4 py-2 transition-colors text-left text-sm
-                  ${viewMode === "kanban" ? "bg-highlight/20 text-highlight-hover dark:text-highlight" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-dark dark:text-light"}`}
+                  ${viewMode === "kanban" ? "bg-highlight/20 text-highlight-hover dark:text-highlight" : "hover:bg-surface-hover text-dark dark:text-light"}`}
               >
                 <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <rect x="2" y="3" width="3.5" height="12" rx="1" /><rect x="7.25" y="3" width="3.5" height="8" rx="1" /><rect x="12.5" y="3" width="3.5" height="10" rx="1" />

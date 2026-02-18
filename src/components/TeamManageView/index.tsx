@@ -10,6 +10,8 @@ import { MemberListItem, MemberListItemMember } from "../MemberListItem";
 import { MissionReminder } from "../MissionReminder";
 import { NotFound } from "../NotFound";
 import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
+import { Link } from "react-router";
+import { routes } from "../../routes";
 import { ContactInfo } from "../../utils/contacts";
 import { getRoleTypeBadgeColor } from "../../utils/roleTypeColors";
 import { getRoleIconPath } from "../../utils/roleIconDefaults";
@@ -306,11 +308,17 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                   <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     {t("manage.parentTeam")}
                   </span>
-                  <div className="flex items-center gap-2 mt-1">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-400">
-                      <path d="M8 12V4M8 4L4 8M8 4L12 8" />
-                    </svg>
-                    <span className="font-medium text-dark dark:text-light">{parentTeam.name}</span>
+                  <div className="mt-1 text-dark dark:text-light">
+                    <Link
+                      to={routes.teamManage(team.orgaId, parentTeam._id)}
+                      className="
+                        font-medium
+                        hover:text-highlight-hover dark:hover:text-highlight
+                        transition-colors duration-75
+                      "
+                    >
+                      {parentTeam.name}
+                    </Link>
                   </div>
                 </div>
               )}
@@ -321,14 +329,23 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                   <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     {t("manage.childTeams", { count: linkedLeaderRoles.length })}
                   </span>
-                  <p className="mt-1 text-dark dark:text-light">
+                  <div className="mt-1 text-dark dark:text-light">
                     {linkedLeaderRoles.map((link, index) => (
                       <span key={link.linkedRole._id}>
-                        {link.daughterTeam.name}
+                        <Link
+                          to={routes.teamManage(team.orgaId, link.daughterTeam._id)}
+                          className="
+                            font-medium
+                            hover:text-highlight-hover dark:hover:text-highlight
+                            transition-colors duration-75
+                          "
+                        >
+                          {link.daughterTeam.name}
+                        </Link>
                         {index < linkedLeaderRoles.length - 1 && ", "}
                       </span>
                     ))}
-                  </p>
+                  </div>
                 </div>
               )}
             </div>

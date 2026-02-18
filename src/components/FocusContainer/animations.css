@@ -99,6 +99,15 @@
 
    Duration: 500ms
    Easing: cubic-bezier(0.2, 0.8, 0.3, 1) - smooth with slight overshoot
+
+   POINTER-EVENTS FIX:
+   CSS pointer-events: none is unreliable in preserve-3d contexts because
+   browsers can misroute hit-testing through 3D compositor layers.
+   Instead we use visibility: hidden on non-active faces AFTER the flip
+   animation completes (500ms delay). visibility: hidden completely removes
+   elements from hit-testing at the browser level. When a face becomes
+   active, visibility is restored immediately (0s delay) so it participates
+   in the flip animation from the start.
    ============================================================ */
 
 /* Container with perspective for 3D effect */
@@ -121,6 +130,8 @@
 }
 .flip-card.visual .flip-face-manage {
   pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s 500ms;
 }
 
 .flip-card.manage {
@@ -128,6 +139,17 @@
 }
 .flip-card.manage .flip-face-visual {
   pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s 500ms;
+}
+/* Active face: restore visibility immediately */
+.flip-card.manage .flip-face-manage {
+  visibility: visible;
+  transition: visibility 0s 0s;
+}
+.flip-card.visual .flip-face-visual {
+  visibility: visible;
+  transition: visibility 0s 0s;
 }
 
 /* All faces share common positioning and hide when facing away */
@@ -160,25 +182,43 @@
 .flip-card.prism.visual {
   transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(0deg);
 }
+.flip-card.prism.visual .flip-face-visual {
+  visibility: visible;
+  transition: visibility 0s 0s;
+}
 .flip-card.prism.visual .flip-face-manage,
 .flip-card.prism.visual .flip-face-kanban {
   pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s 500ms;
 }
 
 .flip-card.prism.manage {
   transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(-120deg);
 }
+.flip-card.prism.manage .flip-face-manage {
+  visibility: visible;
+  transition: visibility 0s 0s;
+}
 .flip-card.prism.manage .flip-face-visual,
 .flip-card.prism.manage .flip-face-kanban {
   pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s 500ms;
 }
 
 .flip-card.prism.kanban {
   transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(-240deg);
 }
+.flip-card.prism.kanban .flip-face-kanban {
+  visibility: visible;
+  transition: visibility 0s 0s;
+}
 .flip-card.prism.kanban .flip-face-visual,
 .flip-card.prism.kanban .flip-face-manage {
   pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s 500ms;
 }
 
 /* Override face positioning: push each face out to the prism surface */
@@ -302,39 +342,48 @@
   /* Default: only visual face visible */
   .flip-face-visual {
     opacity: 1;
+    visibility: visible !important;
   }
   .flip-face-manage {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden !important;
   }
   .flip-face-kanban {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden !important;
   }
   /* Manage mode: only manage face visible */
   .flip-card.manage .flip-face-visual {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden !important;
   }
   .flip-card.manage .flip-face-manage {
     opacity: 1;
     pointer-events: auto;
+    visibility: visible !important;
   }
   .flip-card.manage .flip-face-kanban {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden !important;
   }
   /* Kanban mode: only kanban face visible */
   .flip-card.kanban .flip-face-visual {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden !important;
   }
   .flip-card.kanban .flip-face-manage {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden !important;
   }
   .flip-card.kanban .flip-face-kanban {
     opacity: 1;
     pointer-events: auto;
+    visibility: visible !important;
   }
 }

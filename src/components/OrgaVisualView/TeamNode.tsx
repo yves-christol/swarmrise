@@ -221,7 +221,7 @@ export const TeamNode = memo(function TeamNode({
   return (
     <g
       role="button"
-      aria-label={t("diagram.teamNodeAriaLabel", { name: node.name, count: node.roleCount, pinned: node.isPinned ? t("diagram.pinned") : "" })}
+      aria-label={t("diagram.teamNodeAriaLabel", { name: node.name, count: node.roleCount })}
       tabIndex={0}
       style={{
         cursor,
@@ -284,30 +284,6 @@ export const TeamNode = memo(function TeamNode({
           filter: shadowFilter,
         }}
       />
-
-      {/* Pinned indicator */}
-      {node.isPinned && !isDragging && (
-        <g>
-          <circle
-            cx={node.x - node.radius * 0.7}
-            cy={node.y - node.radius * 0.7}
-            r={8}
-            fill="var(--org-highlight-color, #eac840)"
-            opacity={0.8}
-          />
-          <text
-            x={node.x - node.radius * 0.7}
-            y={node.y - node.radius * 0.7 + 1}
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="white"
-            fontSize={10}
-            style={{ pointerEvents: "none", userSelect: "none" }}
-          >
-            ⚓
-          </text>
-        </g>
-      )}
 
       {/* Team name (up to three lines) */}
       <text

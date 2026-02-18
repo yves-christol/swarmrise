@@ -369,7 +369,19 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
 
   // --- Render helper ---
 
-  const renderView = (viewType: ViewType, focusTarget: FocusTarget, flipClass: string) => {
+  // When the kanban view is settled (flip complete, no transitions), render
+  // the KanbanBoard in an overlay outside the 3D prism so that dnd-kit's
+  // getBoundingClientRect() measurements are not warped by preserve-3d /
+  // perspective. During the flip animation the board lives inside the face
+  // for visual continuity.
+  const isKanbanSettled =
+    currentView === "team" &&
+    focus.type === "team" &&
+    getFlipClass() === "kanban" &&
+    animationPhase === "idle" &&
+    swapPhase === "idle";
+
+  const renderView = (viewType: ViewType, focusTarget: FocusTarget, flipClass: string, kanbanSettled = false) => {
     if (viewType === "member" && focusTarget.type === "member") {
       return (
         <div className="flip-container absolute inset-0">
@@ -444,7 +456,11 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
             </div>
             <div className="flip-face flip-face-kanban">
               <div className="absolute inset-0 overflow-auto p-4">
-                <KanbanBoard teamId={focusTarget.teamId} orgaId={orgaId} />
+                {/* When settled, the interactive board lives in the overlay
+                    outside the 3D context. Keep the face empty. */}
+                {!kanbanSettled && (
+                  <KanbanBoard teamId={focusTarget.teamId} orgaId={orgaId} />
+                )}
               </div>
             </div>
           </div>
@@ -509,9 +525,18 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         style={isSpatial && animationPhase === "spatial-zoom" ? undefined : getNonSpatialStyles()}
       >
         <Suspense fallback={null}>
-          {renderView(currentView, focus, getFlipClass())}
+          {renderView(currentView, focus, getFlipClass(), isKanbanSettled)}
         </Suspense>
       </div>
+
+      {/* ========== KANBAN OVERLAY (outside 3D context for reliable dnd-kit interaction) ========== */}
+      {isKanbanSettled && focus.type === "team" && (
+        <div className="absolute inset-0 overflow-auto p-4" style={{ zIndex: 10 }}>
+          <Suspense fallback={null}>
+            <KanbanBoard teamId={focus.teamId} orgaId={orgaId} />
+          </Suspense>
+        </div>
+      )}
 
       {/* ========== EXITING OVERLAY (spatial zoom only, removed when transition ends) ========== */}
       {isSpatial && animationPhase === "spatial-zoom" && exitingView !== null && exitingFocus !== null && (

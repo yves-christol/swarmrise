@@ -120,7 +120,10 @@
 .flip-card {
   transform-style: preserve-3d;
   transition: transform 500ms cubic-bezier(0.2, 0.8, 0.3, 1);
-  will-change: transform;
+  /* Intentionally no will-change: transform here — permanent GPU layer
+     promotion inside a preserve-3d context causes browsers to misroute
+     pointer events through 3D compositor layers. The CSS transition
+     already triggers layer promotion for the 500ms animation duration. */
 }
 
 /* --- TWO-FACE COIN FLIP (default for orga/role/member) --- */

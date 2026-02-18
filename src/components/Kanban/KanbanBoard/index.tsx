@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import {
   DndContext,
   DragOverlay,
+  MeasuringStrategy,
   PointerSensor,
   TouchSensor,
   closestCorners,
@@ -398,15 +399,10 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
+        measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
       >
         <div
-          className="
-            flex gap-3 sm:gap-4
-            overflow-x-auto
-            pb-4
-            -mx-2 px-2
-            snap-x snap-mandatory sm:snap-none
-          "
+          className="flex gap-3 sm:gap-4 pb-4"
           style={{ minHeight: totalCards > 0 ? "20rem" : undefined }}
         >
           {boardData.columns.map((column) => {

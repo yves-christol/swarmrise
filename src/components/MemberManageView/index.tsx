@@ -363,8 +363,8 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
             {t("overview")}
           </h2>
           <div className="grid grid-cols-2 gap-4">
-            <StatCard value={masterRoles.length} label={tTeams("roles")} color="purple" />
-            <StatCard value={teams?.length || 0} label={tTeams("teams")} color="green" />
+            <StatCard value={masterRoles.length} label={tTeams("roles")} />
+            <StatCard value={teams?.length || 0} label={tTeams("teams")} />
           </div>
         </section>
 

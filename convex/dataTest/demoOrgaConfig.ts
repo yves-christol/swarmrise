@@ -5,7 +5,7 @@
  * that is recreated nightly as a sandbox for new users to explore.
  *
  * To customize the demo organization, edit this configuration:
- * - Change the orga name, colors, or email domains
+ * - Change the orga name, accent color, or email domains
  * - Add/remove/rename teams in the hierarchy
  * - Add/remove/rename roles within teams
  * - Adjust the number of test users (userCount)
@@ -42,11 +42,8 @@ export interface TeamTemplate {
 export interface DemoOrgaConfig {
   /** Display name of the demo organization (used for lookup and deletion) */
   orgaName: string;
-  /** Color scheme (hex strings like "#RRGGBB") */
-  colorScheme: {
-    primary: string;
-    secondary: string;
-  };
+  /** Accent color (hex string like "#RRGGBB", optional) */
+  accentColor?: string;
   /** Optional: restrict invitations to these email domains */
   authorizedEmailDomains?: string[];
   /** Number of synthetic test users to create (excluding the admin) */
@@ -349,10 +346,7 @@ export const ORGANIZATION_TREE: TeamTemplate = {
 
 export const DEMO_ORGA_CONFIG: DemoOrgaConfig = {
   orgaName: "Infomax Demo",
-  colorScheme: {
-    primary: "#3b82f6",   // Blue-500
-    secondary: "#a855f7",  // Purple-500
-  },
+  accentColor: "#3b82f6",   // Blue-500
   userCount: 100,
   organizationTree: ORGANIZATION_TREE,
 };

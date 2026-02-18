@@ -426,7 +426,7 @@ export const seedDemoOrga = internalMutation({
     const orgaId = await ctx.db.insert("orgas", {
       name: config.orgaName,
       logoUrl: undefined,
-      colorScheme: config.colorScheme,
+      accentColor: config.accentColor,
       owner: adminUser._id,
       authorizedEmailDomains: config.authorizedEmailDomains,
     });

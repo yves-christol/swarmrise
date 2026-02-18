@@ -1,6 +1,6 @@
 import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
-import { orgaValidator, ColorScheme } from ".";
+import { orgaValidator } from ".";
 import {
   getMemberInOrga,
   getAuthenticatedUserEmail,
@@ -82,10 +82,14 @@ export const createOrganization = mutation({
   args: {
     name: v.string(),
     logoStorageId: v.optional(v.id("_storage")), // Storage ID for uploaded logo
-    colorScheme: v.object({
+    accentColor: v.optional(v.string()),         // Brand accent color
+    surfaceColorLight: v.optional(v.string()),   // Background tint for light mode
+    surfaceColorDark: v.optional(v.string()),    // Background tint for dark mode
+    // Legacy field kept for backward compat during migration
+    colorScheme: v.optional(v.object({
       primary: v.string(),
       secondary: v.string(),
-    }),
+    })),
     firstTeamName: v.optional(v.string()), // Optional name for the first team, defaults to organization name
     authorizedEmailDomains: v.optional(v.array(v.string())), // Optional: restrict invitations to these email domains
   },
@@ -113,6 +117,9 @@ export const createOrganization = mutation({
     const orgaId = await ctx.db.insert("orgas", {
       name: args.name,
       logoUrl,
+      accentColor: args.accentColor,
+      surfaceColorLight: args.surfaceColorLight,
+      surfaceColorDark: args.surfaceColorDark,
       colorScheme: args.colorScheme,
       owner: user._id,
       ...(normalizedDomains && { authorizedEmailDomains: normalizedDomains }),
@@ -201,6 +208,9 @@ export const createOrganization = mutation({
         after: {
           name: args.name,
           logoUrl,
+          ...(args.accentColor && { accentColor: args.accentColor }),
+          ...(args.surfaceColorLight && { surfaceColorLight: args.surfaceColorLight }),
+          ...(args.surfaceColorDark && { surfaceColorDark: args.surfaceColorDark }),
           colorScheme: args.colorScheme,
         },
       },
@@ -266,6 +276,11 @@ export const updateOrga = mutation({
     orgaId: v.id("orgas"),
     name: v.optional(v.string()),
     logoStorageId: v.optional(v.union(v.id("_storage"), v.null())), // Storage ID for uploaded logo, null to remove
+    // New color model fields (hex strings like "#RRGGBB", pass null to clear)
+    accentColor: v.optional(v.union(v.string(), v.null())),
+    surfaceColorLight: v.optional(v.union(v.string(), v.null())),
+    surfaceColorDark: v.optional(v.union(v.string(), v.null())),
+    // Legacy fields (kept during migration)
     colorScheme: v.optional(
       v.object({
         primary: v.string(),
@@ -298,34 +313,25 @@ export const updateOrga = mutation({
     if (args.logoStorageId !== undefined && !isOwner) {
       throw new Error("Only the organization owner can modify the organization logo");
     }
-    if (args.colorScheme !== undefined && !isOwner) {
-      throw new Error("Only the organization owner can modify the color scheme");
-    }
-    if (args.authorizedEmailDomains !== undefined && !isOwner) {
-      throw new Error("Only the organization owner can modify authorized email domains");
-    }
-    const hasCustomisationChange =
+    const hasAppearanceChange =
+      args.accentColor !== undefined ||
+      args.surfaceColorLight !== undefined ||
+      args.surfaceColorDark !== undefined ||
+      args.colorScheme !== undefined ||
       args.paperColorLight !== undefined ||
       args.paperColorDark !== undefined ||
       args.highlightColorLight !== undefined ||
       args.highlightColorDark !== undefined ||
       args.titleFont !== undefined;
-    if (hasCustomisationChange && !isOwner) {
-      throw new Error("Only the organization owner can modify customisation settings");
+    if (hasAppearanceChange && !isOwner) {
+      throw new Error("Only the organization owner can modify appearance settings");
+    }
+    if (args.authorizedEmailDomains !== undefined && !isOwner) {
+      throw new Error("Only the organization owner can modify authorized email domains");
     }
 
     // Update organization
-    const updates: {
-      name?: string;
-      logoUrl?: string;
-      colorScheme?: ColorScheme;
-      authorizedEmailDomains?: string[];
-      paperColorLight?: string;
-      paperColorDark?: string;
-      highlightColorLight?: string;
-      highlightColorDark?: string;
-      titleFont?: string;
-    } = {};
+    const updates: Record<string, unknown> = {};
 
     if (args.name !== undefined) updates.name = args.name;
     if (args.logoStorageId !== undefined) {
@@ -336,6 +342,11 @@ export const updateOrga = mutation({
         updates.logoUrl = url ?? undefined;
       }
     }
+    // New color fields
+    if (args.accentColor !== undefined) updates.accentColor = args.accentColor ?? undefined;
+    if (args.surfaceColorLight !== undefined) updates.surfaceColorLight = args.surfaceColorLight ?? undefined;
+    if (args.surfaceColorDark !== undefined) updates.surfaceColorDark = args.surfaceColorDark ?? undefined;
+    // Legacy fields
     if (args.colorScheme !== undefined) updates.colorScheme = args.colorScheme;
     if (args.paperColorLight !== undefined) updates.paperColorLight = args.paperColorLight ?? undefined;
     if (args.paperColorDark !== undefined) updates.paperColorDark = args.paperColorDark ?? undefined;
@@ -353,18 +364,8 @@ export const updateOrga = mutation({
     }
 
     // Build before and after with only modified fields
-    const before: {
-      name?: string;
-      logoUrl?: string;
-      colorScheme?: ColorScheme;
-      authorizedEmailDomains?: string[];
-    } = {};
-    const after: {
-      name?: string;
-      logoUrl?: string;
-      colorScheme?: ColorScheme;
-      authorizedEmailDomains?: string[];
-    } = {};
+    const before: Record<string, unknown> = {};
+    const after: Record<string, unknown> = {};
 
     if (args.name !== undefined) {
       before.name = orga.name;
@@ -374,6 +375,20 @@ export const updateOrga = mutation({
       before.logoUrl = orga.logoUrl;
       after.logoUrl = updates.logoUrl;
     }
+    // New color fields
+    if (args.accentColor !== undefined) {
+      before.accentColor = orga.accentColor;
+      after.accentColor = args.accentColor ?? undefined;
+    }
+    if (args.surfaceColorLight !== undefined) {
+      before.surfaceColorLight = orga.surfaceColorLight;
+      after.surfaceColorLight = args.surfaceColorLight ?? undefined;
+    }
+    if (args.surfaceColorDark !== undefined) {
+      before.surfaceColorDark = orga.surfaceColorDark;
+      after.surfaceColorDark = args.surfaceColorDark ?? undefined;
+    }
+    // Legacy fields
     if (args.colorScheme !== undefined) {
       before.colorScheme = orga.colorScheme;
       after.colorScheme = args.colorScheme;

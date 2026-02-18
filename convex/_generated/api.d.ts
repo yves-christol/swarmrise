@@ -47,6 +47,7 @@ import type * as notifications_helpers from "../notifications/helpers.js";
 import type * as notifications_index from "../notifications/index.js";
 import type * as orgas_functions from "../orgas/functions.js";
 import type * as orgas_index from "../orgas/index.js";
+import type * as orgas_migrations from "../orgas/migrations.js";
 import type * as policies_functions from "../policies/functions.js";
 import type * as policies_index from "../policies/index.js";
 import type * as roles_functions from "../roles/functions.js";
@@ -110,6 +111,7 @@ declare const fullApi: ApiFromModules<{
   "notifications/index": typeof notifications_index;
   "orgas/functions": typeof orgas_functions;
   "orgas/index": typeof orgas_index;
+  "orgas/migrations": typeof orgas_migrations;
   "policies/functions": typeof policies_functions;
   "policies/index": typeof policies_index;
   "roles/functions": typeof roles_functions;

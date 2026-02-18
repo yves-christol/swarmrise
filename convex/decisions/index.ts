@@ -29,18 +29,24 @@ const colorValue = v.union(
   v.object({ r: v.number(), g: v.number(), b: v.number() })
 );
 
-// Organization diff
+// Organization diff (colorScheme kept for historical records, never remove)
 const organizationDiff = v.object({
   type: v.literal("Organization"),
   before: v.optional(v.object({
     name: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
     colorScheme: v.optional(v.object({ primary: colorValue, secondary: colorValue })),
+    accentColor: v.optional(v.string()),
+    surfaceColorLight: v.optional(v.string()),
+    surfaceColorDark: v.optional(v.string()),
   })),
   after: v.optional(v.object({
     name: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
     colorScheme: v.optional(v.object({ primary: colorValue, secondary: colorValue })),
+    accentColor: v.optional(v.string()),
+    surfaceColorLight: v.optional(v.string()),
+    surfaceColorDark: v.optional(v.string()),
   })),
 });
 

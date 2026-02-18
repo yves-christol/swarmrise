@@ -7,9 +7,8 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { EmailDomainsInput } from "../EmailDomainsInput";
 import { SpinnerIcon, CheckIcon, XIcon, ErrorIcon } from "../Icons";
 import { FONT_OPTIONS, ALL_GOOGLE_FONTS_URL } from "./fonts";
-import { COLOR_PRESETS } from "../../utils/colorPresets";
-
-type ColorScheme = { primary: string; secondary: string };
+import { ACCENT_PRESETS } from "../../utils/colorPresets";
+import { contrastRatio, getHslLightness } from "../../utils/colorContrast";
 
 const arraysEqual = (a: string[], b: string[]): boolean =>
   a.length === b.length && a.every((v, i) => v === b[i]);
@@ -19,6 +18,110 @@ const OrgPlaceholderIcon = ({ className }: { className?: string }) => (
     <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
   </svg>
 );
+
+/** Traffic-light contrast feedback */
+function ContrastBadge({ ratio }: { ratio: number }) {
+  const { t } = useTranslation("orgs");
+  if (ratio >= 4.5) {
+    return (
+      <span className="text-xs px-1.5 py-0.5 rounded bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300">
+        {t("settings.contrastGood")} ({ratio.toFixed(1)}:1)
+      </span>
+    );
+  }
+  if (ratio >= 3) {
+    return (
+      <span className="text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+        {t("settings.contrastOkHeadings")} ({ratio.toFixed(1)}:1)
+      </span>
+    );
+  }
+  return (
+    <span className="text-xs px-1.5 py-0.5 rounded bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300">
+      {t("settings.contrastLow")} ({ratio.toFixed(1)}:1)
+    </span>
+  );
+}
+
+/** Lightness feedback for surface colors */
+function LightnessBadge({ lightness, mode }: { lightness: number; mode: "light" | "dark" }) {
+  const { t } = useTranslation("orgs");
+  if (mode === "light") {
+    if (lightness >= 85) return <span className="text-xs text-green-600 dark:text-green-400">{t("settings.lightnessGood")}</span>;
+    if (lightness >= 70) return <span className="text-xs text-amber-600 dark:text-amber-400">{t("settings.lightnessCaution")}</span>;
+    return <span className="text-xs text-red-600 dark:text-red-400">{t("settings.lightnessTooLow")}</span>;
+  }
+  // dark mode
+  if (lightness <= 30) return <span className="text-xs text-green-600 dark:text-green-400">{t("settings.lightnessGood")}</span>;
+  if (lightness <= 45) return <span className="text-xs text-amber-600 dark:text-amber-400">{t("settings.lightnessCaution")}</span>;
+  return <span className="text-xs text-red-600 dark:text-red-400">{t("settings.lightnessTooHigh")}</span>;
+}
+
+/** Mini preview card for a color combination */
+function PreviewCard({ surfaceColor, accentColor, label, fontFamily }: {
+  surfaceColor: string;
+  accentColor: string;
+  label: string;
+  fontFamily?: string;
+}) {
+  const { t } = useTranslation("orgs");
+  const lum = (() => {
+    const { r, g, b } = hexToRgbLocal(accentColor);
+    const toLinear = (c: number) => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+    return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+  })();
+  const accentText = lum > 0.4 ? "#111111" : "#ffffff";
+  const isDark = getHslLightness(surfaceColor) < 50;
+  const textColor = isDark ? "#e5e7eb" : "#1f2937";
+  const mutedColor = isDark ? "#9ca3af" : "#6b7280";
+  const secondarySurface = isDark ? lightenLocal(surfaceColor, 0.08) : darkenLocal(surfaceColor, 0.04);
+
+  return (
+    <div className="flex-1 rounded-md overflow-hidden border border-border-default transition-colors" style={{ backgroundColor: surfaceColor }}>
+      <div className="px-3 py-1.5">
+        <p className="text-[10px] mb-1" style={{ color: mutedColor }}>{label}</p>
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-xs font-semibold truncate" style={{ color: textColor, fontFamily: fontFamily || undefined }}>
+            {t("settings.previewOrgName")}
+          </span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: accentColor, color: accentText }}>
+            {t("settings.previewBadge")}
+          </span>
+        </div>
+        <p className="text-[10px] mb-2" style={{ color: mutedColor }}>{t("settings.previewSecondary")}</p>
+        <button
+          type="button"
+          className="text-[10px] px-2 py-0.5 rounded font-medium transition-colors"
+          style={{ backgroundColor: accentColor, color: accentText }}
+          tabIndex={-1}
+        >
+          {t("settings.previewButton")}
+        </button>
+      </div>
+      <div className="px-3 py-1" style={{ backgroundColor: secondarySurface }}>
+        <p className="text-[9px]" style={{ color: mutedColor }}>{t("settings.previewCaption")}</p>
+      </div>
+    </div>
+  );
+}
+
+// Inline color helpers for the preview (avoid importing from provider to keep component self-contained)
+function hexToRgbLocal(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
+    : { r: 0, g: 0, b: 0 };
+}
+function darkenLocal(hex: string, amount: number): string {
+  const { r, g, b } = hexToRgbLocal(hex);
+  const h = (n: number) => Math.round(n * (1 - amount)).toString(16).padStart(2, "0");
+  return `#${h(r)}${h(g)}${h(b)}`;
+}
+function lightenLocal(hex: string, amount: number): string {
+  const { r, g, b } = hexToRgbLocal(hex);
+  const h = (n: number) => Math.round(n + (255 - n) * amount).toString(16).padStart(2, "0");
+  return `#${h(r)}${h(g)}${h(b)}`;
+}
 
 type OrgaSettingsModalProps = {
   isOpen: boolean;
@@ -49,16 +152,12 @@ export const OrgaSettingsModal = ({
 
   // Form state
   const [name, setName] = useState("");
-  const [selectedPresetId, setSelectedPresetId] = useState("custom");
-  const [customPrimary, setCustomPrimary] = useState(COLOR_PRESETS[0].primary);
-  const [customSecondary, setCustomSecondary] = useState(COLOR_PRESETS[0].secondary);
   const [emailDomains, setEmailDomains] = useState<string[]>([]);
 
-  // Customisation state
-  const [paperColorLight, setPaperColorLight] = useState<string | null>(null);
-  const [paperColorDark, setPaperColorDark] = useState<string | null>(null);
-  const [highlightColorLight, setHighlightColorLight] = useState<string | null>(null);
-  const [highlightColorDark, setHighlightColorDark] = useState<string | null>(null);
+  // Appearance state
+  const [accentColor, setAccentColor] = useState<string | null>(null);
+  const [surfaceColorLight, setSurfaceColorLight] = useState<string | null>(null);
+  const [surfaceColorDark, setSurfaceColorDark] = useState<string | null>(null);
   const [titleFont, setTitleFont] = useState("");
 
   // Logo state
@@ -86,25 +185,10 @@ export const OrgaSettingsModal = ({
       setName(orga.name);
       setEmailDomains(orga.authorizedEmailDomains ?? []);
 
-      // Set color scheme
-      if (orga.colorScheme) {
-        setCustomPrimary(orga.colorScheme.primary);
-        setCustomSecondary(orga.colorScheme.secondary);
-
-        // Check if it matches a preset
-        const matchingPreset = COLOR_PRESETS.find(
-          (p) =>
-            p.primary.toLowerCase() === orga.colorScheme.primary.toLowerCase() &&
-            p.secondary.toLowerCase() === orga.colorScheme.secondary.toLowerCase()
-        );
-        setSelectedPresetId(matchingPreset?.id ?? "custom");
-      }
-
-      // Set customisation colors
-      setPaperColorLight(orga.paperColorLight ?? null);
-      setPaperColorDark(orga.paperColorDark ?? null);
-      setHighlightColorLight(orga.highlightColorLight ?? null);
-      setHighlightColorDark(orga.highlightColorDark ?? null);
+      // Appearance — prefer new fields, fall back to legacy
+      setAccentColor(orga.accentColor ?? orga.highlightColorLight ?? null);
+      setSurfaceColorLight(orga.surfaceColorLight ?? orga.paperColorLight ?? null);
+      setSurfaceColorDark(orga.surfaceColorDark ?? orga.paperColorDark ?? null);
       setTitleFont(orga.titleFont ?? "");
 
       // Reset logo state
@@ -124,39 +208,26 @@ export const OrgaSettingsModal = ({
     return members.filter((m) => m.personId !== orga.owner);
   }, [members, orga]);
 
-  // Get current color scheme
-  const getColorScheme = useCallback((): ColorScheme => {
-    if (selectedPresetId === "custom") {
-      return { primary: customPrimary, secondary: customSecondary };
-    }
-    const preset = COLOR_PRESETS.find((p) => p.id === selectedPresetId);
-    return preset
-      ? { primary: preset.primary, secondary: preset.secondary }
-      : { primary: customPrimary, secondary: customSecondary };
-  }, [selectedPresetId, customPrimary, customSecondary]);
-
   // Detect if form has changes
   const hasChanges = useMemo(() => {
     if (!orga) return false;
 
-    const currentColorScheme = getColorScheme();
-    const originalColorScheme = orga.colorScheme ?? { primary: COLOR_PRESETS[0].primary, secondary: COLOR_PRESETS[0].secondary };
+    const origAccent = orga.accentColor ?? orga.highlightColorLight ?? null;
+    const origSurfaceLight = orga.surfaceColorLight ?? orga.paperColorLight ?? null;
+    const origSurfaceDark = orga.surfaceColorDark ?? orga.paperColorDark ?? null;
     const originalDomains = orga.authorizedEmailDomains ?? [];
 
     return (
       name !== orga.name ||
-      currentColorScheme.primary.toLowerCase() !== originalColorScheme.primary.toLowerCase() ||
-      currentColorScheme.secondary.toLowerCase() !== originalColorScheme.secondary.toLowerCase() ||
+      accentColor !== origAccent ||
+      surfaceColorLight !== origSurfaceLight ||
+      surfaceColorDark !== origSurfaceDark ||
       !arraysEqual(emailDomains, originalDomains) ||
       logoFile !== null ||
       logoRemoved ||
-      (paperColorLight ?? null) !== (orga.paperColorLight ?? null) ||
-      (paperColorDark ?? null) !== (orga.paperColorDark ?? null) ||
-      (highlightColorLight ?? null) !== (orga.highlightColorLight ?? null) ||
-      (highlightColorDark ?? null) !== (orga.highlightColorDark ?? null) ||
       titleFont !== (orga.titleFont ?? "")
     );
-  }, [orga, name, getColorScheme, emailDomains, logoFile, logoRemoved, paperColorLight, paperColorDark, highlightColorLight, highlightColorDark, titleFont]);
+  }, [orga, name, accentColor, surfaceColorLight, surfaceColorDark, emailDomains, logoFile, logoRemoved, titleFont]);
 
   // Preload Google Fonts for picker preview when modal opens
   useEffect(() => {
@@ -209,7 +280,6 @@ export const OrgaSettingsModal = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen && !isSubmitting) {
-        // Inline handleClose logic to avoid dependency issues
         if (hasChanges) {
           if (window.confirm(t("settings.unsavedChangesWarning"))) {
             onClose();
@@ -264,15 +334,9 @@ export const OrgaSettingsModal = ({
   const validateName = useCallback(
     (value: string): string | null => {
       const trimmed = value.trim();
-      if (!trimmed) {
-        return t("validation.nameRequired");
-      }
-      if (trimmed.length < 2) {
-        return t("validation.nameTooShort");
-      }
-      if (trimmed.length > 100) {
-        return t("validation.nameTooLong");
-      }
+      if (!trimmed) return t("validation.nameRequired");
+      if (trimmed.length < 2) return t("validation.nameTooShort");
+      if (trimmed.length > 100) return t("validation.nameTooLong");
       return null;
     },
     [t]
@@ -287,53 +351,31 @@ export const OrgaSettingsModal = ({
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/svg+xml", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      setLogoUploadError(true);
-      return;
-    }
-
-    if (logoPreviewUrl) {
-      URL.revokeObjectURL(logoPreviewUrl);
-    }
-    const previewUrl = URL.createObjectURL(file);
-
+    if (!validTypes.includes(file.type)) { setLogoUploadError(true); return; }
+    if (logoPreviewUrl) URL.revokeObjectURL(logoPreviewUrl);
     setLogoFile(file);
-    setLogoPreviewUrl(previewUrl);
+    setLogoPreviewUrl(URL.createObjectURL(file));
     setLogoRemoved(false);
     setLogoUploadError(false);
   };
 
   const handleRemoveLogo = () => {
-    if (logoPreviewUrl) {
-      URL.revokeObjectURL(logoPreviewUrl);
-    }
+    if (logoPreviewUrl) URL.revokeObjectURL(logoPreviewUrl);
     setLogoFile(null);
     setLogoPreviewUrl(null);
     setLogoRemoved(true);
     setLogoUploadError(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const uploadLogo = async (): Promise<Id<"_storage"> | null> => {
     if (!logoFile) return null;
-
     setIsUploadingLogo(true);
     try {
       const uploadUrl = await generateUploadUrl();
-      const response = await fetch(uploadUrl, {
-        method: "POST",
-        headers: { "Content-Type": logoFile.type },
-        body: logoFile,
-      });
-
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
-
+      const response = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": logoFile.type }, body: logoFile });
+      if (!response.ok) throw new Error("Upload failed");
       const { storageId } = await response.json();
       return storageId as Id<"_storage">;
     } catch (err) {
@@ -345,78 +387,39 @@ export const OrgaSettingsModal = ({
     }
   };
 
-  const handlePresetSelect = (presetId: string) => {
-    setSelectedPresetId(presetId);
-    const preset = COLOR_PRESETS.find((p) => p.id === presetId);
-    if (preset) {
-      setCustomPrimary(preset.primary);
-      setCustomSecondary(preset.secondary);
-    }
-  };
-
-  const handleCustomColorChange = (type: "primary" | "secondary", hex: string) => {
-    if (type === "primary") {
-      setCustomPrimary(hex);
-    } else {
-      setCustomSecondary(hex);
-    }
-    setSelectedPresetId("custom");
-  };
-
   const handleSave = async () => {
     const validationResult = validateName(name);
-    if (validationResult) {
-      setValidationError(validationResult);
-      return;
-    }
-
+    if (validationResult) { setValidationError(validationResult); return; }
     setIsSubmitting(true);
     setError(null);
-
     try {
       let logoStorageId: Id<"_storage"> | null | undefined;
-
-      // Handle logo upload/removal
       if (logoFile) {
         logoStorageId = await uploadLogo();
-        if (!logoStorageId) {
-          setError(t("logoUploadError"));
-          setIsSubmitting(false);
-          return;
-        }
+        if (!logoStorageId) { setError(t("logoUploadError")); setIsSubmitting(false); return; }
       } else if (logoRemoved) {
         logoStorageId = null;
       }
 
-      const colorScheme = getColorScheme();
+      const origAccent = orga?.accentColor ?? orga?.highlightColorLight ?? null;
+      const origSurfaceLight = orga?.surfaceColorLight ?? orga?.paperColorLight ?? null;
+      const origSurfaceDark = orga?.surfaceColorDark ?? orga?.paperColorDark ?? null;
 
-      // Build customisation args (only send changed values)
-      const customisationArgs: Record<string, string | null> = {};
-      if ((paperColorLight ?? null) !== (orga?.paperColorLight ?? null)) {
-        customisationArgs.paperColorLight = paperColorLight;
-      }
-      if ((paperColorDark ?? null) !== (orga?.paperColorDark ?? null)) {
-        customisationArgs.paperColorDark = paperColorDark;
-      }
-      if ((highlightColorLight ?? null) !== (orga?.highlightColorLight ?? null)) {
-        customisationArgs.highlightColorLight = highlightColorLight;
-      }
-      if ((highlightColorDark ?? null) !== (orga?.highlightColorDark ?? null)) {
-        customisationArgs.highlightColorDark = highlightColorDark;
-      }
-      if (titleFont !== (orga?.titleFont ?? "")) {
-        customisationArgs.titleFont = titleFont || null;
+      const args: Record<string, unknown> = { orgaId, name: name.trim() };
+      if (logoStorageId !== undefined) args.logoStorageId = logoStorageId;
+      if (emailDomains.length > 0) {
+        args.authorizedEmailDomains = emailDomains;
+      } else {
+        args.authorizedEmailDomains = null;
       }
 
-      await updateOrga({
-        orgaId,
-        name: name.trim(),
-        colorScheme,
-        ...(logoStorageId !== undefined && { logoStorageId }),
-        authorizedEmailDomains: emailDomains.length > 0 ? emailDomains : null,
-        ...customisationArgs,
-      });
+      // New color fields
+      if (accentColor !== origAccent) args.accentColor = accentColor;
+      if (surfaceColorLight !== origSurfaceLight) args.surfaceColorLight = surfaceColorLight;
+      if (surfaceColorDark !== origSurfaceDark) args.surfaceColorDark = surfaceColorDark;
+      if (titleFont !== (orga?.titleFont ?? "")) args.titleFont = titleFont || null;
 
+      await updateOrga(args as Parameters<typeof updateOrga>[0]);
       onClose();
     } catch (err) {
       console.error("Failed to update organization:", err);
@@ -428,10 +431,7 @@ export const OrgaSettingsModal = ({
 
   const handleDelete = async () => {
     if (!canDelete) return;
-    try {
-      await deleteOrga({ orgaId });
-      onClose();
-    } catch (err) {
+    try { await deleteOrga({ orgaId }); onClose(); } catch (err) {
       console.error("Failed to delete organization:", err);
       setError(t("errors.unknownError"));
     }
@@ -440,27 +440,31 @@ export const OrgaSettingsModal = ({
   const handleTransferOwnership = async () => {
     if (!selectedNewOwnerId) return;
     setIsSubmitting(true);
-    try {
-      await transferOwnership({ orgaId, newOwnerMemberId: selectedNewOwnerId });
-      onClose();
-    } catch (err) {
+    try { await transferOwnership({ orgaId, newOwnerMemberId: selectedNewOwnerId }); onClose(); } catch (err) {
       console.error("Failed to transfer ownership:", err);
       setError(t("errors.unknownError"));
-    } finally {
-      setIsSubmitting(false);
-    }
+    } finally { setIsSubmitting(false); }
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && !isSubmitting) {
-      handleClose();
-    }
+    if (e.target === e.currentTarget && !isSubmitting) handleClose();
   };
 
   if (!isOpen) return null;
 
-  const currentColors = getColorScheme();
   const displayLogoUrl = logoPreviewUrl ?? (logoRemoved ? null : logoUrl);
+
+  // Computed values for contrast display
+  const effectiveAccent = accentColor ?? "#eac840";
+  const effectiveSurfaceLight = surfaceColorLight ?? "#ffffff";
+  const effectiveSurfaceDark = surfaceColorDark ?? "#1f2937";
+  const accentOnLightRatio = contrastRatio(effectiveAccent, effectiveSurfaceLight);
+  const accentOnDarkRatio = contrastRatio(effectiveAccent, effectiveSurfaceDark);
+
+  // Any contrast issues?
+  const hasContrastWarning = accentOnLightRatio < 3 || accentOnDarkRatio < 3
+    || (surfaceColorLight !== null && getHslLightness(surfaceColorLight) < 70)
+    || (surfaceColorDark !== null && getHslLightness(surfaceColorDark) > 45);
 
   return createPortal(
     <div
@@ -480,10 +484,7 @@ export const OrgaSettingsModal = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2
-            id="settings-title"
-            className="text-xl font-bold text-dark dark:text-light"
-          >
+          <h2 id="settings-title" className="text-xl font-bold text-dark dark:text-light">
             {t("settings.title")}
           </h2>
           <button
@@ -506,20 +507,14 @@ export const OrgaSettingsModal = ({
 
             {/* Name input */}
             <div className="flex flex-col gap-2 mb-4">
-              <label
-                htmlFor="org-name"
-                className="text-sm font-bold text-dark dark:text-light"
-              >
+              <label htmlFor="org-name" className="text-sm font-bold text-dark dark:text-light">
                 {t("organizationNameLabel")}
               </label>
               <input
                 id="org-name"
                 type="text"
                 value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  if (validationError) setValidationError(null);
-                }}
+                onChange={(e) => { setName(e.target.value); if (validationError) setValidationError(null); }}
                 onBlur={handleNameBlur}
                 disabled={isSubmitting}
                 className={`px-4 py-3 rounded-md border bg-surface-primary text-dark dark:text-light
@@ -537,170 +532,35 @@ export const OrgaSettingsModal = ({
               )}
             </div>
 
-            {/* Color scheme picker */}
-            <div className="flex flex-col gap-3 mb-4">
-              <label className="text-sm font-bold text-dark dark:text-light">
-                {t("colorSchemeLabel")}
-              </label>
-
-              {/* Preset grid */}
-              <div className="grid grid-cols-3 gap-2">
-                {COLOR_PRESETS.map((preset) => (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    onClick={() => handlePresetSelect(preset.id)}
-                    disabled={isSubmitting}
-                    className={`relative flex items-center justify-center gap-1 p-2 rounded-md border-2 transition-all
-                      disabled:opacity-50 disabled:cursor-not-allowed
-                      ${selectedPresetId === preset.id
-                        ? "border-highlight ring-2 ring-highlight/30"
-                        : "border-border-default hover:border-gray-400 dark:hover:border-gray-500"
-                      }`}
-                    aria-pressed={selectedPresetId === preset.id}
-                    aria-label={t(`presets.${preset.id}` as any)}
-                  >
-                    <div
-                      className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-500"
-                      style={{ backgroundColor: preset.primary }}
-                    />
-                    <div
-                      className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-500"
-                      style={{ backgroundColor: preset.secondary }}
-                    />
-                    {selectedPresetId === preset.id && (
-                      <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-surface-primary rounded-full" />
-                    )}
-                  </button>
-                ))}
-
-                {/* Custom option */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedPresetId("custom")}
-                  disabled={isSubmitting}
-                  className={`relative flex items-center justify-center gap-1 p-2 rounded-md border-2 transition-all
-                    disabled:opacity-50 disabled:cursor-not-allowed
-                    ${selectedPresetId === "custom"
-                      ? "border-highlight ring-2 ring-highlight/30"
-                      : "border-border-default hover:border-gray-400 dark:hover:border-gray-500"
-                    }`}
-                  aria-pressed={selectedPresetId === "custom"}
-                >
-                  <span className="text-xs text-text-secondary">
-                    {t("customColors")}
-                  </span>
-                  {selectedPresetId === "custom" && (
-                    <CheckIcon className="absolute -top-1 -right-1 w-4 h-4 text-highlight bg-surface-primary rounded-full" />
-                  )}
-                </button>
-              </div>
-
-              {/* Custom color pickers */}
-              {selectedPresetId === "custom" && (
-                <div className="flex gap-4 pt-2">
-                  <div className="flex-1 flex flex-col gap-1">
-                    <label htmlFor="primary-color" className="text-xs text-text-secondary">
-                      {t("primaryColorLabel")}
-                    </label>
-                    <input
-                      id="primary-color"
-                      type="color"
-                      value={customPrimary}
-                      onChange={(e) => handleCustomColorChange("primary", e.target.value)}
-                      disabled={isSubmitting}
-                      className="w-full h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                  </div>
-                  <div className="flex-1 flex flex-col gap-1">
-                    <label htmlFor="secondary-color" className="text-xs text-text-secondary">
-                      {t("secondaryColorLabel")}
-                    </label>
-                    <input
-                      id="secondary-color"
-                      type="color"
-                      value={customSecondary}
-                      onChange={(e) => handleCustomColorChange("secondary", e.target.value)}
-                      disabled={isSubmitting}
-                      className="w-full h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Live preview */}
-              <div className="flex items-center gap-3 p-3 rounded-md bg-surface-secondary/50">
-                <span className="text-xs text-text-secondary">{t("preview")}</span>
-                <div className="flex-1 flex items-center gap-2">
-                  <div
-                    className="flex-1 h-3 rounded-full transition-colors"
-                    style={{ backgroundColor: currentColors.primary }}
-                  />
-                  <div
-                    className="flex-1 h-3 rounded-full transition-colors"
-                    style={{ backgroundColor: currentColors.secondary }}
-                  />
-                </div>
-              </div>
-            </div>
-
             {/* Logo upload */}
             <div className="flex flex-col gap-2">
               <label className="text-sm font-bold text-dark dark:text-light">
                 {t("logoLabel")}
               </label>
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-md bg-surface-tertiary flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-300 dark:border-gray-500">
+                <div className="w-14 h-14 rounded-md bg-surface-tertiary flex items-center justify-center overflow-hidden flex-shrink-0 border border-border-strong">
                   {displayLogoUrl ? (
-                    <img
-                      src={displayLogoUrl}
-                      alt=""
-                      className="w-full h-full object-contain"
-                    />
+                    <img src={displayLogoUrl} alt="" className="w-full h-full object-contain" />
                   ) : (
                     <OrgPlaceholderIcon className="w-7 h-7 text-gray-400" />
                   )}
                 </div>
                 <div className="flex flex-col gap-2">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
-                    onChange={handleFileSelect}
-                    disabled={isSubmitting || isUploadingLogo}
-                    className="hidden"
-                    id="logo-file-input"
-                  />
+                  <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
+                    onChange={handleFileSelect} disabled={isSubmitting || isUploadingLogo} className="hidden" id="logo-file-input" />
                   <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isSubmitting || isUploadingLogo}
-                      className="px-3 py-1.5 text-sm rounded-md border border-border-strong
-                        bg-surface-primary text-dark dark:text-light
-                        hover:bg-surface-hover transition-colors
-                        disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
+                    <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isSubmitting || isUploadingLogo}
+                      className="px-3 py-1.5 text-sm rounded-md border border-border-strong bg-surface-primary text-dark dark:text-light hover:bg-surface-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                       {displayLogoUrl ? t("logoChangeButton") : t("logoUploadButton")}
                     </button>
                     {displayLogoUrl && (
-                      <button
-                        type="button"
-                        onClick={handleRemoveLogo}
-                        disabled={isSubmitting || isUploadingLogo}
-                        className="px-3 py-1.5 text-sm rounded-md
-                          text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20
-                          transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
+                      <button type="button" onClick={handleRemoveLogo} disabled={isSubmitting || isUploadingLogo}
+                        className="px-3 py-1.5 text-sm rounded-md text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         {t("logoRemoveButton")}
                       </button>
                     )}
                   </div>
-                  {logoFile && (
-                    <span className="text-xs text-text-secondary truncate max-w-[200px]">
-                      {logoFile.name}
-                    </span>
-                  )}
+                  {logoFile && <span className="text-xs text-text-secondary truncate max-w-[200px]">{logoFile.name}</span>}
                 </div>
               </div>
               {logoUploadError && (
@@ -713,159 +573,145 @@ export const OrgaSettingsModal = ({
             </div>
           </section>
 
-          {/* Customisation Section */}
+          {/* Appearance Section */}
           <section>
             <h3 className="text-lg font-semibold text-dark dark:text-light mb-4">
-              {t("settings.customisationSection")}
+              {t("settings.appearanceSection")}
             </h3>
 
-            {/* Paper Color */}
-            <div className="flex flex-col gap-3 mb-4">
+            {/* Accent Color */}
+            <div className="flex flex-col gap-3 mb-5">
               <label className="text-sm font-bold text-dark dark:text-light">
-                {t("settings.paperColorLabel")}
+                {t("settings.accentColorLabel")}
               </label>
               <p className="text-xs text-text-secondary">
-                {t("settings.paperColorHint")}
+                {t("settings.accentColorHint")}
               </p>
-              <div className="flex gap-4">
-                <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="paper-color-light" className="text-xs text-text-secondary">
-                    {t("settings.lightMode")}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      id="paper-color-light"
-                      type="color"
-                      value={paperColorLight ?? "#ffffff"}
-                      onChange={(e) => setPaperColorLight(e.target.value)}
+
+              {/* Preset row + custom picker */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {ACCENT_PRESETS.map((preset) => {
+                  const isSelected = accentColor === preset.color;
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => setAccentColor(preset.color)}
                       disabled={isSubmitting}
-                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    {paperColorLight && (
-                      <button
-                        type="button"
-                        onClick={() => setPaperColorLight(null)}
-                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                      >
-                        {t("settings.resetColor")}
-                      </button>
-                    )}
-                  </div>
+                      className={`relative w-8 h-8 rounded-full border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed
+                        ${isSelected ? "border-highlight ring-2 ring-highlight/30 scale-110" : "border-border-default hover:scale-105"}`}
+                      style={{ backgroundColor: preset.color }}
+                      aria-pressed={isSelected}
+                      aria-label={t(preset.labelKey as never)}
+                    >
+                      {isSelected && <CheckIcon className="absolute inset-0 m-auto w-4 h-4 text-white drop-shadow" />}
+                    </button>
+                  );
+                })}
+
+                {/* Custom color picker */}
+                <div className="relative">
+                  <input
+                    type="color"
+                    value={accentColor ?? "#eac840"}
+                    onChange={(e) => setAccentColor(e.target.value)}
+                    disabled={isSubmitting}
+                    className="w-8 h-8 rounded-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-2 border-border-default"
+                    aria-label={t("settings.customAccent")}
+                  />
                 </div>
-                <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="paper-color-dark" className="text-xs text-text-secondary">
-                    {t("settings.darkMode")}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      id="paper-color-dark"
-                      type="color"
-                      value={paperColorDark ?? "#1a1a2e"}
-                      onChange={(e) => setPaperColorDark(e.target.value)}
-                      disabled={isSubmitting}
-                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    {paperColorDark && (
-                      <button
-                        type="button"
-                        onClick={() => setPaperColorDark(null)}
-                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                      >
-                        {t("settings.resetColor")}
-                      </button>
-                    )}
-                  </div>
+
+                {accentColor && (
+                  <button type="button" onClick={() => setAccentColor(null)}
+                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 ml-1">
+                    {t("settings.resetColor")}
+                  </button>
+                )}
+              </div>
+
+              {/* Contrast feedback */}
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-text-secondary">{t("settings.contrastOnLight")}:</span>
+                  <ContrastBadge ratio={accentOnLightRatio} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-text-secondary">{t("settings.contrastOnDark")}:</span>
+                  <ContrastBadge ratio={accentOnDarkRatio} />
                 </div>
               </div>
             </div>
 
-            {/* Highlight Color */}
-            <div className="flex flex-col gap-3">
+            {/* Background Colors */}
+            <div className="flex flex-col gap-3 mb-5">
               <label className="text-sm font-bold text-dark dark:text-light">
-                {t("settings.highlightColorLabel")}
+                {t("settings.backgroundLabel")}
               </label>
               <p className="text-xs text-text-secondary">
-                {t("settings.highlightColorHint")}
+                {t("settings.backgroundHint")}
               </p>
               <div className="flex gap-4">
+                {/* Light mode */}
                 <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="highlight-color-light" className="text-xs text-text-secondary">
+                  <label htmlFor="surface-color-light" className="text-xs text-text-secondary">
                     {t("settings.lightMode")}
                   </label>
                   <div className="flex items-center gap-2">
-                    <input
-                      id="highlight-color-light"
-                      type="color"
-                      value={highlightColorLight ?? "#eac840"}
-                      onChange={(e) => setHighlightColorLight(e.target.value)}
-                      disabled={isSubmitting}
-                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    {highlightColorLight && (
-                      <button
-                        type="button"
-                        onClick={() => setHighlightColorLight(null)}
-                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                      >
+                    <input id="surface-color-light" type="color" value={surfaceColorLight ?? "#ffffff"}
+                      onChange={(e) => setSurfaceColorLight(e.target.value)} disabled={isSubmitting}
+                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" />
+                    {surfaceColorLight && (
+                      <button type="button" onClick={() => setSurfaceColorLight(null)}
+                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                         {t("settings.resetColor")}
                       </button>
                     )}
                   </div>
+                  {surfaceColorLight && (
+                    <LightnessBadge lightness={getHslLightness(surfaceColorLight)} mode="light" />
+                  )}
                 </div>
+                {/* Dark mode */}
                 <div className="flex-1 flex flex-col gap-1">
-                  <label htmlFor="highlight-color-dark" className="text-xs text-text-secondary">
+                  <label htmlFor="surface-color-dark" className="text-xs text-text-secondary">
                     {t("settings.darkMode")}
                   </label>
                   <div className="flex items-center gap-2">
-                    <input
-                      id="highlight-color-dark"
-                      type="color"
-                      value={highlightColorDark ?? "#eac840"}
-                      onChange={(e) => setHighlightColorDark(e.target.value)}
-                      disabled={isSubmitting}
-                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    {highlightColorDark && (
-                      <button
-                        type="button"
-                        onClick={() => setHighlightColorDark(null)}
-                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                      >
+                    <input id="surface-color-dark" type="color" value={surfaceColorDark ?? "#1f2937"}
+                      onChange={(e) => setSurfaceColorDark(e.target.value)} disabled={isSubmitting}
+                      className="w-10 h-10 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" />
+                    {surfaceColorDark && (
+                      <button type="button" onClick={() => setSurfaceColorDark(null)}
+                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                         {t("settings.resetColor")}
                       </button>
                     )}
                   </div>
+                  {surfaceColorDark && (
+                    <LightnessBadge lightness={getHslLightness(surfaceColorDark)} mode="dark" />
+                  )}
                 </div>
               </div>
+            </div>
 
-              {/* Live preview */}
-              <div className="flex items-center gap-3 p-3 rounded-md bg-surface-secondary/50">
-                <span className="text-xs text-text-secondary">{t("preview")}</span>
-                <div className="flex-1 flex items-center gap-2">
-                  <div
-                    className="flex-1 h-8 rounded flex items-center justify-center text-xs font-bold"
-                    style={{
-                      backgroundColor: highlightColorLight ?? "#eac840",
-                      color: "#1a1a2e",
-                    }}
-                  >
-                    {t("settings.lightMode")}
-                  </div>
-                  <div
-                    className="flex-1 h-8 rounded flex items-center justify-center text-xs font-bold"
-                    style={{
-                      backgroundColor: highlightColorDark ?? "#eac840",
-                      color: "#1a1a2e",
-                    }}
-                  >
-                    {t("settings.darkMode")}
-                  </div>
-                </div>
-              </div>
+            {/* Live Preview */}
+            <div className="flex gap-3 mb-5" aria-label={t("settings.previewLabel")}>
+              <PreviewCard
+                surfaceColor={effectiveSurfaceLight}
+                accentColor={effectiveAccent}
+                label={t("settings.lightMode")}
+                fontFamily={titleFont || undefined}
+              />
+              <PreviewCard
+                surfaceColor={effectiveSurfaceDark}
+                accentColor={effectiveAccent}
+                label={t("settings.darkMode")}
+                fontFamily={titleFont || undefined}
+              />
             </div>
 
             {/* Title Font */}
-            <div className="flex flex-col gap-3 mt-4">
+            <div className="flex flex-col gap-3">
               <label htmlFor="title-font" className="text-sm font-bold text-dark dark:text-light">
                 {t("settings.titleFontLabel")}
               </label>
@@ -873,42 +719,23 @@ export const OrgaSettingsModal = ({
                 {t("settings.titleFontHint")}
               </p>
               <div className="flex items-center gap-2">
-                <select
-                  id="title-font"
-                  value={titleFont}
-                  onChange={(e) => setTitleFont(e.target.value)}
-                  disabled={isSubmitting}
-                  className="flex-1 px-3 py-2 rounded-md border border-border-strong
-                    bg-surface-primary text-dark dark:text-light text-sm
-                    focus:outline-none focus:ring-2 focus:ring-highlight
-                    disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                <select id="title-font" value={titleFont} onChange={(e) => setTitleFont(e.target.value)} disabled={isSubmitting}
+                  className="flex-1 px-3 py-2 rounded-md border border-border-strong bg-surface-primary text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-highlight disabled:opacity-50 disabled:cursor-not-allowed">
                   {FONT_OPTIONS.map((font) => (
-                    <option
-                      key={font.value}
-                      value={font.value}
-                      style={font.value ? { fontFamily: font.value } : undefined}
-                    >
+                    <option key={font.value} value={font.value} style={font.value ? { fontFamily: font.value } : undefined}>
                       {font.value ? font.label : t("settings.titleFontDefault")}
                     </option>
                   ))}
                 </select>
                 {titleFont && (
-                  <button
-                    type="button"
-                    onClick={() => setTitleFont("")}
-                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  >
+                  <button type="button" onClick={() => setTitleFont("")}
+                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     {t("settings.resetColor")}
                   </button>
                 )}
               </div>
-              {/* Font preview */}
               <div className="p-3 rounded-md bg-surface-secondary/50">
-                <p
-                  className="text-lg font-semibold text-dark dark:text-light"
-                  style={titleFont ? { fontFamily: titleFont } : undefined}
-                >
+                <p className="text-lg font-semibold text-dark dark:text-light" style={titleFont ? { fontFamily: titleFont } : undefined}>
                   {t("settings.titleFontPreview")}
                 </p>
               </div>
@@ -920,11 +747,7 @@ export const OrgaSettingsModal = ({
             <h3 className="text-lg font-semibold text-dark dark:text-light mb-4">
               {t("settings.accessSection")}
             </h3>
-            <EmailDomainsInput
-              domains={emailDomains}
-              onChange={setEmailDomains}
-              disabled={isSubmitting}
-            />
+            <EmailDomainsInput domains={emailDomains} onChange={setEmailDomains} disabled={isSubmitting} />
           </section>
 
           {/* Danger Zone Section */}
@@ -941,22 +764,12 @@ export const OrgaSettingsModal = ({
               <p className="text-sm text-text-description mb-3">
                 {t("settings.transferOwnershipDescription")}
               </p>
-
               {otherMembers.length === 0 ? (
-                <p className="text-sm text-text-secondary italic">
-                  {t("settings.noOtherMembers")}
-                </p>
+                <p className="text-sm text-text-secondary italic">{t("settings.noOtherMembers")}</p>
               ) : showTransferConfirm ? (
                 <div className="flex flex-col gap-3">
-                  <select
-                    value={selectedNewOwnerId ?? ""}
-                    onChange={(e) => setSelectedNewOwnerId(e.target.value as Id<"members">)}
-                    disabled={isSubmitting}
-                    className="px-3 py-2 rounded-md border border-border-strong
-                      bg-surface-primary text-dark dark:text-light text-sm
-                      focus:outline-none focus:ring-2 focus:ring-red-500
-                      disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
+                  <select value={selectedNewOwnerId ?? ""} onChange={(e) => setSelectedNewOwnerId(e.target.value as Id<"members">)} disabled={isSubmitting}
+                    className="px-3 py-2 rounded-md border border-border-strong bg-surface-primary text-dark dark:text-light text-sm focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
                     <option value="">{t("settings.selectNewOwner")}</option>
                     {otherMembers.map((member) => (
                       <option key={member._id} value={member._id}>
@@ -965,31 +778,19 @@ export const OrgaSettingsModal = ({
                     ))}
                   </select>
                   <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => void handleTransferOwnership()}
-                      disabled={isSubmitting || !selectedNewOwnerId}
-                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
+                    <button onClick={() => void handleTransferOwnership()} disabled={isSubmitting || !selectedNewOwnerId}
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
                       {isSubmitting ? t("settings.transferring") : t("settings.confirmTransfer")}
                     </button>
-                    <button
-                      onClick={() => {
-                        setShowTransferConfirm(false);
-                        setSelectedNewOwnerId(null);
-                      }}
-                      disabled={isSubmitting}
-                      className="px-4 py-2 bg-surface-tertiary hover:bg-surface-hover-strong text-text-description rounded-lg transition-colors disabled:opacity-50"
-                    >
+                    <button onClick={() => { setShowTransferConfirm(false); setSelectedNewOwnerId(null); }} disabled={isSubmitting}
+                      className="px-4 py-2 bg-surface-tertiary hover:bg-surface-hover-strong text-text-description rounded-lg transition-colors disabled:opacity-50">
                       {tCommon("cancel")}
                     </button>
                   </div>
                 </div>
               ) : (
-                <button
-                  onClick={() => setShowTransferConfirm(true)}
-                  disabled={isSubmitting}
-                  className="px-4 py-2 border border-red-600 text-red-600 dark:text-red-400 dark:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50"
-                >
+                <button onClick={() => setShowTransferConfirm(true)} disabled={isSubmitting}
+                  className="px-4 py-2 border border-red-600 text-red-600 dark:text-red-400 dark:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50">
                   {t("settings.transferOwnership")}
                 </button>
               )}
@@ -997,36 +798,24 @@ export const OrgaSettingsModal = ({
 
             {/* Delete Organization */}
             <div>
-              <h4 className="text-sm font-semibold text-dark dark:text-light mb-2">
-                {t("deleteOrganization")}
-              </h4>
+              <h4 className="text-sm font-semibold text-dark dark:text-light mb-2">{t("deleteOrganization")}</h4>
               <p className="text-sm text-text-description mb-3">
                 {canDelete ? t("deleteOrgWarning") : t("settings.deleteOrgDisabledReason")}
               </p>
-
               {showDeleteConfirm ? (
                 <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => void handleDelete()}
-                    disabled={isSubmitting}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50"
-                  >
+                  <button onClick={() => void handleDelete()} disabled={isSubmitting}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50">
                     {t("confirmDeleteOrg")}
                   </button>
-                  <button
-                    onClick={() => setShowDeleteConfirm(false)}
-                    disabled={isSubmitting}
-                    className="px-4 py-2 bg-surface-tertiary hover:bg-surface-hover-strong text-text-description rounded-lg transition-colors disabled:opacity-50"
-                  >
+                  <button onClick={() => setShowDeleteConfirm(false)} disabled={isSubmitting}
+                    className="px-4 py-2 bg-surface-tertiary hover:bg-surface-hover-strong text-text-description rounded-lg transition-colors disabled:opacity-50">
                     {tCommon("cancel")}
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  disabled={isSubmitting || !canDelete}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                <button onClick={() => setShowDeleteConfirm(true)} disabled={isSubmitting || !canDelete}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                   {t("deleteOrganization")}
                 </button>
               )}
@@ -1043,23 +832,17 @@ export const OrgaSettingsModal = ({
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={handleClose}
-              disabled={isSubmitting}
-              className="px-4 py-2 text-text-secondary hover:text-gray-700  dark:hover:text-gray-200
-                transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <button type="button" onClick={handleClose} disabled={isSubmitting}
+              className="px-4 py-2 text-text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               {t("cancelButton")}
             </button>
-            <button
-              type="button"
-              onClick={() => void handleSave()}
-              disabled={isSubmitting || !hasChanges}
-              className="px-6 py-2 bg-highlight hover:bg-highlight-hover text-dark font-bold rounded-lg
-                transition-colors disabled:opacity-50 disabled:cursor-not-allowed
-                flex items-center gap-2"
-            >
+            <button type="button" onClick={() => void handleSave()} disabled={isSubmitting || !hasChanges}
+              className="px-6 py-2 bg-highlight hover:bg-highlight-hover text-dark font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+              {hasContrastWarning && !isSubmitting && (
+                <svg className="w-4 h-4 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.168 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                </svg>
+              )}
               {isSubmitting ? (
                 <>
                   <SpinnerIcon className="w-4 h-4" />

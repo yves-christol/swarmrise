@@ -1,9 +1,12 @@
-export type ColorPreset = { id: string; primary: string; secondary: string };
+export type AccentPreset = { id: string; color: string; labelKey: string };
 
-export const COLOR_PRESETS: ColorPreset[] = [
-  { id: "gold-blue", primary: "#eac840", secondary: "#a2dbed" },
-  { id: "green-gray", primary: "#228b22", secondary: "#a9a9a9" },
-  { id: "blue-gold", primary: "#1e90ff", secondary: "#ffc125" },
-  { id: "purple-cyan", primary: "#8a2be2", secondary: "#00ced1" },
-  { id: "red-gray", primary: "#ff6347", secondary: "#708090" },
+export const ACCENT_PRESETS: AccentPreset[] = [
+  { id: "gold", color: "#eac840", labelKey: "presets.gold" },
+  { id: "blue", color: "#2563eb", labelKey: "presets.blue" },
+  { id: "green", color: "#16a34a", labelKey: "presets.green" },
+  { id: "purple", color: "#7c3aed", labelKey: "presets.purple" },
+  { id: "coral", color: "#ef4444", labelKey: "presets.coral" },
+  { id: "teal", color: "#0d9488", labelKey: "presets.teal" },
+  { id: "amber", color: "#d97706", labelKey: "presets.amber" },
+  { id: "slate", color: "#475569", labelKey: "presets.slate" },
 ];

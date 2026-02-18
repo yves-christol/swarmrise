@@ -85,10 +85,7 @@ export const createTestOrganization = internalMutation({
     const orgaId = await ctx.db.insert("orgas", {
       name: testOrgaName,
       logoUrl: undefined,
-      colorScheme: {
-        primary: "#6496c8",
-        secondary: "#c89664",
-      },
+      accentColor: "#6496c8",
       owner: user._id,
     });
 

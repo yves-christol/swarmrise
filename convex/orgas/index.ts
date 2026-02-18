@@ -1,6 +1,6 @@
 import { v, Infer } from "convex/values"
 
-// Color scheme validator (hex strings like "#RRGGBB")
+// Legacy color scheme validator (kept for migration backward compat)
 export const colorScheme = v.object({
   primary: v.string(),
   secondary: v.string(),
@@ -11,12 +11,17 @@ export type ColorScheme = Infer<typeof colorScheme>;
 export const orgaType = v.object({
   name: v.string(),
   logoUrl: v.optional(v.string()),
-  colorScheme: colorScheme,
-  // Customisation fields (hex strings like "#RRGGBB")
+  // New color model (3 fields)
+  accentColor: v.optional(v.string()),         // Single brand accent (hex "#RRGGBB")
+  surfaceColorLight: v.optional(v.string()),   // Background tint for light mode
+  surfaceColorDark: v.optional(v.string()),    // Background tint for dark mode
+  // Legacy color fields (kept during migration, will be removed)
+  colorScheme: v.optional(colorScheme),
   paperColorLight: v.optional(v.string()),
   paperColorDark: v.optional(v.string()),
   highlightColorLight: v.optional(v.string()),
   highlightColorDark: v.optional(v.string()),
+  // Other customisation
   titleFont: v.optional(v.string()),
   owner: v.id("users"),
   // When set and non-empty, only emails with domains in this list can be invited

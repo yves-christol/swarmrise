@@ -25,6 +25,17 @@ function lightenHex(hex: string, amount: number): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+/** Compute relative luminance (WCAG formula) */
+function relativeLuminance(hex: string): number {
+  const { r, g, b } = hexToRgb(hex);
+  const toLinear = (c: number) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  };
+  return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+}
+
+
 export function OrgCustomisationProvider({ children }: { children: ReactNode }) {
   const { selectedOrga } = useSelectedOrga();
   const { resolvedTheme } = useTheme();
@@ -33,28 +44,56 @@ export function OrgCustomisationProvider({ children }: { children: ReactNode }) 
     if (!selectedOrga) return undefined;
 
     const isDark = resolvedTheme === "dark";
-    const paperColor = isDark
-      ? selectedOrga.paperColorDark
-      : selectedOrga.paperColorLight;
-    const highlightColor = isDark
-      ? selectedOrga.highlightColorDark
-      : selectedOrga.highlightColorLight;
+
+    // Read new fields with fallback to legacy fields
+    const surfaceColor = isDark
+      ? (selectedOrga.surfaceColorDark ?? selectedOrga.paperColorDark)
+      : (selectedOrga.surfaceColorLight ?? selectedOrga.paperColorLight);
+
+    const accentColor = selectedOrga.accentColor
+      ?? (isDark ? selectedOrga.highlightColorDark : selectedOrga.highlightColorLight);
 
     const vars: Record<string, string> = {};
 
-    if (paperColor) {
-      vars["--org-paper-color"] = paperColor;
-      vars["--org-paper-color-secondary"] = isDark
-        ? lightenHex(paperColor, 0.08)
-        : darkenHex(paperColor, 0.04);
-      vars["--org-paper-color-tertiary"] = isDark
-        ? lightenHex(paperColor, 0.15)
-        : darkenHex(paperColor, 0.08);
+    // Surface color → derive all surface tokens
+    if (surfaceColor) {
+      vars["--org-paper-color"] = surfaceColor;
+
+      if (isDark) {
+        vars["--org-paper-color-secondary"] = lightenHex(surfaceColor, 0.08);
+        vars["--org-paper-color-tertiary"] = lightenHex(surfaceColor, 0.15);
+        vars["--surface-hover-subtle"] = lightenHex(surfaceColor, 0.05);
+        vars["--surface-hover"] = lightenHex(surfaceColor, 0.10);
+        vars["--surface-hover-strong"] = lightenHex(surfaceColor, 0.18);
+        vars["--border-default"] = lightenHex(surfaceColor, 0.12);
+        vars["--border-strong"] = lightenHex(surfaceColor, 0.20);
+        vars["--text-secondary"] = lightenHex(surfaceColor, 0.50);
+        vars["--text-description"] = lightenHex(surfaceColor, 0.50);
+        vars["--text-tertiary"] = lightenHex(surfaceColor, 0.30);
+      } else {
+        vars["--org-paper-color-secondary"] = darkenHex(surfaceColor, 0.04);
+        vars["--org-paper-color-tertiary"] = darkenHex(surfaceColor, 0.08);
+        vars["--surface-hover-subtle"] = darkenHex(surfaceColor, 0.02);
+        vars["--surface-hover"] = darkenHex(surfaceColor, 0.05);
+        vars["--surface-hover-strong"] = darkenHex(surfaceColor, 0.10);
+        vars["--border-default"] = darkenHex(surfaceColor, 0.12);
+        vars["--border-strong"] = darkenHex(surfaceColor, 0.18);
+        vars["--text-secondary"] = darkenHex(surfaceColor, 0.45);
+        vars["--text-description"] = darkenHex(surfaceColor, 0.55);
+        vars["--text-tertiary"] = darkenHex(surfaceColor, 0.30);
+      }
     }
-    if (highlightColor) {
-      vars["--org-highlight-color"] = highlightColor;
-      vars["--org-highlight-hover"] = darkenHex(highlightColor, 0.15);
+
+    // Accent color → derive highlight tokens
+    if (accentColor) {
+      vars["--org-highlight-color"] = accentColor;
+      vars["--org-highlight-hover"] = darkenHex(accentColor, 0.15);
+
+      // Auto-compute text-on-accent (white or dark)
+      const lum = relativeLuminance(accentColor);
+      vars["--accent-text"] = lum > 0.4 ? "#111111" : "#ffffff";
     }
+
     if (selectedOrga.titleFont) {
       vars["--org-title-font"] = selectedOrga.titleFont;
     }

@@ -8,25 +8,31 @@
    Org paper color override flows through --org-paper-color vars set
    by OrgCustomisationProvider. ──────────────────────────────────────── */
 
+/* Surface tokens: org overrides are set inline by OrgCustomisationProvider.
+   The CSS vars here act as defaults when no org override is active. */
+
 :root.light {
   /* Surface (background) */
   --surface-primary: var(--org-paper-color, #ffffff);
   --surface-secondary: var(--org-paper-color-secondary, #f1f5f9);
   --surface-tertiary: var(--org-paper-color-tertiary, #e2e8f0);
 
-  /* Hover */
+  /* Hover – overridden by OrgCustomisationProvider when surface color is set */
   --surface-hover-subtle: #f9fafb;
   --surface-hover: #f3f4f6;
   --surface-hover-strong: #e2e8f0;
 
-  /* Border */
+  /* Border – overridden by OrgCustomisationProvider when surface color is set */
   --border-default: #e5e7eb;
   --border-strong: #d1d5db;
 
-  /* Text */
+  /* Text – overridden by OrgCustomisationProvider when surface color is set */
   --text-secondary: #6b7280;
   --text-description: #4b5563;
   --text-tertiary: #9ca3af;
+
+  /* Accent text (auto white/dark on accent buttons) */
+  --accent-text: #111111;
 }
 
 :root.dark {
@@ -35,19 +41,22 @@
   --surface-secondary: var(--org-paper-color-secondary, #334155);
   --surface-tertiary: var(--org-paper-color-tertiary, #475569);
 
-  /* Hover */
+  /* Hover – overridden by OrgCustomisationProvider when surface color is set */
   --surface-hover-subtle: rgba(55, 65, 81, 0.5);
   --surface-hover: #374151;
   --surface-hover-strong: #475569;
 
-  /* Border */
+  /* Border – overridden by OrgCustomisationProvider when surface color is set */
   --border-default: #374151;
   --border-strong: #4b5563;
 
-  /* Text */
+  /* Text – overridden by OrgCustomisationProvider when surface color is set */
   --text-secondary: #9ca3af;
   --text-description: #9ca3af;
   --text-tertiary: #6b7280;
+
+  /* Accent text (auto white/dark on accent buttons) */
+  --accent-text: #ffffff;
 }
 
 @theme {
@@ -75,6 +84,7 @@
   --color-text-secondary: var(--text-secondary);
   --color-text-description: var(--text-description);
   --color-text-tertiary: var(--text-tertiary);
+  --color-accent-text: var(--accent-text);
 
   /* Custom font family */
   --font-family-swarm: 'Montserrat Alternates', sans-serif;

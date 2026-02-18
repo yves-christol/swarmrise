@@ -91,7 +91,27 @@ export const getBoardWithData = query({
 });
 
 /**
+ * Get all cards assigned to a specific role.
+ */
+export const getCardsByRole = query({
+  args: { roleId: v.id("roles") },
+  returns: v.array(kanbanCardValidator),
+  handler: async (ctx, args) => {
+    const role = await ctx.db.get(args.roleId);
+    if (!role) return [];
+
+    await getMemberInOrga(ctx, role.orgaId);
+
+    return await ctx.db
+      .query("kanbanCards")
+      .withIndex("by_role", (q) => q.eq("roleId", args.roleId))
+      .collect();
+  },
+});
+
+/**
  * Get all cards owned by a member across all boards.
+ * Looks up all roles held by the member, then gathers cards for each role.
  * Used for the member profile view.
  */
 export const getCardsByMember = query({
@@ -103,10 +123,23 @@ export const getCardsByMember = query({
 
     await getMemberInOrga(ctx, memberDoc.orgaId);
 
-    return await ctx.db
-      .query("kanbanCards")
-      .withIndex("by_owner", (q) => q.eq("ownerId", args.memberId))
+    // Get all roles held by this member
+    const roles = await ctx.db
+      .query("roles")
+      .withIndex("by_member", (q) => q.eq("memberId", args.memberId))
       .collect();
+
+    // Gather cards for each role
+    const allCards = [];
+    for (const role of roles) {
+      const cards = await ctx.db
+        .query("kanbanCards")
+        .withIndex("by_role", (q) => q.eq("roleId", role._id))
+        .collect();
+      allCards.push(...cards);
+    }
+
+    return allCards;
   },
 });
 
@@ -122,7 +155,7 @@ export const createCard = mutation({
     boardId: v.id("kanbanBoards"),
     columnId: v.id("kanbanColumns"),
     title: v.string(),
-    ownerId: v.id("members"),
+    roleId: v.id("roles"),
     dueDate: v.number(),
     comments: v.optional(v.string()),
   },
@@ -136,10 +169,13 @@ export const createCard = mutation({
       throw new Error("Column not found on this board");
     }
 
-    // Verify owner is a member of the org
-    const owner = await ctx.db.get(args.ownerId);
-    if (!owner || owner.orgaId !== board.orgaId) {
-      throw new Error("Owner must be a member of the organization");
+    // Verify role belongs to the board's team
+    const role = await ctx.db.get(args.roleId);
+    if (!role || role.orgaId !== board.orgaId) {
+      throw new Error("Role must belong to the same organization");
+    }
+    if (role.teamId !== board.teamId) {
+      throw new Error("Role must belong to the board's team");
     }
 
     // Calculate position: place at end of column
@@ -157,7 +193,7 @@ export const createCard = mutation({
       columnId: args.columnId,
       boardId: args.boardId,
       orgaId: board.orgaId,
-      ownerId: args.ownerId,
+      roleId: args.roleId,
       title: args.title,
       dueDate: args.dueDate,
       comments: args.comments ?? "",
@@ -167,13 +203,13 @@ export const createCard = mutation({
 });
 
 /**
- * Update card details (title, owner, due date, comments).
+ * Update card details (title, role, due date, comments).
  */
 export const updateCard = mutation({
   args: {
     cardId: v.id("kanbanCards"),
     title: v.optional(v.string()),
-    ownerId: v.optional(v.id("members")),
+    roleId: v.optional(v.id("roles")),
     dueDate: v.optional(v.number()),
     comments: v.optional(v.string()),
   },
@@ -184,23 +220,26 @@ export const updateCard = mutation({
 
     const { board } = await requireBoardAccess(ctx, card.boardId);
 
-    // Verify new owner if provided
-    if (args.ownerId !== undefined) {
-      const owner = await ctx.db.get(args.ownerId);
-      if (!owner || owner.orgaId !== board.orgaId) {
-        throw new Error("Owner must be a member of the organization");
+    // Verify new role if provided
+    if (args.roleId !== undefined) {
+      const role = await ctx.db.get(args.roleId);
+      if (!role || role.orgaId !== board.orgaId) {
+        throw new Error("Role must belong to the same organization");
+      }
+      if (role.teamId !== board.teamId) {
+        throw new Error("Role must belong to the board's team");
       }
     }
 
     const updates: Partial<{
       title: string;
-      ownerId: Id<"members">;
+      roleId: Id<"roles">;
       dueDate: number;
       comments: string;
     }> = {};
 
     if (args.title !== undefined) updates.title = args.title;
-    if (args.ownerId !== undefined) updates.ownerId = args.ownerId;
+    if (args.roleId !== undefined) updates.roleId = args.roleId;
     if (args.dueDate !== undefined) updates.dueDate = args.dueDate;
     if (args.comments !== undefined) updates.comments = args.comments;
 
@@ -374,5 +413,68 @@ export const backfillBoards = internalMutation({
     }
 
     return created;
+  },
+});
+
+/**
+ * Migrate existing kanban cards from ownerId (member) to roleId (role).
+ * For each card with an ownerId, finds a matching role in the board's team
+ * held by that member. Flags cards where no matching role is found.
+ * Run once via the Convex dashboard after deploying the schema change.
+ */
+export const migrateOwnerToRole = internalMutation({
+  args: {},
+  returns: v.object({
+    migrated: v.number(),
+    flagged: v.number(),
+  }),
+  handler: async (ctx) => {
+    const allCards = await ctx.db.query("kanbanCards").collect();
+    let migrated = 0;
+    let flagged = 0;
+
+    for (const card of allCards) {
+      // Skip cards that already have roleId (already migrated)
+      if ((card as Record<string, unknown>).roleId) continue;
+
+      const ownerId = (card as Record<string, unknown>).ownerId as Id<"members"> | undefined;
+      if (!ownerId) {
+        flagged++;
+        continue;
+      }
+
+      // Get the board to find the team
+      const board = await ctx.db.get(card.boardId);
+      if (!board) {
+        flagged++;
+        continue;
+      }
+
+      // Find roles in this team held by the card's owner
+      const memberRoles = await ctx.db
+        .query("roles")
+        .withIndex("by_member", (q) => q.eq("memberId", ownerId))
+        .collect();
+
+      const teamRoles = memberRoles.filter((r) => r.teamId === board.teamId);
+
+      if (teamRoles.length === 0) {
+        // No matching role found — flag for manual review
+        flagged++;
+        continue;
+      }
+
+      // Pick a non-special role first, fall back to the first available
+      const targetRole =
+        teamRoles.find((r) => !r.roleType) ?? teamRoles[0];
+
+      await ctx.db.patch(card._id, {
+        roleId: targetRole._id,
+      } as Record<string, unknown>);
+
+      migrated++;
+    }
+
+    return { migrated, flagged };
   },
 });

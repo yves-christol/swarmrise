@@ -16,7 +16,7 @@
   },
   "card": {
     "title": "Titolo",
-    "owner": "Responsabile",
+    "role": "Ruolo",
     "dueDate": "Scadenza",
     "comments": "Commenti",
     "overdue": "Scaduta",
@@ -26,7 +26,7 @@
     "delete": "Elimina scheda",
     "deleteConfirm": "Sei sicuro di voler eliminare questa scheda?",
     "titleRequired": "Il titolo \u00e8 obbligatorio",
-    "ownerRequired": "Il responsabile \u00e8 obbligatorio",
+    "roleRequired": "Il ruolo \u00e8 obbligatorio",
     "dueDateRequired": "La data di scadenza \u00e8 obbligatoria",
     "noComments": "Nessun commento"
   },

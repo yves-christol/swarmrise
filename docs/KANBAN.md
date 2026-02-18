@@ -2,7 +2,7 @@
 
 This document defines the architecture, data model, and implementation plan for the Kanban board feature in Swarmrise. It is maintained by Kimiko, the Kanban system architect.
 
-**Status:** Phase 4 complete. Drag and drop working (cross-column moves, within-column reordering, drag overlay ghost card). Phases 1-4 done.
+**Status:** Phases 1-4 done. Design evolution in progress: migrating from member-based to role-based card ownership (`ownerId` -> `roleId`). Cards will display role icon + member avatar.
 
 ---
 
@@ -34,7 +34,7 @@ The Kanban board is a **team-scoped action tracker**. It gives each team a share
 
 1. **One board per team, always.** A Kanban board is created automatically when a team is created, mirroring how team channels are auto-created. There is no orga-level Kanban. Teams are the unit of coordination.
 
-2. **Accountability is explicit.** Every card has exactly one owner (a member). No unassigned cards. No multiple owners. This mirrors Swarmrise's governance philosophy: every commitment has a single accountable person.
+2. **Accountability is role-based.** Every card is owned by exactly one role, not a person. No unassigned cards. No multiple owners. When a role is reassigned to a different member, all cards tied to that role automatically reflect the new holder. This mirrors Swarmrise's governance philosophy: commitments belong to organizational functions, not individuals.
 
 3. **Simplicity over configurability.** The initial implementation provides four fixed columns (New Topics, Actions, Done, Archived). Custom columns come later. The card model is intentionally lean: title, owner, due date, comments. No labels, no attachments, no checklists -- those are future enhancements that can be added incrementally.
 
@@ -48,7 +48,7 @@ The Kanban board is a **team-scoped action tracker**. It gives each team a share
 
 ### What It Is
 
-A Kanban board attached to each team in Swarmrise. Team members can create cards, assign them to members, set due dates, and move them across columns to track progress.
+A Kanban board attached to each team in Swarmrise. Team members can create cards, assign them to roles (not individuals), set due dates, and move them across columns to track progress. Each card displays the role icon alongside the avatar of the member currently holding that role.
 
 ### What It Is Not
 
@@ -59,11 +59,13 @@ A Kanban board attached to each team in Swarmrise. Team members can create cards
 ### Core User Stories
 
 1. As a team member, I can see all cards on my team's Kanban board organized by column.
-2. As a team member, I can create a new card with a title, owner, due date, and optional comments.
+2. As a team member, I can create a new card with a title, owning role, due date, and optional comments.
 3. As a team member, I can drag cards between columns and reorder them within a column.
-4. As a team member, I can edit a card's details (title, owner, due date, comments).
+4. As a team member, I can edit a card's details (title, owning role, due date, comments).
 5. As a team member, I can search/filter cards across all columns on the board.
 6. As a team member, I can see cards with overdue dates visually highlighted.
+7. As a team member, I can see each card's role icon and the avatar of the member currently holding that role.
+8. When a role is reassigned to a different member, all cards owned by that role automatically show the new member's avatar.
 
 ---
 
@@ -105,19 +107,26 @@ A Kanban board attached to each team in Swarmrise. Team members can create cards
          |
          | 1:N
          v
-+--------+-------+
-|  KanbanCard    |
++--------+-------+         +----------------+
+|  KanbanCard    |         |     Role       |
++----------------+         +----------------+
+| _id            |         | _id            |
+| columnId       |  -----> | teamId         |
+| boardId        |  -----> | memberId       |  --> members._id (current holder)
+| orgaId         |         | title          |
+| roleId         |  -----> | iconKey        |
+| title          |         | roleType       |
+| dueDate        |         +----------------+
+| comments       |
+| position       |
 +----------------+
-| _id            |
-| columnId       |  --> kanbanColumns._id
-| boardId        |  --> kanbanBoards._id
-| orgaId         |  --> orgas._id
-| ownerId        |  --> members._id (REQUIRED, exactly one)
-| title          |  string (REQUIRED)
-| dueDate        |  number (timestamp, REQUIRED)
-| comments       |  string (can be empty, supports multi-line)
-| position       |  number (ordering within column)
-+----------------+
+
+Card.roleId --> roles._id (REQUIRED, exactly one)
+Role.memberId --> members._id (the person currently filling the role)
+
+Key insight: When a role is reassigned (role.memberId changes),
+all kanban cards with that roleId automatically reflect the new member
+because the member is resolved at query time through the role, not stored on the card.
 ```
 
 ### Type Definitions
@@ -167,7 +176,7 @@ export const kanbanCardType = v.object({
   columnId: v.id("kanbanColumns"),
   boardId: v.id("kanbanBoards"),
   orgaId: v.id("orgas"),
-  ownerId: v.id("members"),
+  roleId: v.id("roles"),       // The role that owns this card (REQUIRED, exactly one)
   title: v.string(),
   dueDate: v.number(),
   comments: v.string(),
@@ -219,8 +228,8 @@ kanbanCards: defineTable({ ...kanbanCardType.fields })
   .index("by_board", ["boardId"])
   .index("by_column", ["columnId"])
   .index("by_column_and_position", ["columnId", "position"])
-  .index("by_owner", ["ownerId"])
-  .index("by_board_and_owner", ["boardId", "ownerId"]),
+  .index("by_role", ["roleId"])
+  .index("by_board_and_role", ["boardId", "roleId"]),
 ```
 
 ### Query Pattern Rationale
@@ -233,8 +242,8 @@ kanbanCards: defineTable({ ...kanbanCardType.fields })
 | `kanbanCards.by_column` | `getCardsInColumn` | Fetch cards for one column |
 | `kanbanCards.by_column_and_position` | `getCardsInColumn` (ordered) | Fetch cards in display order within a column |
 | `kanbanCards.by_board` | `getAllCardsForBoard`, search | Fetch all cards across a board |
-| `kanbanCards.by_owner` | `getCardsByMember` | Member view: all cards owned by a member across all teams |
-| `kanbanCards.by_board_and_owner` | `getCardsForMemberOnBoard` | Filter board by owner |
+| `kanbanCards.by_role` | `getCardsByRole` | All cards owned by a specific role |
+| `kanbanCards.by_board_and_role` | `getCardsForRoleOnBoard` | Filter board by owning role |
 
 ---
 
@@ -248,7 +257,7 @@ Kanban access control mirrors the chat system's team-scoped access pattern (see 
 
 2. **All team members can create, edit, and move cards.** There is no distinction between "card owner" and "card editor" -- any team member can modify any card on the board. This matches the collaborative ethos of Swarmrise.
 
-3. **Card ownership is about accountability, not permissions.** The `ownerId` field tracks who is responsible for the action, not who can edit it.
+3. **Card ownership is about role accountability, not permissions.** The `roleId` field tracks which organizational role is responsible for the action, not who can edit it. The responsible person is derived from the role's `memberId` at query time.
 
 ### Access Helper
 
@@ -303,14 +312,15 @@ convex/kanban/
 | `kanban.checkTeamAccess` | `{ teamId: Id<"teams"> }` | `boolean` | Check if the authenticated user has access to a team's board. Used as a guard to skip heavier queries for non-members. |
 | `kanban.getBoard` | `{ teamId: Id<"teams"> }` | `KanbanBoard \| null` | Get the Kanban board for a team |
 | `kanban.getBoardWithData` | `{ teamId: Id<"teams"> }` | `{ board, columns, cards } \| null` | Get board with all columns and cards in one query (main board loader) |
-| `kanban.getCardsByMember` | `{ memberId: Id<"members"> }` | `KanbanCard[]` | Get all cards owned by a member across all boards (for member profile view) |
+| `kanban.getCardsByRole` | `{ roleId: Id<"roles"> }` | `KanbanCard[]` | Get all cards owned by a specific role |
+| `kanban.getCardsByMember` | `{ memberId: Id<"members"> }` | `KanbanCard[]` | Get all cards where the owning role is held by a given member (for member profile view; queries roles by memberId, then cards by roleId) |
 
 ### Mutations
 
 | Function | Args | Returns | Description |
 |----------|------|---------|-------------|
-| `kanban.createCard` | `{ boardId, columnId, title, ownerId, dueDate, comments?, position? }` | `Id<"kanbanCards">` | Create a new card in a column |
-| `kanban.updateCard` | `{ cardId, title?, ownerId?, dueDate?, comments? }` | `Id<"kanbanCards">` | Update card details |
+| `kanban.createCard` | `{ boardId, columnId, title, roleId, dueDate, comments?, position? }` | `Id<"kanbanCards">` | Create a new card in a column, assigned to a role |
+| `kanban.updateCard` | `{ cardId, title?, roleId?, dueDate?, comments? }` | `Id<"kanbanCards">` | Update card details (change owning role, title, etc.) |
 | `kanban.moveCard` | `{ cardId, targetColumnId, targetPosition }` | `null` | Move a card to a different column and/or position (drag and drop) |
 | `kanban.deleteCard` | `{ cardId }` | `null` | Delete a card permanently |
 | `kanban.reorderColumns` | `{ boardId, columnOrder: Id<"kanbanColumns">[] }` | `null` | Reorder columns on a board |
@@ -439,7 +449,8 @@ Renders a single column with its header and a droppable zone for cards.
 type KanbanColumnProps = {
   column: KanbanColumn;
   cards: KanbanCard[];
-  members: Map<Id<"members">, Member>;
+  roleMap: Map<Id<"roles">, Role>;
+  memberMap: Map<Id<"members">, Member>;
   onCreateCard: () => void;
 };
 ```
@@ -457,13 +468,16 @@ A single card rendered within a column. Draggable.
 ```typescript
 type KanbanCardProps = {
   card: KanbanCard;
-  owner: Member;
+  role: Role;             // The owning role (provides icon, title)
+  roleMember: Member;     // The member currently holding the role (provides avatar, name)
   onClick: () => void;
 };
 ```
 
 Responsibilities:
-- Display card title, owner avatar, due date
+- Display card title, role icon + member avatar side-by-side, due date
+- Role icon rendered as an SVG using `getRoleIconPath(role.iconKey, role.roleType)`
+- Member avatar rendered beside the role icon (small circular photo or initials)
 - Visual indicator for overdue cards (red tint or border)
 - Draggable via DnD library
 - Click to open card detail modal
@@ -477,15 +491,17 @@ type KanbanCardModalProps = {
   isOpen: boolean;
   onClose: () => void;
   boardId: Id<"kanbanBoards">;
+  columns: KanbanColumn[];
+  roles: Role[];                   // Team roles for the role picker
+  members: Map<Id<"members">, Member>; // Members lookup for displaying role holders
   columnId?: Id<"kanbanColumns">;  // Pre-selected column (for "add card" in a specific column)
   card?: KanbanCard;               // Existing card (for edit mode)
-  members: Member[];               // Team members for owner picker
 };
 ```
 
 Fields:
 - Title (text input, required)
-- Owner (member dropdown, required)
+- Role (role dropdown, required) -- shows role title + icon + current holder's name
 - Due date (date picker, required)
 - Comments (textarea, optional)
 - Column (dropdown, only shown in create mode)
@@ -587,7 +603,8 @@ The search bar filters cards client-side across all columns on the board. Since 
 ### Search Behavior
 
 - Filters by card title (case-insensitive substring match)
-- Filters by owner name (first name, last name)
+- Filters by role title (e.g., searching "secretary" shows cards owned by the secretary role)
+- Filters by role holder's name (first name, last name of the member currently holding the role)
 - When search is active, columns only show matching cards
 - Empty columns during search are hidden or dimmed
 - Clear search button to reset
@@ -631,7 +648,7 @@ Create `public/locales/{lng}/kanban.json` for all supported languages (en, fr, e
   },
   "card": {
     "title": "Title",
-    "owner": "Owner",
+    "role": "Role",
     "dueDate": "Due date",
     "comments": "Comments",
     "overdue": "Overdue",
@@ -640,7 +657,7 @@ Create `public/locales/{lng}/kanban.json` for all supported languages (en, fr, e
     "delete": "Delete card",
     "deleteConfirm": "Are you sure you want to delete this card?",
     "titleRequired": "Title is required",
-    "ownerRequired": "Owner is required",
+    "roleRequired": "Role is required",
     "dueDateRequired": "Due date is required",
     "noComments": "No comments"
   },
@@ -687,7 +704,7 @@ Add `'kanban'` to the `ns` array.
 
 ### 6. Member Profile (Future)
 
-From `MemberManageView` or `MemberVisualView`, show all cards owned by a member across all teams using `kanban.getCardsByMember`.
+From `MemberManageView` or `MemberVisualView`, show all cards where the owning role is held by a given member across all teams using `kanban.getCardsByMember` (which resolves roles by memberId, then cards by roleId).
 
 ### 7. Decision Audit Trail (Optional, Future)
 
@@ -803,6 +820,19 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | Search/filter | Done | Phase 5.1-5.2 |
 | Responsive design | Done | Phase 5.3 |
 | Graceful no-access handling | Done | `checkTeamAccess` query gates all downstream queries; non-members see i18n message with zero backend errors |
+| **Role-based ownership migration** | | |
+| Schema: `ownerId` -> `roleId` in kanbanCards | Pending | Replace `ownerId: v.id("members")` with `roleId: v.id("roles")` |
+| Schema: indexes `by_owner`/`by_board_and_owner` -> `by_role`/`by_board_and_role` | Pending | Update `convex/schema.ts` |
+| Backend: update `kanban/index.ts` types | Pending | Change `kanbanCardType` field |
+| Backend: update `kanban/functions.ts` | Pending | All queries/mutations that reference `ownerId` |
+| Backend: add `migrateOwnerToRole` internal mutation | Pending | One-time migration for existing cards |
+| Backend: update `getBoardWithData` to include roles | Pending | Query roles for the team alongside cards |
+| Frontend: `KanbanCard` shows role icon + member avatar | Pending | Dual display: role SVG icon + member photo |
+| Frontend: `KanbanCardModal` role picker (replaces member picker) | Pending | Dropdown showing team roles with icons |
+| Frontend: `KanbanBoard` fetches roles for the team | Pending | Add `useQuery(listRolesInTeam)` |
+| Frontend: `KanbanColumn` passes roleMap | Pending | Thread role data to card components |
+| Frontend: update search to filter by role title + holder name | Pending | Extend client-side filter logic |
+| i18n: update `owner` -> `role` keys in all 6 languages | Pending | `card.owner` -> `card.role`, `card.ownerRequired` -> `card.roleRequired` |
 
 ---
 
@@ -814,11 +844,11 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 
 **Rationale:** Matches the channel model (one channel per team). Keeps the mental model simple. A team is a unit of coordination, and one board is sufficient. If a team needs to track fundamentally different types of work, that is a signal the team should be split.
 
-### 2. Single owner per card (not optional, not multiple)
+### 2. Single role owner per card (not optional, not multiple)
 
-**Decision:** Every card must have exactly one owner (`ownerId` is required).
+**Decision:** Every card must be owned by exactly one role (`roleId` is required). The card references a role, not a member directly.
 
-**Rationale:** Swarmrise's governance model is built on clear accountability. "Everyone is responsible" means "no one is responsible." Requiring exactly one owner forces explicit commitment.
+**Rationale:** Swarmrise's governance model is built on clear accountability tied to organizational structure. By linking cards to roles rather than people: (a) "Everyone is responsible" means "no one is responsible" -- requiring exactly one owning role forces explicit commitment. (b) When a role is reassigned to a different member, all associated cards automatically reflect the new holder without any data migration or manual updates. (c) The card display shows both the role icon and the current member's avatar, reinforcing the organizational structure.
 
 ### 3. Due date is required
 
@@ -868,6 +898,14 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 
 **Rationale:** Previously the frontend called `getBoardWithData` unconditionally and relied on catching `ensureBoard` mutation failures to detect non-membership, which produced console errors. The `checkTeamAccess` query is a cheap boolean check that prevents all downstream queries and mutations from firing when the user is not a team member. This eliminates console exceptions entirely and provides a clean "no access" message without any backend error noise.
 
+### 11. Role-based card ownership (not member-based)
+
+**Decision:** Cards reference `roleId: Id<"roles">` instead of `ownerId: Id<"members">`. The responsible person is derived at query/render time by looking up `role.memberId`.
+
+**Rationale:** In Swarmrise, accountability belongs to organizational functions (roles), not individuals. When a role is reassigned from person A to person B, all kanban cards tied to that role should automatically reflect the new holder. With member-based ownership, every card would need to be manually re-assigned on role changes. With role-based ownership, the indirection through the role document makes reassignment a zero-touch operation for the Kanban system. The card display renders both the role icon (from `role.iconKey`/`role.roleType`) and the current holder's avatar (from `role.memberId -> member.pictureURL`), making the organizational context visible at a glance.
+
+**Migration:** Existing cards with `ownerId: Id<"members">` must be migrated to `roleId: Id<"roles">`. Each card's `ownerId` maps to `member -> member.roleIds -> find role in same team as the card's board`. If a member holds multiple roles in the team, the migration script should use a heuristic (e.g., pick the first role, or flag for manual review). If a member has no role in the team, the card should be flagged for manual assignment.
+
 ---
 
 ## Future Enhancements
@@ -876,7 +914,7 @@ Listed roughly in priority order:
 
 1. **Custom columns** - Add, rename, reorder, delete columns (requires UI for column management and schema support for user-defined column names)
 2. **Dedicated full-screen route** - `/o/:orgaId/teams/:teamId/kanban` with maximized board view
-3. **Member view integration** - Show all cards owned by a member across all teams in `MemberManageView`/`MemberVisualView`
+3. **Member view integration** - Show all cards owned by roles held by a member across all teams in `MemberManageView`/`MemberVisualView`
 4. **Card labels/tags** - Color-coded labels for categorization
 5. **Column WIP limits** - Optional maximum card count per column, visual warning when exceeded
 6. **Due date notifications** - Notify card owner when a card approaches or passes its due date (integrates with existing notification system)
@@ -898,30 +936,53 @@ Listed roughly in priority order:
 
 ### Data Migration
 
-No migration needed for initial deployment. The schema addition is purely additive (new tables). Existing teams will not have boards until they are manually created or a backfill migration is run.
+**Board backfill (original):** The `backfillBoards` internal mutation creates boards for existing teams that don't have one. This is unchanged.
 
-**Backfill strategy for existing teams:** A one-time internal mutation that iterates over all teams without boards and creates them:
+**ownerId -> roleId migration:** When transitioning from member-based to role-based card ownership, existing cards need their `ownerId` field replaced with `roleId`. The migration strategy:
+
+1. For each kanban card with `ownerId`:
+   a. Look up the board to find the team (`board.teamId`)
+   b. Query all roles in that team (`roles.by_team`)
+   c. Find a role held by the card's `ownerId` member (`role.memberId === card.ownerId`)
+   d. If exactly one match: set `card.roleId = role._id`, remove `ownerId`
+   e. If multiple matches: pick the first non-special role (or log for manual review)
+   f. If no match (member has no role in team): log the card for manual assignment
 
 ```typescript
 // convex/kanban/functions.ts
-export const backfillBoards = internalMutation({
+export const migrateOwnerToRole = internalMutation({
   args: {},
-  returns: v.number(),
+  returns: v.object({ migrated: v.number(), flagged: v.number() }),
   handler: async (ctx) => {
-    const teams = await ctx.db.query("teams").collect();
-    let created = 0;
-    for (const team of teams) {
-      const existing = await ctx.db
-        .query("kanbanBoards")
-        .withIndex("by_team", (q) => q.eq("teamId", team._id))
-        .unique();
-      if (!existing) {
-        // Create board with default columns (same logic as createTeam)
-        // ...
-        created++;
+    const cards = await ctx.db.query("kanbanCards").collect();
+    let migrated = 0;
+    let flagged = 0;
+
+    for (const card of cards) {
+      if ((card as any).roleId) continue; // Already migrated
+      const ownerId = (card as any).ownerId;
+      if (!ownerId) { flagged++; continue; }
+
+      const board = await ctx.db.get(card.boardId);
+      if (!board) { flagged++; continue; }
+
+      const teamRoles = await ctx.db
+        .query("roles")
+        .withIndex("by_team", (q) => q.eq("teamId", board.teamId))
+        .collect();
+
+      const matchingRole = teamRoles.find((r) => r.memberId === ownerId);
+      if (matchingRole) {
+        await ctx.db.patch(card._id, { roleId: matchingRole._id } as any);
+        migrated++;
+      } else {
+        flagged++;
       }
     }
-    return created;
+
+    return { migrated, flagged };
   },
 });
 ```
+
+**Important:** After running the migration, a schema update removes the old `ownerId` field and `by_owner`/`by_board_and_owner` indexes, replacing them with `roleId` and `by_role`/`by_board_and_role`.

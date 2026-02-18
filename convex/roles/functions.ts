@@ -601,7 +601,16 @@ export const deleteRole = mutation({
         });
       }
     }
-    
+
+    // Clean up kanban cards owned by this role
+    const roleCards = await ctx.db
+      .query("kanbanCards")
+      .withIndex("by_role", (q) => q.eq("roleId", args.roleId))
+      .collect();
+    for (const card of roleCards) {
+      await ctx.db.delete(card._id);
+    }
+
     // Delete role
     await ctx.db.delete(args.roleId);
     

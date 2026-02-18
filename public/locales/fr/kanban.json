@@ -16,7 +16,7 @@
   },
   "card": {
     "title": "Titre",
-    "owner": "Responsable",
+    "role": "R\u00f4le",
     "dueDate": "\u00c9ch\u00e9ance",
     "comments": "Commentaires",
     "overdue": "En retard",
@@ -26,7 +26,7 @@
     "delete": "Supprimer la carte",
     "deleteConfirm": "\u00cates-vous s\u00fbr de vouloir supprimer cette carte ?",
     "titleRequired": "Le titre est requis",
-    "ownerRequired": "Le responsable est requis",
+    "roleRequired": "Le r\u00f4le est requis",
     "dueDateRequired": "La date d'\u00e9ch\u00e9ance est requise",
     "noComments": "Aucun commentaire"
   },

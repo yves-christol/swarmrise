@@ -16,7 +16,7 @@
   },
   "card": {
     "title": "T\u00edtulo",
-    "owner": "Responsable",
+    "role": "Rol",
     "dueDate": "Fecha l\u00edmite",
     "comments": "Comentarios",
     "overdue": "Vencida",
@@ -26,7 +26,7 @@
     "delete": "Eliminar tarjeta",
     "deleteConfirm": "\u00bfEst\u00e1s seguro de que quieres eliminar esta tarjeta?",
     "titleRequired": "El t\u00edtulo es obligatorio",
-    "ownerRequired": "El responsable es obligatorio",
+    "roleRequired": "El rol es obligatorio",
     "dueDateRequired": "La fecha l\u00edmite es obligatoria",
     "noComments": "Sin comentarios"
   },

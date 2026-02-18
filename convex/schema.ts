@@ -167,6 +167,6 @@ export default defineSchema({
     .index("by_board", ["boardId"])
     .index("by_column", ["columnId"])
     .index("by_column_and_position", ["columnId", "position"])
-    .index("by_owner", ["ownerId"])
-    .index("by_board_and_owner", ["boardId", "ownerId"]),
+    .index("by_role", ["roleId"])
+    .index("by_board_and_role", ["boardId", "roleId"]),
 });

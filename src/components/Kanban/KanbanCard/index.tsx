@@ -2,16 +2,19 @@ import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { KanbanCard as KanbanCardType } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
+import type { Role } from "../../../../convex/roles";
+import { getRoleIconPath } from "../../../utils/roleIconDefaults";
 
 type KanbanCardProps = {
   card: KanbanCardType;
-  owner: Member | undefined;
+  role: Role | undefined;
+  roleMember: Member | undefined;
   onClick?: () => void;
   style?: React.CSSProperties;
 };
 
 export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
-  function KanbanCard({ card, owner, onClick, style, ...props }, ref) {
+  function KanbanCard({ card, role, roleMember, onClick, style, ...props }, ref) {
     const { t } = useTranslation("kanban");
     const isOverdue = card.dueDate < Date.now();
 
@@ -37,7 +40,7 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
           ${onClick ? "hover:shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-highlight" : "shadow-lg"}
           transition-shadow duration-75
         `}
-        aria-label={`${card.title} - ${owner ? `${owner.firstname} ${owner.surname}` : ""}`}
+        aria-label={`${card.title} - ${role ? role.title : ""} ${roleMember ? `${roleMember.firstname} ${roleMember.surname}` : ""}`}
         {...props}
       >
         {/* Title */}
@@ -45,29 +48,44 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
           {card.title}
         </p>
 
-        {/* Footer: owner + due date */}
+        {/* Footer: role icon + member avatar + due date */}
         <div className="flex items-center justify-between mt-2 gap-2">
-          {/* Owner */}
-          {owner && (
-            <div className="flex items-center gap-1.5 min-w-0">
-              <div className="w-5 h-5 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0">
-                {owner.pictureURL ? (
-                  <img
-                    src={owner.pictureURL}
-                    alt={`${owner.firstname} ${owner.surname}`}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[10px] font-medium text-text-secondary">
-                    {owner.firstname.charAt(0)}{owner.surname.charAt(0)}
-                  </div>
-                )}
-              </div>
-              <span className="text-xs text-text-secondary truncate">
-                {owner.firstname}
-              </span>
-            </div>
-          )}
+          {/* Role + Member */}
+          <div className="flex items-center gap-1.5 min-w-0">
+            {/* Role icon */}
+            {role && (
+              <svg
+                className="w-4 h-4 flex-shrink-0 text-text-secondary"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d={getRoleIconPath(role.iconKey, role.roleType)} />
+              </svg>
+            )}
+
+            {/* Member avatar */}
+            {roleMember && (
+              <>
+                <div className="w-5 h-5 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0">
+                  {roleMember.pictureURL ? (
+                    <img
+                      src={roleMember.pictureURL}
+                      alt={`${roleMember.firstname} ${roleMember.surname}`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[10px] font-medium text-text-secondary">
+                      {roleMember.firstname.charAt(0)}{roleMember.surname.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs text-text-secondary truncate">
+                  {roleMember.firstname}
+                </span>
+              </>
+            )}
+          </div>
 
           {/* Due date */}
           <span

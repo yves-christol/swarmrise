@@ -7,13 +7,16 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import type { KanbanCard } from "../../../../convex/kanban";
 import type { KanbanColumn } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
+import type { Role } from "../../../../convex/roles";
+import { getRoleIconPath } from "../../../utils/roleIconDefaults";
 
 type KanbanCardModalProps = {
   isOpen: boolean;
   onClose: () => void;
   boardId: Id<"kanbanBoards">;
   columns: KanbanColumn[];
-  members: Member[];
+  roles: Role[];
+  memberMap: Map<Id<"members">, Member>;
   columnId?: Id<"kanbanColumns">;
   card?: KanbanCard;
 };
@@ -23,7 +26,8 @@ export function KanbanCardModal({
   onClose,
   boardId,
   columns,
-  members,
+  roles,
+  memberMap,
   columnId,
   card,
 }: KanbanCardModalProps) {
@@ -37,7 +41,7 @@ export function KanbanCardModal({
 
   // Form state
   const [title, setTitle] = useState("");
-  const [ownerId, setOwnerId] = useState("");
+  const [roleId, setRoleId] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [comments, setComments] = useState("");
   const [selectedColumnId, setSelectedColumnId] = useState("");
@@ -51,25 +55,23 @@ export function KanbanCardModal({
   const modalRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
-  // Sort members alphabetically
-  const sortedMembers = useMemo(() => {
-    return [...members].sort((a, b) =>
-      `${a.firstname} ${a.surname}`.localeCompare(`${b.firstname} ${b.surname}`)
-    );
-  }, [members]);
+  // Sort roles alphabetically by title
+  const sortedRoles = useMemo(() => {
+    return [...roles].sort((a, b) => a.title.localeCompare(b.title));
+  }, [roles]);
 
   // Initialize form when modal opens
   useEffect(() => {
     if (isOpen) {
       if (card) {
         setTitle(card.title);
-        setOwnerId(card.ownerId);
+        setRoleId(card.roleId);
         setDueDate(timestampToDateString(card.dueDate));
         setComments(card.comments);
         setSelectedColumnId(card.columnId);
       } else {
         setTitle("");
-        setOwnerId(members[0]?._id ?? "");
+        setRoleId(roles[0]?._id ?? "");
         setDueDate(todayString());
         setComments("");
         setSelectedColumnId(columnId ?? columns[0]?._id ?? "");
@@ -80,7 +82,7 @@ export function KanbanCardModal({
     } else {
       setIsVisible(false);
     }
-  }, [isOpen, card, columnId, columns, members]);
+  }, [isOpen, card, columnId, columns, roles]);
 
   // Focus title input when modal opens
   useEffect(() => {
@@ -137,8 +139,8 @@ export function KanbanCardModal({
       setError(t("card.titleRequired"));
       return false;
     }
-    if (!ownerId) {
-      setError(t("card.ownerRequired"));
+    if (!roleId) {
+      setError(t("card.roleRequired"));
       return false;
     }
     if (!dueDate) {
@@ -162,7 +164,7 @@ export function KanbanCardModal({
         await updateCard({
           cardId: card._id,
           title: title.trim(),
-          ownerId: ownerId as Id<"members">,
+          roleId: roleId as Id<"roles">,
           dueDate: dueDateTimestamp,
           comments: comments.trim(),
         });
@@ -171,7 +173,7 @@ export function KanbanCardModal({
           boardId,
           columnId: selectedColumnId as Id<"kanbanColumns">,
           title: title.trim(),
-          ownerId: ownerId as Id<"members">,
+          roleId: roleId as Id<"roles">,
           dueDate: dueDateTimestamp,
           comments: comments.trim() || undefined,
         });
@@ -283,16 +285,16 @@ export function KanbanCardModal({
             </div>
           )}
 
-          {/* Owner */}
+          {/* Role */}
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="card-owner" className="text-sm font-bold text-dark dark:text-light">
-              {t("card.owner")}
+            <label htmlFor="card-role" className="text-sm font-bold text-dark dark:text-light">
+              {t("card.role")}
             </label>
             <select
-              id="card-owner"
-              value={ownerId}
+              id="card-role"
+              value={roleId}
               onChange={(e) => {
-                setOwnerId(e.target.value);
+                setRoleId(e.target.value);
                 if (error) setError(null);
               }}
               disabled={isSubmitting}
@@ -301,13 +303,54 @@ export function KanbanCardModal({
                 focus:outline-none focus:ring-2 focus:ring-highlight transition-colors
                 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option value="" disabled>{t("card.ownerRequired")}</option>
-              {sortedMembers.map((m) => (
-                <option key={m._id} value={m._id}>
-                  {m.firstname} {m.surname}
-                </option>
-              ))}
+              <option value="" disabled>{t("card.roleRequired")}</option>
+              {sortedRoles.map((r) => {
+                const holder = memberMap.get(r.memberId);
+                const holderName = holder ? `${holder.firstname} ${holder.surname}` : "";
+                return (
+                  <option key={r._id} value={r._id}>
+                    {r.title}{holderName ? ` (${holderName})` : ""}
+                  </option>
+                );
+              })}
             </select>
+
+            {/* Preview of selected role */}
+            {roleId && (() => {
+              const selectedRole = roles.find((r) => r._id === roleId);
+              const holder = selectedRole ? memberMap.get(selectedRole.memberId) : undefined;
+              if (!selectedRole) return null;
+              return (
+                <div className="flex items-center gap-2 mt-1 text-xs text-text-secondary">
+                  <svg
+                    className="w-4 h-4 flex-shrink-0"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d={getRoleIconPath(selectedRole.iconKey, selectedRole.roleType)} />
+                  </svg>
+                  {holder && (
+                    <>
+                      <div className="w-4 h-4 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0">
+                        {holder.pictureURL ? (
+                          <img
+                            src={holder.pictureURL}
+                            alt={`${holder.firstname} ${holder.surname}`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-[8px] font-medium">
+                            {holder.firstname.charAt(0)}{holder.surname.charAt(0)}
+                          </div>
+                        )}
+                      </div>
+                      <span>{holder.firstname} {holder.surname}</span>
+                    </>
+                  )}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Due date */}
@@ -419,7 +462,7 @@ export function KanbanCardModal({
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || !title.trim() || !ownerId || !dueDate}
+                disabled={isSubmitting || !title.trim() || !roleId || !dueDate}
                 className="
                   px-5 py-2 text-sm font-bold rounded-md
                   bg-highlight hover:bg-highlight-hover text-dark

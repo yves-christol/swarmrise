@@ -39,7 +39,7 @@ export const kanbanCardType = v.object({
   columnId: v.id("kanbanColumns"),
   boardId: v.id("kanbanBoards"),
   orgaId: v.id("orgas"),
-  ownerId: v.id("members"),
+  roleId: v.id("roles"),
   title: v.string(),
   dueDate: v.number(),
   comments: v.string(),

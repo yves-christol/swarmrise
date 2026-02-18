@@ -20,6 +20,7 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import type { KanbanCard as KanbanCardType } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
+import type { Role } from "../../../../convex/roles";
 import { KanbanColumn } from "../KanbanColumn";
 import { KanbanEmptyState } from "../KanbanEmptyState";
 import { KanbanCardModal } from "../KanbanCardModal";
@@ -47,6 +48,10 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   const members = useQuery(
     api.members.functions.listMembers,
     hasAccess ? { orgaId } : "skip",
+  );
+  const roles = useQuery(
+    api.roles.functions.listRolesInTeam,
+    hasAccess ? { teamId } : "skip",
   );
   const moveCard = useMutation(api.kanban.functions.moveCard);
   const ensureBoard = useMutation(api.kanban.functions.ensureBoard);
@@ -96,10 +101,17 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     return map;
   }, [members]);
 
-  // Members as array for modal
-  const memberList = useMemo(() => {
-    return Array.from(memberMap.values());
-  }, [memberMap]);
+  // Build role lookup map
+  const roleMap = useMemo(() => {
+    const map = new Map<Id<"roles">, Role>();
+    roles?.forEach((r) => map.set(r._id, r as Role));
+    return map;
+  }, [roles]);
+
+  // Roles as array for modal
+  const roleList = useMemo(() => {
+    return Array.from(roleMap.values());
+  }, [roleMap]);
 
   // Group cards by column (sorted by position)
   const cardsByColumn = useMemo(() => {
@@ -122,7 +134,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     return map;
   }, [boardData]);
 
-  // Filter cards by search query
+  // Filter cards by search query (matches card title, role title, or member name)
   const filteredCardsByColumn = useMemo(() => {
     if (!searchQuery.trim()) return cardsByColumn;
 
@@ -134,17 +146,21 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
         columnId,
         cards.filter((card) => {
           if (card.title.toLowerCase().includes(query)) return true;
-          const owner = memberMap.get(card.ownerId);
-          if (owner) {
-            const fullName = `${owner.firstname} ${owner.surname}`.toLowerCase();
-            if (fullName.includes(query)) return true;
+          const role = roleMap.get(card.roleId);
+          if (role) {
+            if (role.title.toLowerCase().includes(query)) return true;
+            const member = memberMap.get(role.memberId);
+            if (member) {
+              const fullName = `${member.firstname} ${member.surname}`.toLowerCase();
+              if (fullName.includes(query)) return true;
+            }
           }
           return false;
         }),
       );
     }
     return filtered;
-  }, [cardsByColumn, searchQuery, memberMap]);
+  }, [cardsByColumn, searchQuery, roleMap, memberMap]);
 
   // Card lookup by id
   const cardById = useMemo(() => {
@@ -258,6 +274,8 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
 
   // Active card for drag overlay
   const activeCard = activeCardId ? cardById.get(activeCardId) : null;
+  const activeRole = activeCard ? roleMap.get(activeCard.roleId) : undefined;
+  const activeRoleMember = activeRole ? memberMap.get(activeRole.memberId) : undefined;
 
   // Loading (access check still pending)
   if (hasAccess === undefined) {
@@ -404,6 +422,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                 <KanbanColumn
                   column={column}
                   cards={columnCards}
+                  roleMap={roleMap}
                   memberMap={memberMap}
                   onCardClick={handleCardClick}
                   onAddCard={handleAddCard}
@@ -421,7 +440,8 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
               <div className="w-64 sm:w-72">
                 <KanbanCard
                   card={activeCard}
-                  owner={memberMap.get(activeCard.ownerId)}
+                  role={activeRole}
+                  roleMember={activeRoleMember}
                 />
               </div>
             ) : null}
@@ -436,7 +456,8 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
         onClose={handleCloseModal}
         boardId={boardData.board._id}
         columns={boardData.columns}
-        members={memberList}
+        roles={roleList}
+        memberMap={memberMap}
         columnId={createColumnId}
         card={editingCard}
       />

@@ -63,3 +63,15 @@
 ## Decisions Index (in decisions/index.ts)
 - targetType union includes: orgas, teams, roles, members, policies, invitations, topics, elections
 - May need to add 'kanbanCards' if we integrate Decision audit trail later
+
+## Role System (Key for Role-Based Card Ownership)
+- Role entity: `convex/roles/index.ts` -- has `memberId`, `teamId`, `orgaId`, `title`, `iconKey`, `roleType`
+- Role icon: `src/utils/roleIconDefaults.ts::getRoleIconPath(iconKey?, roleType?)` returns SVG path
+- Icon dictionary: `src/components/Icons/icons.ts` -- iconDict maps string keys to SVG paths
+- Roles query: `roles.functions.listRolesInTeam({ teamId })` fetches all roles in a team
+- `deleteRole` in `convex/roles/functions.ts` (line 560) does NOT clean up kanban cards
+  -- CRITICAL: must add kanban card cleanup when migrating to roleId-based ownership
+- `deleteTeam` cleans up roles AND kanban data separately, so team deletion is safe
+- A role always has exactly one `memberId` (required field, Id<"members">)
+- Role has optional `roleType`: "leader" | "secretary" | "referee"
+- Role has optional `iconKey` for custom icon (falls back to roleType default)

@@ -6,12 +6,14 @@ import { CSS } from "@dnd-kit/utilities";
 import type { KanbanColumn as KanbanColumnType } from "../../../../convex/kanban";
 import type { KanbanCard as KanbanCardType } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
+import type { Role } from "../../../../convex/roles";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { KanbanCard } from "../KanbanCard";
 
 type KanbanColumnProps = {
   column: KanbanColumnType;
   cards: KanbanCardType[];
+  roleMap: Map<Id<"roles">, Role>;
   memberMap: Map<Id<"members">, Member>;
   onCardClick: (card: KanbanCardType) => void;
   onAddCard: (columnId: Id<"kanbanColumns">) => void;
@@ -19,11 +21,13 @@ type KanbanColumnProps = {
 
 function SortableCard({
   card,
-  owner,
+  role,
+  roleMember,
   onCardClick,
 }: {
   card: KanbanCardType;
-  owner: Member | undefined;
+  role: Role | undefined;
+  roleMember: Member | undefined;
   onCardClick: (card: KanbanCardType) => void;
 }) {
   const {
@@ -45,7 +49,8 @@ function SortableCard({
     <KanbanCard
       ref={setNodeRef}
       card={card}
-      owner={owner}
+      role={role}
+      roleMember={roleMember}
       onClick={() => onCardClick(card)}
       style={style}
       {...attributes}
@@ -54,7 +59,7 @@ function SortableCard({
   );
 }
 
-export function KanbanColumn({ column, cards, memberMap, onCardClick, onAddCard }: KanbanColumnProps) {
+export function KanbanColumn({ column, cards, roleMap, memberMap, onCardClick, onAddCard }: KanbanColumnProps) {
   const { t } = useTranslation("kanban");
 
   const sortedCards = useMemo(
@@ -94,14 +99,19 @@ export function KanbanColumn({ column, cards, memberMap, onCardClick, onAddCard 
           ref={setDroppableRef}
           className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[4rem]"
         >
-          {sortedCards.map((card) => (
-            <SortableCard
-              key={card._id}
-              card={card}
-              owner={memberMap.get(card.ownerId)}
-              onCardClick={onCardClick}
-            />
-          ))}
+          {sortedCards.map((card) => {
+            const role = roleMap.get(card.roleId);
+            const roleMember = role ? memberMap.get(role.memberId) : undefined;
+            return (
+              <SortableCard
+                key={card._id}
+                card={card}
+                role={role}
+                roleMember={roleMember}
+                onCardClick={onCardClick}
+              />
+            );
+          })}
         </div>
       </SortableContext>
 

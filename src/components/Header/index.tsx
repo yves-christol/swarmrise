@@ -237,7 +237,10 @@ export const Header = () => {
       {/* LEFT: Focused entity name + search button (next to logo) */}
       {isSignedIn && selectedOrga && (
         <div className="flex items-center gap-1 ml-2">
-          <span className="text-sm text-dark dark:text-light truncate max-w-[160px] hidden sm:block">
+          <span
+            className="text-sm text-dark dark:text-light truncate max-w-[160px] hidden sm:block"
+            style={{ fontFamily: "var(--org-title-font, Arial, Helvetica, sans-serif)" }}
+          >
             {focusedEntityName}
           </span>
           <div className="relative">

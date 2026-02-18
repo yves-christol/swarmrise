@@ -56,42 +56,106 @@ export function OrgCustomisationProvider({ children }: { children: ReactNode }) 
     const vars: Record<string, string> = {};
 
     // Surface color → derive all surface tokens
+    // We set BOTH intermediate vars (--org-paper-color, --surface-*, etc.)
+    // AND the final @theme-level vars (--color-surface-*, --color-border-*, etc.)
+    // because CSS custom properties resolve var() eagerly at computed-value time.
+    // The @theme vars on :root (e.g. --color-surface-primary: var(--surface-primary))
+    // are resolved before inline styles take effect, so we must override them directly.
     if (surfaceColor) {
       vars["--org-paper-color"] = surfaceColor;
+      vars["--color-surface-primary"] = surfaceColor;
 
       if (isDark) {
-        vars["--org-paper-color-secondary"] = lightenHex(surfaceColor, 0.08);
-        vars["--org-paper-color-tertiary"] = lightenHex(surfaceColor, 0.15);
-        vars["--surface-hover-subtle"] = lightenHex(surfaceColor, 0.05);
-        vars["--surface-hover"] = lightenHex(surfaceColor, 0.10);
-        vars["--surface-hover-strong"] = lightenHex(surfaceColor, 0.18);
-        vars["--border-default"] = lightenHex(surfaceColor, 0.12);
-        vars["--border-strong"] = lightenHex(surfaceColor, 0.20);
-        vars["--text-secondary"] = lightenHex(surfaceColor, 0.50);
-        vars["--text-description"] = lightenHex(surfaceColor, 0.50);
-        vars["--text-tertiary"] = lightenHex(surfaceColor, 0.30);
+        const secondary = lightenHex(surfaceColor, 0.08);
+        const tertiary = lightenHex(surfaceColor, 0.15);
+        vars["--org-paper-color-secondary"] = secondary;
+        vars["--org-paper-color-tertiary"] = tertiary;
+        vars["--color-surface-secondary"] = secondary;
+        vars["--color-surface-tertiary"] = tertiary;
+
+        const hoverSubtle = lightenHex(surfaceColor, 0.05);
+        const hover = lightenHex(surfaceColor, 0.10);
+        const hoverStrong = lightenHex(surfaceColor, 0.18);
+        vars["--surface-hover-subtle"] = hoverSubtle;
+        vars["--surface-hover"] = hover;
+        vars["--surface-hover-strong"] = hoverStrong;
+        vars["--color-surface-hover-subtle"] = hoverSubtle;
+        vars["--color-surface-hover"] = hover;
+        vars["--color-surface-hover-strong"] = hoverStrong;
+
+        const bDefault = lightenHex(surfaceColor, 0.12);
+        const bStrong = lightenHex(surfaceColor, 0.20);
+        vars["--border-default"] = bDefault;
+        vars["--border-strong"] = bStrong;
+        vars["--color-border-default"] = bDefault;
+        vars["--color-border-strong"] = bStrong;
+
+        const tSecondary = lightenHex(surfaceColor, 0.50);
+        const tTertiary = lightenHex(surfaceColor, 0.30);
+        vars["--text-secondary"] = tSecondary;
+        vars["--text-description"] = tSecondary;
+        vars["--text-tertiary"] = tTertiary;
+        vars["--color-text-secondary"] = tSecondary;
+        vars["--color-text-description"] = tSecondary;
+        vars["--color-text-tertiary"] = tTertiary;
       } else {
-        vars["--org-paper-color-secondary"] = darkenHex(surfaceColor, 0.04);
-        vars["--org-paper-color-tertiary"] = darkenHex(surfaceColor, 0.08);
-        vars["--surface-hover-subtle"] = darkenHex(surfaceColor, 0.02);
-        vars["--surface-hover"] = darkenHex(surfaceColor, 0.05);
-        vars["--surface-hover-strong"] = darkenHex(surfaceColor, 0.10);
-        vars["--border-default"] = darkenHex(surfaceColor, 0.12);
-        vars["--border-strong"] = darkenHex(surfaceColor, 0.18);
-        vars["--text-secondary"] = darkenHex(surfaceColor, 0.45);
-        vars["--text-description"] = darkenHex(surfaceColor, 0.55);
-        vars["--text-tertiary"] = darkenHex(surfaceColor, 0.30);
+        const secondary = darkenHex(surfaceColor, 0.04);
+        const tertiary = darkenHex(surfaceColor, 0.08);
+        vars["--org-paper-color-secondary"] = secondary;
+        vars["--org-paper-color-tertiary"] = tertiary;
+        vars["--color-surface-secondary"] = secondary;
+        vars["--color-surface-tertiary"] = tertiary;
+
+        const hoverSubtle = darkenHex(surfaceColor, 0.02);
+        const hover = darkenHex(surfaceColor, 0.05);
+        const hoverStrong = darkenHex(surfaceColor, 0.10);
+        vars["--surface-hover-subtle"] = hoverSubtle;
+        vars["--surface-hover"] = hover;
+        vars["--surface-hover-strong"] = hoverStrong;
+        vars["--color-surface-hover-subtle"] = hoverSubtle;
+        vars["--color-surface-hover"] = hover;
+        vars["--color-surface-hover-strong"] = hoverStrong;
+
+        const bDefault = darkenHex(surfaceColor, 0.12);
+        const bStrong = darkenHex(surfaceColor, 0.18);
+        vars["--border-default"] = bDefault;
+        vars["--border-strong"] = bStrong;
+        vars["--color-border-default"] = bDefault;
+        vars["--color-border-strong"] = bStrong;
+
+        const tSecondary = darkenHex(surfaceColor, 0.45);
+        const tDescription = darkenHex(surfaceColor, 0.55);
+        const tTertiary = darkenHex(surfaceColor, 0.30);
+        vars["--text-secondary"] = tSecondary;
+        vars["--text-description"] = tDescription;
+        vars["--text-tertiary"] = tTertiary;
+        vars["--color-text-secondary"] = tSecondary;
+        vars["--color-text-description"] = tDescription;
+        vars["--color-text-tertiary"] = tTertiary;
       }
     }
 
     // Accent color → derive highlight tokens
     if (accentColor) {
+      const accentHover = darkenHex(accentColor, 0.15);
       vars["--org-highlight-color"] = accentColor;
-      vars["--org-highlight-hover"] = darkenHex(accentColor, 0.15);
+      vars["--org-highlight-hover"] = accentHover;
+      vars["--color-highlight"] = accentColor;
+      vars["--color-highlight-hover"] = accentHover;
 
       // Auto-compute text-on-accent (white or dark)
       const lum = relativeLuminance(accentColor);
-      vars["--accent-text"] = lum > 0.4 ? "#111111" : "#ffffff";
+      const accentText = lum > 0.4 ? "#111111" : "#ffffff";
+      vars["--accent-text"] = accentText;
+      vars["--color-accent-text"] = accentText;
+
+      // Gold text and diagram tokens (also use var() indirection from :root)
+      if (isDark) {
+        vars["--color-gold-text"] = accentColor;
+        vars["--diagram-golden-bee"] = accentColor;
+      } else {
+        vars["--diagram-golden-bee"] = accentHover;
+      }
     }
 
     if (selectedOrga.titleFont) {

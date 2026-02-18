@@ -217,7 +217,8 @@ body {
 
 /* Swarmrise static pages: reset org customisation to brand defaults.
    These pages (glossary, terms, privacy, principles) represent the Swarmrise
-   platform itself and must not inherit org-level title fonts or highlight colours. */
+   platform itself and must not inherit org-level title fonts or highlight colours.
+   Uses !important to override the OrgCustomisationProvider's inline styles. */
 .swarmrise-page {
   --org-highlight-color: #eac840;
   --org-highlight-hover: #d4af37;
@@ -225,6 +226,42 @@ body {
   --org-paper-color: initial;
   --org-paper-color-secondary: initial;
   --org-paper-color-tertiary: initial;
+  /* Reset @theme-level accent vars (must beat provider inline styles) */
+  --color-highlight: #eac840 !important;
+  --color-highlight-hover: #d4af37 !important;
+  --color-accent-text: #111111 !important;
+  --diagram-golden-bee: #D4AF37 !important;
+}
+:root.light .swarmrise-page {
+  --color-gold-text: #996800 !important;
+  --color-surface-primary: #ffffff !important;
+  --color-surface-secondary: #f1f5f9 !important;
+  --color-surface-tertiary: #e2e8f0 !important;
+  --color-surface-hover-subtle: #f9fafb !important;
+  --color-surface-hover: #f3f4f6 !important;
+  --color-surface-hover-strong: #e2e8f0 !important;
+  --color-border-default: #e5e7eb !important;
+  --color-border-strong: #d1d5db !important;
+  --color-text-secondary: #6b7280 !important;
+  --color-text-description: #4b5563 !important;
+  --color-text-tertiary: #9ca3af !important;
+  --color-accent-text: #111111 !important;
+}
+:root.dark .swarmrise-page {
+  --color-gold-text: #eac840 !important;
+  --color-surface-primary: #1f2937 !important;
+  --color-surface-secondary: #334155 !important;
+  --color-surface-tertiary: #475569 !important;
+  --color-surface-hover-subtle: rgba(55, 65, 81, 0.5) !important;
+  --color-surface-hover: #374151 !important;
+  --color-surface-hover-strong: #475569 !important;
+  --color-border-default: #374151 !important;
+  --color-border-strong: #4b5563 !important;
+  --color-text-secondary: #9ca3af !important;
+  --color-text-description: #9ca3af !important;
+  --color-text-tertiary: #6b7280 !important;
+  --color-accent-text: #ffffff !important;
+  --diagram-golden-bee: #EAC840 !important;
 }
 
 /* Principles page animations */

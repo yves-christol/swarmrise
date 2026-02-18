@@ -7,14 +7,14 @@ import { getRoleIconPath } from "../../../utils/roleIconDefaults";
 
 type KanbanCardProps = {
   card: KanbanCardType;
-  role: Role | undefined;
+  cardRole: Role | undefined;
   roleMember: Member | undefined;
   onClick?: () => void;
   style?: React.CSSProperties;
 };
 
 export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
-  function KanbanCard({ card, role, roleMember, onClick, style, ...props }, ref) {
+  function KanbanCard({ card, cardRole, roleMember, onClick, style, ...props }, ref) {
     const { t } = useTranslation("kanban");
     const isOverdue = card.dueDate < Date.now();
 
@@ -40,7 +40,7 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
           ${onClick ? "hover:shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-highlight" : "shadow-lg"}
           transition-shadow duration-75
         `}
-        aria-label={`${card.title} - ${role ? role.title : ""} ${roleMember ? `${roleMember.firstname} ${roleMember.surname}` : ""}`}
+        aria-label={`${card.title} - ${cardRole ? cardRole.title : ""} ${roleMember ? `${roleMember.firstname} ${roleMember.surname}` : ""}`}
         {...props}
       >
         {/* Title */}
@@ -53,14 +53,18 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
           {/* Role + Member */}
           <div className="flex items-center gap-1.5 min-w-0">
             {/* Role icon */}
-            {role && (
+            {cardRole && (
               <svg
-                className="w-4 h-4 flex-shrink-0 text-text-secondary"
-                viewBox="0 0 24 24"
-                fill="currentColor"
+                width="16"
+                height="16"
+                viewBox="0 0 40 40"
+                className="flex-shrink-0 text-dark dark:text-light"
                 aria-hidden="true"
               >
-                <path d={getRoleIconPath(role.iconKey, role.roleType)} />
+                <path
+                  d={getRoleIconPath(cardRole.iconKey, cardRole.roleType)}
+                  fill="currentColor"
+                />
               </svg>
             )}
 

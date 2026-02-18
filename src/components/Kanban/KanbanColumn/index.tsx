@@ -21,12 +21,12 @@ type KanbanColumnProps = {
 
 function SortableCard({
   card,
-  role,
+  cardRole,
   roleMember,
   onCardClick,
 }: {
   card: KanbanCardType;
-  role: Role | undefined;
+  cardRole: Role | undefined;
   roleMember: Member | undefined;
   onCardClick: (card: KanbanCardType) => void;
 }) {
@@ -49,7 +49,7 @@ function SortableCard({
     <KanbanCard
       ref={setNodeRef}
       card={card}
-      role={role}
+      cardRole={cardRole}
       roleMember={roleMember}
       onClick={() => onCardClick(card)}
       style={style}
@@ -100,13 +100,13 @@ export function KanbanColumn({ column, cards, roleMap, memberMap, onCardClick, o
           className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[4rem]"
         >
           {sortedCards.map((card) => {
-            const role = roleMap.get(card.roleId);
-            const roleMember = role ? memberMap.get(role.memberId) : undefined;
+            const cardRole = roleMap.get(card.roleId);
+            const roleMember = cardRole ? memberMap.get(cardRole.memberId) : undefined;
             return (
               <SortableCard
                 key={card._id}
                 card={card}
-                role={role}
+                cardRole={cardRole}
                 roleMember={roleMember}
                 onCardClick={onCardClick}
               />

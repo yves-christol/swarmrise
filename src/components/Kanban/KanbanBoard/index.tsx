@@ -440,7 +440,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
               <div className="w-64 sm:w-72">
                 <KanbanCard
                   card={activeCard}
-                  role={activeRole}
+                  cardRole={activeRole}
                   roleMember={activeRoleMember}
                 />
               </div>

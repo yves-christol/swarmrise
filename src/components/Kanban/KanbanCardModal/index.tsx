@@ -324,7 +324,7 @@ export function KanbanCardModal({
                 <div className="flex items-center gap-2 mt-1 text-xs text-text-secondary">
                   <svg
                     className="w-4 h-4 flex-shrink-0"
-                    viewBox="0 0 24 24"
+                    viewBox="0 0 40 40"
                     fill="currentColor"
                     aria-hidden="true"
                   >

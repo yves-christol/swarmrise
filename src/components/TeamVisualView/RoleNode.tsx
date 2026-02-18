@@ -100,28 +100,6 @@ export const RoleNode = memo(function RoleNode({
         />
       </g>
 
-      {/* Linked role badge (for roles synced from parent team - double role pattern) */}
-      {role.linkedRoleId && (
-        <g>
-          <circle
-            cx={x - radius * 0.7}
-            cy={y - radius * 0.7}
-            r={9}
-            fill="#64748b"
-          />
-          {/* Chain link icon */}
-          <g transform={`translate(${x - radius * 0.7}, ${y - radius * 0.7}) scale(0.35)`}>
-            <path
-              d="M-8,-2 C-8,-6 -5,-8 -2,-8 L2,-8 C6,-8 8,-5 8,-2 L8,2 C8,5 6,8 2,8 L-2,8 C-5,8 -8,5 -8,2 L-8,-2 M-4,0 L4,0"
-              fill="none"
-              stroke="white"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-          </g>
-        </g>
-      )}
-
       {/* Role title - same typography for all roles (flat organization) */}
       <text
         x={x}

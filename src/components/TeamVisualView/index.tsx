@@ -331,7 +331,7 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
 }
 
 
-// Team name and mission text component - name positioned higher, mission up to 3 lines
+// Team name and mission text component - name up to 3 lines, mission up to 3 lines
 function TeamNameText({
   name,
   mission,
@@ -351,43 +351,50 @@ function TeamNameText({
   const missionLineHeight = missionFontSize * 1.3;
   const gap = 8;
 
-  // Split name into lines (max 2 lines, truncate if needed)
+  // Split name into lines (max 3 lines, truncate last if needed)
   const getNameLines = (text: string): string[] => {
-    // If short enough, single line
     if (text.length <= maxCharsPerLine) {
       return [text];
     }
 
-    // Try to split at a space near the middle
     const words = text.split(" ");
     if (words.length === 1) {
-      // Single long word - truncate to fit two lines
       if (text.length <= maxCharsPerLine * 2) {
         const mid = Math.ceil(text.length / 2);
         return [text.slice(0, mid), text.slice(mid)];
       }
-      // Too long even for two lines
-      return [text.slice(0, maxCharsPerLine), text.slice(maxCharsPerLine, maxCharsPerLine * 2 - 1) + "…"];
+      return [text.slice(0, maxCharsPerLine), text.slice(maxCharsPerLine, maxCharsPerLine * 2 - 1) + "\u2026"];
     }
 
-    // Find best split point for two lines
-    let line1 = "";
-    let line2 = "";
-    for (const word of words) {
-      const testLine = line1 ? `${line1} ${word}` : word;
-      if (testLine.length <= maxCharsPerLine) {
-        line1 = testLine;
+    // Build lines word by word, up to 3 lines
+    const lines: string[] = [];
+    let currentLine = "";
+
+    for (let i = 0; i < words.length; i++) {
+      const candidate = currentLine ? `${currentLine} ${words[i]}` : words[i];
+      if (candidate.length > maxCharsPerLine && currentLine.length > 0) {
+        lines.push(currentLine);
+        if (lines.length === 2) {
+          // 3rd line - take all remaining words (including current)
+          const remaining = words.slice(i).join(" ");
+          if (remaining.length > maxCharsPerLine) {
+            lines.push(remaining.slice(0, maxCharsPerLine - 1) + "\u2026");
+          } else {
+            lines.push(remaining);
+          }
+          return lines;
+        }
+        currentLine = words[i];
       } else {
-        line2 = line2 ? `${line2} ${word}` : word;
+        currentLine = candidate;
       }
     }
 
-    // Truncate line2 if needed
-    if (line2.length > maxCharsPerLine) {
-      line2 = line2.slice(0, maxCharsPerLine - 1) + "…";
+    if (currentLine) {
+      lines.push(currentLine);
     }
 
-    return line2 ? [line1, line2] : [line1];
+    return lines;
   };
 
   // Split mission into lines (max 3 lines, truncate last line if needed)

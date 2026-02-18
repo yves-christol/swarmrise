@@ -44,6 +44,10 @@ export interface DemoOrgaConfig {
   orgaName: string;
   /** Accent color (hex string like "#RRGGBB", optional) */
   accentColor?: string;
+  /** Surface background tint for light mode (hex string like "#RRGGBB", optional) */
+  surfaceColorLight?: string;
+  /** Surface background tint for dark mode (hex string like "#RRGGBB", optional) */
+  surfaceColorDark?: string;
   /** Optional: restrict invitations to these email domains */
   authorizedEmailDomains?: string[];
   /** Number of synthetic test users to create (excluding the admin) */
@@ -346,7 +350,9 @@ export const ORGANIZATION_TREE: TeamTemplate = {
 
 export const DEMO_ORGA_CONFIG: DemoOrgaConfig = {
   orgaName: "Infomax Demo",
-  accentColor: "#3b82f6",   // Blue-500
+  accentColor: "#3b82f6",          // Blue-500
+  surfaceColorLight: "#eff6ff",    // Blue-50
+  surfaceColorDark: "#1e3a5f",     // Dark navy blue
   userCount: 100,
   organizationTree: ORGANIZATION_TREE,
 };

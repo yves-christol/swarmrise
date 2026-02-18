@@ -427,6 +427,8 @@ export const seedDemoOrga = internalMutation({
       name: config.orgaName,
       logoUrl: undefined,
       accentColor: config.accentColor,
+      surfaceColorLight: config.surfaceColorLight,
+      surfaceColorDark: config.surfaceColorDark,
       owner: adminUser._id,
       authorizedEmailDomains: config.authorizedEmailDomains,
     });

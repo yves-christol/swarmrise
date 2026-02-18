@@ -846,7 +846,7 @@ export const uploadDemoLogo = internalAction({
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
-    const blob = new Blob([bytes], { type: "image/png" });
+    const blob = new Blob([bytes], { type: "image/svg+xml" });
 
     // Store in Convex storage
     const storageId = await ctx.storage.store(blob);

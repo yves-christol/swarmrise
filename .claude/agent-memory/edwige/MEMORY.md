@@ -28,15 +28,34 @@
 4. Split large frontend components (RoleManageView, MemberManageView)
 5. topics/ directory confirmed clean
 
-## Round 2 Audit Findings (2026-02-17)
-See `audit-round2.md` for full prioritized list.
-Key issues:
-- Massive icon duplication (SpinnerIcon x5, CheckIcon x7, XIcon x5, ErrorIcon x3)
-- Duplicate COLOR_PRESETS, ContactInfo type (x3), getContactLink (x2)
-- `memberHasTeamAccess` lives in chat/access.ts but shared with kanban
-- Dead: ResourceCard component, 7 chat validators, SpecialRole/DigestFrequency/NotificationPayload types
-- `@types/d3-force` misplaced in dependencies (should be devDependencies)
-- `v.any()` in decisions for colorScheme backward compat
+## Round 3 Audit Findings (2026-02-19)
+
+### Resolved from Round 2
+- ResourceCard component removed
+- COLOR_PRESETS consolidated into ACCENT_PRESETS
+
+### Remaining Issues (Critical)
+- Org deletion (`deleteOrganization`) does NOT clean up: topics, policies, kanban, notifications, chat tool tables
+- `leaveOrganization` (owner-as-last-member) also has incomplete cleanup -- duplicates partial org deletion logic
+- `policies/functions.ts` is entirely dead (never called from frontend or backend)
+- `notificationPreferences/functions.ts` is entirely dead (never called)
+
+### Remaining Issues (Moderate)
+- Spinner SVG inlined ~15 times instead of using SpinnerIcon from Icons.tsx
+- `getContactLink` duplicated in MemberVisualView/ContactInfo.tsx vs utils/contacts.tsx
+- `createDefaultPreferences` takes `string` instead of `Id<"users">`
+- `memberHasTeamAccess` re-exported from chat/access.ts but unused re-export
+- Inconsistent semicolons and quote styles in schema.ts
+- `getMemberById` in members/functions.ts has indentation issue (line 45-46)
+
+### Dead Code
+- `convex/storage.ts`: `getStorageUrl`, `deleteStorageFile`
+- `convex/users/functions.ts`: `listMyInvitations`, `syncProfileToMembers`
+- `convex/notifications/functions.ts`: `getAll`, `getUnread`, `getByOrga`, `getById`, `markAsUnread`, `markAllAsReadByOrga`, `archive`, `unarchive`, `remove`, `removeAllArchived`, `deleteByUserAndOrga`, `cleanupExpired`
+- `convex/invitations/functions.ts`: `getInvitationById` (never from frontend)
+
+### Stale Documentation
+- CLAUDE.md references `aggregates.ts` which does not exist
 
 ## Agent-Documentation Mapping
 

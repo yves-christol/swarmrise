@@ -57,7 +57,7 @@ export const LegalFooter = () => {
             <span className="font-swarm text-sm">swarmrise</span>
           </Link>
           <p className="text-xs opacity-40 text-center">
-            Yorga (SASU, SIREN 889 512 406) -- Apache License 2.0
+            published by Yorga
           </p>
         </div>
       </div>

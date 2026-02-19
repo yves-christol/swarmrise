@@ -252,7 +252,6 @@ export function KanbanColumn({
       className={`
         flex flex-col
         w-72 flex-shrink-0
-        bg-surface-secondary/50
         border
         ${isOverWip ? "border-amber-400 dark:border-amber-600" : "border-border-default"}
         rounded-xl
@@ -262,7 +261,7 @@ export function KanbanColumn({
       `}
     >
       {/* Column header */}
-      <div className="flex items-center justify-between px-3 py-2.5 border-b border-border-default gap-1">
+      <div className="flex items-center justify-between px-3 py-2.5 border-b border-border-default gap-1 bg-surface-secondary/50 rounded-t-xl">
         {/* Left: drag handle + collapse toggle + name */}
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
           {/* Column drag handle */}
@@ -426,7 +425,7 @@ export function KanbanColumn({
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
         <div
           ref={setDroppableRef}
-          className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[4rem] bg-surface-primary/20"
+          className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[4rem]"
         >
           {sortedCards.map((card) => {
             const cardRole = roleMap.get(card.roleId);
@@ -450,7 +449,7 @@ export function KanbanColumn({
 
       {/* Add card button */}
       {!selectionMode && (
-        <div className="p-2 border-t border-border-default">
+        <div className="p-2 border-t border-border-default bg-surface-secondary/50 rounded-b-xl">
           <button
             onClick={() => onAddCard(column._id)}
             className="

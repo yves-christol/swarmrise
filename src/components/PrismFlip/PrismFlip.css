@@ -1,0 +1,44 @@
+/* ============================================================
+   PrismFlip — 3D rotation only during the flip animation
+
+   Architecture (no-reparenting, hybrid declarative/imperative):
+
+   Face content is rendered as permanent React children. Face
+   styles (visibility, transforms, backface-visibility) are
+   declarative in JSX, driven by flipState. Card rotation uses
+   an imperative reflow trick in useLayoutEffect.
+
+   In idle state there is zero 3D context — flat DOM, full
+   interactivity. During the ~500ms flip, perspective / preserve-3d
+   / per-face transforms activate, then get stripped.
+
+   Because face nodes never move in the DOM, CSS & SVG drawing
+   animations are never restarted by the browser.
+   ============================================================ */
+
+.prism-flip-root {
+  position: absolute;
+  inset: 0;
+}
+
+.prism-flip-card {
+  position: absolute;
+  inset: 0;
+}
+
+.prism-flip-face {
+  position: absolute;
+  inset: 0;
+}
+
+/* ============================================================
+   REDUCED MOTION: handled in JS (skip animation, instant swap).
+   This is a CSS safety net.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .prism-flip-card {
+    transition: none !important;
+    transform: none !important;
+  }
+}

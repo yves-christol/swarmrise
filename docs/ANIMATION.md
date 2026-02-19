@@ -15,7 +15,7 @@ The Swarmrise codebase has a well-developed animation system with consistent pat
 | Category | Status | Location | Purpose |
 |----------|--------|----------|---------|
 | Focus Navigation | Complete | `FocusContainer/animations.css` | View transitions between orga/team/role/member |
-| View Mode Flip | Complete | `FocusContainer/animations.css` | 3D coin flip between Visual/Manage modes |
+| PrismFlip (3D Rotation) | Complete | `PrismFlip/index.tsx`, `PrismFlip/PrismFlip.css` | 3D coin/prism flip between view modes |
 | Node Reveal | Complete | Inline in visual views | Staggered element appearance on load |
 | Logo Animation | Complete | `Logo/index.tsx` | Interactive SVG bee wing animation (SMIL) |
 | Theme Transition | Complete | `index.css` | Background/text color transitions |
@@ -191,48 +191,60 @@ Other transitions (team-to-role, role-to-member, etc.) use a two-phase scale ani
 - **Non-spatial**: `team-to-role` / `role-to-team`, `role-to-member` / `member-to-role`
 - **Direct jumps**: `orga-to-role`, `orga-to-member` (non-spatial)
 
-#### View Mode Flip (Visual/Manage Toggle)
+#### PrismFlip (3D View Rotation)
 
-The view mode toggle uses a 3D coin flip effect for switching between visual and manage modes.
+The `PrismFlip` component handles 3D rotation between multiple face views (e.g., visual/manage mode toggle). It supports two geometries: **coin** (2 faces, Y-axis half-turn) and **prism** (3 faces, Y-axis third-turns).
 
-```css
-/* Container with perspective for 3D effect */
-.flip-container {
-  perspective: 1200px;
-  transform-style: preserve-3d;
-}
+**Location**: `src/components/PrismFlip/index.tsx`, `src/components/PrismFlip/PrismFlip.css`
 
-/* The rotating card */
-.flip-card {
-  transform-style: preserve-3d;
-  transition: transform 500ms cubic-bezier(0.2, 0.8, 0.3, 1);
-}
+**Duration**: 500ms (default, configurable via `duration` prop)
 
-/* Flip states */
-.flip-card.visual { transform: rotateY(0deg); }
-.flip-card.manage { transform: rotateY(180deg); }
+**Easing**: `cubic-bezier(0.2, 0.8, 0.3, 1)` -- starts slow, accelerates through middle, gentle landing
 
-/* Faces with backface hidden */
-.flip-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-}
-.flip-face-visual { transform: rotateY(0deg); }
-.flip-face-manage { transform: rotateY(180deg); }
+##### Architecture: No-Reparenting, Hybrid Declarative/Imperative
+
+PrismFlip was completely rewritten (Feb 2026) to fix persistent bugs with the previous portal-and-reparenting approach. The current architecture has three strict design rules:
+
+1. **Face content is rendered as permanent React children** -- they never move in the DOM. This means CSS animations and SVG drawing animations on face content are never restarted by the browser.
+
+2. **Face styles are fully declarative** -- `visibility`, `transform`, `backfaceVisibility`, and `pointerEvents` are computed from a `flipState` state machine and applied via JSX inline styles. This avoids conflicts between React reconciliation and imperative DOM manipulation.
+
+3. **Card rotation is imperative** -- a `useLayoutEffect` uses the reflow trick (`getBoundingClientRect()` between setting the FROM and TO transforms) to snap the card to the start position and transition to the end position in a single browser commit.
+
+##### State Machine
+
+```
+idle  ──(activeFaceKey changes)──>  animating { from }
+                                        │
+                                  (duration ms timeout)
+                                        │
+                                        v
+                                      idle
 ```
 
-**Duration**: 500ms
+- **`idle`**: Zero 3D context. No `perspective`, no `preserve-3d`, no face transforms. Faces are flat, fully interactive DOM elements.
+- **`animating`**: `perspective: 1200px` on root, `transform-style: preserve-3d` on card, per-face `backfaceVisibility: hidden` + position transforms. Only the FROM and TO faces are visible; all others are `visibility: hidden`.
 
-**Easing**: `cubic-bezier(0.2, 0.8, 0.3, 1)` - starts slow, accelerates through middle, gentle landing
+##### CSS Classes
 
-**Key Properties**:
-- `perspective: 1200px` on container creates depth for 3D effect
-- `transform-style: preserve-3d` enables 3D space for children
-- `backface-visibility: hidden` hides the back of each face during rotation
-- Both faces are rendered simultaneously and pre-rotated
+```css
+.prism-flip-root  /* Root container, absolute inset:0 */
+.prism-flip-card  /* Card wrapper, absolute inset:0 */
+.prism-flip-face  /* Individual face, absolute inset:0 */
+```
 
-**Design Rationale**: The coin flip metaphor creates a satisfying tactile feel, reinforcing that the user is "flipping" between two sides of the same entity. The 500ms duration allows the user to perceive the 3D motion without feeling slow.
+All 3D properties (`perspective`, `transform-style`, `backface-visibility`, face transforms) are applied via **inline styles** controlled by React state -- the CSS file only handles positioning and the reduced-motion safety net.
+
+##### Key Implementation Details
+
+- **Stable effect deps**: The animation `useLayoutEffect` intentionally excludes the `faces` prop array and `onFlipComplete` callback from its dependency list. The `faces` array creates a new reference on every parent render, and `onFlipComplete` is accessed via a ref (`onFlipCompleteRef`). This prevents parent re-renders (e.g., from Convex real-time data) from restarting the animation mid-flip.
+- **Apothem calculation**: For prism geometry, the apothem (distance from center to face midpoint) is computed from container width via ResizeObserver and used in `translateZ` transforms.
+- **Reduced motion**: Detected via `matchMedia` in a ref. When active, face swaps are instant (no 3D animation), and the CSS file includes a `!important` safety net.
+- **Cleanup**: Animation timers are cleared on unmount and on interruption (new flip triggered during existing flip).
+
+##### Design Rationale
+
+The coin/prism flip metaphor creates a satisfying tactile feel, reinforcing that the user is "flipping" between two sides of the same entity. The 500ms duration allows the user to perceive the 3D motion without feeling slow.
 
 ### Node Reveal Animations
 
@@ -332,6 +344,76 @@ body {
   transition: background-color 200ms ease-out, color 200ms ease-out;
 }
 ```
+
+---
+
+## 3D Animation Pitfalls (PrismFlip Lessons)
+
+This section documents hard-won lessons from the PrismFlip rewrite (Feb 2026). These rules apply to any 3D CSS animation in the codebase. Violating any of these will reintroduce the bugs that took multiple iterations to fix.
+
+### Rule 1: Never Reparent DOM Nodes That Contain Animations
+
+**Bug**: Calling `appendChild` or `insertBefore` to move a DOM node from one parent to another causes the browser to restart all CSS animations, CSS transitions, and SVG SMIL/drawing animations on that node and its descendants.
+
+**Context**: The original PrismFlip used `createPortal` + `document.createElement` to create persistent face host divs, then physically reparented them between a flat overlay (idle) and 3D prism slots (animating) via `appendChild`. Each flip triggered two reparenting operations (flat-to-prism at start, prism-to-flat at end), replaying SVG stroke-dashoffset animations and CSS keyframe animations twice per flip.
+
+**Fix**: Render face content as permanent React children that never move in the DOM. Control visibility and transforms declaratively via React state instead of physically relocating nodes.
+
+### Rule 2: `overflow: hidden` Destroys `preserve-3d`
+
+**Bug**: Per the CSS Transforms spec, any `overflow` value other than `visible` on an element forces `transform-style: preserve-3d` to compute as `flat`. This causes all 3D-positioned children to collapse onto the same plane and render on top of each other.
+
+**Context**: The original implementation had `overflow: hidden` on intermediate containers to clip content during animation. This silently killed the 3D prism effect, making all faces overlap instead of rotating.
+
+**Fix**: Never set `overflow: hidden` (or `auto`, `scroll`, `clip`) on any element in the ancestor chain between the `perspective` container and the `preserve-3d` card. If you need clipping, apply it to elements *inside* the individual faces, not on their containers.
+
+### Rule 3: Keep 3D Context to Absolute Minimum Duration
+
+**Bug**: Persistent `preserve-3d` contexts interact badly with browser rendering. `visibility: hidden` does not reliably hide children inside a `preserve-3d` container (browser quirk where "hidden" faces bleed through). Persistent 3D contexts also consume GPU compositing resources unnecessarily.
+
+**Context**: The original approach kept `preserve-3d` active at all times. Hidden faces would occasionally flash or overlap with the active face, especially during React re-renders.
+
+**Fix**: Apply `perspective`, `transform-style: preserve-3d`, `backface-visibility: hidden`, and face position transforms *only* during the animation (approximately 500ms). In idle state, strip all 3D properties -- faces are just flat, absolutely-positioned divs with `visibility` controlling which one is shown.
+
+### Rule 4: Face Styles Must Be Declarative, Card Rotation Must Be Imperative
+
+**Bug (if face styles were imperative)**: When React re-renders during an animation (e.g., Convex pushes a data update), React's reconciler overwrites imperative DOM style changes with its own computed values. This causes face visibility/transforms to flash or reset mid-animation.
+
+**Bug (if card rotation were declarative)**: To animate a CSS transition, the browser needs to see two different style states in two different frames. A single React state update + render produces only one style state. There is no way to declaratively say "start at rotation X, transition to rotation Y" in a single render pass.
+
+**Fix**: Use the hybrid approach:
+- Face `visibility`, `transform`, `backfaceVisibility`, `pointerEvents` are computed from `flipState` in JSX (declarative). React owns these values and they survive re-renders correctly.
+- Card `transform` and `transition` are set imperatively in a `useLayoutEffect` using the reflow trick: set FROM transform with `transition: none`, call `getBoundingClientRect()` to force a reflow, then set TO transform with `transition` enabled. This produces two style states in one commit.
+
+### Rule 5: Never Include Unstable References in Animation Effect Dependencies
+
+**Bug**: Including `faces` (a prop that is a new array reference on every parent render) in a `useLayoutEffect` dependency array causes the effect to re-run every time the parent re-renders. If the parent re-renders mid-animation (common with real-time Convex data), the animation restarts from scratch, producing visual glitches.
+
+**Fix**:
+- Access the `faces` data via a ref (`faceIndexMap.current`) instead of including it in deps.
+- Access callbacks (`onFlipComplete`) via a ref (`onFlipCompleteRef.current`) instead of including them in deps.
+- The animation effect's dependency array should contain only truly stable values: `flipState`, `activeFaceKey`, `angles` (constant), `geometry` (string), `apothem` (changes only on resize), `duration` (number).
+
+### Rule 6: `visibility: hidden` Is Unreliable Inside `preserve-3d`
+
+**Bug**: In some browsers/configurations, elements with `visibility: hidden` inside a `preserve-3d` context are still partially rendered or cause visual artifacts.
+
+**Fix**: Do not rely on `visibility: hidden` alone to hide faces during 3D animation. Use it in combination with:
+- Only rendering `backfaceVisibility: hidden` + face transforms on participating faces (FROM and TO).
+- Keeping non-participating faces as plain flat divs without any 3D positioning.
+- Stripping the entire 3D context (perspective, preserve-3d) as soon as the animation completes.
+
+### Summary Table
+
+| Pitfall | Symptom | Rule |
+|---------|---------|------|
+| DOM reparenting | CSS/SVG animations replay on every flip | Never reparent animated nodes |
+| `overflow: hidden` + `preserve-3d` | All faces render on same plane, overlapping | No `overflow` except `visible` in 3D ancestor chain |
+| Persistent 3D context | Hidden faces bleed through, GPU waste | 3D properties only during animation |
+| Imperative face styles | Styles reset on React re-render mid-animation | Face styles declarative in JSX |
+| Declarative card rotation | Cannot express "start at X, transition to Y" | Card rotation imperative with reflow trick |
+| Unstable effect deps | Animation restarts on unrelated parent re-render | Use refs for arrays and callbacks |
+| `visibility: hidden` in `preserve-3d` | Hidden faces still visible | Combine visibility with structural 3D removal |
 
 ---
 
@@ -476,6 +558,7 @@ style={{ willChange: "auto" }}
 - Define fixed dimensions for containers before animation
 - Use `position: absolute` with `inset: 0` for overlay animations
 - Never trigger layout during animation (no reading offsetWidth/offsetHeight)
+- **Exception**: A single deliberate `getBoundingClientRect()` call *before* the transition starts is acceptable as the "reflow trick" to force the browser to register a start position (see PrismFlip Rule 4). This is not a mid-animation layout thrash -- it happens in `useLayoutEffect` before the browser paints.
 
 ### Performance Budgets
 
@@ -504,6 +587,17 @@ style={{ willChange: "auto" }}
 - [ ] Window resize during animation handled gracefully
 - [ ] Theme switch during animation handled gracefully
 
+### PrismFlip-Specific Tests
+
+- [ ] SVG drawing animations on face content do NOT replay on flip
+- [ ] CSS keyframe animations on face content do NOT replay on flip
+- [ ] Click handlers on the active face remain functional after flip completes
+- [ ] Rapid flipping (triggering new flip before previous completes) does not produce visual artifacts
+- [ ] Convex real-time data update during mid-flip does not restart the rotation
+- [ ] Faces do not overlap or bleed through in idle state
+- [ ] Prism geometry recalculates correctly on container resize
+- [ ] Reduced motion preference causes instant swap with no 3D animation
+
 ---
 
 ## Future Considerations
@@ -519,7 +613,7 @@ style={{ willChange: "auto" }}
 
 1. **SMIL in Logo**: Works but is deprecated; consider CSS animation replacement
 2. **Inline Styles**: Many animations use inline keyframes; could be centralized
-3. **No Animation Cancellation**: Rapid navigation can queue animations
+3. **Focus Navigation Queuing**: Rapid focus navigation can queue animations (PrismFlip handles interruption correctly via timer cleanup, but FocusContainer transitions do not yet cancel on re-trigger)
 
 ---
 
@@ -531,8 +625,10 @@ style={{ willChange: "auto" }}
 2. Choose appropriate timing token
 3. Use `cubic-bezier(0.4, 0, 0.2, 1)` for emphasis
 4. Add reduced motion fallback
-5. Test at 60fps
-6. Document in this file
+5. If 3D: read the "3D Animation Pitfalls" section above -- all six rules apply
+6. If 3D: verify no `overflow: hidden` in the ancestor chain
+7. Test at 60fps
+8. Document in this file
 
 ### Common Patterns
 
@@ -552,6 +648,6 @@ transition: color 75ms ease-out, opacity 150ms ease-out;
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: 2026-02-08*
+*Document Version: 2.0*
+*Last Updated: 2026-02-19*
 *Maintainer: Luigi (Animation/SVG Agent)*

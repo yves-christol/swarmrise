@@ -1,11 +1,9 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
 import { useQuery, useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
 import {
   DndContext,
   DragOverlay,
-  MeasuringStrategy,
   PointerSensor,
   TouchSensor,
   closestCorners,
@@ -399,7 +397,6 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
-        measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
       >
         <div
           className="flex gap-3 sm:gap-4 pb-4"
@@ -428,22 +425,17 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
           })}
         </div>
 
-        {/* Drag overlay — portaled to document.body to escape ancestor
-            transforms/filters that break position:fixed coordinates */}
-        {createPortal(
-          <DragOverlay dropAnimation={null}>
-            {activeCard ? (
-              <div className="w-64 sm:w-72">
-                <KanbanCard
-                  card={activeCard}
-                  cardRole={activeRole}
-                  roleMember={activeRoleMember}
-                />
-              </div>
-            ) : null}
-          </DragOverlay>,
-          document.body,
-        )}
+        <DragOverlay dropAnimation={null}>
+          {activeCard ? (
+            <div className="w-64 sm:w-72">
+              <KanbanCard
+                card={activeCard}
+                cardRole={activeRole}
+                roleMember={activeRoleMember}
+              />
+            </div>
+          ) : null}
+        </DragOverlay>
       </DndContext>
 
       {/* Card modal */}

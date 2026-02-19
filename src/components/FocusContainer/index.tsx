@@ -3,6 +3,7 @@ import { useFocus, useViewMode } from "../../tools/orgaStore";
 import { useRouteSync } from "../../hooks/useRouteSync";
 import { useViewModeNavigation } from "../../hooks/useViewModeNavigation";
 import "./animations.css";
+import { PrismFlip } from "../PrismFlip";
 
 // Lazy-loaded view components - only one renders at a time
 const OrgaVisualView = lazy(() => import("../OrgaVisualView").then(m => ({ default: m.OrgaVisualView })));
@@ -276,9 +277,6 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
 
   const getNonSpatialStyles = (): React.CSSProperties => {
     if (animationPhase === "idle") {
-      // No transform in idle state — a CSS transform (even identity scale(1))
-      // creates a containing block that breaks position:fixed descendants
-      // like @dnd-kit's DragOverlay.
       return { opacity: 1 };
     }
     if (animationPhase === "zoom-out-old") {
@@ -308,34 +306,6 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
   };
 
   const isTeamFocused = focus.type === "team";
-
-  // Compute the prism apothem (distance from center to face) based on container width.
-  // apothem = width / (2 * tan(60deg)) = width / 3.4641
-  // This is set as a CSS custom property on flip-card elements.
-  const flipApothemRef = useRef<number>(300);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const updateApothem = () => {
-      const width = container.getBoundingClientRect().width;
-      const apothem = width / (2 * Math.tan(Math.PI / 3));
-      flipApothemRef.current = apothem;
-
-      // Set on prism flip-card elements (team view with 3 faces)
-      const prismCards = container.querySelectorAll<HTMLElement>(".flip-card.prism");
-      prismCards.forEach((el) => {
-        el.style.setProperty("--flip-apothem", `${apothem}px`);
-      });
-    };
-
-    updateApothem();
-
-    const observer = new ResizeObserver(updateApothem);
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, [currentView]); // Re-run when view changes so newly mounted prism cards get the apothem
 
   // Keyboard shortcut for view toggle (V key cycles modes, K jumps to kanban)
   useEffect(() => {
@@ -369,120 +339,137 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
 
   // --- Render helper ---
 
-  // When the kanban view is settled (flip complete, no transitions), render
-  // the KanbanBoard in an overlay outside the 3D prism so that dnd-kit's
-  // getBoundingClientRect() measurements are not warped by preserve-3d /
-  // perspective. During the flip animation the board lives inside the face
-  // for visual continuity.
-  const isKanbanSettled =
-    currentView === "team" &&
-    focus.type === "team" &&
-    getFlipClass() === "kanban" &&
-    animationPhase === "idle" &&
-    swapPhase === "idle";
-
-  const renderView = (viewType: ViewType, focusTarget: FocusTarget, flipClass: string, kanbanSettled = false) => {
+  const renderView = (viewType: ViewType, focusTarget: FocusTarget, flipClass: string) => {
     if (viewType === "member" && focusTarget.type === "member") {
       return (
-        <div className="flip-container absolute inset-0">
-          <div className={`flip-card absolute inset-0 ${flipClass}`}>
-            <div className="flip-face flip-face-visual">
-              <MemberVisualView
-                memberId={focusTarget.memberId}
-                onZoomOut={
-                  previousFocusFromMember
-                    ? focusOnRoleFromMember
-                    : focusOnOrgaFromMember
-                }
-                onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
-                onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
-              />
-            </div>
-            <div className="flip-face flip-face-manage">
-              <MemberManageView
-                memberId={focusTarget.memberId}
-                onZoomOut={
-                  previousFocusFromMember
-                    ? focusOnRoleFromMember
-                    : focusOnOrgaFromMember
-                }
-              />
-            </div>
-          </div>
-        </div>
+        <PrismFlip
+          geometry="coin"
+          activeFaceKey={flipClass}
+          faces={[
+            {
+              key: "visual",
+              content: (
+                <MemberVisualView
+                  memberId={focusTarget.memberId}
+                  onZoomOut={
+                    previousFocusFromMember
+                      ? focusOnRoleFromMember
+                      : focusOnOrgaFromMember
+                  }
+                  onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+                  onNavigateToTeam={(teamId) => focusOnTeamFromMember(teamId)}
+                />
+              ),
+            },
+            {
+              key: "manage",
+              content: (
+                <MemberManageView
+                  memberId={focusTarget.memberId}
+                  onZoomOut={
+                    previousFocusFromMember
+                      ? focusOnRoleFromMember
+                      : focusOnOrgaFromMember
+                  }
+                />
+              ),
+            },
+          ]}
+        />
       );
     }
 
     if (viewType === "role" && focusTarget.type === "role") {
       return (
-        <div className="flip-container absolute inset-0">
-          <div className={`flip-card absolute inset-0 ${flipClass}`}>
-            <div className="flip-face flip-face-visual">
-              <RoleVisualView
-                roleId={focusTarget.roleId}
-                onZoomOut={focusOnTeamFromRole}
-                onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
-                onNavigateToMember={(memberId, origin) =>
-                  focusOnMember(memberId, origin)
-                }
-              />
-            </div>
-            <div className="flip-face flip-face-manage">
-              <RoleManageView
-                roleId={focusTarget.roleId}
-                onZoomOut={focusOnTeamFromRole}
-              />
-            </div>
-          </div>
-        </div>
+        <PrismFlip
+          geometry="coin"
+          activeFaceKey={flipClass}
+          faces={[
+            {
+              key: "visual",
+              content: (
+                <RoleVisualView
+                  roleId={focusTarget.roleId}
+                  onZoomOut={focusOnTeamFromRole}
+                  onNavigateToRole={(roleId, teamId) => focusOnRole(roleId, teamId)}
+                  onNavigateToMember={(memberId, origin) =>
+                    focusOnMember(memberId, origin)
+                  }
+                />
+              ),
+            },
+            {
+              key: "manage",
+              content: (
+                <RoleManageView
+                  roleId={focusTarget.roleId}
+                  onZoomOut={focusOnTeamFromRole}
+                />
+              ),
+            },
+          ]}
+        />
       );
     }
 
     if (viewType === "team" && focusTarget.type === "team") {
       return (
-        <div className="flip-container absolute inset-0">
-          <div className={`flip-card prism absolute inset-0 ${flipClass}`}>
-            <div className="flip-face flip-face-visual">
-              <TeamVisualView
-                teamId={focusTarget.teamId}
-                onZoomOut={focusOnOrga}
-              />
-            </div>
-            <div className="flip-face flip-face-manage">
-              <TeamManageView
-                teamId={focusTarget.teamId}
-                onZoomOut={focusOnOrga}
-              />
-            </div>
-            <div className="flip-face flip-face-kanban">
-              <div className="absolute inset-0 overflow-auto p-4">
-                {/* When settled, the interactive board lives in the overlay
-                    outside the 3D context. Keep the face empty. */}
-                {!kanbanSettled && (
+        <PrismFlip
+          geometry="prism"
+          activeFaceKey={flipClass}
+          faces={[
+            {
+              key: "visual",
+              content: (
+                <TeamVisualView
+                  teamId={focusTarget.teamId}
+                  onZoomOut={focusOnOrga}
+                />
+              ),
+            },
+            {
+              key: "manage",
+              content: (
+                <TeamManageView
+                  teamId={focusTarget.teamId}
+                  onZoomOut={focusOnOrga}
+                />
+              ),
+            },
+            {
+              key: "kanban",
+              content: (
+                <div className="absolute inset-0 overflow-auto p-4">
                   <KanbanBoard teamId={focusTarget.teamId} orgaId={orgaId} />
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+                </div>
+              ),
+            },
+          ]}
+        />
       );
     }
 
     // Default: orga view
     return (
-      <div className="flip-container absolute inset-0">
-        <div className={`flip-card absolute inset-0 ${flipClass}`}>
-          <div className="flip-face flip-face-visual">
-            <OrgaVisualView
-              orgaId={orgaId}
-              onRegisterNodePositionLookup={registerNodePositionLookup}
-            />
-          </div>
-          <div className="flip-face flip-face-manage">
-            <OrgaManageView orgaId={orgaId} />
-          </div>
-        </div>
-      </div>
+      <PrismFlip
+        geometry="coin"
+        activeFaceKey={flipClass}
+        faces={[
+          {
+            key: "visual",
+            content: (
+              <OrgaVisualView
+                orgaId={orgaId}
+                onRegisterNodePositionLookup={registerNodePositionLookup}
+              />
+            ),
+          },
+          {
+            key: "manage",
+            content: <OrgaManageView orgaId={orgaId} />,
+          },
+        ]}
+      />
     );
   };
 
@@ -525,18 +512,9 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         style={isSpatial && animationPhase === "spatial-zoom" ? undefined : getNonSpatialStyles()}
       >
         <Suspense fallback={null}>
-          {renderView(currentView, focus, getFlipClass(), isKanbanSettled)}
+          {renderView(currentView, focus, getFlipClass())}
         </Suspense>
       </div>
-
-      {/* ========== KANBAN OVERLAY (outside 3D context for reliable dnd-kit interaction) ========== */}
-      {isKanbanSettled && focus.type === "team" && (
-        <div className="absolute inset-0 overflow-auto p-4" style={{ zIndex: 10 }}>
-          <Suspense fallback={null}>
-            <KanbanBoard teamId={focus.teamId} orgaId={orgaId} />
-          </Suspense>
-        </div>
-      )}
 
       {/* ========== EXITING OVERLAY (spatial zoom only, removed when transition ends) ========== */}
       {isSpatial && animationPhase === "spatial-zoom" && exitingView !== null && exitingFocus !== null && (

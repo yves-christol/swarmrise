@@ -1,7 +1,7 @@
 /* Focus view transition animations */
 
 /* ============================================================
-   SPATIAL ZOOM TRANSITIONS (Tier 3 - FLIP-inspired)
+   SPATIAL ZOOM TRANSITIONS (FLIP-inspired)
 
    The spatial zoom creates visual continuity between orga and
    team views using clip-path circle reveal.
@@ -13,15 +13,9 @@
    Easing: cubic-bezier(0.2, 0, 0, 1) - fast start, smooth decel
    ============================================================ */
 
-/* --- Old/new view layers during transition --- */
+/* --- Old view layer during spatial transition --- */
 
 .zoom-layer-old {
-  position: absolute;
-  inset: 0;
-  will-change: transform, opacity;
-}
-
-.zoom-layer-new {
   position: absolute;
   inset: 0;
   will-change: transform, opacity;
@@ -31,7 +25,6 @@
 .zoom-layer-old.zoom-in-exit {
   animation: zoomInExit 300ms cubic-bezier(0.2, 0, 0, 1) forwards;
 }
-
 
 /* --- Keyframes --- */
 
@@ -46,8 +39,7 @@
   }
 }
 
-
-/* --- Fallback for non-orga-team transitions --- */
+/* --- Non-spatial scale transitions (role/member/orga navigation) --- */
 
 @keyframes fadeScaleIn {
   from {
@@ -83,226 +75,6 @@
 }
 
 /* ============================================================
-   VIEW MODE FLIP (3D rotation for view switching)
-
-   Two modes:
-
-   1. TWO-FACE COIN FLIP (default) - orga, role, member views
-      Visual at 0deg, Manage at 180deg. Classic Y-axis coin flip.
-
-   2. THREE-FACE PRISM (.prism modifier) - team view with kanban
-      Visual at 0deg, Manage at 120deg, Kanban at 240deg.
-      Each face pushed outward by the prism's apothem so they
-      don't intersect during rotation.
-      Apothem = containerWidth / (2 * tan(60deg))
-      Set via --flip-apothem CSS variable from JavaScript.
-
-   Duration: 500ms
-   Easing: cubic-bezier(0.2, 0.8, 0.3, 1) - smooth with slight overshoot
-
-   POINTER-EVENTS FIX:
-   CSS pointer-events: none is unreliable in preserve-3d contexts because
-   browsers can misroute hit-testing through 3D compositor layers.
-   Instead we use visibility: hidden on non-active faces AFTER the flip
-   animation completes (500ms delay). visibility: hidden completely removes
-   elements from hit-testing at the browser level. When a face becomes
-   active, visibility is restored immediately (0s delay) so it participates
-   in the flip animation from the start.
-   ============================================================ */
-
-/* Container with perspective for 3D effect */
-.flip-container {
-  perspective: 1200px;
-  transform-style: preserve-3d;
-}
-
-/* The rotating element */
-.flip-card {
-  transform-style: preserve-3d;
-  transition: transform 500ms cubic-bezier(0.2, 0.8, 0.3, 1);
-  /* Intentionally no will-change: transform here — permanent GPU layer
-     promotion inside a preserve-3d context causes browsers to misroute
-     pointer events through 3D compositor layers. The CSS transition
-     already triggers layer promotion for the 500ms animation duration. */
-}
-
-/* --- TWO-FACE COIN FLIP (default for orga/role/member) --- */
-
-.flip-card.visual {
-  transform: rotateY(0deg);
-}
-.flip-card.visual .flip-face-manage {
-  pointer-events: none;
-  visibility: hidden;
-  transition: visibility 0s 500ms;
-}
-
-.flip-card.manage {
-  transform: rotateY(180deg);
-}
-.flip-card.manage .flip-face-visual {
-  pointer-events: none;
-  visibility: hidden;
-  transition: visibility 0s 500ms;
-}
-/* Active face: restore visibility immediately */
-.flip-card.manage .flip-face-manage {
-  visibility: visible;
-  transition: visibility 0s 0s;
-}
-.flip-card.visual .flip-face-visual {
-  visibility: visible;
-  transition: visibility 0s 0s;
-}
-
-/* All faces share common positioning and hide when facing away */
-.flip-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-/* Front face (visual) - no rotation needed */
-.flip-face-visual {
-  transform: rotateY(0deg);
-}
-
-/* Back face (manage) - pre-rotated 180deg so it shows correctly when flipped */
-.flip-face-manage {
-  transform: rotateY(180deg);
-}
-
-/* --- THREE-FACE PRISM (team view with kanban) --- */
-
-.flip-card.prism {
-  --flip-apothem: 300px; /* Fallback; JS overrides this */
-}
-
-/* Override card rotation angles for prism geometry (120deg spacing).
-   translateZ(-apothem) pulls the prism back so the front face sits at Z=0,
-   preventing the apparent zoom caused by faces being pushed toward the camera. */
-.flip-card.prism.visual {
-  transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(0deg);
-}
-.flip-card.prism.visual .flip-face-visual {
-  visibility: visible;
-  transition: visibility 0s 0s;
-}
-.flip-card.prism.visual .flip-face-manage,
-.flip-card.prism.visual .flip-face-kanban {
-  pointer-events: none;
-  visibility: hidden;
-  transition: visibility 0s 500ms;
-}
-
-.flip-card.prism.manage {
-  transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(-120deg);
-}
-.flip-card.prism.manage .flip-face-manage {
-  visibility: visible;
-  transition: visibility 0s 0s;
-}
-.flip-card.prism.manage .flip-face-visual,
-.flip-card.prism.manage .flip-face-kanban {
-  pointer-events: none;
-  visibility: hidden;
-  transition: visibility 0s 500ms;
-}
-
-.flip-card.prism.kanban {
-  transform: translateZ(calc(-1 * var(--flip-apothem))) rotateY(-240deg);
-}
-.flip-card.prism.kanban .flip-face-kanban {
-  visibility: visible;
-  transition: visibility 0s 0s;
-}
-.flip-card.prism.kanban .flip-face-visual,
-.flip-card.prism.kanban .flip-face-manage {
-  pointer-events: none;
-  visibility: hidden;
-  transition: visibility 0s 500ms;
-}
-
-/* Override face positioning: push each face out to the prism surface */
-.flip-card.prism .flip-face-visual {
-  transform: rotateY(0deg) translateZ(var(--flip-apothem));
-}
-
-.flip-card.prism .flip-face-manage {
-  transform: rotateY(120deg) translateZ(var(--flip-apothem));
-}
-
-/* Kanban face only exists inside prism containers */
-.flip-face-kanban {
-  transform: rotateY(240deg) translateZ(var(--flip-apothem));
-}
-
-/* ============================================================
-   LEGACY SWAP ANIMATIONS (kept for backwards compatibility)
-   ============================================================ */
-
-@keyframes swapOutUp {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-24px) scale(0.98);
-  }
-}
-
-@keyframes swapInUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes swapOutDown {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(24px) scale(0.98);
-  }
-}
-
-@keyframes swapInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-24px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.swap-out-up {
-  animation: swapOutUp 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.swap-in-up {
-  animation: swapInUp 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.swap-out-down {
-  animation: swapOutDown 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.swap-in-down {
-  animation: swapInDown 175ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-/* ============================================================
    REDUCED MOTION PREFERENCES
    ============================================================ */
 
@@ -313,9 +85,7 @@
     transform: none !important;
   }
 
-  /* Disable spatial zoom for reduced motion */
-  .zoom-layer-old,
-  .zoom-layer-new {
+  .zoom-layer-old {
     animation: none !important;
     clip-path: none !important;
     will-change: auto !important;
@@ -324,69 +94,5 @@
     opacity: 0 !important;
     transform: none !important;
     transition: opacity 150ms ease-out !important;
-  }
-
-  .swap-out-up, .swap-in-up, .swap-out-down, .swap-in-down {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  /* Disable 3D flip animation for reduced motion */
-  .flip-card {
-    transition: none !important;
-    transform: none !important;
-  }
-  .flip-face {
-    backface-visibility: visible !important;
-    -webkit-backface-visibility: visible !important;
-    transform: none !important;
-  }
-  /* Default: only visual face visible */
-  .flip-face-visual {
-    opacity: 1;
-    visibility: visible !important;
-  }
-  .flip-face-manage {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden !important;
-  }
-  .flip-face-kanban {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden !important;
-  }
-  /* Manage mode: only manage face visible */
-  .flip-card.manage .flip-face-visual {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden !important;
-  }
-  .flip-card.manage .flip-face-manage {
-    opacity: 1;
-    pointer-events: auto;
-    visibility: visible !important;
-  }
-  .flip-card.manage .flip-face-kanban {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden !important;
-  }
-  /* Kanban mode: only kanban face visible */
-  .flip-card.kanban .flip-face-visual {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden !important;
-  }
-  .flip-card.kanban .flip-face-manage {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden !important;
-  }
-  .flip-card.kanban .flip-face-kanban {
-    opacity: 1;
-    pointer-events: auto;
-    visibility: visible !important;
   }
 }

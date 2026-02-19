@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import type { MemberKanbanCard, MemberKanbanTeamGroup } from "../../../convex/kanban";
 import { getRoleIconPath } from "../../utils/roleIconDefaults";
-import { useFocus } from "../../tools/orgaStore";
+import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
+import { routes } from "../../routes";
 
 type MemberKanbanViewProps = {
   memberId: Id<"members">;
@@ -22,6 +24,8 @@ export function MemberKanbanView({ memberId }: MemberKanbanViewProps) {
   const { t: tCommon } = useTranslation("common");
 
   const { focusOnTeam } = useFocus();
+  const { selectedOrgaId } = useSelectedOrga();
+  const navigate = useNavigate();
 
   const teamGroups = useQuery(
     api.kanban.functions.getCardsByMemberWithContext,
@@ -91,6 +95,11 @@ export function MemberKanbanView({ memberId }: MemberKanbanViewProps) {
             key={group.teamId}
             group={group}
             onNavigateToTeam={() => focusOnTeam(group.teamId)}
+            onNavigateToKanban={() => {
+              if (selectedOrgaId) {
+                void navigate(routes.teamKanban(selectedOrgaId, group.teamId));
+              }
+            }}
           />
         ))}
       </div>
@@ -105,9 +114,11 @@ export function MemberKanbanView({ memberId }: MemberKanbanViewProps) {
 function TeamCardGroup({
   group,
   onNavigateToTeam,
+  onNavigateToKanban,
 }: {
   group: MemberKanbanTeamGroup;
   onNavigateToTeam: () => void;
+  onNavigateToKanban: () => void;
 }) {
   const { t } = useTranslation("kanban");
 
@@ -182,7 +193,11 @@ function TeamCardGroup({
             {/* Cards in this column */}
             <div className="space-y-1.5 ml-1">
               {cards.map((card) => (
-                <MemberKanbanCardItem key={card._id} card={card} />
+                <MemberKanbanCardItem
+                  key={card._id}
+                  card={card}
+                  onClick={onNavigateToKanban}
+                />
               ))}
             </div>
           </div>
@@ -192,7 +207,13 @@ function TeamCardGroup({
   );
 }
 
-function MemberKanbanCardItem({ card }: { card: MemberKanbanCard }) {
+function MemberKanbanCardItem({
+  card,
+  onClick,
+}: {
+  card: MemberKanbanCard;
+  onClick: () => void;
+}) {
   const { t } = useTranslation("kanban");
   const isOverdue = card.dueDate < Date.now();
 
@@ -202,14 +223,20 @@ function MemberKanbanCardItem({ card }: { card: MemberKanbanCard }) {
   });
 
   return (
-    <div
+    <button
+      onClick={onClick}
       className={`
+        w-full text-left
         p-2.5 rounded-lg
         bg-surface-secondary/60
         border
         ${isOverdue ? "border-red-300 dark:border-red-700" : "border-border-default"}
+        hover:bg-surface-hover/50
         transition-colors duration-75
+        cursor-pointer
+        focus:outline-none focus:ring-2 focus:ring-inset focus:ring-highlight
       `}
+      aria-label={`${card.title} - ${t("memberView.viewTeamBoard")}`}
     >
       {/* Title */}
       <p className="text-sm font-medium text-dark dark:text-light leading-snug line-clamp-2">
@@ -258,6 +285,6 @@ function MemberKanbanCardItem({ card }: { card: MemberKanbanCard }) {
           </span>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

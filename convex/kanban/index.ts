@@ -122,6 +122,17 @@ export const kanbanAttachmentValidator = v.object({
 
 export type KanbanAttachment = Infer<typeof kanbanAttachmentValidator>;
 
+// --- B3: Attachment with resolved download URL ---
+
+export const kanbanAttachmentWithUrlValidator = v.object({
+  _id: v.id("kanbanAttachments"),
+  _creationTime: v.number(),
+  ...kanbanAttachmentType.fields,
+  url: v.union(v.string(), v.null()),
+});
+
+export type KanbanAttachmentWithUrl = Infer<typeof kanbanAttachmentWithUrlValidator>;
+
 // --- B4: Threaded Comments ---
 
 export const kanbanCommentType = v.object({

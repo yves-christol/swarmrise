@@ -103,7 +103,8 @@
     "fileTooLarge": "\u6a94\u6848\u904e\u5927\uff08\u6700\u5927 10MB\uff09",
     "noAttachments": "\u7121\u9644\u4ef6",
     "fileCount": "{{count}} \u500b\u6a94\u6848",
-    "fileCount_other": "{{count}} \u500b\u6a94\u6848"
+    "fileCount_other": "{{count}} \u500b\u6a94\u6848",
+    "download": "\u4e0b\u8f09\u6a94\u6848"
   },
   "threadedComments": {
     "title": "\u7559\u8a00",

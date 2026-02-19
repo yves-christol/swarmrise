@@ -103,7 +103,8 @@
     "fileTooLarge": "Le fichier est trop volumineux (max 10 Mo)",
     "noAttachments": "Aucune pi\u00e8ce jointe",
     "fileCount": "{{count}} fichier",
-    "fileCount_other": "{{count}} fichiers"
+    "fileCount_other": "{{count}} fichiers",
+    "download": "T\u00e9l\u00e9charger le fichier"
   },
   "threadedComments": {
     "title": "Commentaires",

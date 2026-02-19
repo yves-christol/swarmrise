@@ -103,7 +103,8 @@
     "fileTooLarge": "Il file \u00e8 troppo grande (max 10 MB)",
     "noAttachments": "Nessun allegato",
     "fileCount": "{{count}} file",
-    "fileCount_other": "{{count}} file"
+    "fileCount_other": "{{count}} file",
+    "download": "Scarica file"
   },
   "threadedComments": {
     "title": "Commenti",

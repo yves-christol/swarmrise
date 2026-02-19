@@ -9,6 +9,7 @@ import {
   kanbanLabelValidator,
   kanbanCommentValidator,
   kanbanAttachmentValidator,
+  kanbanAttachmentWithUrlValidator,
   kanbanTemplateValidator,
   memberKanbanTeamGroupValidator,
   checklistItemValidator,
@@ -322,6 +323,36 @@ export const getAttachmentsForCard = query({
       .query("kanbanAttachments")
       .withIndex("by_card", (q) => q.eq("cardId", args.cardId))
       .collect();
+  },
+});
+
+/**
+ * Get all attachments for a card with resolved download URLs.
+ * Enforces team membership via requireBoardAccess before returning any URLs.
+ * This is the preferred query for the frontend attachment list so that
+ * filenames are clickable download links.
+ */
+export const getAttachmentsForCardWithUrls = query({
+  args: { cardId: v.id("kanbanCards") },
+  returns: v.array(kanbanAttachmentWithUrlValidator),
+  handler: async (ctx, args) => {
+    const card = await ctx.db.get(args.cardId);
+    if (!card) return [];
+
+    await requireBoardAccess(ctx, card.boardId);
+
+    const attachments = await ctx.db
+      .query("kanbanAttachments")
+      .withIndex("by_card", (q) => q.eq("cardId", args.cardId))
+      .collect();
+
+    const result = [];
+    for (const att of attachments) {
+      const url = await ctx.storage.getUrl(att.storageId);
+      result.push({ ...att, url });
+    }
+
+    return result;
   },
 });
 

@@ -103,7 +103,8 @@
     "fileTooLarge": "El archivo es demasiado grande (m\u00e1x 10 MB)",
     "noAttachments": "Sin archivos adjuntos",
     "fileCount": "{{count}} archivo",
-    "fileCount_other": "{{count}} archivos"
+    "fileCount_other": "{{count}} archivos",
+    "download": "Descargar archivo"
   },
   "threadedComments": {
     "title": "Comentarios",

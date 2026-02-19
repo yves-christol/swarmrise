@@ -20,5 +20,8 @@
   "genericNotification": "Нове сповіщення",
   "messageTitle": "Нові повідомлення в {{channelName}}",
   "messagePreview": "{{senderName}}: {{preview}}",
-  "toolEventSubtitle": "У {{channelName}}"
+  "toolEventSubtitle": "У {{channelName}}",
+  "kanbanDueApproachingTitle": "Скоро термін: {{cardTitle}}",
+  "kanbanDueOverdueTitle": "Прострочено: {{cardTitle}}",
+  "kanbanDueSubtitle": "У команді {{teamName}}"
 }

@@ -31,6 +31,7 @@ export const notificationPreferencesType = v.object({
   policy_team: channelPreferences,
   decision: channelPreferences,
   role_assignment: channelPreferences,
+  kanban_due: v.optional(channelPreferences),
   mention: channelPreferences,
   system: channelPreferences,
 

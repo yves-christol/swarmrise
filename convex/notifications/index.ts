@@ -10,6 +10,7 @@ export const notificationCategoryType = v.union(
   v.literal("decision"),         // New decision affecting user
   v.literal("role_assignment"),  // Assigned to a new role
   v.literal("mention"),          // Mentioned in a topic/discussion (future)
+  v.literal("kanban_due"),       // Kanban card approaching due date or overdue
   v.literal("system")            // System announcements
 );
 
@@ -100,6 +101,17 @@ export const mentionPayload = v.object({
   preview: v.string(),
 });
 
+// Kanban due date payload
+export const kanbanDuePayload = v.object({
+  category: v.literal("kanban_due"),
+  cardId: v.id("kanbanCards"),
+  cardTitle: v.string(),
+  teamId: v.id("teams"),
+  teamName: v.string(),
+  dueDate: v.number(),
+  dueType: v.union(v.literal("approaching"), v.literal("overdue")),
+});
+
 // System payload
 export const systemPayload = v.object({
   category: v.literal("system"),
@@ -117,6 +129,7 @@ export const notificationPayload = v.union(
   decisionPayload,
   roleAssignmentPayload,
   mentionPayload,
+  kanbanDuePayload,
   systemPayload
 );
 

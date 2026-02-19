@@ -840,6 +840,14 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | Frontend: `MemberKanbanView` component | Done | `src/components/MemberKanbanView/index.tsx` |
 | i18n: `memberView` keys in all 6 languages | Done | title, empty, totalCards, viewTeamBoard |
 | Integration into FocusContainer PrismFlip | Done | Third "kanban" face on member prism (wired by Giuseppe) |
+| **Due Date Notifications (E1)** | | |
+| Notification category `kanban_due` | Done | Added to `notifications/index.ts` discriminated union |
+| Kanban due payload type | Done | `cardId`, `cardTitle`, `teamId`, `teamName`, `dueDate`, `dueType` |
+| Notification preferences `kanban_due` | Done | Optional field in `notificationPreferences/index.ts` |
+| Cron job `checkDueDateNotifications` | Done | Hourly cron in `crons.ts`, internal mutation in `kanban/functions.ts` |
+| Dedup via `groupKey` | Done | `kanban_due:{cardId}:{approaching\|overdue}`, checked before creation |
+| Frontend `NotificationItem` rendering | Done | Clock icon, red (overdue) / amber (approaching) color, title + team |
+| i18n notification keys (6 languages) | Done | `kanbanDueApproachingTitle`, `kanbanDueOverdueTitle`, `kanbanDueSubtitle` |
 
 ---
 
@@ -924,7 +932,7 @@ Listed roughly in priority order:
 3. ~~**Member view integration**~~ - DONE (D4). See Feature Catalogue below.
 4. **Card labels/tags** - Color-coded labels for categorization
 5. **Column WIP limits** - Optional maximum card count per column, visual warning when exceeded
-6. **Due date notifications** - Notify card owner when a card approaches or passes its due date (integrates with existing notification system)
+6. ~~**Due date notifications**~~ - DONE (E1). Hourly cron checks cards; "approaching" (within 24h) and "overdue" notifications sent to role holder. Dedup via groupKey.
 7. **Card attachments** - File uploads using Convex storage (`convex/storage.ts`)
 8. **Decision trail integration** - Record card creation, moves, and edits as Decision entries
 9. **Board analytics** - Cycle time, throughput, aging cards
@@ -979,7 +987,7 @@ A comprehensive inventory of potential Kanban features, organized by category. E
 
 | ID | Feature | Description | Complexity | Value | Status |
 |----|---------|-------------|------------|-------|--------|
-| E1 | Due Date Notifications | Notify card owner (role holder) when a card approaches its due date (e.g., 1 day before) or becomes overdue. Integrates with the existing notification system. | Medium | High | PROPOSED |
+| E1 | Due Date Notifications | Notify card owner (role holder) when a card approaches its due date (e.g., 1 day before) or becomes overdue. Integrates with the existing notification system. | Medium | High | DONE |
 | E2 | Card Activity Notifications | Notify relevant parties when a card is created, moved, reassigned, or commented on. Configurable per-user preferences. | Medium | Medium | PROPOSED |
 | E3 | Auto-Archive | Automatically move cards from "Done" to "Archived" after a configurable period (e.g., 7 days). Runs via Convex cron. | Low | Medium | PROPOSED |
 | E4 | Decision Trail Integration | Record card creation, column moves, role reassignment, and edits as Decision entries for governance traceability. | Medium | Low | PROPOSED |

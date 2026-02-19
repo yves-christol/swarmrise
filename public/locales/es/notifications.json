@@ -20,5 +20,8 @@
   "genericNotification": "Nueva notificación",
   "messageTitle": "Nuevos mensajes en {{channelName}}",
   "messagePreview": "{{senderName}}: {{preview}}",
-  "toolEventSubtitle": "En {{channelName}}"
+  "toolEventSubtitle": "En {{channelName}}",
+  "kanbanDueApproachingTitle": "Vence pronto: {{cardTitle}}",
+  "kanbanDueOverdueTitle": "Vencida: {{cardTitle}}",
+  "kanbanDueSubtitle": "En el equipo {{teamName}}"
 }

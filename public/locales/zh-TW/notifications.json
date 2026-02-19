@@ -20,5 +20,8 @@
   "genericNotification": "新通知",
   "messageTitle": "{{channelName}} 中有新訊息",
   "messagePreview": "{{senderName}}：{{preview}}",
-  "toolEventSubtitle": "在 {{channelName}}"
+  "toolEventSubtitle": "在 {{channelName}}",
+  "kanbanDueApproachingTitle": "即將到期：{{cardTitle}}",
+  "kanbanDueOverdueTitle": "已逾期：{{cardTitle}}",
+  "kanbanDueSubtitle": "在團隊 {{teamName}}"
 }

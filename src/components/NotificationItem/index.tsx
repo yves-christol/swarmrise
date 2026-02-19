@@ -101,6 +101,21 @@ const ZapIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const ClockIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+
 type NotificationItemProps = {
   notification: Notification;
   onActionComplete?: () => void;
@@ -183,6 +198,13 @@ export const NotificationItem = ({
         return {
           icon: <ZapIcon className="w-5 h-5" />,
           color: "text-orange-500 dark:text-orange-400",
+        };
+      case "kanban_due":
+        return {
+          icon: <ClockIcon className="w-5 h-5" />,
+          color: payload.dueType === "overdue"
+            ? "text-red-500 dark:text-red-400"
+            : "text-amber-500 dark:text-amber-400",
         };
       default:
         return {
@@ -352,6 +374,36 @@ export const NotificationItem = ({
     );
   };
 
+  // Render kanban due date notification content
+  const renderKanbanDueContent = () => {
+    if (payload.category !== "kanban_due") return null;
+
+    const titleKey =
+      payload.dueType === "overdue"
+        ? "notifications:kanbanDueOverdueTitle"
+        : "notifications:kanbanDueApproachingTitle";
+
+    const titleDefault =
+      payload.dueType === "overdue"
+        ? "Overdue: {{cardTitle}}"
+        : "Due soon: {{cardTitle}}";
+
+    return (
+      <>
+        <p className={`font-medium text-dark dark:text-light ${!isRead ? "font-semibold" : ""}`}>
+          {t(titleKey, titleDefault, {
+            cardTitle: payload.cardTitle,
+          })}
+        </p>
+        <p className="text-sm text-text-secondary truncate">
+          {t("notifications:kanbanDueSubtitle", "In team {{teamName}}", {
+            teamName: payload.teamName,
+          })}
+        </p>
+      </>
+    );
+  };
+
   // Render default content for other categories
   const renderDefaultContent = () => {
     if (
@@ -361,7 +413,8 @@ export const NotificationItem = ({
       payload.category === "policy_team" ||
       payload.category === "system" ||
       payload.category === "message" ||
-      payload.category === "tool_event"
+      payload.category === "tool_event" ||
+      payload.category === "kanban_due"
     ) {
       return null;
     }
@@ -394,6 +447,7 @@ export const NotificationItem = ({
           {renderSystemContent()}
           {renderMessageContent()}
           {renderToolEventContent()}
+          {renderKanbanDueContent()}
           {renderDefaultContent()}
         </div>
 

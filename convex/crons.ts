@@ -20,4 +20,12 @@ crons.daily(
   internal.dataTest.createDemoOrga.resetDemoOrga
 );
 
+// Check kanban cards for approaching/overdue due dates and send notifications
+// Runs every hour
+crons.interval(
+  "kanban-due-date-notifications",
+  { hours: 1 },
+  internal.kanban.functions.checkDueDateNotifications
+);
+
 export default crons;

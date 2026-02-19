@@ -94,7 +94,20 @@
 - i18n: `memberView` section in `kanban` namespace -- title, empty, totalCards, viewTeamBoard
   - zh-TW was missed in the initial commit; I added it separately
 
+## Notification System Integration (E1 - Due Date Notifications)
+- Notification categories: discriminated union in `convex/notifications/index.ts` on `category` field
+- Adding a new category requires: (1) add literal to `notificationCategoryType`, (2) create payload validator, (3) add to `notificationPayload` union
+- Notification creation: use `internal.notifications.functions.create` (internalMutation) -- args: userId, orgaId?, memberId?, payload, priority, expiresAt?, groupKey?
+- Deduplication: use `groupKey` field + query `by_group_key` index before creating
+- Notification preferences: `convex/notificationPreferences/index.ts` -- each category is a field; new categories should be `v.optional()` for backward compat
+- Cron jobs: `convex/crons.ts` -- use `crons.interval()` for periodic or `crons.daily()` for fixed time
+- Frontend rendering: `src/components/NotificationItem/index.tsx` -- add icon case to `getIconAndColor`, add render function, add to JSX and default exclusion list
+- i18n for notifications: keys go in `public/locales/{lng}/notifications.json` (NOT kanban.json)
+- Member resolution chain: card.roleId -> role.memberId -> member.personId (= userId for notifications)
+- Cron references internal functions as: `internal.kanban.functions.checkDueDateNotifications`
+
 ## KANBAN.md Feature Catalogue
-- Added comprehensive feature catalogue with 30 features across 7 categories (A-G)
-- D4 (Member Kanban View) marked as IN PROGRESS; all others PROPOSED
+- Comprehensive feature catalogue with 30 features across 7 categories (A-G)
+- D4 (Member Kanban View): DONE
+- E1 (Due Date Notifications): DONE -- hourly cron, approaching (24h) + overdue, dedup via groupKey
 - Updated role-based ownership migration status from Pending to Done

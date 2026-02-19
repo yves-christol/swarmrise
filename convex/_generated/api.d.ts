@@ -38,6 +38,7 @@ import type * as invitations_index from "../invitations/index.js";
 import type * as kanban_access from "../kanban/access.js";
 import type * as kanban_functions from "../kanban/functions.js";
 import type * as kanban_index from "../kanban/index.js";
+import type * as legal_versions from "../legal/versions.js";
 import type * as members_functions from "../members/functions.js";
 import type * as members_index from "../members/index.js";
 import type * as notificationPreferences_functions from "../notificationPreferences/functions.js";
@@ -102,6 +103,7 @@ declare const fullApi: ApiFromModules<{
   "kanban/access": typeof kanban_access;
   "kanban/functions": typeof kanban_functions;
   "kanban/index": typeof kanban_index;
+  "legal/versions": typeof legal_versions;
   "members/functions": typeof members_functions;
   "members/index": typeof members_index;
   "notificationPreferences/functions": typeof notificationPreferences_functions;

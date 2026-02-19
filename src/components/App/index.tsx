@@ -3,6 +3,7 @@ import { AuthenticatedView } from "../AuthenticatedView"
 import { Anonymous } from "../Anonymous"
 import { Header } from "../Header"
 import { FloatingLogo } from "../FloatingLogo"
+import { ConsentGate } from "../ConsentGate"
 
 export default function App() {
   return (
@@ -10,7 +11,9 @@ export default function App() {
       <Header />
       <FloatingLogo />
       <Authenticated>
-        <AuthenticatedView />
+        <ConsentGate>
+          <AuthenticatedView />
+        </ConsentGate>
       </Authenticated>
       <Unauthenticated>
         <main className="flex-1 min-h-0 p-8 flex flex-col gap-16 overflow-auto">

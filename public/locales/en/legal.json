@@ -599,5 +599,15 @@
     "principlesLink": "Our Principles",
     "principlesDescription": "Learn about the values that guide swarmrise",
     "footer": "Published by Yorga (SASU, SIREN 889 512 406) -- Open source under Apache License 2.0"
+  },
+  "consent": {
+    "title": "Terms & Conditions",
+    "titleUpdated": "Our terms have been updated",
+    "description": "Before using swarmrise, please review and accept our terms of service and privacy policy.",
+    "descriptionUpdated": "We have updated our legal documents. Please review and accept the new terms to continue using swarmrise.",
+    "agreementText": "I have read and agree to the <termsLink>Terms of Service</termsLink> and the <privacyLink>Privacy Policy</privacyLink>.",
+    "ageConfirmation": "I confirm that I am at least 16 years old.",
+    "continue": "Continue",
+    "submitting": "Submitting..."
   }
 }

@@ -593,5 +593,15 @@
     "principlesLink": "Nuestros Principios",
     "principlesDescription": "Conoce los valores que guian swarmrise",
     "footer": "swarmrise esta licenciado bajo Apache License 2.0"
+  },
+  "consent": {
+    "title": "Términos y condiciones",
+    "titleUpdated": "Nuestros términos han sido actualizados",
+    "description": "Antes de usar swarmrise, por favor revisa y acepta nuestros términos de servicio y política de privacidad.",
+    "descriptionUpdated": "Hemos actualizado nuestros documentos legales. Por favor revisa y acepta los nuevos términos para continuar usando swarmrise.",
+    "agreementText": "He leído y acepto los <termsLink>Términos de servicio</termsLink> y la <privacyLink>Política de privacidad</privacyLink>.",
+    "ageConfirmation": "Confirmo que tengo al menos 16 años.",
+    "continue": "Continuar",
+    "submitting": "Enviando..."
   }
 }

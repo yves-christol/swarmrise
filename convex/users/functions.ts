@@ -9,6 +9,10 @@ import {
   getAuthenticatedUserEmail,
   ensureEmailInContactInfos,
 } from "../utils";
+import {
+  CURRENT_TERMS_VERSION,
+  CURRENT_PRIVACY_VERSION,
+} from "../legal/versions";
 
 /**
  * Get the current authenticated user
@@ -22,6 +26,24 @@ export const getCurrentUser = query({
     } catch {
       return null;
     }
+  },
+});
+
+/**
+ * Accept current terms of service and privacy policy.
+ * Stamps the current versions from server-side constants.
+ */
+export const acceptTerms = mutation({
+  args: {},
+  returns: v.null(),
+  handler: async (ctx) => {
+    const user = await getAuthenticatedUser(ctx);
+    await ctx.db.patch(user._id, {
+      termsAcceptedAt: Date.now(),
+      termsVersion: CURRENT_TERMS_VERSION,
+      privacyVersion: CURRENT_PRIVACY_VERSION,
+    });
+    return null;
   },
 });
 

@@ -593,5 +593,15 @@
     "principlesLink": "我們的原則",
     "principlesDescription": "了解指引 swarmrise 的價值觀",
     "footer": "swarmrise 以 Apache License 2.0 許可"
+  },
+  "consent": {
+    "title": "條款與條件",
+    "titleUpdated": "我們的條款已更新",
+    "description": "在使用 swarmrise 之前，請閱讀並接受我們的服務條款和隱私政策。",
+    "descriptionUpdated": "我們已更新法律文件。請閱讀並接受新條款以繼續使用 swarmrise。",
+    "agreementText": "我已閱讀並同意<termsLink>服務條款</termsLink>和<privacyLink>隱私政策</privacyLink>。",
+    "ageConfirmation": "我確認我已年滿 16 歲。",
+    "continue": "繼續",
+    "submitting": "提交中..."
   }
 }

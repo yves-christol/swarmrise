@@ -30,6 +30,9 @@ export const userType = v.object({
   pictureURL: v.optional(v.string()),
   contactInfos: contactInfos,
   orgaIds: v.array(v.id("orgas")),
+  termsAcceptedAt: v.optional(v.number()),
+  termsVersion: v.optional(v.string()),
+  privacyVersion: v.optional(v.string()),
 })
 
 export const userValidator = v.object({

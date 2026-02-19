@@ -73,5 +73,70 @@
     "totalCards": "{{count}} card",
     "totalCards_other": "{{count}} cards",
     "viewTeamBoard": "View team board"
+  },
+  "labels": {
+    "title": "Labels",
+    "add": "Add label",
+    "edit": "Edit label",
+    "delete": "Delete label",
+    "deleteConfirm": "Delete this label? It will be removed from all cards.",
+    "name": "Label name",
+    "color": "Color",
+    "noLabels": "No labels defined",
+    "manageLabels": "Manage labels",
+    "selectLabels": "Select labels...",
+    "createNew": "Create new label"
+  },
+  "checklist": {
+    "title": "Checklist",
+    "addItem": "Add item",
+    "placeholder": "New item...",
+    "progress": "{{completed}}/{{total}}",
+    "removeItem": "Remove item"
+  },
+  "attachments": {
+    "title": "Attachments",
+    "add": "Add file",
+    "delete": "Delete file",
+    "deleteConfirm": "Delete this attachment?",
+    "uploading": "Uploading...",
+    "fileTooLarge": "File is too large (max 10MB)",
+    "noAttachments": "No attachments",
+    "fileCount": "{{count}} file",
+    "fileCount_other": "{{count}} files"
+  },
+  "threadedComments": {
+    "title": "Comments",
+    "add": "Add comment",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this comment?",
+    "placeholder": "Write a comment...",
+    "noComments": "No comments yet",
+    "edited": "edited",
+    "commentCount": "{{count}} comment",
+    "commentCount_other": "{{count}} comments"
+  },
+  "templates": {
+    "title": "Templates",
+    "create": "Create template",
+    "edit": "Edit template",
+    "delete": "Delete template",
+    "deleteConfirm": "Delete this template?",
+    "apply": "Use template",
+    "name": "Template name",
+    "cardTitle": "Card title",
+    "noTemplates": "No templates defined",
+    "manageTemplates": "Manage templates",
+    "fromTemplate": "From template..."
+  },
+  "priority": {
+    "title": "Priority",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "critical": "Critical",
+    "none": "No priority",
+    "selectPriority": "Select priority..."
   }
 }

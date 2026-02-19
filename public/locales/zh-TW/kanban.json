@@ -73,5 +73,70 @@
     "totalCards": "{{count}} \u5f35\u5361\u7247",
     "totalCards_other": "{{count}} \u5f35\u5361\u7247",
     "viewTeamBoard": "\u67e5\u770b\u5718\u968a\u770b\u677f"
+  },
+  "labels": {
+    "title": "\u6a19\u7c64",
+    "add": "\u65b0\u589e\u6a19\u7c64",
+    "edit": "\u7de8\u8f2f\u6a19\u7c64",
+    "delete": "\u522a\u9664\u6a19\u7c64",
+    "deleteConfirm": "\u522a\u9664\u6b64\u6a19\u7c64\uff1f\u5b83\u5c07\u5f9e\u6240\u6709\u5361\u7247\u4e2d\u79fb\u9664\u3002",
+    "name": "\u6a19\u7c64\u540d\u7a31",
+    "color": "\u984f\u8272",
+    "noLabels": "\u5c1a\u672a\u5b9a\u7fa9\u6a19\u7c64",
+    "manageLabels": "\u7ba1\u7406\u6a19\u7c64",
+    "selectLabels": "\u9078\u64c7\u6a19\u7c64...",
+    "createNew": "\u5efa\u7acb\u65b0\u6a19\u7c64"
+  },
+  "checklist": {
+    "title": "\u6e05\u55ae",
+    "addItem": "\u65b0\u589e\u9805\u76ee",
+    "placeholder": "\u65b0\u9805\u76ee...",
+    "progress": "{{completed}}/{{total}}",
+    "removeItem": "\u79fb\u9664\u9805\u76ee"
+  },
+  "attachments": {
+    "title": "\u9644\u4ef6",
+    "add": "\u65b0\u589e\u6a94\u6848",
+    "delete": "\u522a\u9664\u6a94\u6848",
+    "deleteConfirm": "\u522a\u9664\u6b64\u9644\u4ef6\uff1f",
+    "uploading": "\u4e0a\u50b3\u4e2d...",
+    "fileTooLarge": "\u6a94\u6848\u904e\u5927\uff08\u6700\u5927 10MB\uff09",
+    "noAttachments": "\u7121\u9644\u4ef6",
+    "fileCount": "{{count}} \u500b\u6a94\u6848",
+    "fileCount_other": "{{count}} \u500b\u6a94\u6848"
+  },
+  "threadedComments": {
+    "title": "\u7559\u8a00",
+    "add": "\u65b0\u589e\u7559\u8a00",
+    "edit": "\u7de8\u8f2f",
+    "delete": "\u522a\u9664",
+    "deleteConfirm": "\u522a\u9664\u6b64\u7559\u8a00\uff1f",
+    "placeholder": "\u5beb\u4e00\u5247\u7559\u8a00...",
+    "noComments": "\u5c1a\u7121\u7559\u8a00",
+    "edited": "\u5df2\u7de8\u8f2f",
+    "commentCount": "{{count}} \u5247\u7559\u8a00",
+    "commentCount_other": "{{count}} \u5247\u7559\u8a00"
+  },
+  "templates": {
+    "title": "\u7bc4\u672c",
+    "create": "\u5efa\u7acb\u7bc4\u672c",
+    "edit": "\u7de8\u8f2f\u7bc4\u672c",
+    "delete": "\u522a\u9664\u7bc4\u672c",
+    "deleteConfirm": "\u522a\u9664\u6b64\u7bc4\u672c\uff1f",
+    "apply": "\u4f7f\u7528\u7bc4\u672c",
+    "name": "\u7bc4\u672c\u540d\u7a31",
+    "cardTitle": "\u5361\u7247\u6a19\u984c",
+    "noTemplates": "\u5c1a\u672a\u5b9a\u7fa9\u7bc4\u672c",
+    "manageTemplates": "\u7ba1\u7406\u7bc4\u672c",
+    "fromTemplate": "\u5f9e\u7bc4\u672c..."
+  },
+  "priority": {
+    "title": "\u512a\u5148\u7d1a",
+    "low": "\u4f4e",
+    "medium": "\u4e2d",
+    "high": "\u9ad8",
+    "critical": "\u7dca\u6025",
+    "none": "\u7121\u512a\u5148\u7d1a",
+    "selectPriority": "\u9078\u64c7\u512a\u5148\u7d1a..."
   }
 }

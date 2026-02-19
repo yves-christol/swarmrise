@@ -73,5 +73,70 @@
     "totalCards": "{{count}} carte",
     "totalCards_other": "{{count}} cartes",
     "viewTeamBoard": "Voir le tableau de l'\u00e9quipe"
+  },
+  "labels": {
+    "title": "\u00c9tiquettes",
+    "add": "Ajouter une \u00e9tiquette",
+    "edit": "Modifier l'\u00e9tiquette",
+    "delete": "Supprimer l'\u00e9tiquette",
+    "deleteConfirm": "Supprimer cette \u00e9tiquette ? Elle sera retir\u00e9e de toutes les cartes.",
+    "name": "Nom de l'\u00e9tiquette",
+    "color": "Couleur",
+    "noLabels": "Aucune \u00e9tiquette d\u00e9finie",
+    "manageLabels": "G\u00e9rer les \u00e9tiquettes",
+    "selectLabels": "S\u00e9lectionner des \u00e9tiquettes...",
+    "createNew": "Cr\u00e9er une nouvelle \u00e9tiquette"
+  },
+  "checklist": {
+    "title": "Liste de t\u00e2ches",
+    "addItem": "Ajouter un \u00e9l\u00e9ment",
+    "placeholder": "Nouvel \u00e9l\u00e9ment...",
+    "progress": "{{completed}}/{{total}}",
+    "removeItem": "Retirer l'\u00e9l\u00e9ment"
+  },
+  "attachments": {
+    "title": "Pi\u00e8ces jointes",
+    "add": "Ajouter un fichier",
+    "delete": "Supprimer le fichier",
+    "deleteConfirm": "Supprimer cette pi\u00e8ce jointe ?",
+    "uploading": "T\u00e9l\u00e9versement...",
+    "fileTooLarge": "Le fichier est trop volumineux (max 10 Mo)",
+    "noAttachments": "Aucune pi\u00e8ce jointe",
+    "fileCount": "{{count}} fichier",
+    "fileCount_other": "{{count}} fichiers"
+  },
+  "threadedComments": {
+    "title": "Commentaires",
+    "add": "Ajouter un commentaire",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer ce commentaire ?",
+    "placeholder": "\u00c9crire un commentaire...",
+    "noComments": "Aucun commentaire pour le moment",
+    "edited": "modifi\u00e9",
+    "commentCount": "{{count}} commentaire",
+    "commentCount_other": "{{count}} commentaires"
+  },
+  "templates": {
+    "title": "Mod\u00e8les",
+    "create": "Cr\u00e9er un mod\u00e8le",
+    "edit": "Modifier le mod\u00e8le",
+    "delete": "Supprimer le mod\u00e8le",
+    "deleteConfirm": "Supprimer ce mod\u00e8le ?",
+    "apply": "Utiliser le mod\u00e8le",
+    "name": "Nom du mod\u00e8le",
+    "cardTitle": "Titre de la carte",
+    "noTemplates": "Aucun mod\u00e8le d\u00e9fini",
+    "manageTemplates": "G\u00e9rer les mod\u00e8les",
+    "fromTemplate": "Depuis un mod\u00e8le..."
+  },
+  "priority": {
+    "title": "Priorit\u00e9",
+    "low": "Basse",
+    "medium": "Moyenne",
+    "high": "Haute",
+    "critical": "Critique",
+    "none": "Sans priorit\u00e9",
+    "selectPriority": "S\u00e9lectionner la priorit\u00e9..."
   }
 }

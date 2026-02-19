@@ -2,7 +2,7 @@
 
 This document defines the architecture, data model, and implementation plan for the Kanban board feature in Swarmrise. It is maintained by Kimiko, the Kanban system architect.
 
-**Status:** Phases 1-5 done. Category A (Core Board Enhancements: A1-A5) done. A6 (Column drag-and-drop reordering) done. Role-based ownership migration complete. Cards display role icon + member avatar.
+**Status:** Phases 1-5 done. Category A (Core Board Enhancements: A1-A6) done. Category B (Card Enhancements: B1-B6) done. Role-based ownership migration complete. Cards display role icon + member avatar, labels, priority, checklist progress.
 
 ---
 
@@ -317,6 +317,8 @@ convex/kanban/
 | `kanban.getBoardWithData` | `{ teamId: Id<"teams"> }` | `{ board, columns, cards } \| null` | Get board with all columns and cards in one query (main board loader) |
 | `kanban.getCardsByRole` | `{ roleId: Id<"roles"> }` | `KanbanCard[]` | Get all cards owned by a specific role |
 | `kanban.getCardsByMember` | `{ memberId: Id<"members"> }` | `KanbanCard[]` | Get all cards where the owning role is held by a given member (for member profile view; queries roles by memberId, then cards by roleId) |
+| `kanban.getCommentsForCard` | `{ cardId: Id<"kanbanCards"> }` | `KanbanComment[]` | Get all threaded comments for a card, ordered by creation time (B4) |
+| `kanban.getAttachmentsForCard` | `{ cardId: Id<"kanbanCards"> }` | `KanbanAttachment[]` | Get all file attachments for a card (B3) |
 
 ### Mutations
 
@@ -333,6 +335,19 @@ convex/kanban/
 | `kanban.setColumnWipLimit` | `{ columnId, wipLimit: number \| null }` | `null` | Set or clear the WIP limit for a column (A2) |
 | `kanban.bulkMoveCards` | `{ cardIds, targetColumnId }` | `null` | Move multiple cards to a column at once (A5) |
 | `kanban.bulkDeleteCards` | `{ cardIds }` | `null` | Delete multiple cards at once (A5) |
+| `kanban.createLabel` | `{ boardId, name, color }` | `Id<"kanbanLabels">` | Create a label for the board (B1) |
+| `kanban.updateLabel` | `{ labelId, name?, color? }` | `null` | Update a label's name/color (B1) |
+| `kanban.deleteLabel` | `{ labelId }` | `null` | Delete a label; cascades to remove from all cards/templates (B1) |
+| `kanban.updateChecklist` | `{ cardId, checklist }` | `null` | Replace the entire checklist on a card (B2) |
+| `kanban.toggleChecklistItem` | `{ cardId, itemId }` | `null` | Toggle a single checklist item's completed state (B2) |
+| `kanban.addAttachment` | `{ cardId, storageId, fileName, fileSize, mimeType }` | `Id<"kanbanAttachments">` | Add a file attachment to a card (B3) |
+| `kanban.deleteAttachment` | `{ attachmentId }` | `null` | Delete an attachment and its storage file (B3) |
+| `kanban.addComment` | `{ cardId, text }` | `Id<"kanbanComments">` | Add a threaded comment to a card (B4) |
+| `kanban.updateComment` | `{ commentId, text }` | `null` | Edit a comment (author-only) (B4) |
+| `kanban.deleteComment` | `{ commentId }` | `null` | Delete a comment (author-only) (B4) |
+| `kanban.createTemplate` | `{ boardId, name, title, defaults... }` | `Id<"kanbanTemplates">` | Create a card template (B5) |
+| `kanban.updateTemplate` | `{ templateId, name?, title?, defaults... }` | `null` | Update a template (B5) |
+| `kanban.deleteTemplate` | `{ templateId }` | `null` | Delete a template (B5) |
 
 ### Board Auto-Creation
 
@@ -907,6 +922,29 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | Column DnD: Disabled in selection mode | Done | `useSortable({ disabled: selectionMode })` |
 | Column DnD: Works with collapsed columns | Done | Collapsed columns are draggable via the entire collapsed bar |
 | Column DnD: i18n `dragToReorder` key (6 languages) | Done | `columnActions.dragToReorder` in en/fr/es/it/uk/zh-TW |
+| **Category B: Card Enhancements (B1-B6)** | | |
+| B1: Labels - Schema (`kanbanLabels` table, `labelIds` on card) | Done | `kanbanLabelType` with boardId, orgaId, name, color; `by_board` index |
+| B1: Labels - Backend (`createLabel`, `updateLabel`, `deleteLabel`) | Done | Delete cascades to remove label from all cards + templates |
+| B1: Labels - Frontend (label badges on cards, picker in modal, inline creation) | Done | Color-coded pill bars on cards; toggle picker + create-new in modal |
+| B1: Labels - Search integration | Done | Cards filterable by label name in search bar |
+| B2: Checklists - Schema (`checklist` inline array on card) | Done | `checklistItemValidator` (id, text, completed); stored inline on card |
+| B2: Checklists - Backend (`updateChecklist`, `toggleChecklistItem`) | Done | Full checklist replace and individual item toggle |
+| B2: Checklists - Frontend (progress bar on cards, editor in modal) | Done | Progress bar with N/M count; add/remove/toggle items in modal |
+| B3: Attachments - Schema (`kanbanAttachments` table) | Done | `kanbanAttachmentType` with storageId, fileName, fileSize, mimeType, uploadedBy |
+| B3: Attachments - Backend (`addAttachment`, `deleteAttachment`, `getAttachmentsForCard`) | Done | Upload via `generateUploadUrl`; delete cascades to storage file |
+| B3: Attachments - Frontend (file upload, listing, delete in modal) | Done | Drag-or-click upload; file list with size; delete with storage cleanup |
+| B3: Attachments - Cascade deletion | Done | Card/column/bulk delete removes associated attachments + storage files |
+| B4: Comments - Schema (`kanbanComments` table) | Done | `kanbanCommentType` with authorId, text; `by_card` index |
+| B4: Comments - Backend (`addComment`, `updateComment`, `deleteComment`, `getCommentsForCard`) | Done | Author-only edit/delete enforcement |
+| B4: Comments - Frontend (threaded list in modal, add/delete) | Done | Author avatar + timestamp; Cmd+Enter submit; own-comment delete |
+| B5: Templates - Schema (`kanbanTemplates` table) | Done | `kanbanTemplateType` with name, title, defaults for comments/priority/labels/checklist |
+| B5: Templates - Backend (`createTemplate`, `updateTemplate`, `deleteTemplate`) | Done | Board-scoped templates |
+| B5: Templates - Frontend (template selector in create mode, save-as-template) | Done | Dropdown prefills form; save current card as template button |
+| B6: Priority - Schema (`priority` optional field on card) | Done | `priorityValidator`: low/medium/high/critical |
+| B6: Priority - Frontend (colored border + dot on cards, selector in modal) | Done | Left border color + dot indicator; button row selector in modal |
+| B6: Priority - Search integration | Done | Cards filterable by priority level in search bar |
+| B1-B6: i18n keys (6 languages) | Done | `labels.*`, `checklist.*`, `attachments.*`, `threadedComments.*`, `templates.*`, `priority.*` |
+| B1-B6: `getBoardWithData` updated | Done | Returns `labels` and `templates` alongside board/columns/cards |
 
 ---
 
@@ -930,11 +968,11 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 
 **Rationale:** A card without a due date is a wish, not a commitment. Due dates create accountability and enable overdue detection. If the exact date is unknown, pick a reasonable deadline -- it can always be updated.
 
-### 4. Comments as a simple string (not threaded)
+### 4. ~~Comments as a simple string (not threaded)~~ -- SUPERSEDED by B4
 
-**Decision:** Card comments are a single text field, not a threaded discussion.
+**Decision:** ~~Card comments are a single text field, not a threaded discussion.~~ As of B4, comments are stored in a separate `kanbanComments` table with author identity and timestamps. The original `comments` string field is retained for backward compatibility but new comments use the threaded system.
 
-**Rationale:** The chat system already provides rich threaded discussions. Kanban comments are for brief context notes ("Waiting on design review", "Blocked by API change"). Detailed discussions should happen in the team channel, not on a card.
+**Rationale:** The original rationale (use chat for discussions) remains valid for detailed conversations. However, lightweight per-card comments with author attribution improve accountability and traceability without requiring users to switch to the chat channel.
 
 ### 5. Client-side search (not server-side)
 
@@ -1016,6 +1054,42 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 
 **Rationale:** The delete confirmation dialog shows the number of cards that will be deleted, making the consequence explicit. Requiring card migration before deletion adds complexity and slows the operation. Cards in a column being deleted are likely irrelevant -- if they were important, the user would move them first. A future enhancement could offer a "move cards first" option if user feedback warrants it.
 
+### 18. Labels are board-scoped entities (not inline on cards)
+
+**Decision:** Labels are stored in a separate `kanbanLabels` table, scoped to a board. Cards reference labels via `labelIds: Id<"kanbanLabels">[]`. Labels have a `name` and a `color` (Tailwind color key).
+
+**Rationale:** Board-scoped labels allow consistent categorization across all cards. If labels were inline strings, there would be no way to ensure consistent naming or coloring. A separate table enables: (a) shared vocabulary across the board, (b) rename-once-update-everywhere, (c) deletion that cleanly removes the label from all cards and templates. The 10-color palette (red, orange, amber, green, teal, blue, indigo, purple, pink, gray) covers common categorization needs without overwhelming users.
+
+### 19. Checklists stored inline on cards (not as a separate table)
+
+**Decision:** Checklist items are stored as an inline array `checklist: ChecklistItem[]` directly on the card document, not in a separate table.
+
+**Rationale:** Checklists are tightly coupled to their card and are always loaded/displayed together. A separate table would require an additional query per card and complicate the data model unnecessarily. The inline approach means: (a) no extra queries -- checklist data is returned with `getBoardWithData`, (b) atomic updates -- toggling an item is a single `patch` operation, (c) simple deletion -- deleting a card automatically removes its checklist. The trade-off is that concurrent edits to the same checklist can overwrite each other, but this is acceptable for small checklists (typically 3-10 items) on a team board.
+
+### 20. Comments and attachments are separate tables (not inline)
+
+**Decision:** Threaded comments (`kanbanComments`) and file attachments (`kanbanAttachments`) are stored in separate tables, not inline on the card.
+
+**Rationale:** Unlike checklists, comments and attachments can grow unbounded and are loaded on-demand (only when the card modal is open). Storing them inline would bloat every card document and slow down `getBoardWithData` which loads all cards for the board. Separate tables with `by_card` indexes allow lazy loading: `getCommentsForCard` and `getAttachmentsForCard` are only called when a specific card's modal is opened. Cascade deletion is handled explicitly in `deleteCard`, `deleteColumn`, and `bulkDeleteCards`.
+
+### 21. Priority as optional field (not required)
+
+**Decision:** Priority is an optional field on cards (`priority?: "low" | "medium" | "high" | "critical"`). Cards without a priority are displayed normally with no priority indicator.
+
+**Rationale:** Not every card needs a priority. Forcing a priority on every card adds friction during creation. The four-level scale (low/medium/high/critical) is standard and intuitive. Visual indicators (colored left border + dot) make priority scannable without cluttering the card. Priority is filterable in search.
+
+### 22. Templates store defaults, not constraints
+
+**Decision:** Card templates store default values (`title`, `defaultComments`, `defaultPriority`, `defaultLabelIds`, `defaultChecklist`) that pre-fill the card creation form. Users can modify any field after applying a template.
+
+**Rationale:** Templates are productivity shortcuts, not rigid structures. Pre-filling common values reduces repetitive data entry while allowing per-card customization. The "save as template" action in the card modal lets users create templates from successful card patterns, promoting organic template evolution.
+
+### 23. Author-only edit/delete for comments
+
+**Decision:** Only the comment author can edit or delete their own comments. Other team members can view all comments but cannot modify them.
+
+**Rationale:** This mirrors standard comment systems (GitHub, Slack) and prevents accidental or unauthorized modification of others' contributions. The board is collaborative for card management, but individual comments represent a specific person's input and should be protected. Admin override can be added later if needed.
+
 ---
 
 ## Future Enhancements
@@ -1025,13 +1099,16 @@ Listed roughly in priority order:
 1. ~~**Custom columns**~~ - DONE (A1). Add, rename, delete columns via context menu and add-column button.
 2. **Dedicated full-screen route** - `/o/:orgaId/teams/:teamId/kanban` with maximized board view (D1)
 3. ~~**Member view integration**~~ - DONE (D4). See Feature Catalogue below.
-4. **Card labels/tags** - Color-coded labels for categorization
+4. ~~**Card labels/tags**~~ - DONE (B1). Color-coded board-scoped labels; inline creation; filterable in search.
 5. ~~**Column WIP limits**~~ - DONE (A2). Optional wipLimit field on columns; amber visual warning when exceeded.
 6. ~~**Due date notifications**~~ - DONE (E1). Hourly cron checks cards; "approaching" (within 24h) and "overdue" notifications sent to role holder. Dedup via groupKey.
-7. **Card attachments** - File uploads using Convex storage (`convex/storage.ts`)
+7. ~~**Card attachments**~~ - DONE (B3). File uploads via Convex storage with 10MB limit; delete cascades to storage.
 8. **Decision trail integration** - Record card creation, moves, and edits as Decision entries
 9. **Board analytics** - Cycle time, throughput, aging cards
-10. **Card templates** - Pre-filled card templates for common action types
+10. ~~**Card templates**~~ - DONE (B5). Pre-filled card templates for common action types; save-as-template from existing cards.
+11. ~~**Card checklists**~~ - DONE (B2). Inline sub-task checklist with progress bar.
+12. ~~**Card priority levels**~~ - DONE (B6). Low/Medium/High/Critical with colored left border and dot indicator.
+13. ~~**Threaded comments**~~ - DONE (B4). Author-stamped comments with timestamps; author-only edit/delete.
 
 ---
 
@@ -1054,12 +1131,12 @@ A comprehensive inventory of potential Kanban features, organized by category. E
 
 | ID | Feature | Description | Complexity | Value | Status |
 |----|---------|-------------|------------|-------|--------|
-| B1 | Card Labels/Tags | Color-coded labels for categorization (e.g., "urgent", "blocked", "discussion"). Configurable per board. Filterable in search. | Medium | High | PROPOSED |
-| B2 | Card Checklists | Sub-task checklist within a card. Progress bar showing N/M items completed. Does not affect card position. | Medium | Medium | PROPOSED |
-| B3 | Card Attachments | File uploads (images, documents) using Convex storage. Preview thumbnails on cards. Max file size limit. | High | Medium | PROPOSED |
-| B4 | Card Comments (Threaded) | Upgrade from single string to threaded comments. Each comment has author, timestamp. Integrates with member identity. | High | Medium | PROPOSED |
-| B5 | Card Templates | Pre-filled card templates for common action types (e.g., "Meeting Follow-up", "Decision Implementation"). Configurable per board. | Low | Low | PROPOSED |
-| B6 | Card Priority Levels | Explicit priority field (e.g., Low/Medium/High/Critical) with visual indicators. Sort/filter by priority. | Low | Medium | PROPOSED |
+| B1 | Card Labels/Tags | Color-coded labels for categorization (e.g., "urgent", "blocked", "discussion"). Configurable per board. Filterable in search. | Medium | High | DONE |
+| B2 | Card Checklists | Sub-task checklist within a card. Progress bar showing N/M items completed. Does not affect card position. | Medium | Medium | DONE |
+| B3 | Card Attachments | File uploads (images, documents) using Convex storage. Preview thumbnails on cards. Max file size limit (10MB). | High | Medium | DONE |
+| B4 | Card Comments (Threaded) | Upgrade from single string to threaded comments. Each comment has author, timestamp. Integrates with member identity. Author-only edit/delete. | High | Medium | DONE |
+| B5 | Card Templates | Pre-filled card templates for common action types (e.g., "Meeting Follow-up", "Decision Implementation"). Configurable per board. Save-as-template from existing cards. | Low | Low | DONE |
+| B6 | Card Priority Levels | Explicit priority field (Low/Medium/High/Critical) with visual indicators (colored left border, dot). Filterable in search. | Low | Medium | DONE |
 
 ### Category C: Search, Filter, and Sort
 
@@ -1076,7 +1153,7 @@ A comprehensive inventory of potential Kanban features, organized by category. E
 | D1 | Dedicated Full-Screen Route | `/o/:orgaId/teams/:teamId/kanban` with maximized board view. Full-width layout without sidebar constraints. | Medium | High | PROPOSED |
 | D2 | Role Kanban View | From a role's profile, see all Kanban cards assigned to that role across all boards. Uses existing `getCardsByRole` query. | Low | Medium | PROPOSED |
 | D3 | Orga-Wide Dashboard | Aggregated view across all teams in an orga: total cards, overdue count, cards per team, bottleneck columns. Read-only summary. | High | Medium | PROPOSED |
-| D4 | Member Kanban View | From a member's profile, see all Kanban cards owned by roles that the member holds, across all teams. Cards grouped by team, organized by column. | Medium | High | IN PROGRESS |
+| D4 | Member Kanban View | From a member's profile, see all Kanban cards owned by roles that the member holds, across all teams. Cards grouped by team, organized by column. | Medium | High | DONE |
 | D5 | Cross-Team Card Timeline | Timeline view showing cards across all teams sorted by due date. Useful for members with roles in multiple teams. | High | Medium | PROPOSED |
 
 ### Category E: Notifications and Automation

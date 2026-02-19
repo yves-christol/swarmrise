@@ -5,6 +5,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import type { KanbanColumn as KanbanColumnType } from "../../../../convex/kanban";
 import type { KanbanCard as KanbanCardType } from "../../../../convex/kanban";
+import type { KanbanLabel } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
 import type { Role } from "../../../../convex/roles";
 import { Id } from "../../../../convex/_generated/dataModel";
@@ -28,6 +29,8 @@ type KanbanColumnProps = {
   selectionMode: boolean;
   selectedCardIds: Set<string>;
   onToggleCardSelection: (cardId: Id<"kanbanCards">) => void;
+  // Labels
+  labelMap?: Map<Id<"kanbanLabels">, KanbanLabel>;
   // Column DnD
   isDimmed?: boolean;
   isDraggingColumn?: boolean;
@@ -42,6 +45,7 @@ function SortableCard({
   selectionMode,
   isSelected,
   onToggleSelection,
+  labelMap,
 }: {
   card: KanbanCardType;
   cardRole: Role | undefined;
@@ -50,6 +54,7 @@ function SortableCard({
   selectionMode: boolean;
   isSelected: boolean;
   onToggleSelection: () => void;
+  labelMap?: Map<Id<"kanbanLabels">, KanbanLabel>;
 }) {
   const {
     attributes,
@@ -76,6 +81,7 @@ function SortableCard({
       style={style}
       selectionMode={selectionMode}
       isSelected={isSelected}
+      labelMap={labelMap}
       {...(selectionMode ? {} : { ...attributes, ...listeners })}
     />
   );
@@ -95,6 +101,7 @@ export function KanbanColumn({
   selectionMode,
   selectedCardIds,
   onToggleCardSelection,
+  labelMap,
   isDimmed = false,
   isDraggingColumn = false,
   isOverlay = false,
@@ -434,6 +441,7 @@ export function KanbanColumn({
                 selectionMode={selectionMode}
                 isSelected={selectedCardIds.has(card._id)}
                 onToggleSelection={() => onToggleCardSelection(card._id)}
+                labelMap={labelMap}
               />
             );
           })}

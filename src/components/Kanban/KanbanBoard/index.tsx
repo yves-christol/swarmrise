@@ -20,6 +20,7 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import type { KanbanCard as KanbanCardType } from "../../../../convex/kanban";
 import type { KanbanColumn as KanbanColumnType } from "../../../../convex/kanban";
+import type { KanbanLabel } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
 import type { Role } from "../../../../convex/roles";
 import { KanbanColumn } from "../KanbanColumn";
@@ -276,6 +277,17 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     return Array.from(roleMap.values());
   }, [roleMap]);
 
+  // Build label lookup map (B1)
+  const labelMap = useMemo(() => {
+    const map = new Map<Id<"kanbanLabels">, KanbanLabel>();
+    if (boardData?.labels) {
+      for (const label of boardData.labels) {
+        map.set(label._id, label);
+      }
+    }
+    return map;
+  }, [boardData?.labels]);
+
   // Group cards by column (sorted by position)
   const cardsByColumn = useMemo(() => {
     const map = new Map<Id<"kanbanColumns">, KanbanCardType[]>();
@@ -297,7 +309,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     return map;
   }, [boardData]);
 
-  // Filter cards by search query (matches card title, role title, or member name)
+  // Filter cards by search query (matches card title, role title, member name, labels, priority)
   const filteredCardsByColumn = useMemo(() => {
     if (!searchQuery.trim()) return cardsByColumn;
 
@@ -318,12 +330,21 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
               if (fullName.includes(query)) return true;
             }
           }
+          // B1: Search by label name
+          if (card.labelIds) {
+            for (const labelId of card.labelIds) {
+              const label = labelMap.get(labelId);
+              if (label && label.name.toLowerCase().includes(query)) return true;
+            }
+          }
+          // B6: Search by priority
+          if (card.priority && card.priority.toLowerCase().includes(query)) return true;
           return false;
         }),
       );
     }
     return filtered;
-  }, [cardsByColumn, searchQuery, roleMap, memberMap]);
+  }, [cardsByColumn, searchQuery, roleMap, memberMap, labelMap]);
 
   // Card lookup by id
   const cardById = useMemo(() => {
@@ -720,6 +741,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                   selectionMode={selectionMode}
                   selectedCardIds={selectedCardIds}
                   onToggleCardSelection={toggleCardSelection}
+                  labelMap={labelMap}
                   isDimmed={isEmpty}
                   isDraggingColumn={activeColumnId === column._id}
                 />
@@ -803,6 +825,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                 card={activeCard}
                 cardRole={activeRole}
                 roleMember={activeRoleMember}
+                labelMap={labelMap}
               />
             </div>
           ) : activeColumn ? (
@@ -821,6 +844,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                 selectionMode={selectionMode}
                 selectedCardIds={selectedCardIds}
                 onToggleCardSelection={() => {}}
+                labelMap={labelMap}
                 isDimmed={false}
                 isDraggingColumn={false}
                 isOverlay
@@ -840,6 +864,8 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
         memberMap={memberMap}
         columnId={createColumnId}
         card={editingCard}
+        labels={boardData.labels}
+        templates={boardData.templates}
       />
 
       {/* Board settings modal (A4) */}

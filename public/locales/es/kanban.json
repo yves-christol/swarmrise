@@ -73,5 +73,70 @@
     "totalCards": "{{count}} tarjeta",
     "totalCards_other": "{{count}} tarjetas",
     "viewTeamBoard": "Ver tablero del equipo"
+  },
+  "labels": {
+    "title": "Etiquetas",
+    "add": "A\u00f1adir etiqueta",
+    "edit": "Editar etiqueta",
+    "delete": "Eliminar etiqueta",
+    "deleteConfirm": "\u00bfEliminar esta etiqueta? Se retirar\u00e1 de todas las tarjetas.",
+    "name": "Nombre de la etiqueta",
+    "color": "Color",
+    "noLabels": "No hay etiquetas definidas",
+    "manageLabels": "Gestionar etiquetas",
+    "selectLabels": "Seleccionar etiquetas...",
+    "createNew": "Crear nueva etiqueta"
+  },
+  "checklist": {
+    "title": "Lista de tareas",
+    "addItem": "A\u00f1adir elemento",
+    "placeholder": "Nuevo elemento...",
+    "progress": "{{completed}}/{{total}}",
+    "removeItem": "Eliminar elemento"
+  },
+  "attachments": {
+    "title": "Archivos adjuntos",
+    "add": "A\u00f1adir archivo",
+    "delete": "Eliminar archivo",
+    "deleteConfirm": "\u00bfEliminar este archivo adjunto?",
+    "uploading": "Subiendo...",
+    "fileTooLarge": "El archivo es demasiado grande (m\u00e1x 10 MB)",
+    "noAttachments": "Sin archivos adjuntos",
+    "fileCount": "{{count}} archivo",
+    "fileCount_other": "{{count}} archivos"
+  },
+  "threadedComments": {
+    "title": "Comentarios",
+    "add": "A\u00f1adir comentario",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "deleteConfirm": "\u00bfEliminar este comentario?",
+    "placeholder": "Escribir un comentario...",
+    "noComments": "A\u00fan no hay comentarios",
+    "edited": "editado",
+    "commentCount": "{{count}} comentario",
+    "commentCount_other": "{{count}} comentarios"
+  },
+  "templates": {
+    "title": "Plantillas",
+    "create": "Crear plantilla",
+    "edit": "Editar plantilla",
+    "delete": "Eliminar plantilla",
+    "deleteConfirm": "\u00bfEliminar esta plantilla?",
+    "apply": "Usar plantilla",
+    "name": "Nombre de la plantilla",
+    "cardTitle": "T\u00edtulo de la tarjeta",
+    "noTemplates": "No hay plantillas definidas",
+    "manageTemplates": "Gestionar plantillas",
+    "fromTemplate": "Desde plantilla..."
+  },
+  "priority": {
+    "title": "Prioridad",
+    "low": "Baja",
+    "medium": "Media",
+    "high": "Alta",
+    "critical": "Cr\u00edtica",
+    "none": "Sin prioridad",
+    "selectPriority": "Seleccionar prioridad..."
   }
 }

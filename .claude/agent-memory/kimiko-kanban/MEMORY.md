@@ -108,9 +108,10 @@
 
 ## KANBAN.md Feature Catalogue
 - Comprehensive feature catalogue with 31 features across 7 categories (A-G)
+- Category A (A1-A6): ALL DONE
+- Category B (B1-B6): ALL DONE
 - D4 (Member Kanban View): DONE
 - E1 (Due Date Notifications): DONE -- hourly cron, approaching (24h) + overdue, dedup via groupKey
-- Updated role-based ownership migration status from Pending to Done
 
 ## Category A: Core Board Enhancements (ALL DONE)
 - A1 Custom Columns: `addColumn`, `renameColumn`, `deleteColumn` mutations; inline rename in column header via context menu; add column button at board end
@@ -129,3 +130,54 @@
 - Column droppable IDs: `column:{columnId}` prefix (for card drops into empty columns)
 - `handleDragStart`/`handleDragEnd` check `isColumnSortableId()` to route logic
 - COLUMN_SORTABLE_PREFIX defined in both KanbanBoard and KanbanColumn (must stay in sync)
+
+## Category B: Card Enhancements (ALL DONE)
+
+### B1 Labels
+- Table: `kanbanLabels` (boardId, orgaId, name, color) with `by_board` index
+- Cards reference via `labelIds: v.optional(v.array(v.id("kanbanLabels")))`
+- 10 color palette: red, orange, amber, green, teal, blue, indigo, purple, pink, gray
+- `LABEL_COLORS` and `LabelColor` exported from `convex/kanban/index.ts`
+- Delete cascades: removes label from all cards + templates on the board
+- Frontend: colored pill bars on KanbanCard; toggle picker + inline create in modal
+- Search: filters by label name
+
+### B2 Checklists
+- Stored INLINE on card: `checklist: v.optional(v.array(checklistItemValidator))`
+- `ChecklistItem`: { id: string, text: string, completed: boolean }
+- Mutations: `updateChecklist` (full replace), `toggleChecklistItem` (single toggle)
+- Frontend: progress bar on card (green when 100%); add/remove/toggle in modal
+- Design decision: inline (not separate table) -- always loaded with card, atomic updates
+
+### B3 Attachments
+- Table: `kanbanAttachments` (cardId, boardId, orgaId, storageId, fileName, fileSize, mimeType, uploadedBy)
+- `MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024` (10MB)
+- Upload flow: `generateUploadUrl` -> `fetch(uploadUrl, { method: "POST" })` -> `addAttachment`
+- Delete cascade: card/column/bulk delete removes attachments AND storage files via `ctx.storage.delete()`
+- Query: `getAttachmentsForCard` -- lazy loaded only when modal opens
+
+### B4 Threaded Comments
+- Table: `kanbanComments` (cardId, boardId, orgaId, authorId, text) with `by_card` index
+- Author-only edit/delete: `updateComment`/`deleteComment` check `comment.authorId === member._id`
+- Query: `getCommentsForCard` -- lazy loaded only when modal opens
+- Frontend: comment list with avatar, timestamp, Cmd+Enter submit, own-delete button
+- Original `comments` string field retained on card for backward compat
+
+### B5 Templates
+- Table: `kanbanTemplates` (boardId, orgaId, name, title, defaultComments?, defaultPriority?, defaultLabelIds?, defaultChecklist?)
+- Board-scoped; returned by `getBoardWithData` alongside labels
+- Frontend: dropdown in create mode prefills form; save-as-template button in modal
+- Design: defaults not constraints -- users can modify any field after applying
+
+### B6 Priority
+- Field: `priority: v.optional(priorityValidator)` on card -- "low" | "medium" | "high" | "critical"
+- `PRIORITY_CLASSES` in KanbanCard: colored left border + dot (blue/amber/orange/red)
+- Frontend: button row selector in modal (None + 4 levels with colored dots)
+- Search: filterable by priority level name
+
+### B-Category Schema Changes
+- 4 new tables: `kanbanLabels`, `kanbanAttachments`, `kanbanComments`, `kanbanTemplates`
+- 3 new optional fields on `kanbanCardType`: `labelIds`, `checklist`, `priority`
+- `getBoardWithData` returns `labels` and `templates` alongside board/columns/cards
+- `memberKanbanCardValidator` updated with same 3 new fields
+- i18n: 6 new sections in all 6 languages: `labels`, `checklist`, `attachments`, `threadedComments`, `templates`, `priority`

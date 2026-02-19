@@ -73,5 +73,70 @@
     "totalCards": "{{count}} scheda",
     "totalCards_other": "{{count}} schede",
     "viewTeamBoard": "Visualizza bacheca del team"
+  },
+  "labels": {
+    "title": "Etichette",
+    "add": "Aggiungi etichetta",
+    "edit": "Modifica etichetta",
+    "delete": "Elimina etichetta",
+    "deleteConfirm": "Eliminare questa etichetta? Verr\u00e0 rimossa da tutte le schede.",
+    "name": "Nome etichetta",
+    "color": "Colore",
+    "noLabels": "Nessuna etichetta definita",
+    "manageLabels": "Gestisci etichette",
+    "selectLabels": "Seleziona etichette...",
+    "createNew": "Crea nuova etichetta"
+  },
+  "checklist": {
+    "title": "Lista di controllo",
+    "addItem": "Aggiungi elemento",
+    "placeholder": "Nuovo elemento...",
+    "progress": "{{completed}}/{{total}}",
+    "removeItem": "Rimuovi elemento"
+  },
+  "attachments": {
+    "title": "Allegati",
+    "add": "Aggiungi file",
+    "delete": "Elimina file",
+    "deleteConfirm": "Eliminare questo allegato?",
+    "uploading": "Caricamento...",
+    "fileTooLarge": "Il file \u00e8 troppo grande (max 10 MB)",
+    "noAttachments": "Nessun allegato",
+    "fileCount": "{{count}} file",
+    "fileCount_other": "{{count}} file"
+  },
+  "threadedComments": {
+    "title": "Commenti",
+    "add": "Aggiungi commento",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "deleteConfirm": "Eliminare questo commento?",
+    "placeholder": "Scrivi un commento...",
+    "noComments": "Nessun commento ancora",
+    "edited": "modificato",
+    "commentCount": "{{count}} commento",
+    "commentCount_other": "{{count}} commenti"
+  },
+  "templates": {
+    "title": "Modelli",
+    "create": "Crea modello",
+    "edit": "Modifica modello",
+    "delete": "Elimina modello",
+    "deleteConfirm": "Eliminare questo modello?",
+    "apply": "Usa modello",
+    "name": "Nome modello",
+    "cardTitle": "Titolo scheda",
+    "noTemplates": "Nessun modello definito",
+    "manageTemplates": "Gestisci modelli",
+    "fromTemplate": "Da modello..."
+  },
+  "priority": {
+    "title": "Priorit\u00e0",
+    "low": "Bassa",
+    "medium": "Media",
+    "high": "Alta",
+    "critical": "Critica",
+    "none": "Nessuna priorit\u00e0",
+    "selectPriority": "Seleziona priorit\u00e0..."
   }
 }

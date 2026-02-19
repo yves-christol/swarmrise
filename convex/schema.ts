@@ -14,7 +14,7 @@ import { channelType } from "./chat"
 import { messageType } from "./chat"
 import { channelReadPositionType } from "./chat"
 import { topicClarificationType, topicAnswerType, topicResponseType, voteType, electionNominationType, electionResponseType, reactionType } from "./chat"
-import { kanbanBoardType, kanbanColumnType, kanbanCardType } from "./kanban"
+import { kanbanBoardType, kanbanColumnType, kanbanCardType, kanbanLabelType, kanbanAttachmentType, kanbanCommentType, kanbanTemplateType } from "./kanban"
 /**
  * Swarmrise Data Model Schema
  *
@@ -169,4 +169,26 @@ export default defineSchema({
     .index("by_column_and_position", ["columnId", "position"])
     .index("by_role", ["roleId"])
     .index("by_board_and_role", ["boardId", "roleId"]),
+
+  // B1: Kanban Labels - board-scoped label definitions
+  kanbanLabels: defineTable({ ...kanbanLabelType.fields })
+    .index("by_orga", ["orgaId"])
+    .index("by_board", ["boardId"]),
+
+  // B3: Kanban Attachments - file attachments on cards
+  kanbanAttachments: defineTable({ ...kanbanAttachmentType.fields })
+    .index("by_orga", ["orgaId"])
+    .index("by_card", ["cardId"])
+    .index("by_board", ["boardId"]),
+
+  // B4: Kanban Comments - threaded comments on cards
+  kanbanComments: defineTable({ ...kanbanCommentType.fields })
+    .index("by_orga", ["orgaId"])
+    .index("by_card", ["cardId"])
+    .index("by_board", ["boardId"]),
+
+  // B5: Kanban Templates - pre-filled card templates per board
+  kanbanTemplates: defineTable({ ...kanbanTemplateType.fields })
+    .index("by_orga", ["orgaId"])
+    .index("by_board", ["boardId"]),
 });

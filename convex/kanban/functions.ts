@@ -2,7 +2,20 @@ import { query, mutation, internalMutation } from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { internal } from "../_generated/api";
-import { kanbanBoardValidator, kanbanColumnValidator, kanbanCardValidator, memberKanbanTeamGroupValidator, DEFAULT_COLUMNS } from ".";
+import {
+  kanbanBoardValidator,
+  kanbanColumnValidator,
+  kanbanCardValidator,
+  kanbanLabelValidator,
+  kanbanCommentValidator,
+  kanbanAttachmentValidator,
+  kanbanTemplateValidator,
+  memberKanbanTeamGroupValidator,
+  checklistItemValidator,
+  priorityValidator,
+  DEFAULT_COLUMNS,
+  MAX_ATTACHMENT_SIZE,
+} from ".";
 import { getMemberInOrga, memberHasTeamAccess } from "../utils";
 import { requireBoardAccess } from "./access";
 
@@ -49,7 +62,7 @@ export const getBoard = query({
 });
 
 /**
- * Get the full board data (board + columns + cards) in a single query.
+ * Get the full board data (board + columns + cards + labels + templates) in a single query.
  * This is the main loader for the Kanban UI.
  */
 export const getBoardWithData = query({
@@ -59,6 +72,8 @@ export const getBoardWithData = query({
       board: kanbanBoardValidator,
       columns: v.array(kanbanColumnValidator),
       cards: v.array(kanbanCardValidator),
+      labels: v.array(kanbanLabelValidator),
+      templates: v.array(kanbanTemplateValidator),
     }),
     v.null(),
   ),
@@ -87,7 +102,17 @@ export const getBoardWithData = query({
       .withIndex("by_board", (q) => q.eq("boardId", board._id))
       .collect();
 
-    return { board, columns, cards };
+    const labels = await ctx.db
+      .query("kanbanLabels")
+      .withIndex("by_board", (q) => q.eq("boardId", board._id))
+      .collect();
+
+    const templates = await ctx.db
+      .query("kanbanTemplates")
+      .withIndex("by_board", (q) => q.eq("boardId", board._id))
+      .collect();
+
+    return { board, columns, cards, labels, templates };
   },
 });
 
@@ -255,11 +280,57 @@ export const getCardsByMemberWithContext = query({
 });
 
 // ============================================================
+// B4: Card Comments Queries
+// ============================================================
+
+/**
+ * Get all comments for a card, ordered by creation time.
+ */
+export const getCommentsForCard = query({
+  args: { cardId: v.id("kanbanCards") },
+  returns: v.array(kanbanCommentValidator),
+  handler: async (ctx, args) => {
+    const card = await ctx.db.get(args.cardId);
+    if (!card) return [];
+
+    await requireBoardAccess(ctx, card.boardId);
+
+    return await ctx.db
+      .query("kanbanComments")
+      .withIndex("by_card", (q) => q.eq("cardId", args.cardId))
+      .collect();
+  },
+});
+
+// ============================================================
+// B3: Card Attachments Queries
+// ============================================================
+
+/**
+ * Get all attachments for a card.
+ */
+export const getAttachmentsForCard = query({
+  args: { cardId: v.id("kanbanCards") },
+  returns: v.array(kanbanAttachmentValidator),
+  handler: async (ctx, args) => {
+    const card = await ctx.db.get(args.cardId);
+    if (!card) return [];
+
+    await requireBoardAccess(ctx, card.boardId);
+
+    return await ctx.db
+      .query("kanbanAttachments")
+      .withIndex("by_card", (q) => q.eq("cardId", args.cardId))
+      .collect();
+  },
+});
+
+// ============================================================
 // Mutations
 // ============================================================
 
 /**
- * Create a new card in a column.
+ * Create a new card in a column (updated with B1, B2, B6 fields).
  */
 export const createCard = mutation({
   args: {
@@ -269,6 +340,12 @@ export const createCard = mutation({
     roleId: v.id("roles"),
     dueDate: v.number(),
     comments: v.optional(v.string()),
+    // B1: Labels
+    labelIds: v.optional(v.array(v.id("kanbanLabels"))),
+    // B2: Checklist
+    checklist: v.optional(v.array(checklistItemValidator)),
+    // B6: Priority
+    priority: v.optional(priorityValidator),
   },
   returns: v.id("kanbanCards"),
   handler: async (ctx, args) => {
@@ -309,12 +386,15 @@ export const createCard = mutation({
       dueDate: args.dueDate,
       comments: args.comments ?? "",
       position: maxPosition + 1024,
+      labelIds: args.labelIds,
+      checklist: args.checklist,
+      priority: args.priority,
     });
   },
 });
 
 /**
- * Update card details (title, role, due date, comments).
+ * Update card details (title, role, due date, comments, labels, checklist, priority).
  */
 export const updateCard = mutation({
   args: {
@@ -323,6 +403,12 @@ export const updateCard = mutation({
     roleId: v.optional(v.id("roles")),
     dueDate: v.optional(v.number()),
     comments: v.optional(v.string()),
+    // B1: Labels
+    labelIds: v.optional(v.array(v.id("kanbanLabels"))),
+    // B2: Checklist
+    checklist: v.optional(v.array(checklistItemValidator)),
+    // B6: Priority
+    priority: v.optional(priorityValidator),
   },
   returns: v.id("kanbanCards"),
   handler: async (ctx, args) => {
@@ -342,17 +428,15 @@ export const updateCard = mutation({
       }
     }
 
-    const updates: Partial<{
-      title: string;
-      roleId: Id<"roles">;
-      dueDate: number;
-      comments: string;
-    }> = {};
+    const updates: Record<string, unknown> = {};
 
     if (args.title !== undefined) updates.title = args.title;
     if (args.roleId !== undefined) updates.roleId = args.roleId;
     if (args.dueDate !== undefined) updates.dueDate = args.dueDate;
     if (args.comments !== undefined) updates.comments = args.comments;
+    if (args.labelIds !== undefined) updates.labelIds = args.labelIds;
+    if (args.checklist !== undefined) updates.checklist = args.checklist;
+    if (args.priority !== undefined) updates.priority = args.priority;
 
     await ctx.db.patch(args.cardId, updates);
     return args.cardId;
@@ -393,6 +477,7 @@ export const moveCard = mutation({
 
 /**
  * Delete a card permanently.
+ * Cascade-deletes associated comments and attachments.
  */
 export const deleteCard = mutation({
   args: { cardId: v.id("kanbanCards") },
@@ -402,6 +487,25 @@ export const deleteCard = mutation({
     if (!card) throw new Error("Card not found");
 
     await requireBoardAccess(ctx, card.boardId);
+
+    // B4: Delete associated comments
+    const comments = await ctx.db
+      .query("kanbanComments")
+      .withIndex("by_card", (q) => q.eq("cardId", args.cardId))
+      .collect();
+    for (const comment of comments) {
+      await ctx.db.delete(comment._id);
+    }
+
+    // B3: Delete associated attachments (also delete storage files)
+    const attachments = await ctx.db
+      .query("kanbanAttachments")
+      .withIndex("by_card", (q) => q.eq("cardId", args.cardId))
+      .collect();
+    for (const attachment of attachments) {
+      await ctx.storage.delete(attachment.storageId);
+      await ctx.db.delete(attachment._id);
+    }
 
     await ctx.db.delete(args.cardId);
     return null;
@@ -519,13 +623,30 @@ export const deleteColumn = mutation({
 
     const { board } = await requireBoardAccess(ctx, column.boardId);
 
-    // Delete all cards in this column
+    // Delete all cards in this column (with cascade)
     const cards = await ctx.db
       .query("kanbanCards")
       .withIndex("by_column", (q) => q.eq("columnId", args.columnId))
       .collect();
 
     for (const card of cards) {
+      // Cascade: comments
+      const comments = await ctx.db
+        .query("kanbanComments")
+        .withIndex("by_card", (q) => q.eq("cardId", card._id))
+        .collect();
+      for (const comment of comments) {
+        await ctx.db.delete(comment._id);
+      }
+      // Cascade: attachments
+      const attachments = await ctx.db
+        .query("kanbanAttachments")
+        .withIndex("by_card", (q) => q.eq("cardId", card._id))
+        .collect();
+      for (const attachment of attachments) {
+        await ctx.storage.delete(attachment.storageId);
+        await ctx.db.delete(attachment._id);
+      }
       await ctx.db.delete(card._id);
     }
 
@@ -645,9 +766,416 @@ export const bulkDeleteCards = mutation({
       if (!card) continue;
       if (card.boardId !== firstCard.boardId) continue;
 
+      // Cascade: comments
+      const comments = await ctx.db
+        .query("kanbanComments")
+        .withIndex("by_card", (q) => q.eq("cardId", cardId))
+        .collect();
+      for (const comment of comments) {
+        await ctx.db.delete(comment._id);
+      }
+      // Cascade: attachments
+      const attachments = await ctx.db
+        .query("kanbanAttachments")
+        .withIndex("by_card", (q) => q.eq("cardId", cardId))
+        .collect();
+      for (const attachment of attachments) {
+        await ctx.storage.delete(attachment.storageId);
+        await ctx.db.delete(attachment._id);
+      }
+
       await ctx.db.delete(cardId);
     }
 
+    return null;
+  },
+});
+
+// ============================================================
+// B1: Label Management
+// ============================================================
+
+/**
+ * Create a new label for a board.
+ */
+export const createLabel = mutation({
+  args: {
+    boardId: v.id("kanbanBoards"),
+    name: v.string(),
+    color: v.string(),
+  },
+  returns: v.id("kanbanLabels"),
+  handler: async (ctx, args) => {
+    const { board } = await requireBoardAccess(ctx, args.boardId);
+
+    if (!args.name.trim()) {
+      throw new Error("Label name cannot be empty");
+    }
+
+    return await ctx.db.insert("kanbanLabels", {
+      boardId: args.boardId,
+      orgaId: board.orgaId,
+      name: args.name.trim(),
+      color: args.color,
+    });
+  },
+});
+
+/**
+ * Update a label's name and/or color.
+ */
+export const updateLabel = mutation({
+  args: {
+    labelId: v.id("kanbanLabels"),
+    name: v.optional(v.string()),
+    color: v.optional(v.string()),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const label = await ctx.db.get(args.labelId);
+    if (!label) throw new Error("Label not found");
+
+    await requireBoardAccess(ctx, label.boardId);
+
+    const updates: Record<string, string> = {};
+    if (args.name !== undefined) {
+      if (!args.name.trim()) throw new Error("Label name cannot be empty");
+      updates.name = args.name.trim();
+    }
+    if (args.color !== undefined) updates.color = args.color;
+
+    await ctx.db.patch(args.labelId, updates);
+    return null;
+  },
+});
+
+/**
+ * Delete a label. Also removes it from all cards that reference it.
+ */
+export const deleteLabel = mutation({
+  args: { labelId: v.id("kanbanLabels") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const label = await ctx.db.get(args.labelId);
+    if (!label) throw new Error("Label not found");
+
+    await requireBoardAccess(ctx, label.boardId);
+
+    // Remove label from all cards on this board
+    const cards = await ctx.db
+      .query("kanbanCards")
+      .withIndex("by_board", (q) => q.eq("boardId", label.boardId))
+      .collect();
+
+    for (const card of cards) {
+      if (card.labelIds && card.labelIds.includes(args.labelId)) {
+        await ctx.db.patch(card._id, {
+          labelIds: card.labelIds.filter((id) => id !== args.labelId),
+        });
+      }
+    }
+
+    // Remove label from all templates on this board
+    const templates = await ctx.db
+      .query("kanbanTemplates")
+      .withIndex("by_board", (q) => q.eq("boardId", label.boardId))
+      .collect();
+
+    for (const tmpl of templates) {
+      if (tmpl.defaultLabelIds && tmpl.defaultLabelIds.includes(args.labelId)) {
+        await ctx.db.patch(tmpl._id, {
+          defaultLabelIds: tmpl.defaultLabelIds.filter((id) => id !== args.labelId),
+        });
+      }
+    }
+
+    await ctx.db.delete(args.labelId);
+    return null;
+  },
+});
+
+// ============================================================
+// B2: Checklist Management
+// ============================================================
+
+/**
+ * Update the entire checklist for a card.
+ */
+export const updateChecklist = mutation({
+  args: {
+    cardId: v.id("kanbanCards"),
+    checklist: v.array(checklistItemValidator),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const card = await ctx.db.get(args.cardId);
+    if (!card) throw new Error("Card not found");
+
+    await requireBoardAccess(ctx, card.boardId);
+
+    await ctx.db.patch(args.cardId, { checklist: args.checklist });
+    return null;
+  },
+});
+
+/**
+ * Toggle a single checklist item's completed state.
+ */
+export const toggleChecklistItem = mutation({
+  args: {
+    cardId: v.id("kanbanCards"),
+    itemId: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const card = await ctx.db.get(args.cardId);
+    if (!card) throw new Error("Card not found");
+
+    await requireBoardAccess(ctx, card.boardId);
+
+    if (!card.checklist) return null;
+
+    const updatedChecklist = card.checklist.map((item) =>
+      item.id === args.itemId ? { ...item, completed: !item.completed } : item,
+    );
+
+    await ctx.db.patch(args.cardId, { checklist: updatedChecklist });
+    return null;
+  },
+});
+
+// ============================================================
+// B3: Attachment Management
+// ============================================================
+
+/**
+ * Add an attachment to a card. The file must already be uploaded to Convex storage.
+ */
+export const addAttachment = mutation({
+  args: {
+    cardId: v.id("kanbanCards"),
+    storageId: v.id("_storage"),
+    fileName: v.string(),
+    fileSize: v.number(),
+    mimeType: v.string(),
+  },
+  returns: v.id("kanbanAttachments"),
+  handler: async (ctx, args) => {
+    const card = await ctx.db.get(args.cardId);
+    if (!card) throw new Error("Card not found");
+
+    const { board, member } = await requireBoardAccess(ctx, card.boardId);
+
+    if (args.fileSize > MAX_ATTACHMENT_SIZE) {
+      throw new Error("File size exceeds the 10MB limit");
+    }
+
+    return await ctx.db.insert("kanbanAttachments", {
+      cardId: args.cardId,
+      boardId: card.boardId,
+      orgaId: board.orgaId,
+      storageId: args.storageId,
+      fileName: args.fileName,
+      fileSize: args.fileSize,
+      mimeType: args.mimeType,
+      uploadedBy: member._id,
+    });
+  },
+});
+
+/**
+ * Delete an attachment from a card. Also deletes the file from storage.
+ */
+export const deleteAttachment = mutation({
+  args: { attachmentId: v.id("kanbanAttachments") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const attachment = await ctx.db.get(args.attachmentId);
+    if (!attachment) throw new Error("Attachment not found");
+
+    await requireBoardAccess(ctx, attachment.boardId);
+
+    await ctx.storage.delete(attachment.storageId);
+    await ctx.db.delete(args.attachmentId);
+    return null;
+  },
+});
+
+// ============================================================
+// B4: Threaded Comment Management
+// ============================================================
+
+/**
+ * Add a comment to a card.
+ */
+export const addComment = mutation({
+  args: {
+    cardId: v.id("kanbanCards"),
+    text: v.string(),
+  },
+  returns: v.id("kanbanComments"),
+  handler: async (ctx, args) => {
+    const card = await ctx.db.get(args.cardId);
+    if (!card) throw new Error("Card not found");
+
+    const { board, member } = await requireBoardAccess(ctx, card.boardId);
+
+    if (!args.text.trim()) {
+      throw new Error("Comment text cannot be empty");
+    }
+
+    return await ctx.db.insert("kanbanComments", {
+      cardId: args.cardId,
+      boardId: card.boardId,
+      orgaId: board.orgaId,
+      authorId: member._id,
+      text: args.text.trim(),
+    });
+  },
+});
+
+/**
+ * Update a comment's text. Only the author can edit their comment.
+ */
+export const updateComment = mutation({
+  args: {
+    commentId: v.id("kanbanComments"),
+    text: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const comment = await ctx.db.get(args.commentId);
+    if (!comment) throw new Error("Comment not found");
+
+    const { member } = await requireBoardAccess(ctx, comment.boardId);
+
+    if (comment.authorId !== member._id) {
+      throw new Error("You can only edit your own comments");
+    }
+
+    if (!args.text.trim()) {
+      throw new Error("Comment text cannot be empty");
+    }
+
+    await ctx.db.patch(args.commentId, { text: args.text.trim() });
+    return null;
+  },
+});
+
+/**
+ * Delete a comment. Only the author can delete their comment.
+ */
+export const deleteComment = mutation({
+  args: { commentId: v.id("kanbanComments") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const comment = await ctx.db.get(args.commentId);
+    if (!comment) throw new Error("Comment not found");
+
+    const { member } = await requireBoardAccess(ctx, comment.boardId);
+
+    if (comment.authorId !== member._id) {
+      throw new Error("You can only delete your own comments");
+    }
+
+    await ctx.db.delete(args.commentId);
+    return null;
+  },
+});
+
+// ============================================================
+// B5: Card Template Management
+// ============================================================
+
+/**
+ * Create a card template for a board.
+ */
+export const createTemplate = mutation({
+  args: {
+    boardId: v.id("kanbanBoards"),
+    name: v.string(),
+    title: v.string(),
+    defaultComments: v.optional(v.string()),
+    defaultPriority: v.optional(priorityValidator),
+    defaultLabelIds: v.optional(v.array(v.id("kanbanLabels"))),
+    defaultChecklist: v.optional(v.array(checklistItemValidator)),
+  },
+  returns: v.id("kanbanTemplates"),
+  handler: async (ctx, args) => {
+    const { board } = await requireBoardAccess(ctx, args.boardId);
+
+    if (!args.name.trim()) {
+      throw new Error("Template name cannot be empty");
+    }
+    if (!args.title.trim()) {
+      throw new Error("Template title cannot be empty");
+    }
+
+    return await ctx.db.insert("kanbanTemplates", {
+      boardId: args.boardId,
+      orgaId: board.orgaId,
+      name: args.name.trim(),
+      title: args.title.trim(),
+      defaultComments: args.defaultComments?.trim(),
+      defaultPriority: args.defaultPriority,
+      defaultLabelIds: args.defaultLabelIds,
+      defaultChecklist: args.defaultChecklist,
+    });
+  },
+});
+
+/**
+ * Update a card template.
+ */
+export const updateTemplate = mutation({
+  args: {
+    templateId: v.id("kanbanTemplates"),
+    name: v.optional(v.string()),
+    title: v.optional(v.string()),
+    defaultComments: v.optional(v.string()),
+    defaultPriority: v.optional(priorityValidator),
+    defaultLabelIds: v.optional(v.array(v.id("kanbanLabels"))),
+    defaultChecklist: v.optional(v.array(checklistItemValidator)),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const template = await ctx.db.get(args.templateId);
+    if (!template) throw new Error("Template not found");
+
+    await requireBoardAccess(ctx, template.boardId);
+
+    const updates: Record<string, unknown> = {};
+    if (args.name !== undefined) {
+      if (!args.name.trim()) throw new Error("Template name cannot be empty");
+      updates.name = args.name.trim();
+    }
+    if (args.title !== undefined) {
+      if (!args.title.trim()) throw new Error("Template title cannot be empty");
+      updates.title = args.title.trim();
+    }
+    if (args.defaultComments !== undefined) updates.defaultComments = args.defaultComments.trim();
+    if (args.defaultPriority !== undefined) updates.defaultPriority = args.defaultPriority;
+    if (args.defaultLabelIds !== undefined) updates.defaultLabelIds = args.defaultLabelIds;
+    if (args.defaultChecklist !== undefined) updates.defaultChecklist = args.defaultChecklist;
+
+    await ctx.db.patch(args.templateId, updates);
+    return null;
+  },
+});
+
+/**
+ * Delete a card template.
+ */
+export const deleteTemplate = mutation({
+  args: { templateId: v.id("kanbanTemplates") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const template = await ctx.db.get(args.templateId);
+    if (!template) throw new Error("Template not found");
+
+    await requireBoardAccess(ctx, template.boardId);
+
+    await ctx.db.delete(args.templateId);
     return null;
   },
 });
@@ -801,7 +1329,7 @@ export const migrateOwnerToRole = internalMutation({
           } as Record<string, unknown>);
           migrated++;
         } else {
-          // No roles in the team at all — delete orphaned card
+          // No roles in the team at all -- delete orphaned card
           await ctx.db.delete(card._id);
           flagged++;
         }

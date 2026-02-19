@@ -38,5 +38,12 @@
     "cancel": "\u53d6\u6d88",
     "close": "\u95dc\u9589",
     "moveToColumn": "\u79fb\u81f3 {{column}}"
+  },
+  "memberView": {
+    "title": "\u770b\u677f\u5361\u7247",
+    "empty": "\u6b64\u6210\u54e1\u7684\u89d2\u8272\u7121\u4efb\u4f55\u770b\u677f\u5361\u7247\u3002",
+    "totalCards": "{{count}} \u5f35\u5361\u7247",
+    "totalCards_other": "{{count}} \u5f35\u5361\u7247",
+    "viewTeamBoard": "\u67e5\u770b\u5718\u968a\u770b\u677f"
   }
 }

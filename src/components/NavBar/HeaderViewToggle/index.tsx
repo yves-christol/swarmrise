@@ -23,7 +23,7 @@ export const HeaderViewToggle = () => {
 
   const { viewMode } = useViewModeNavigation();
   const disabled = swapPhase !== "idle" || isFocusTransitioning;
-  const isTeamFocused = focus.type === "team";
+  const hasKanbanView = focus.type === "team" || focus.type === "member";
 
   const handleChange = (mode: ViewMode) => {
     if (!disabled) changeViewMode(mode);
@@ -84,7 +84,7 @@ export const HeaderViewToggle = () => {
         </svg>
       </button>
 
-      {isTeamFocused && (
+      {hasKanbanView && (
         <>
           <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" aria-hidden="true" />
           <button

@@ -23,6 +23,7 @@ This document defines the architecture, data model, and implementation plan for 
 13. [Implementation Status](#implementation-status)
 14. [Design Decisions](#design-decisions)
 15. [Future Enhancements](#future-enhancements)
+16. [Feature Catalogue](#feature-catalogue)
 
 ---
 
@@ -821,18 +822,24 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | Responsive design | Done | Phase 5.3 |
 | Graceful no-access handling | Done | `checkTeamAccess` query gates all downstream queries; non-members see i18n message with zero backend errors |
 | **Role-based ownership migration** | | |
-| Schema: `ownerId` -> `roleId` in kanbanCards | Pending | Replace `ownerId: v.id("members")` with `roleId: v.id("roles")` |
-| Schema: indexes `by_owner`/`by_board_and_owner` -> `by_role`/`by_board_and_role` | Pending | Update `convex/schema.ts` |
-| Backend: update `kanban/index.ts` types | Pending | Change `kanbanCardType` field |
-| Backend: update `kanban/functions.ts` | Pending | All queries/mutations that reference `ownerId` |
-| Backend: add `migrateOwnerToRole` internal mutation | Pending | One-time migration for existing cards |
-| Backend: update `getBoardWithData` to include roles | Pending | Query roles for the team alongside cards |
-| Frontend: `KanbanCard` shows role icon + member avatar | Pending | Dual display: role SVG icon + member photo |
-| Frontend: `KanbanCardModal` role picker (replaces member picker) | Pending | Dropdown showing team roles with icons |
-| Frontend: `KanbanBoard` fetches roles for the team | Pending | Add `useQuery(listRolesInTeam)` |
-| Frontend: `KanbanColumn` passes roleMap | Pending | Thread role data to card components |
-| Frontend: update search to filter by role title + holder name | Pending | Extend client-side filter logic |
+| Schema: `ownerId` -> `roleId` in kanbanCards | Done | `roleId: v.id("roles")` in `kanbanCardType` |
+| Schema: indexes `by_role`/`by_board_and_role` | Done | In `convex/schema.ts` |
+| Backend: update `kanban/index.ts` types | Done | `kanbanCardType` uses `roleId` |
+| Backend: update `kanban/functions.ts` | Done | All queries/mutations reference `roleId` |
+| Backend: add `migrateOwnerToRole` internal mutation | Done | One-time migration in `functions.ts` |
+| Backend: update `getBoardWithData` to include roles | Done | `KanbanBoard` fetches roles via `listRolesInTeam` |
+| Frontend: `KanbanCard` shows role icon + member avatar | Done | Dual display: role SVG icon + member photo |
+| Frontend: `KanbanCardModal` role picker (replaces member picker) | Done | Dropdown showing team roles with icons |
+| Frontend: `KanbanBoard` fetches roles for the team | Done | `useQuery(listRolesInTeam)` in board component |
+| Frontend: `KanbanColumn` passes roleMap | Done | Role data threaded to card components |
+| Frontend: update search to filter by role title + holder name | Done | Client-side filter by card title, role title, member name |
 | i18n: update `owner` -> `role` keys in all 6 languages | Done | `card.owner` -> `card.role`, `card.ownerRequired` -> `card.roleRequired`; added `card.selectRole`, `card.column`, `card.genericError` |
+| **Member Kanban View (D4)** | | |
+| Backend: `getCardsByMemberWithContext` query | Done | Enriched query returns cards grouped by team with column/role context |
+| Backend: `MemberKanbanCard` + `MemberKanbanTeamGroup` validators | Done | In `convex/kanban/index.ts` |
+| Frontend: `MemberKanbanView` component | Done | `src/components/MemberKanbanView/index.tsx` |
+| i18n: `memberView` keys in all 6 languages | Done | title, empty, totalCards, viewTeamBoard |
+| Integration into FocusContainer PrismFlip | Done | Third "kanban" face on member prism (wired by Giuseppe) |
 
 ---
 
@@ -914,7 +921,7 @@ Listed roughly in priority order:
 
 1. **Custom columns** - Add, rename, reorder, delete columns (requires UI for column management and schema support for user-defined column names)
 2. **Dedicated full-screen route** - `/o/:orgaId/teams/:teamId/kanban` with maximized board view
-3. **Member view integration** - Show all cards owned by roles held by a member across all teams in `MemberManageView`/`MemberVisualView`
+3. ~~**Member view integration**~~ - DONE (D4). See Feature Catalogue below.
 4. **Card labels/tags** - Color-coded labels for categorization
 5. **Column WIP limits** - Optional maximum card count per column, visual warning when exceeded
 6. **Due date notifications** - Notify card owner when a card approaches or passes its due date (integrates with existing notification system)
@@ -922,6 +929,90 @@ Listed roughly in priority order:
 8. **Decision trail integration** - Record card creation, moves, and edits as Decision entries
 9. **Board analytics** - Cycle time, throughput, aging cards
 10. **Card templates** - Pre-filled card templates for common action types
+
+---
+
+## Feature Catalogue
+
+A comprehensive inventory of potential Kanban features, organized by category. Each feature includes a complexity rating (Low / Medium / High) and value assessment (Low / Medium / High). Status is tracked to show the current state of each feature.
+
+### Category A: Core Board Enhancements
+
+| ID | Feature | Description | Complexity | Value | Status |
+|----|---------|-------------|------------|-------|--------|
+| A1 | Custom Columns | Add, rename, reorder, and delete columns beyond the default four. Requires column management UI and schema support for user-defined names. | Medium | High | PROPOSED |
+| A2 | Column WIP Limits | Optional maximum card count per column. Visual warning (color change, icon) when the limit is reached or exceeded. Configurable per-column. | Low | Medium | PROPOSED |
+| A3 | Column Collapse/Expand | Allow users to collapse columns to save horizontal space, especially "Archived" which is rarely viewed. Persist collapsed state per user. | Low | Medium | PROPOSED |
+| A4 | Board-Level Settings | A settings panel for each board: default column config, WIP limits, archived card retention policy. Accessible to team leaders. | Medium | Low | PROPOSED |
+| A5 | Bulk Card Actions | Multi-select cards (via checkboxes or shift-click) and perform bulk operations: move to column, change owner, delete. | Medium | Medium | PROPOSED |
+
+### Category B: Card Enhancements
+
+| ID | Feature | Description | Complexity | Value | Status |
+|----|---------|-------------|------------|-------|--------|
+| B1 | Card Labels/Tags | Color-coded labels for categorization (e.g., "urgent", "blocked", "discussion"). Configurable per board. Filterable in search. | Medium | High | PROPOSED |
+| B2 | Card Checklists | Sub-task checklist within a card. Progress bar showing N/M items completed. Does not affect card position. | Medium | Medium | PROPOSED |
+| B3 | Card Attachments | File uploads (images, documents) using Convex storage. Preview thumbnails on cards. Max file size limit. | High | Medium | PROPOSED |
+| B4 | Card Comments (Threaded) | Upgrade from single string to threaded comments. Each comment has author, timestamp. Integrates with member identity. | High | Medium | PROPOSED |
+| B5 | Card Templates | Pre-filled card templates for common action types (e.g., "Meeting Follow-up", "Decision Implementation"). Configurable per board. | Low | Low | PROPOSED |
+| B6 | Card Priority Levels | Explicit priority field (e.g., Low/Medium/High/Critical) with visual indicators. Sort/filter by priority. | Low | Medium | PROPOSED |
+
+### Category C: Search, Filter, and Sort
+
+| ID | Feature | Description | Complexity | Value | Status |
+|----|---------|-------------|------------|-------|--------|
+| C1 | Advanced Filters | Filter cards by multiple criteria simultaneously: role, due date range, column, label, overdue status. Persistent filter presets. | Medium | High | PROPOSED |
+| C2 | Server-Side Search | Full-text search index on card titles and comments for boards with 100+ cards. Uses Convex search indexes. | Medium | Low | PROPOSED |
+| C3 | Sort Within Column | Sort cards within a column by due date, creation date, title, or role -- in addition to manual drag ordering. | Low | Medium | PROPOSED |
+
+### Category D: Cross-Entity Views
+
+| ID | Feature | Description | Complexity | Value | Status |
+|----|---------|-------------|------------|-------|--------|
+| D1 | Dedicated Full-Screen Route | `/o/:orgaId/teams/:teamId/kanban` with maximized board view. Full-width layout without sidebar constraints. | Medium | High | PROPOSED |
+| D2 | Role Kanban View | From a role's profile, see all Kanban cards assigned to that role across all boards. Uses existing `getCardsByRole` query. | Low | Medium | PROPOSED |
+| D3 | Orga-Wide Dashboard | Aggregated view across all teams in an orga: total cards, overdue count, cards per team, bottleneck columns. Read-only summary. | High | Medium | PROPOSED |
+| D4 | Member Kanban View | From a member's profile, see all Kanban cards owned by roles that the member holds, across all teams. Cards grouped by team, organized by column. | Medium | High | IN PROGRESS |
+| D5 | Cross-Team Card Timeline | Timeline view showing cards across all teams sorted by due date. Useful for members with roles in multiple teams. | High | Medium | PROPOSED |
+
+### Category E: Notifications and Automation
+
+| ID | Feature | Description | Complexity | Value | Status |
+|----|---------|-------------|------------|-------|--------|
+| E1 | Due Date Notifications | Notify card owner (role holder) when a card approaches its due date (e.g., 1 day before) or becomes overdue. Integrates with the existing notification system. | Medium | High | PROPOSED |
+| E2 | Card Activity Notifications | Notify relevant parties when a card is created, moved, reassigned, or commented on. Configurable per-user preferences. | Medium | Medium | PROPOSED |
+| E3 | Auto-Archive | Automatically move cards from "Done" to "Archived" after a configurable period (e.g., 7 days). Runs via Convex cron. | Low | Medium | PROPOSED |
+| E4 | Decision Trail Integration | Record card creation, column moves, role reassignment, and edits as Decision entries for governance traceability. | Medium | Low | PROPOSED |
+
+### Category F: Analytics and Reporting
+
+| ID | Feature | Description | Complexity | Value | Status |
+|----|---------|-------------|------------|-------|--------|
+| F1 | Board Analytics | Cycle time (how long cards take from "New Topics" to "Done"), throughput (cards completed per week), aging report (cards stale for >N days). | High | Medium | PROPOSED |
+| F2 | Cumulative Flow Diagram | Stacked area chart showing card counts per column over time. Classic Kanban metric for identifying bottlenecks. | High | Low | PROPOSED |
+| F3 | Overdue Report | Dedicated view listing all overdue cards across a team or orga, sorted by how far past due. Exportable. | Medium | Medium | PROPOSED |
+
+### Category G: Collaboration and Integration
+
+| ID | Feature | Description | Complexity | Value | Status |
+|----|---------|-------------|------------|-------|--------|
+| G1 | Chat-to-Card | Create a Kanban card directly from a chat message. Pre-fills card title from message text, links back to the message. | Medium | High | PROPOSED |
+| G2 | Card-to-Chat | From a card detail modal, jump to the team channel. Optionally create a new message referencing the card. | Low | Medium | PROPOSED |
+| G3 | Real-Time Presence | Show which team members are currently viewing the board. Display cursor/card highlighting for active drag operations by others. | High | Low | PROPOSED |
+| G4 | Board Export | Export board data as CSV or JSON for external reporting or archival. | Low | Low | PROPOSED |
+
+### Feature Catalogue Summary
+
+| Category | Features | Avg Complexity | Avg Value |
+|----------|----------|----------------|-----------|
+| A: Core Board | 5 | Medium | Medium |
+| B: Card Enhancements | 6 | Medium | Medium |
+| C: Search/Filter/Sort | 3 | Medium | Medium |
+| D: Cross-Entity Views | 5 | Medium | High |
+| E: Notifications/Automation | 4 | Medium | Medium |
+| F: Analytics/Reporting | 3 | High | Medium |
+| G: Collaboration/Integration | 4 | Medium | Medium |
+| **Total** | **30** | | |
 
 ---
 

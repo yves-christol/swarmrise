@@ -19,7 +19,7 @@ export const NavOverflowMenu = () => {
   const focusedTeamId =
     focus.type === "team" ? focus.teamId : focus.type === "role" ? focus.teamId : null;
   const focusedRoleId = focus.type === "role" ? focus.roleId : null;
-  const isTeamFocused = focus.type === "team";
+  const hasKanbanView = focus.type === "team" || focus.type === "member";
 
   const myTeams = useQuery(
     api.members.functions.listMemberTeams,
@@ -191,7 +191,7 @@ export const NavOverflowMenu = () => {
               </svg>
               {t("manage")}
             </button>
-            {isTeamFocused && (
+            {hasKanbanView && (
               <button
                 onClick={() => handleViewChange("kanban")}
                 className={`w-full flex items-center gap-2 px-4 py-2 transition-colors text-left text-sm

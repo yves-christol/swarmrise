@@ -75,3 +75,26 @@
 - A role always has exactly one `memberId` (required field, Id<"members">)
 - Role has optional `roleType`: "leader" | "secretary" | "referee"
 - Role has optional `iconKey` for custom icon (falls back to roleType default)
+
+## Member Kanban View (D4) -- Implementation Details
+- Backend: `getCardsByMemberWithContext` in `convex/kanban/functions.ts` -- enriched query
+  - Queries roles by `by_member` index, then cards by `by_role` index for each role
+  - Resolves column names, role metadata, board->team mapping, team names
+  - Returns `MemberKanbanTeamGroup[]` (cards grouped by team)
+- Validators: `memberKanbanCardValidator`, `memberKanbanTeamGroupValidator` in `convex/kanban/index.ts`
+- Frontend: `src/components/MemberKanbanView/index.tsx` (NOT under Kanban/ subdirectory)
+  - Takes only `memberId` prop (orgaId derived from member doc in backend query)
+  - Uses `useFocus().focusOnTeam` for team navigation
+  - Three sub-components: MemberKanbanView, TeamCardGroup, MemberKanbanCardItem
+  - Cards grouped by column name within each team group
+- Integration: Wired into FocusContainer PrismFlip as third "kanban" face for member view
+  - Giuseppe handled the PrismFlip wiring and lazy import
+  - Import path: `../MemberKanbanView` (relative to FocusContainer)
+  - geometry="prism" for member view (3 faces: visual, manage, kanban)
+- i18n: `memberView` section in `kanban` namespace -- title, empty, totalCards, viewTeamBoard
+  - zh-TW was missed in the initial commit; I added it separately
+
+## KANBAN.md Feature Catalogue
+- Added comprehensive feature catalogue with 30 features across 7 categories (A-G)
+- D4 (Member Kanban View) marked as IN PROGRESS; all others PROPOSED
+- Updated role-based ownership migration status from Pending to Done

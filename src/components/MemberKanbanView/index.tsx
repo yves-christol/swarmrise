@@ -1,24 +1,23 @@
 import { useMemo } from "react";
 import { useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
-import { api } from "../../../../convex/_generated/api";
-import { Id } from "../../../../convex/_generated/dataModel";
-import type { MemberKanbanCard, MemberKanbanTeamGroup } from "../../../../convex/kanban";
-import { getRoleIconPath } from "../../../utils/roleIconDefaults";
-import { useFocus } from "../../../tools/orgaStore";
+import { api } from "../../../convex/_generated/api";
+import { Id } from "../../../convex/_generated/dataModel";
+import type { MemberKanbanCard, MemberKanbanTeamGroup } from "../../../convex/kanban";
+import { getRoleIconPath } from "../../utils/roleIconDefaults";
+import { useFocus } from "../../tools/orgaStore";
 
 type MemberKanbanViewProps = {
   memberId: Id<"members">;
-  orgaId: Id<"orgas">;
 };
 
 /**
  * MemberKanbanView displays all Kanban cards owned by roles that
  * a specific member holds, across all teams they belong to.
- * Cards are grouped by team, with each team showing a mini-board
- * layout organized by column.
+ * Cards are grouped by team, with each team showing cards
+ * organized by column.
  */
-export function MemberKanbanView({ memberId, orgaId }: MemberKanbanViewProps) {
+export function MemberKanbanView({ memberId }: MemberKanbanViewProps) {
   const { t } = useTranslation("kanban");
   const { t: tCommon } = useTranslation("common");
 
@@ -38,7 +37,7 @@ export function MemberKanbanView({ memberId, orgaId }: MemberKanbanViewProps) {
   // Loading state
   if (teamGroups === undefined) {
     return (
-      <div className="absolute inset-0 bg-light dark:bg-dark flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[12rem]">
         <div className="text-text-secondary">{tCommon("loading")}</div>
       </div>
     );
@@ -47,57 +46,53 @@ export function MemberKanbanView({ memberId, orgaId }: MemberKanbanViewProps) {
   // Empty state
   if (teamGroups.length === 0 || totalCards === 0) {
     return (
-      <div className="absolute inset-0 bg-light dark:bg-dark overflow-auto">
-        <div className="pt-8 px-8 pb-8 max-w-3xl mx-auto">
-          <h2 className="text-lg font-semibold text-dark dark:text-light mb-6">
-            {t("memberView.title")}
-          </h2>
-          <div className="bg-surface-primary border border-border-default rounded-lg px-4 py-12 text-center">
-            <svg
-              className="w-12 h-12 mx-auto mb-3 text-text-tertiary"
-              viewBox="0 0 48 48"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              aria-hidden="true"
-            >
-              <rect x="6" y="8" width="36" height="32" rx="3" />
-              <line x1="18" y1="8" x2="18" y2="40" />
-              <line x1="30" y1="8" x2="30" y2="40" />
-              <rect x="20" y="14" width="8" height="6" rx="1" />
-            </svg>
-            <p className="text-text-secondary text-sm">
-              {t("memberView.empty")}
-            </p>
-          </div>
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-lg font-semibold text-dark dark:text-light mb-6">
+          {t("memberView.title")}
+        </h2>
+        <div className="bg-surface-primary border border-border-default rounded-lg px-4 py-12 text-center">
+          <svg
+            className="w-12 h-12 mx-auto mb-3 text-text-tertiary"
+            viewBox="0 0 48 48"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            aria-hidden="true"
+          >
+            <rect x="6" y="8" width="36" height="32" rx="3" />
+            <line x1="18" y1="8" x2="18" y2="40" />
+            <line x1="30" y1="8" x2="30" y2="40" />
+            <rect x="20" y="14" width="8" height="6" rx="1" />
+          </svg>
+          <p className="text-text-secondary text-sm">
+            {t("memberView.empty")}
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="absolute inset-0 bg-light dark:bg-dark overflow-auto">
-      <div className="pt-8 px-8 pb-8 max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-dark dark:text-light">
-            {t("memberView.title")}
-          </h2>
-          <span className="text-sm text-text-secondary">
-            {t("memberView.totalCards", { count: totalCards })}
-          </span>
-        </div>
+    <div className="max-w-3xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-semibold text-dark dark:text-light">
+          {t("memberView.title")}
+        </h2>
+        <span className="text-sm text-text-secondary">
+          {t("memberView.totalCards", { count: totalCards })}
+        </span>
+      </div>
 
-        {/* Team groups */}
-        <div className="space-y-6">
-          {teamGroups.map((group) => (
-            <TeamCardGroup
-              key={group.teamId}
-              group={group}
-              onNavigateToTeam={() => focusOnTeam(group.teamId)}
-            />
-          ))}
-        </div>
+      {/* Team groups */}
+      <div className="space-y-6">
+        {teamGroups.map((group) => (
+          <TeamCardGroup
+            key={group.teamId}
+            group={group}
+            onNavigateToTeam={() => focusOnTeam(group.teamId)}
+          />
+        ))}
       </div>
     </div>
   );
@@ -116,7 +111,7 @@ function TeamCardGroup({
 }) {
   const { t } = useTranslation("kanban");
 
-  // Group cards by column name for a mini-board layout
+  // Group cards by column name for organized display
   const cardsByColumn = useMemo(() => {
     const map = new Map<string, MemberKanbanCard[]>();
     for (const card of group.cards) {
@@ -172,7 +167,7 @@ function TeamCardGroup({
       </button>
 
       {/* Cards organized by column */}
-      <div className="p-3 space-y-2">
+      <div className="p-3 space-y-3">
         {[...cardsByColumn.entries()].map(([columnName, cards]) => (
           <div key={columnName}>
             {/* Column label */}
@@ -221,7 +216,7 @@ function MemberKanbanCardItem({ card }: { card: MemberKanbanCard }) {
         {card.title}
       </p>
 
-      {/* Footer: role + column badge + due date */}
+      {/* Footer: role + due date */}
       <div className="flex items-center justify-between mt-1.5 gap-2">
         {/* Role info */}
         <div className="flex items-center gap-1.5 min-w-0">

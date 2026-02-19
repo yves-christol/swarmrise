@@ -4,7 +4,24 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useChatStore } from "../../../tools/chatStore/hooks";
-import { MessageText } from "../MessageList/MessageText";
+/** Strip markdown syntax for clean plaintext search previews. */
+function stripMarkdown(text: string): string {
+  return text
+    // mentions: @[Name](id) → @Name
+    .replace(/@\[([^\]]+)\]\([^)]+\)/g, "@$1")
+    // bold/italic
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, "$1")
+    // strikethrough
+    .replace(/~~([^~]+)~~/g, "$1")
+    // inline code
+    .replace(/`([^`]+)`/g, "$1")
+    // links: [text](url) → text
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    // blockquote markers
+    .replace(/^>\s?/gm, "")
+    // heading markers
+    .replace(/^#{1,6}\s/gm, "");
+}
 
 type SearchPanelProps = {
   orgaId: Id<"orgas">;
@@ -176,7 +193,10 @@ export const SearchPanel = ({ orgaId, channelId }: SearchPanelProps) => {
                   </span>
                 </div>
                 <p className="text-sm text-text-description truncate">
-                  <MessageText text={result.text.length > 100 ? result.text.slice(0, 100) + "..." : result.text} />
+                  {(() => {
+                    const clean = stripMarkdown(result.text);
+                    return clean.length > 100 ? clean.slice(0, 100) + "..." : clean;
+                  })()}
                   {result.isEdited && (
                     <span className="text-xs text-text-tertiary italic ml-1">
                       ({t("edited")})

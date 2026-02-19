@@ -8,7 +8,7 @@ import { TopicTool } from "../TopicTool";
 import { VotingTool } from "../VotingTool";
 import { ElectionTool } from "../ElectionTool";
 import { ReactionBar, ReactionButton } from "../Reactions";
-import { MessageText } from "./MessageText";
+import { MarkdownMessage } from "./MarkdownMessage";
 import { extractMentionIds } from "../MessageInput/useMentionInput";
 import type { EmbeddedVoting } from "../VotingTool";
 import type { EmbeddedElection } from "../ElectionTool";
@@ -345,12 +345,12 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
         </div>
         <div className="flex-1 min-w-0">
           {!hasEmbeddedTool && !isEditing && (
-            <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
-              <MessageText text={message.text} />
+            <div className="text-sm text-dark dark:text-light break-words">
+              <MarkdownMessage text={message.text} />
               {message.isEdited && (
-                <> <span className="text-xs text-text-tertiary italic">({t("edited")})</span></>
+                <span className="text-xs text-text-tertiary italic ml-1">({t("edited")})</span>
               )}
-            </p>
+            </div>
           )}
           {!hasEmbeddedTool && isEditing && editArea}
           {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
@@ -393,9 +393,9 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
           {editedIndicator}
         </div>
         {!hasEmbeddedTool && !isEditing && (
-          <p className="text-sm text-dark dark:text-light whitespace-pre-wrap break-words">
-            <MessageText text={message.text} />
-          </p>
+          <div className="text-sm text-dark dark:text-light break-words">
+            <MarkdownMessage text={message.text} />
+          </div>
         )}
         {!hasEmbeddedTool && isEditing && editArea}
         {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}

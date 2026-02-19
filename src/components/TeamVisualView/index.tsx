@@ -232,7 +232,6 @@ export function TeamVisualView({ teamId, onZoomOut }: TeamVisualViewProps) {
         aria-label={t("diagram.teamStructureAriaLabel", { name: team.name, count: roles.length })}
         {...viewportHandlers}
       >
-        <title>{t("diagram.teamStructureTitle", { name: team.name })}</title>
 
       <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
         {/* Outer boundary circle: team color fill at 20% opacity, team color stroke */}

@@ -185,7 +185,6 @@ export function ContactInfo({ member, onClose }: ContactInfoProps) {
           <button
             onClick={onClose}
             className="p-1 rounded-md hover:bg-surface-hover transition-colors cursor-pointer border-none bg-transparent text-text-secondary"
-            title={t("diagram.closeContactModal")}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M4 4l8 8M12 4l-8 8" />

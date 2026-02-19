@@ -321,7 +321,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
         aria-label={t("diagram.roleDetailsAriaLabel", { name: role.title })}
         {...viewportHandlers}
       >
-        <title>{t("diagram.roleDetailsTitle", { name: role.title })}</title>
 
       <g transform={`translate(${viewport.offsetX}, ${viewport.offsetY}) scale(${viewport.scale})`}>
         {/* Team colour background fill */}
@@ -384,7 +383,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
                   className="role-content-badge flex items-center gap-2 px-3 py-1 rounded-full cursor-pointer border-none hover:brightness-110 transition-all"
                   style={{ backgroundColor: getRoleTypeBadgeColor(role.roleType) + "30" }}
                   onClick={() => linkedRole && onNavigateToRole?.(linkedRole._id, linkedRole.teamId)}
-                  title="Go to source role in parent team (L)"
                 >
                   <span
                     className="text-xs font-medium"
@@ -417,7 +415,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
               <button
                 className="role-content-badge flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-tertiary hover:bg-surface-hover-strong transition-colors cursor-pointer border-none"
                 onClick={() => onNavigateToRole?.(linkedRole._id, linkedRole.teamId)}
-                title="Go to source role in parent team (L)"
               >
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-secondary">
                   <path d="M6.5,9.5 L9.5,6.5 M5,11 L3.5,12.5 C2.5,13.5 2.5,15 3.5,15 L4,15 C5,15 5.5,14 4.5,13 M11,5 L12.5,3.5 C13.5,2.5 13.5,1 12.5,1 L12,1 C11,1 10.5,2 11.5,3" />
@@ -453,7 +450,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
               <button
                 onClick={() => setShowDuties(true)}
                 className="role-content-duties flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-secondary/60 hover:bg-surface-hover-strong/60 text-xs text-text-description transition-colors cursor-pointer border-none"
-                title={t("diagram.keyboardDuties") + " (D)"}
               >
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M2 4h12M2 8h12M2 12h8" />
@@ -519,7 +515,6 @@ export function RoleVisualView({ roleId, onZoomOut, onNavigateToRole, onNavigate
               <button
                 onClick={() => setShowDuties(false)}
                 className="p-1 rounded-md hover:bg-surface-hover transition-colors cursor-pointer border-none bg-transparent text-text-secondary"
-                title="Close (Esc/D)"
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 4l8 8M12 4l-8 8" />

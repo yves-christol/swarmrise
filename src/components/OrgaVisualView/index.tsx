@@ -282,10 +282,6 @@ export function OrgaVisualView({ orgaId, onRegisterNodePositionLookup }: OrgaVis
         tabIndex={0}
         {...handlers}
       >
-        <title>{t("diagram.orgStructureTitle")}</title>
-        <desc>
-          {t("diagram.orgStructureDesc", { count: nodes.length })}
-        </desc>
 
         {/* Arrow marker definition */}
         <defs>

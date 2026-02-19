@@ -498,7 +498,6 @@ export function MemberVisualView({
         aria-label={t("diagram.memberDetailsAriaLabel", { name: `${member.firstname} ${member.surname}`, roleCount: masterRoles.length, teamCount: teams?.length || 0 })}
         {...viewportHandlers}
       >
-        <title>{t("diagram.memberDetailsTitle", { name: `${member.firstname} ${member.surname}` })}</title>
 
         {/* Arrow marker definition */}
         <defs>
@@ -631,8 +630,6 @@ export function MemberVisualView({
           onFocus={() => setIsAvatarHovered(true)}
           onBlur={() => setIsAvatarHovered(false)}
         >
-          <title>{t("viewContactInfo")}</title>
-
           {/* Hover glow ring */}
           {isAvatarHovered && (
             <circle

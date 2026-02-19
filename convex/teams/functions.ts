@@ -124,8 +124,7 @@ export const listChildTeams = query({
     // Find all leader roles that have this team as parent
     const leaderRoles = await ctx.db
       .query("roles")
-      .withIndex("by_parent_team", (q) => q.eq("parentTeamId", args.parentTeamId))
-      .filter((q) => q.eq(q.field("roleType"), "leader"))
+      .withIndex("by_parent_team_and_role_type", (q) => q.eq("parentTeamId", args.parentTeamId).eq("roleType", "leader"))
       .collect();
     
     // Get unique team IDs from these leader roles
@@ -160,8 +159,7 @@ export const listConnectedTeams = query({
     // Find parent: this team's leader role with a parentTeamId
     const teamRoles = await ctx.db
       .query("roles")
-      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
-      .filter((q) => q.eq(q.field("roleType"), "leader"))
+      .withIndex("by_team_and_role_type", (q) => q.eq("teamId", args.teamId).eq("roleType", "leader"))
       .collect();
 
     let parent = null;
@@ -175,8 +173,7 @@ export const listConnectedTeams = query({
     // Find children: leader roles with parentTeamId pointing to this team
     const childLeaderRoles = await ctx.db
       .query("roles")
-      .withIndex("by_parent_team", (q) => q.eq("parentTeamId", args.teamId))
-      .filter((q) => q.eq(q.field("roleType"), "leader"))
+      .withIndex("by_parent_team_and_role_type", (q) => q.eq("parentTeamId", args.teamId).eq("roleType", "leader"))
       .collect();
 
     const childTeamIds = [...new Set(childLeaderRoles.map((role) => role.teamId))];
@@ -512,8 +509,7 @@ export const deleteTeam = mutation({
     // Check if team has child teams (via leader roles with parentTeamId)
     const childLeaderRoles = await ctx.db
       .query("roles")
-      .withIndex("by_parent_team", (q) => q.eq("parentTeamId", args.teamId))
-      .filter((q) => q.eq(q.field("roleType"), "leader"))
+      .withIndex("by_parent_team_and_role_type", (q) => q.eq("parentTeamId", args.teamId).eq("roleType", "leader"))
       .first();
     if (childLeaderRoles) {
       throw new Error("Cannot delete team with child teams");

@@ -106,7 +106,7 @@ const NavigationCard = ({ icon, title, description, ...rest }: NavigationCardPro
   }
 
   return (
-    <Link to={rest.to!} className={className}>
+    <Link to={rest.to} className={className}>
       {content}
     </Link>
   );

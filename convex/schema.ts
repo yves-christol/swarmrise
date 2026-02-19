@@ -40,7 +40,8 @@ export default defineSchema({
     .index("by_orga", ["orgaId"])
     .index("by_person", ["personId"])
     .index("by_orga_and_person", ["orgaId", "personId"])
-    .index("by_email", ["email"]),
+    .index("by_email", ["email"])
+    .index("by_email_and_orga", ["email", "orgaId"]),
 
   // Roles collection - each Role belongs to one Team
   roles: defineTable({ ...roleType.fields})
@@ -50,6 +51,7 @@ export default defineSchema({
     .index("by_team_and_title", ["teamId", "title"])
     .index("by_team_and_role_type", ["teamId", "roleType"])
     .index("by_parent_team", ["parentTeamId"])
+    .index("by_parent_team_and_role_type", ["parentTeamId", "roleType"])
     .index("by_linked_role", ["linkedRoleId"]),
 
   // Invitations collection - Invitations sent by Members to join an Orga
@@ -60,7 +62,9 @@ export default defineSchema({
     .index("by_orga_and_status", ["orgaId", "status"])
     .index("by_status_and_sentDate", ["status", "sentDate"])
     .index("by_emitter", ["emitterMemberId"])
-    .index("by_email_and_status", ["email", "status"]),
+    .index("by_email_and_status", ["email", "status"])
+    .index("by_orga_and_status_and_email", ["orgaId", "status", "email"])
+    .index("by_email_and_status_and_orga", ["email", "status", "orgaId"]),
 
   // Decisions collection - Traceability for all modifications
   decisions: defineTable({ ...decisionType.fields })
@@ -96,7 +100,8 @@ export default defineSchema({
   // Notification preferences collection - User preferences for notification delivery
   notificationPreferences: defineTable({ ...notificationPreferencesType.fields })
     .index("by_user", ["userId"])
-    .index("by_user_and_orga", ["userId", "orgaId"]),
+    .index("by_user_and_orga", ["userId", "orgaId"])
+    .index("by_orga", ["orgaId"]),
 
   // Chat system tables
   channels: defineTable({ ...channelType.fields })

@@ -136,8 +136,7 @@ export const createInvitation = mutation({
     // Check if user with this email already exists in the organization
     const existingMember = await ctx.db
       .query("members")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
-      .filter((q) => q.eq(q.field("orgaId"), args.orgaId))
+      .withIndex("by_email_and_orga", (q) => q.eq("email", args.email).eq("orgaId", args.orgaId))
       .first();
 
     if (existingMember) {
@@ -147,10 +146,9 @@ export const createInvitation = mutation({
     // Check for pending invitation
     const pendingInvitation = await ctx.db
       .query("invitations")
-      .withIndex("by_orga_and_status", (q) =>
-        q.eq("orgaId", args.orgaId).eq("status", "pending")
+      .withIndex("by_orga_and_status_and_email", (q) =>
+        q.eq("orgaId", args.orgaId).eq("status", "pending").eq("email", args.email)
       )
-      .filter((q) => q.eq(q.field("email"), args.email))
       .first();
 
     if (pendingInvitation) {
@@ -431,10 +429,9 @@ export const requestDemoInvitation = mutation({
     // 4. Check if a pending invitation already exists for this user
     const existingPending = await ctx.db
       .query("invitations")
-      .withIndex("by_email_and_status", (q) =>
-        q.eq("email", user.email).eq("status", "pending")
+      .withIndex("by_email_and_status_and_orga", (q) =>
+        q.eq("email", user.email).eq("status", "pending").eq("orgaId", orgaId)
       )
-      .filter((q) => q.eq(q.field("orgaId"), orgaId))
       .first();
 
     if (existingPending) {

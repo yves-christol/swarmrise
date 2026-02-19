@@ -12,6 +12,7 @@ import {
   getRoleAndTeamInfo,
   getTeamLeaderMemberId,
   ensureEmailInContactInfos,
+  deleteAllOrgaData,
 } from "../utils";
 import { contactInfo } from "../users";
 
@@ -153,8 +154,7 @@ export const listMemberDecisions = query({
     // Get all decisions made by this member (by author email)
     return await ctx.db
       .query("decisions")
-      .withIndex("by_orga_and_author", (q) => q.eq("orgaId", member.orgaId))
-      .filter((q) => q.eq(q.field("authorEmail"), member.email))
+      .withIndex("by_orga_and_author", (q) => q.eq("orgaId", member.orgaId).eq("authorEmail", member.email))
       .collect();
   },
 });
@@ -227,56 +227,7 @@ export const leaveOrganization = mutation({
       }
 
       // Owner is the last member - delete the organization and all related data
-      const teams = await ctx.db
-        .query("teams")
-        .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
-        .collect();
-
-      for (const team of teams) {
-        const roles = await ctx.db
-          .query("roles")
-          .withIndex("by_team", (q) => q.eq("teamId", team._id))
-          .collect();
-        for (const role of roles) {
-          await ctx.db.delete(role._id);
-        }
-
-        const topics = await ctx.db
-          .query("topics")
-          .withIndex("by_team", (q) => q.eq("teamId", team._id))
-          .collect();
-        for (const topic of topics) {
-          await ctx.db.delete(topic._id);
-        }
-      }
-
-      for (const team of teams) {
-        await ctx.db.delete(team._id);
-      }
-
-      const invitations = await ctx.db
-        .query("invitations")
-        .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
-        .collect();
-      for (const invitation of invitations) {
-        await ctx.db.delete(invitation._id);
-      }
-
-      const decisions = await ctx.db
-        .query("decisions")
-        .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
-        .collect();
-      for (const decision of decisions) {
-        await ctx.db.delete(decision._id);
-      }
-
-      const policies = await ctx.db
-        .query("policies")
-        .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
-        .collect();
-      for (const policy of policies) {
-        await ctx.db.delete(policy._id);
-      }
+      await deleteAllOrgaData(ctx, args.orgaId);
 
       await ctx.db.delete(member._id);
       await ctx.db.delete(args.orgaId);

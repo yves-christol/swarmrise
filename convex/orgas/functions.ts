@@ -7,6 +7,7 @@ import {
   getRoleAndTeamInfo,
   getAuthenticatedUser,
   ensureEmailInContactInfos,
+  deleteAllOrgaData,
 } from "../utils";
 
 /**
@@ -518,67 +519,10 @@ export const deleteOrganization = mutation({
       throw new Error("Cannot delete organization with multiple members");
     }
 
-    // Get user to update their orgaIds
     const user = await getAuthenticatedUser(ctx);
 
-    // Delete all chat data for this organization
-    const orgChannels = await ctx.db
-      .query("channels")
-      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
-      .collect();
-    for (const channel of orgChannels) {
-      const channelMessages = await ctx.db
-        .query("messages")
-        .withIndex("by_channel", (q) => q.eq("channelId", channel._id))
-        .collect();
-      for (const msg of channelMessages) {
-        await ctx.db.delete(msg._id);
-      }
-      const readPositions = await ctx.db
-        .query("channelReadPositions")
-        .withIndex("by_channel_and_member", (q) => q.eq("channelId", channel._id))
-        .collect();
-      for (const rp of readPositions) {
-        await ctx.db.delete(rp._id);
-      }
-      await ctx.db.delete(channel._id);
-    }
-
-    // Delete all roles in the organization
-    const roles = await ctx.db
-      .query("roles")
-      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
-      .collect();
-    for (const role of roles) {
-      await ctx.db.delete(role._id);
-    }
-
-    // Delete all teams in the organization
-    const teams = await ctx.db
-      .query("teams")
-      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
-      .collect();
-    for (const team of teams) {
-      await ctx.db.delete(team._id);
-    }
-
-    // Delete all decisions in the organization
-    const decisions = await ctx.db
-      .query("decisions")
-      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
-      .collect();
-    for (const decision of decisions) {
-      await ctx.db.delete(decision._id);
-    }
-
-    // Delete all invitations for the organization
-    const invitations = await ctx.db
-      .query("invitations")
-      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
-      .collect();
-    for (const invitation of invitations) {
-      await ctx.db.delete(invitation._id);
-    }
+    // Delete all org-scoped data (except members and the orga doc)
+    await deleteAllOrgaData(ctx, args.orgaId);
 
     // Delete the member (should be only one - the owner)
     for (const m of members) {
@@ -586,9 +530,8 @@ export const deleteOrganization = mutation({
     }
 
     // Update user's orgaIds to remove this organization
-    const updatedOrgaIds = user.orgaIds.filter((id) => id !== args.orgaId);
     await ctx.db.patch(user._id, {
-      orgaIds: updatedOrgaIds,
+      orgaIds: user.orgaIds.filter((id) => id !== args.orgaId),
     });
 
     // Finally delete the organization

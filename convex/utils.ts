@@ -5,6 +5,145 @@ import { contactInfo } from "./users";
 import type { Member } from "./members";
 
 /**
+ * Delete all organization-scoped data EXCEPT members and the orga document itself.
+ * Callers handle member deletion and orga deletion differently depending on context.
+ */
+export async function deleteAllOrgaData(ctx: MutationCtx, orgaId: Id<"orgas">) {
+  // --- Chat tool data (all have by_orga) ---
+  const tablesToDeleteByOrga = [
+    "topicClarifications",
+    "topicAnswers",
+    "topicResponses",
+    "votes",
+    "electionNominations",
+    "electionResponses",
+    "reactions",
+  ] as const;
+
+  for (const table of tablesToDeleteByOrga) {
+    const docs = await ctx.db
+      .query(table)
+      .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+      .collect();
+    for (const doc of docs) {
+      await ctx.db.delete(doc._id);
+    }
+  }
+
+  // --- Channels + messages + readPositions (readPositions via channel, not by_orga) ---
+  const channels = await ctx.db
+    .query("channels")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const channel of channels) {
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_channel", (q) => q.eq("channelId", channel._id))
+      .collect();
+    for (const msg of messages) {
+      await ctx.db.delete(msg._id);
+    }
+    const readPositions = await ctx.db
+      .query("channelReadPositions")
+      .withIndex("by_channel_and_member", (q) => q.eq("channelId", channel._id))
+      .collect();
+    for (const rp of readPositions) {
+      await ctx.db.delete(rp._id);
+    }
+    await ctx.db.delete(channel._id);
+  }
+
+  // --- Kanban (all have by_orga) ---
+  const kanbanTables = [
+    "kanbanAttachments",
+    "kanbanComments",
+    "kanbanCards",
+    "kanbanLabels",
+    "kanbanColumns",
+    "kanbanBoards",
+  ] as const;
+
+  for (const table of kanbanTables) {
+    const docs = await ctx.db
+      .query(table)
+      .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+      .collect();
+    for (const doc of docs) {
+      await ctx.db.delete(doc._id);
+    }
+  }
+
+  // --- Notifications + notificationPreferences (both have by_orga) ---
+  const notifications = await ctx.db
+    .query("notifications")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const n of notifications) {
+    await ctx.db.delete(n._id);
+  }
+  const notifPrefs = await ctx.db
+    .query("notificationPreferences")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const np of notifPrefs) {
+    await ctx.db.delete(np._id);
+  }
+
+  // --- Topics (via team iteration, topics lack by_orga) ---
+  const teams = await ctx.db
+    .query("teams")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const team of teams) {
+    const topics = await ctx.db
+      .query("topics")
+      .withIndex("by_team", (q) => q.eq("teamId", team._id))
+      .collect();
+    for (const topic of topics) {
+      await ctx.db.delete(topic._id);
+    }
+  }
+
+  // --- Policies, decisions, invitations, roles (all have by_orga) ---
+  const policies = await ctx.db
+    .query("policies")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const p of policies) {
+    await ctx.db.delete(p._id);
+  }
+
+  const decisions = await ctx.db
+    .query("decisions")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const d of decisions) {
+    await ctx.db.delete(d._id);
+  }
+
+  const invitations = await ctx.db
+    .query("invitations")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const inv of invitations) {
+    await ctx.db.delete(inv._id);
+  }
+
+  const roles = await ctx.db
+    .query("roles")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const role of roles) {
+    await ctx.db.delete(role._id);
+  }
+
+  // --- Teams (by_orga) ---
+  for (const team of teams) {
+    await ctx.db.delete(team._id);
+  }
+}
+
+/**
  * Get the authenticated user's email or throw an error
  */
 export async function getAuthenticatedUserEmail(ctx: QueryCtx | MutationCtx): Promise<string> {

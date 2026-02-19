@@ -29,13 +29,13 @@ import { KanbanEmptyState } from "../KanbanEmptyState";
 import { KanbanCardModal } from "../KanbanCardModal";
 import { KanbanCard } from "../KanbanCard";
 import { KanbanBoardSettings } from "../KanbanBoardSettings";
+import { KanbanFilterPanel } from "../KanbanFilterPanel";
 import {
-  KanbanFilterPanel,
   EMPTY_FILTERS,
   countActiveFilters,
   type KanbanFilters,
   type SortOption,
-} from "../KanbanFilterPanel";
+} from "../kanbanTypes";
 
 /** Prefix to distinguish column sortable IDs from card IDs */
 const COLUMN_SORTABLE_PREFIX = "sortable-col:";

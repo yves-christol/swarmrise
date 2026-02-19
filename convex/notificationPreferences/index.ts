@@ -1,4 +1,5 @@
 import { v, Infer } from "convex/values";
+import type { Id } from "../_generated/dataModel";
 
 // Channel preferences for each notification category
 export const channelPreferences = v.object({
@@ -58,7 +59,7 @@ export const defaultChannelPreferences: ChannelPreferences = {
 };
 
 // Helper to create default preferences for a user
-export function createDefaultPreferences(userId: string) {
+export function createDefaultPreferences(userId: Id<"users">) {
   return {
     userId,
     orgaId: undefined,

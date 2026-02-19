@@ -11,10 +11,18 @@ import type { Role } from "../../../../convex/roles";
 import type { Priority } from "../../../../convex/kanban";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { KanbanCard } from "../KanbanCard";
-import type { SortOption } from "../KanbanFilterPanel";
+import type { SortOption } from "../kanbanTypes";
 
 /** Prefix matching the one in KanbanBoard -- must stay in sync */
 const COLUMN_SORTABLE_PREFIX = "sortable-col:";
+
+// C3: Priority ordering for sort (higher priority = lower number = sorted first)
+const PRIORITY_ORDER: Record<Priority, number> = {
+  critical: 0,
+  high: 1,
+  medium: 2,
+  low: 3,
+};
 
 type KanbanColumnProps = {
   column: KanbanColumnType;
@@ -144,14 +152,6 @@ export function KanbanColumn({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const renameInputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  // C3: Priority ordering for sort (higher priority = lower number = sorted first)
-  const PRIORITY_ORDER: Record<Priority, number> = {
-    critical: 0,
-    high: 1,
-    medium: 2,
-    low: 3,
-  };
 
   // C3: Sort cards based on selected sort option
   const sortedCards = useMemo(() => {

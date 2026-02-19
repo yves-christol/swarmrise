@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import type { MemberData } from "./types";
+import { getContactLink } from "../../utils/contacts";
 
 type ContactInfoProps = {
   member: MemberData;
@@ -75,47 +76,6 @@ function getContactIcon(type: string) {
         </svg>
       );
   }
-}
-
-function sanitizeUrl(url: string): string | null {
-  const trimmed = url.trim();
-  if (/^https?:\/\//i.test(trimmed) || /^mailto:/i.test(trimmed) || /^tel:/i.test(trimmed)) {
-    return trimmed;
-  }
-  return null;
-}
-
-function getContactLink(type: string, value: string): string | null {
-  let url: string;
-  switch (type) {
-    case "LinkedIn":
-      url = value.startsWith("http") ? value : `https://linkedin.com/in/${value}`;
-      break;
-    case "Email":
-      url = `mailto:${value}`;
-      break;
-    case "Facebook":
-      url = value.startsWith("http") ? value : `https://facebook.com/${value}`;
-      break;
-    case "Instagram":
-      url = value.startsWith("http") ? value : `https://instagram.com/${value}`;
-      break;
-    case "Whatsapp":
-      url = `https://wa.me/${value.replace(/\D/g, "")}`;
-      break;
-    case "Mobile":
-      url = `tel:${value}`;
-      break;
-    case "Website":
-      url = value.startsWith("http") ? value : `https://${value}`;
-      break;
-    case "Twitter":
-      url = value.startsWith("http") ? value : `https://x.com/${value.replace(/^@/, "")}`;
-      break;
-    default:
-      return null;
-  }
-  return sanitizeUrl(url);
 }
 
 export function ContactInfo({ member, onClose }: ContactInfoProps) {

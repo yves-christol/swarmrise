@@ -865,7 +865,8 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
         columnId={createColumnId}
         card={editingCard}
         labels={boardData.labels}
-        templates={boardData.templates}
+        allCards={boardData.cards}
+        templateLabelId={boardData.templateLabelId}
       />
 
       {/* Board settings modal (A4) */}

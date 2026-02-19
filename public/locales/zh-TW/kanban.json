@@ -119,16 +119,6 @@
     "commentCount_other": "{{count}} \u5247\u7559\u8a00"
   },
   "templates": {
-    "title": "\u7bc4\u672c",
-    "create": "\u5efa\u7acb\u7bc4\u672c",
-    "edit": "\u7de8\u8f2f\u7bc4\u672c",
-    "delete": "\u522a\u9664\u7bc4\u672c",
-    "deleteConfirm": "\u522a\u9664\u6b64\u7bc4\u672c\uff1f",
-    "apply": "\u4f7f\u7528\u7bc4\u672c",
-    "name": "\u7bc4\u672c\u540d\u7a31",
-    "cardTitle": "\u5361\u7247\u6a19\u984c",
-    "noTemplates": "\u5c1a\u672a\u5b9a\u7fa9\u7bc4\u672c",
-    "manageTemplates": "\u7ba1\u7406\u7bc4\u672c",
     "fromTemplate": "\u5f9e\u7bc4\u672c..."
   },
   "priority": {

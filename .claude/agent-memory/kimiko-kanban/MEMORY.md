@@ -138,7 +138,7 @@
 - Cards reference via `labelIds: v.optional(v.array(v.id("kanbanLabels")))`
 - 10 color palette: red, orange, amber, green, teal, blue, indigo, purple, pink, gray
 - `LABEL_COLORS` and `LabelColor` exported from `convex/kanban/index.ts`
-- Delete cascades: removes label from all cards + templates on the board
+- Delete cascades: removes label from all cards on the board
 - Frontend: colored pill bars on KanbanCard; toggle picker + inline create in modal
 - Search: filters by label name
 
@@ -163,11 +163,15 @@
 - Frontend: comment list with avatar, timestamp, Cmd+Enter submit, own-delete button
 - Original `comments` string field retained on card for backward compat
 
-### B5 Templates
-- Table: `kanbanTemplates` (boardId, orgaId, name, title, defaultComments?, defaultPriority?, defaultLabelIds?, defaultChecklist?)
-- Board-scoped; returned by `getBoardWithData` alongside labels
-- Frontend: dropdown in create mode prefills form; save-as-template button in modal
-- Design: defaults not constraints -- users can modify any field after applying
+### B5 Templates (REFACTORED - label-based, no separate table)
+- Templates = regular cards with a "template" label (purple, name="template")
+- Constants: `TEMPLATE_LABEL_NAME = "template"`, `TEMPLATE_LABEL_COLOR = "purple"` in `convex/kanban/index.ts`
+- `ensureTemplateLabel` mutation auto-creates the label on first use
+- `getBoardWithData` returns `templateLabelId` (null if no template label yet)
+- Frontend: cards with template label shown in "From template..." dropdown in create mode
+- "Mark as template" / "Unmark template" toggle in edit mode adds/removes template label
+- When applying template: copies title, comments, priority, checklist, labels (minus template label)
+- Old `kanbanTemplates` table REMOVED from schema
 
 ### B6 Priority
 - Field: `priority: v.optional(priorityValidator)` on card -- "low" | "medium" | "high" | "critical"
@@ -176,8 +180,8 @@
 - Search: filterable by priority level name
 
 ### B-Category Schema Changes
-- 4 new tables: `kanbanLabels`, `kanbanAttachments`, `kanbanComments`, `kanbanTemplates`
+- 3 tables: `kanbanLabels`, `kanbanAttachments`, `kanbanComments` (no more `kanbanTemplates`)
 - 3 new optional fields on `kanbanCardType`: `labelIds`, `checklist`, `priority`
-- `getBoardWithData` returns `labels` and `templates` alongside board/columns/cards
+- `getBoardWithData` returns `labels` and `templateLabelId` alongside board/columns/cards
 - `memberKanbanCardValidator` updated with same 3 new fields
 - i18n: 6 new sections in all 6 languages: `labels`, `checklist`, `attachments`, `threadedComments`, `templates`, `priority`

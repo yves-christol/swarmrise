@@ -4,11 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
-import type { KanbanCard, KanbanLabel, KanbanTemplate, ChecklistItem, Priority } from "../../../../convex/kanban";
+import type { KanbanCard, KanbanLabel, ChecklistItem, Priority } from "../../../../convex/kanban";
 import type { KanbanColumn } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
 import type { Role } from "../../../../convex/roles";
-import { getRoleIconPath } from "../../../utils/roleIconDefaults";
 import { LABEL_COLORS, MAX_ATTACHMENT_SIZE, priorityValues } from "../../../../convex/kanban";
 
 /** Maps label color keys to Tailwind classes */
@@ -33,7 +32,8 @@ type KanbanCardModalProps = {
   columnId?: Id<"kanbanColumns">;
   card?: KanbanCard;
   labels: KanbanLabel[];
-  templates: KanbanTemplate[];
+  allCards: KanbanCard[];
+  templateLabelId: Id<"kanbanLabels"> | null;
 };
 
 export function KanbanCardModal({
@@ -46,7 +46,8 @@ export function KanbanCardModal({
   columnId,
   card,
   labels,
-  templates,
+  allCards,
+  templateLabelId,
 }: KanbanCardModalProps) {
   const { t } = useTranslation("kanban");
 
@@ -55,7 +56,6 @@ export function KanbanCardModal({
   const deleteCard = useMutation(api.kanban.functions.deleteCard);
   // B1
   const createLabelMut = useMutation(api.kanban.functions.createLabel);
-  const deleteLabelMut = useMutation(api.kanban.functions.deleteLabel);
   // B3
   const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
   const addAttachmentMut = useMutation(api.kanban.functions.addAttachment);
@@ -63,10 +63,6 @@ export function KanbanCardModal({
   // B4
   const addCommentMut = useMutation(api.kanban.functions.addComment);
   const deleteCommentMut = useMutation(api.kanban.functions.deleteComment);
-  // B5
-  const createTemplateMut = useMutation(api.kanban.functions.createTemplate);
-  const deleteTemplateMut = useMutation(api.kanban.functions.deleteTemplate);
-
   // B3/B4: Fetch attachments (with download URLs) and comments for the card being edited
   const attachments = useQuery(
     api.kanban.functions.getAttachmentsForCardWithUrls,
@@ -119,6 +115,14 @@ export function KanbanCardModal({
   const sortedRoles = useMemo(() => {
     return [...roles].sort((a, b) => a.title.localeCompare(b.title));
   }, [roles]);
+
+  // B5: Derive template cards -- cards that have the template label attached
+  const templateCards = useMemo(() => {
+    if (!templateLabelId) return [];
+    return allCards.filter(
+      (c) => c.labelIds?.includes(templateLabelId),
+    );
+  }, [allCards, templateLabelId]);
 
   // Initialize form when modal opens
   useEffect(() => {
@@ -175,18 +179,25 @@ export function KanbanCardModal({
     if (e.target === e.currentTarget) onClose();
   };
 
-  // B5: Apply template
-  const handleApplyTemplate = useCallback((tmpl: KanbanTemplate) => {
-    setTitle(tmpl.title);
-    if (tmpl.defaultComments) setCardComments(tmpl.defaultComments);
-    if (tmpl.defaultPriority) setPriority(tmpl.defaultPriority);
-    if (tmpl.defaultLabelIds) setSelectedLabelIds(tmpl.defaultLabelIds);
-    if (tmpl.defaultChecklist) setChecklist(tmpl.defaultChecklist.map((item) => ({
-      ...item,
-      id: crypto.randomUUID(),
-      completed: false,
-    })));
-  }, []);
+  // B5: Apply template -- copy fields from a template card into the form
+  const handleApplyTemplate = useCallback((templateCard: KanbanCard) => {
+    setTitle(templateCard.title);
+    if (templateCard.comments) setCardComments(templateCard.comments);
+    if (templateCard.priority) setPriority(templateCard.priority);
+    // Copy labels from template card, but exclude the "template" label itself
+    if (templateCard.labelIds) {
+      setSelectedLabelIds(
+        templateCard.labelIds.filter((id) => id !== templateLabelId),
+      );
+    }
+    if (templateCard.checklist) {
+      setChecklist(templateCard.checklist.map((item) => ({
+        ...item,
+        id: crypto.randomUUID(),
+        completed: false,
+      })));
+    }
+  }, [templateLabelId]);
 
   // B2: Checklist helpers
   const handleAddChecklistItem = useCallback(() => {
@@ -294,7 +305,7 @@ export function KanbanCardModal({
           comments: cardComments.trim(),
           labelIds: selectedLabelIds,
           checklist: checklist,
-          priority: priority ? priority as Priority : undefined,
+          priority: priority ? priority : undefined,
         });
       } else {
         await createCard({
@@ -306,7 +317,7 @@ export function KanbanCardModal({
           comments: cardComments.trim() || undefined,
           labelIds: selectedLabelIds.length > 0 ? selectedLabelIds : undefined,
           checklist: checklist.length > 0 ? checklist : undefined,
-          priority: priority ? priority as Priority : undefined,
+          priority: priority ? priority : undefined,
         });
       }
       onClose();
@@ -329,22 +340,6 @@ export function KanbanCardModal({
       setIsSubmitting(false);
     }
   };
-
-  // B5: Save as template
-  const handleSaveAsTemplate = useCallback(async () => {
-    if (!title.trim()) return;
-    try {
-      await createTemplateMut({
-        boardId,
-        name: title.trim(),
-        title: title.trim(),
-        defaultComments: cardComments.trim() || undefined,
-        defaultPriority: priority ? priority as Priority : undefined,
-        defaultLabelIds: selectedLabelIds.length > 0 ? selectedLabelIds : undefined,
-        defaultChecklist: checklist.length > 0 ? checklist : undefined,
-      });
-    } catch { /* handled by Convex */ }
-  }, [boardId, title, cardComments, priority, selectedLabelIds, checklist, createTemplateMut]);
 
   if (!isOpen) return null;
 
@@ -384,13 +379,13 @@ export function KanbanCardModal({
           </button>
         </div>
 
-        {/* B5: Template selector (create mode only) */}
-        {!isEditMode && templates.length > 0 && (
+        {/* B5: Template selector (create mode only) -- pick from cards with "template" label */}
+        {!isEditMode && templateCards.length > 0 && (
           <div className="px-6 pt-3">
             <select
               onChange={(e) => {
-                const tmpl = templates.find((t) => t._id === e.target.value);
-                if (tmpl) handleApplyTemplate(tmpl);
+                const tmplCard = templateCards.find((c) => c._id === e.target.value);
+                if (tmplCard) handleApplyTemplate(tmplCard);
                 e.target.value = "";
               }}
               defaultValue=""
@@ -399,8 +394,8 @@ export function KanbanCardModal({
                 focus:outline-none focus:ring-2 focus:ring-highlight"
             >
               <option value="" disabled>{t("templates.fromTemplate")}</option>
-              {templates.map((tmpl) => (
-                <option key={tmpl._id} value={tmpl._id}>{tmpl.name}</option>
+              {templateCards.map((tmplCard) => (
+                <option key={tmplCard._id} value={tmplCard._id}>{tmplCard.title}</option>
               ))}
             </select>
           </div>
@@ -873,7 +868,7 @@ export function KanbanCardModal({
 
           {/* Actions */}
           <div className="flex items-center justify-between pt-2">
-            {/* Left: delete + save as template */}
+            {/* Left: delete */}
             <div className="flex items-center gap-2">
               {isEditMode && !showDeleteConfirm && (
                 <button
@@ -883,16 +878,6 @@ export function KanbanCardModal({
                   className="px-3 py-1.5 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors disabled:opacity-50"
                 >
                   {t("card.delete")}
-                </button>
-              )}
-              {/* B5: Save as template */}
-              {title.trim() && (
-                <button
-                  type="button"
-                  onClick={() => void handleSaveAsTemplate()}
-                  className="px-2.5 py-1 text-xs text-text-secondary hover:text-text-primary border border-border-default rounded-md hover:border-border-strong transition-colors"
-                >
-                  {t("templates.create")}
                 </button>
               )}
             </div>

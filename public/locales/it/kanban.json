@@ -119,16 +119,6 @@
     "commentCount_other": "{{count}} commenti"
   },
   "templates": {
-    "title": "Modelli",
-    "create": "Crea modello",
-    "edit": "Modifica modello",
-    "delete": "Elimina modello",
-    "deleteConfirm": "Eliminare questo modello?",
-    "apply": "Usa modello",
-    "name": "Nome modello",
-    "cardTitle": "Titolo scheda",
-    "noTemplates": "Nessun modello definito",
-    "manageTemplates": "Gestisci modelli",
     "fromTemplate": "Da modello..."
   },
   "priority": {

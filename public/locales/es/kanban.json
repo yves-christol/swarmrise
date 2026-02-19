@@ -119,16 +119,6 @@
     "commentCount_other": "{{count}} comentarios"
   },
   "templates": {
-    "title": "Plantillas",
-    "create": "Crear plantilla",
-    "edit": "Editar plantilla",
-    "delete": "Eliminar plantilla",
-    "deleteConfirm": "\u00bfEliminar esta plantilla?",
-    "apply": "Usar plantilla",
-    "name": "Nombre de la plantilla",
-    "cardTitle": "T\u00edtulo de la tarjeta",
-    "noTemplates": "No hay plantillas definidas",
-    "manageTemplates": "Gestionar plantillas",
     "fromTemplate": "Desde plantilla..."
   },
   "priority": {

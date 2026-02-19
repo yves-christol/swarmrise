@@ -151,26 +151,12 @@ export const kanbanCommentValidator = v.object({
 
 export type KanbanComment = Infer<typeof kanbanCommentValidator>;
 
-// --- B5: Card Templates ---
+// --- B5: Template label constants ---
+// Templates are just regular cards with a specific "template" label (purple color).
+// No separate template table needed.
 
-export const kanbanTemplateType = v.object({
-  boardId: v.id("kanbanBoards"),
-  orgaId: v.id("orgas"),
-  name: v.string(),
-  title: v.string(), // Pre-filled card title
-  defaultComments: v.optional(v.string()),
-  defaultPriority: v.optional(priorityValidator),
-  defaultLabelIds: v.optional(v.array(v.id("kanbanLabels"))),
-  defaultChecklist: v.optional(v.array(checklistItemValidator)),
-});
-
-export const kanbanTemplateValidator = v.object({
-  _id: v.id("kanbanTemplates"),
-  _creationTime: v.number(),
-  ...kanbanTemplateType.fields,
-});
-
-export type KanbanTemplate = Infer<typeof kanbanTemplateValidator>;
+export const TEMPLATE_LABEL_NAME = "template";
+export const TEMPLATE_LABEL_COLOR = "purple";
 
 // --- MemberKanbanView enriched return type ---
 

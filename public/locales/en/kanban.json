@@ -119,16 +119,6 @@
     "commentCount_other": "{{count}} comments"
   },
   "templates": {
-    "title": "Templates",
-    "create": "Create template",
-    "edit": "Edit template",
-    "delete": "Delete template",
-    "deleteConfirm": "Delete this template?",
-    "apply": "Use template",
-    "name": "Template name",
-    "cardTitle": "Card title",
-    "noTemplates": "No templates defined",
-    "manageTemplates": "Manage templates",
     "fromTemplate": "From template..."
   },
   "priority": {

@@ -14,7 +14,7 @@ import { channelType } from "./chat"
 import { messageType } from "./chat"
 import { channelReadPositionType } from "./chat"
 import { topicClarificationType, topicAnswerType, topicResponseType, voteType, electionNominationType, electionResponseType, reactionType } from "./chat"
-import { kanbanBoardType, kanbanColumnType, kanbanCardType, kanbanLabelType, kanbanAttachmentType, kanbanCommentType, kanbanTemplateType } from "./kanban"
+import { kanbanBoardType, kanbanColumnType, kanbanCardType, kanbanLabelType, kanbanAttachmentType, kanbanCommentType } from "./kanban"
 /**
  * Swarmrise Data Model Schema
  *
@@ -187,8 +187,4 @@ export default defineSchema({
     .index("by_card", ["cardId"])
     .index("by_board", ["boardId"]),
 
-  // B5: Kanban Templates - pre-filled card templates per board
-  kanbanTemplates: defineTable({ ...kanbanTemplateType.fields })
-    .index("by_orga", ["orgaId"])
-    .index("by_board", ["boardId"]),
 });

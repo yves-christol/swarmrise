@@ -10,12 +10,13 @@ import {
   kanbanCommentValidator,
   kanbanAttachmentValidator,
   kanbanAttachmentWithUrlValidator,
-  kanbanTemplateValidator,
   memberKanbanTeamGroupValidator,
   checklistItemValidator,
   priorityValidator,
   DEFAULT_COLUMNS,
   MAX_ATTACHMENT_SIZE,
+  TEMPLATE_LABEL_NAME,
+  TEMPLATE_LABEL_COLOR,
 } from ".";
 import { getMemberInOrga, memberHasTeamAccess } from "../utils";
 import { requireBoardAccess } from "./access";
@@ -63,8 +64,12 @@ export const getBoard = query({
 });
 
 /**
- * Get the full board data (board + columns + cards + labels + templates) in a single query.
+ * Get the full board data (board + columns + cards + labels) in a single query.
  * This is the main loader for the Kanban UI.
+ *
+ * Also returns `templateLabelId` -- the ID of the "template" label on this board,
+ * or null if no such label exists yet. The frontend uses this to identify which
+ * cards serve as templates (cards that have this label attached).
  */
 export const getBoardWithData = query({
   args: { teamId: v.id("teams") },
@@ -74,7 +79,7 @@ export const getBoardWithData = query({
       columns: v.array(kanbanColumnValidator),
       cards: v.array(kanbanCardValidator),
       labels: v.array(kanbanLabelValidator),
-      templates: v.array(kanbanTemplateValidator),
+      templateLabelId: v.union(v.id("kanbanLabels"), v.null()),
     }),
     v.null(),
   ),
@@ -108,12 +113,18 @@ export const getBoardWithData = query({
       .withIndex("by_board", (q) => q.eq("boardId", board._id))
       .collect();
 
-    const templates = await ctx.db
-      .query("kanbanTemplates")
-      .withIndex("by_board", (q) => q.eq("boardId", board._id))
-      .collect();
+    // Find the "template" label for this board (if it exists)
+    const templateLabel = labels.find(
+      (l) => l.name === TEMPLATE_LABEL_NAME && l.color === TEMPLATE_LABEL_COLOR,
+    );
 
-    return { board, columns, cards, labels, templates };
+    return {
+      board,
+      columns,
+      cards,
+      labels,
+      templateLabelId: templateLabel?._id ?? null,
+    };
   },
 });
 
@@ -906,20 +917,6 @@ export const deleteLabel = mutation({
       }
     }
 
-    // Remove label from all templates on this board
-    const templates = await ctx.db
-      .query("kanbanTemplates")
-      .withIndex("by_board", (q) => q.eq("boardId", label.boardId))
-      .collect();
-
-    for (const tmpl of templates) {
-      if (tmpl.defaultLabelIds && tmpl.defaultLabelIds.includes(args.labelId)) {
-        await ctx.db.patch(tmpl._id, {
-          defaultLabelIds: tmpl.defaultLabelIds.filter((id) => id !== args.labelId),
-        });
-      }
-    }
-
     await ctx.db.delete(args.labelId);
     return null;
   },
@@ -1115,99 +1112,38 @@ export const deleteComment = mutation({
 });
 
 // ============================================================
-// B5: Card Template Management
+// B5: Template Label Management
 // ============================================================
 
 /**
- * Create a card template for a board.
+ * Ensure the "template" label exists on a board, creating it if needed.
+ * Returns the label ID.
  */
-export const createTemplate = mutation({
-  args: {
-    boardId: v.id("kanbanBoards"),
-    name: v.string(),
-    title: v.string(),
-    defaultComments: v.optional(v.string()),
-    defaultPriority: v.optional(priorityValidator),
-    defaultLabelIds: v.optional(v.array(v.id("kanbanLabels"))),
-    defaultChecklist: v.optional(v.array(checklistItemValidator)),
-  },
-  returns: v.id("kanbanTemplates"),
+export const ensureTemplateLabel = mutation({
+  args: { boardId: v.id("kanbanBoards") },
+  returns: v.id("kanbanLabels"),
   handler: async (ctx, args) => {
     const { board } = await requireBoardAccess(ctx, args.boardId);
 
-    if (!args.name.trim()) {
-      throw new Error("Template name cannot be empty");
-    }
-    if (!args.title.trim()) {
-      throw new Error("Template title cannot be empty");
-    }
+    // Check if the template label already exists
+    const labels = await ctx.db
+      .query("kanbanLabels")
+      .withIndex("by_board", (q) => q.eq("boardId", args.boardId))
+      .collect();
 
-    return await ctx.db.insert("kanbanTemplates", {
+    const existing = labels.find(
+      (l) => l.name === TEMPLATE_LABEL_NAME && l.color === TEMPLATE_LABEL_COLOR,
+    );
+
+    if (existing) return existing._id;
+
+    // Create it
+    return await ctx.db.insert("kanbanLabels", {
       boardId: args.boardId,
       orgaId: board.orgaId,
-      name: args.name.trim(),
-      title: args.title.trim(),
-      defaultComments: args.defaultComments?.trim(),
-      defaultPriority: args.defaultPriority,
-      defaultLabelIds: args.defaultLabelIds,
-      defaultChecklist: args.defaultChecklist,
+      name: TEMPLATE_LABEL_NAME,
+      color: TEMPLATE_LABEL_COLOR,
     });
-  },
-});
-
-/**
- * Update a card template.
- */
-export const updateTemplate = mutation({
-  args: {
-    templateId: v.id("kanbanTemplates"),
-    name: v.optional(v.string()),
-    title: v.optional(v.string()),
-    defaultComments: v.optional(v.string()),
-    defaultPriority: v.optional(priorityValidator),
-    defaultLabelIds: v.optional(v.array(v.id("kanbanLabels"))),
-    defaultChecklist: v.optional(v.array(checklistItemValidator)),
-  },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const template = await ctx.db.get(args.templateId);
-    if (!template) throw new Error("Template not found");
-
-    await requireBoardAccess(ctx, template.boardId);
-
-    const updates: Record<string, unknown> = {};
-    if (args.name !== undefined) {
-      if (!args.name.trim()) throw new Error("Template name cannot be empty");
-      updates.name = args.name.trim();
-    }
-    if (args.title !== undefined) {
-      if (!args.title.trim()) throw new Error("Template title cannot be empty");
-      updates.title = args.title.trim();
-    }
-    if (args.defaultComments !== undefined) updates.defaultComments = args.defaultComments.trim();
-    if (args.defaultPriority !== undefined) updates.defaultPriority = args.defaultPriority;
-    if (args.defaultLabelIds !== undefined) updates.defaultLabelIds = args.defaultLabelIds;
-    if (args.defaultChecklist !== undefined) updates.defaultChecklist = args.defaultChecklist;
-
-    await ctx.db.patch(args.templateId, updates);
-    return null;
-  },
-});
-
-/**
- * Delete a card template.
- */
-export const deleteTemplate = mutation({
-  args: { templateId: v.id("kanbanTemplates") },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const template = await ctx.db.get(args.templateId);
-    if (!template) throw new Error("Template not found");
-
-    await requireBoardAccess(ctx, template.boardId);
-
-    await ctx.db.delete(args.templateId);
-    return null;
   },
 });
 

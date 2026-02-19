@@ -314,7 +314,7 @@ convex/kanban/
 |----------|------|---------|-------------|
 | `kanban.checkTeamAccess` | `{ teamId: Id<"teams"> }` | `boolean` | Check if the authenticated user has access to a team's board. Used as a guard to skip heavier queries for non-members. |
 | `kanban.getBoard` | `{ teamId: Id<"teams"> }` | `KanbanBoard \| null` | Get the Kanban board for a team |
-| `kanban.getBoardWithData` | `{ teamId: Id<"teams"> }` | `{ board, columns, cards } \| null` | Get board with all columns and cards in one query (main board loader) |
+| `kanban.getBoardWithData` | `{ teamId: Id<"teams"> }` | `{ board, columns, cards, labels, templateLabelId } \| null` | Get board with all columns, cards, labels, and template label ID in one query (main board loader) |
 | `kanban.getCardsByRole` | `{ roleId: Id<"roles"> }` | `KanbanCard[]` | Get all cards owned by a specific role |
 | `kanban.getCardsByMember` | `{ memberId: Id<"members"> }` | `KanbanCard[]` | Get all cards where the owning role is held by a given member (for member profile view; queries roles by memberId, then cards by roleId) |
 | `kanban.getCommentsForCard` | `{ cardId: Id<"kanbanCards"> }` | `KanbanComment[]` | Get all threaded comments for a card, ordered by creation time (B4) |
@@ -345,9 +345,7 @@ convex/kanban/
 | `kanban.addComment` | `{ cardId, text }` | `Id<"kanbanComments">` | Add a threaded comment to a card (B4) |
 | `kanban.updateComment` | `{ commentId, text }` | `null` | Edit a comment (author-only) (B4) |
 | `kanban.deleteComment` | `{ commentId }` | `null` | Delete a comment (author-only) (B4) |
-| `kanban.createTemplate` | `{ boardId, name, title, defaults... }` | `Id<"kanbanTemplates">` | Create a card template (B5) |
-| `kanban.updateTemplate` | `{ templateId, name?, title?, defaults... }` | `null` | Update a template (B5) |
-| `kanban.deleteTemplate` | `{ templateId }` | `null` | Delete a template (B5) |
+| `kanban.ensureTemplateLabel` | `{ boardId }` | `Id<"kanbanLabels">` | Ensure "template" label exists on a board, creating if needed (B5) |
 
 ### Board Auto-Creation
 
@@ -937,9 +935,8 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | B4: Comments - Schema (`kanbanComments` table) | Done | `kanbanCommentType` with authorId, text; `by_card` index |
 | B4: Comments - Backend (`addComment`, `updateComment`, `deleteComment`, `getCommentsForCard`) | Done | Author-only edit/delete enforcement |
 | B4: Comments - Frontend (threaded list in modal, add/delete) | Done | Author avatar + timestamp; Cmd+Enter submit; own-comment delete |
-| B5: Templates - Schema (`kanbanTemplates` table) | Done | `kanbanTemplateType` with name, title, defaults for comments/priority/labels/checklist |
-| B5: Templates - Backend (`createTemplate`, `updateTemplate`, `deleteTemplate`) | Done | Board-scoped templates |
-| B5: Templates - Frontend (template selector in create mode, save-as-template) | Done | Dropdown prefills form; save current card as template button |
+| B5: Templates - Refactored to label-based approach | Done | Templates are cards with "template" purple label; `ensureTemplateLabel` mutation; no separate table |
+| B5: Templates - Frontend (template selector in create mode, mark-as-template toggle) | Done | Dropdown of template-labeled cards prefills form; toggle button adds/removes template label |
 | B6: Priority - Schema (`priority` optional field on card) | Done | `priorityValidator`: low/medium/high/critical |
 | B6: Priority - Frontend (colored border + dot on cards, selector in modal) | Done | Left border color + dot indicator; button row selector in modal |
 | B6: Priority - Search integration | Done | Cards filterable by priority level in search bar |
@@ -1078,11 +1075,11 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 
 **Rationale:** Not every card needs a priority. Forcing a priority on every card adds friction during creation. The four-level scale (low/medium/high/critical) is standard and intuitive. Visual indicators (colored left border + dot) make priority scannable without cluttering the card. Priority is filterable in search.
 
-### 22. Templates store defaults, not constraints
+### 22. Templates are regular cards with a "template" label (not a separate table)
 
-**Decision:** Card templates store default values (`title`, `defaultComments`, `defaultPriority`, `defaultLabelIds`, `defaultChecklist`) that pre-fill the card creation form. Users can modify any field after applying a template.
+**Decision:** Templates are implemented as regular kanban cards that have a specific "template" label (purple color) attached. There is no separate `kanbanTemplates` table. To create a template, users create a normal card and mark it as a template via a toggle in the card modal. To use a template, users pick from cards with the template label when creating a new card, and the card's fields (title, description, checklist, priority, labels minus the template label) are copied into the new card form.
 
-**Rationale:** Templates are productivity shortcuts, not rigid structures. Pre-filling common values reduces repetitive data entry while allowing per-card customization. The "save as template" action in the card modal lets users create templates from successful card patterns, promoting organic template evolution.
+**Rationale:** A separate template system with its own table, CRUD mutations, and management UI was over-engineered for the actual use case. Templates are just reusable card patterns -- making them regular cards with a label is more intuitive: users can see them on the board, edit them like any other card, and the template label is self-documenting. This also eliminates schema complexity (one fewer table), reduces backend code (no template CRUD mutations), and leverages the existing label system. The `ensureTemplateLabel` mutation auto-creates the "template" purple label on first use, so there is no setup required.
 
 ### 23. Author-only edit/delete for comments
 
@@ -1105,7 +1102,7 @@ Listed roughly in priority order:
 7. ~~**Card attachments**~~ - DONE (B3). File uploads via Convex storage with 10MB limit; delete cascades to storage.
 8. **Decision trail integration** - Record card creation, moves, and edits as Decision entries
 9. **Board analytics** - Cycle time, throughput, aging cards
-10. ~~**Card templates**~~ - DONE (B5). Pre-filled card templates for common action types; save-as-template from existing cards.
+10. ~~**Card templates**~~ - DONE (B5). Templates are regular cards with a "template" label; mark/unmark via toggle; "from template" copies fields into new cards.
 11. ~~**Card checklists**~~ - DONE (B2). Inline sub-task checklist with progress bar.
 12. ~~**Card priority levels**~~ - DONE (B6). Low/Medium/High/Critical with colored left border and dot indicator.
 13. ~~**Threaded comments**~~ - DONE (B4). Author-stamped comments with timestamps; author-only edit/delete.
@@ -1135,7 +1132,7 @@ A comprehensive inventory of potential Kanban features, organized by category. E
 | B2 | Card Checklists | Sub-task checklist within a card. Progress bar showing N/M items completed. Does not affect card position. | Medium | Medium | DONE |
 | B3 | Card Attachments | File uploads (images, documents) using Convex storage. Preview thumbnails on cards. Max file size limit (10MB). | High | Medium | DONE |
 | B4 | Card Comments (Threaded) | Upgrade from single string to threaded comments. Each comment has author, timestamp. Integrates with member identity. Author-only edit/delete. | High | Medium | DONE |
-| B5 | Card Templates | Pre-filled card templates for common action types (e.g., "Meeting Follow-up", "Decision Implementation"). Configurable per board. Save-as-template from existing cards. | Low | Low | DONE |
+| B5 | Card Templates | Templates are regular cards with a "template" purple label. Users mark cards as templates via toggle; "from template" dropdown copies fields into new cards. No separate table needed. | Low | Low | DONE |
 | B6 | Card Priority Levels | Explicit priority field (Low/Medium/High/Critical) with visual indicators (colored left border, dot). Filterable in search. | Low | Medium | DONE |
 
 ### Category C: Search, Filter, and Sort

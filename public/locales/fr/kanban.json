@@ -119,16 +119,6 @@
     "commentCount_other": "{{count}} commentaires"
   },
   "templates": {
-    "title": "Mod\u00e8les",
-    "create": "Cr\u00e9er un mod\u00e8le",
-    "edit": "Modifier le mod\u00e8le",
-    "delete": "Supprimer le mod\u00e8le",
-    "deleteConfirm": "Supprimer ce mod\u00e8le ?",
-    "apply": "Utiliser le mod\u00e8le",
-    "name": "Nom du mod\u00e8le",
-    "cardTitle": "Titre de la carte",
-    "noTemplates": "Aucun mod\u00e8le d\u00e9fini",
-    "manageTemplates": "G\u00e9rer les mod\u00e8les",
     "fromTemplate": "Depuis un mod\u00e8le..."
   },
   "priority": {

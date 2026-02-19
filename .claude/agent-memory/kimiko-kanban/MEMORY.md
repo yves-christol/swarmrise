@@ -110,6 +110,7 @@
 - Comprehensive feature catalogue with 31 features across 7 categories (A-G)
 - Category A (A1-A6): ALL DONE
 - Category B (B1-B6): ALL DONE
+- Category C: C1 (Advanced Filters) DONE, C2 (Server-Side Search) PROPOSED, C3 (Sort) DONE
 - D4 (Member Kanban View): DONE
 - E1 (Due Date Notifications): DONE -- hourly cron, approaching (24h) + overdue, dedup via groupKey
 
@@ -185,3 +186,21 @@
 - `getBoardWithData` returns `labels` and `templateLabelId` alongside board/columns/cards
 - `memberKanbanCardValidator` updated with same 3 new fields
 - i18n: 6 new sections in all 6 languages: `labels`, `checklist`, `attachments`, `threadedComments`, `templates`, `priority`
+
+## Category C: Search, Filter, and Sort (C1 + C3 DONE, C2 PROPOSED)
+
+### C1 Advanced Filters
+- Component: `src/components/Kanban/KanbanFilterPanel/index.tsx`
+- Exports: `KanbanFilterPanel`, `KanbanFilters`, `SortOption`, `EMPTY_FILTERS`, `countActiveFilters`
+- Purely frontend -- no backend changes needed
+- Filter criteria: roleId, labelId, priority (including "none"), dueDate range (overdue/today/thisWeek/later)
+- Filters compose with text search via AND logic
+- i18n: `filters.*` section in kanban namespace
+
+### C3 Sort Within Column
+- Sort state: `Map<string, SortOption>` in KanbanBoard, not persisted
+- Sort options: manual, dueDate, creationDate, titleAZ, titleZA, priority, role
+- Sort dropdown icon in column header; highlights when non-manual sort active
+- DnD disabled per-column when sort is active (not globally)
+- Priority sort order: critical(0) > high(1) > medium(2) > low(3) > none(4)
+- i18n: `sort.*` section in kanban namespace

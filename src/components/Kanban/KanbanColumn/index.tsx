@@ -8,8 +8,10 @@ import type { KanbanCard as KanbanCardType } from "../../../../convex/kanban";
 import type { KanbanLabel } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
 import type { Role } from "../../../../convex/roles";
+import type { Priority } from "../../../../convex/kanban";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { KanbanCard } from "../KanbanCard";
+import type { SortOption } from "../KanbanFilterPanel";
 
 /** Prefix matching the one in KanbanBoard -- must stay in sync */
 const COLUMN_SORTABLE_PREFIX = "sortable-col:";
@@ -35,6 +37,9 @@ type KanbanColumnProps = {
   isDimmed?: boolean;
   isDraggingColumn?: boolean;
   isOverlay?: boolean;
+  // C3: Sort within column
+  sortOption: SortOption;
+  onSortChange: (sort: SortOption) => void;
 };
 
 function SortableCard({
@@ -46,6 +51,7 @@ function SortableCard({
   isSelected,
   onToggleSelection,
   labelMap,
+  dragDisabled,
 }: {
   card: KanbanCardType;
   cardRole: Role | undefined;
@@ -55,6 +61,7 @@ function SortableCard({
   isSelected: boolean;
   onToggleSelection: () => void;
   labelMap?: Map<Id<"kanbanLabels">, KanbanLabel>;
+  dragDisabled?: boolean;
 }) {
   const {
     attributes,
@@ -63,7 +70,7 @@ function SortableCard({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: card._id, disabled: selectionMode });
+  } = useSortable({ id: card._id, disabled: selectionMode || !!dragDisabled });
 
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
@@ -105,6 +112,8 @@ export function KanbanColumn({
   isDimmed = false,
   isDraggingColumn = false,
   isOverlay = false,
+  sortOption,
+  onSortChange,
 }: KanbanColumnProps) {
   const { t } = useTranslation("kanban");
 
@@ -136,10 +145,76 @@ export function KanbanColumn({
   const renameInputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const sortedCards = useMemo(
-    () => [...cards].sort((a, b) => a.position - b.position),
-    [cards],
-  );
+  // C3: Priority ordering for sort (higher priority = lower number = sorted first)
+  const PRIORITY_ORDER: Record<Priority, number> = {
+    critical: 0,
+    high: 1,
+    medium: 2,
+    low: 3,
+  };
+
+  // C3: Sort cards based on selected sort option
+  const sortedCards = useMemo(() => {
+    const sorted = [...cards];
+
+    switch (sortOption) {
+      case "dueDate":
+        sorted.sort((a, b) => a.dueDate - b.dueDate);
+        break;
+      case "creationDate":
+        sorted.sort((a, b) => b._creationTime - a._creationTime);
+        break;
+      case "titleAZ":
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case "titleZA":
+        sorted.sort((a, b) => b.title.localeCompare(a.title));
+        break;
+      case "priority":
+        sorted.sort((a, b) => {
+          const aPriority = a.priority ? PRIORITY_ORDER[a.priority] : 4;
+          const bPriority = b.priority ? PRIORITY_ORDER[b.priority] : 4;
+          if (aPriority !== bPriority) return aPriority - bPriority;
+          return a.position - b.position;
+        });
+        break;
+      case "role":
+        sorted.sort((a, b) => {
+          const aRole = roleMap.get(a.roleId);
+          const bRole = roleMap.get(b.roleId);
+          const aTitle = aRole?.title ?? "";
+          const bTitle = bRole?.title ?? "";
+          if (aTitle !== bTitle) return aTitle.localeCompare(bTitle);
+          return a.position - b.position;
+        });
+        break;
+      case "manual":
+      default:
+        sorted.sort((a, b) => a.position - b.position);
+        break;
+    }
+
+    return sorted;
+  }, [cards, sortOption, roleMap]);
+
+  // C3: Whether a non-manual sort is active (disables DnD for cards in this column)
+  const isSorted = sortOption !== "manual";
+
+  // C3: Sort dropdown state
+  const [showSortMenu, setShowSortMenu] = useState(false);
+  const sortMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close sort menu on outside click
+  useEffect(() => {
+    if (!showSortMenu) return;
+    const handleClick = (e: MouseEvent) => {
+      if (sortMenuRef.current && !sortMenuRef.current.contains(e.target as Node)) {
+        setShowSortMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showSortMenu]);
 
   const cardIds = useMemo(() => sortedCards.map((c) => c._id), [sortedCards]);
 
@@ -354,6 +429,45 @@ export function KanbanColumn({
             </svg>
           )}
 
+          {/* C3: Sort button */}
+          <div className="relative" ref={sortMenuRef}>
+            <button
+              onClick={() => setShowSortMenu(!showSortMenu)}
+              className={`p-0.5 transition-colors ${
+                isSorted
+                  ? "text-highlight"
+                  : "text-text-tertiary hover:text-text-secondary"
+              }`}
+              title={t("sort.title")}
+              aria-label={t("sort.title")}
+            >
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M2 3.75A.75.75 0 012.75 3h11.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zM2 7.5a.75.75 0 01.75-.75h7.508a.75.75 0 010 1.5H2.75A.75.75 0 012 7.5zM14 7a.75.75 0 01.75.75v6.59l1.95-2.1a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 111.1-1.02l1.95 2.1V7.75A.75.75 0 0114 7zM2 11.25a.75.75 0 01.75-.75h4.562a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clipRule="evenodd" />
+              </svg>
+            </button>
+
+            {showSortMenu && (
+              <div className="absolute right-0 top-full mt-1 w-40 bg-surface-primary border border-border-strong rounded-lg shadow-lg z-20 py-1">
+                {(["manual", "dueDate", "creationDate", "titleAZ", "titleZA", "priority", "role"] as const).map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => {
+                      onSortChange(option);
+                      setShowSortMenu(false);
+                    }}
+                    className={`w-full text-left px-3 py-1.5 text-sm transition-colors ${
+                      sortOption === option
+                        ? "text-highlight font-medium bg-highlight/10"
+                        : "text-dark dark:text-light hover:bg-surface-hover"
+                    }`}
+                  >
+                    {t(`sort.${option}`)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Column menu button */}
           <div className="relative" ref={menuRef}>
             <button
@@ -441,6 +555,7 @@ export function KanbanColumn({
                 isSelected={selectedCardIds.has(card._id)}
                 onToggleSelection={() => onToggleCardSelection(card._id)}
                 labelMap={labelMap}
+                dragDisabled={isSorted}
               />
             );
           })}

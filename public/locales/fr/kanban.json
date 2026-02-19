@@ -129,5 +129,33 @@
     "critical": "Critique",
     "none": "Sans priorit\u00e9",
     "selectPriority": "S\u00e9lectionner la priorit\u00e9..."
+  },
+  "filters": {
+    "title": "Filtres",
+    "activeCount": "{{count}} actif",
+    "clear": "Effacer les filtres",
+    "role": "R\u00f4le",
+    "allRoles": "Tous les r\u00f4les",
+    "label": "\u00c9tiquette",
+    "allLabels": "Toutes les \u00e9tiquettes",
+    "priority": "Priorit\u00e9",
+    "allPriorities": "Toutes les priorit\u00e9s",
+    "dueDate": "\u00c9ch\u00e9ance",
+    "allDueDates": "Toutes les \u00e9ch\u00e9ances",
+    "overdue": "En retard",
+    "dueToday": "\u00c9ch\u00e9ance aujourd'hui",
+    "dueThisWeek": "\u00c9ch\u00e9ance cette semaine",
+    "dueLater": "\u00c9ch\u00e9ance ult\u00e9rieure",
+    "noDueDate": "Aucun r\u00e9sultat"
+  },
+  "sort": {
+    "title": "Trier",
+    "manual": "Ordre manuel",
+    "dueDate": "\u00c9ch\u00e9ance",
+    "creationDate": "Date de cr\u00e9ation",
+    "titleAZ": "Titre (A-Z)",
+    "titleZA": "Titre (Z-A)",
+    "priority": "Priorit\u00e9",
+    "role": "R\u00f4le"
   }
 }

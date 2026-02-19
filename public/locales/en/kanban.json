@@ -129,5 +129,33 @@
     "critical": "Critical",
     "none": "No priority",
     "selectPriority": "Select priority..."
+  },
+  "filters": {
+    "title": "Filters",
+    "activeCount": "{{count}} active",
+    "clear": "Clear filters",
+    "role": "Role",
+    "allRoles": "All roles",
+    "label": "Label",
+    "allLabels": "All labels",
+    "priority": "Priority",
+    "allPriorities": "All priorities",
+    "dueDate": "Due date",
+    "allDueDates": "All due dates",
+    "overdue": "Overdue",
+    "dueToday": "Due today",
+    "dueThisWeek": "Due this week",
+    "dueLater": "Due later",
+    "noDueDate": "No results"
+  },
+  "sort": {
+    "title": "Sort",
+    "manual": "Manual order",
+    "dueDate": "Due date",
+    "creationDate": "Creation date",
+    "titleAZ": "Title (A-Z)",
+    "titleZA": "Title (Z-A)",
+    "priority": "Priority",
+    "role": "Role"
   }
 }

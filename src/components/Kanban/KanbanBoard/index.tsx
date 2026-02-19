@@ -28,6 +28,13 @@ import { KanbanEmptyState } from "../KanbanEmptyState";
 import { KanbanCardModal } from "../KanbanCardModal";
 import { KanbanCard } from "../KanbanCard";
 import { KanbanBoardSettings } from "../KanbanBoardSettings";
+import {
+  KanbanFilterPanel,
+  EMPTY_FILTERS,
+  countActiveFilters,
+  type KanbanFilters,
+  type SortOption,
+} from "../KanbanFilterPanel";
 
 /** Prefix to distinguish column sortable IDs from card IDs */
 const COLUMN_SORTABLE_PREFIX = "sortable-col:";
@@ -129,6 +136,26 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
+
+  // C1: Advanced filters state
+  const [filters, setFilters] = useState<KanbanFilters>(EMPTY_FILTERS);
+  const activeFilterCount = countActiveFilters(filters);
+  const hasActiveFilters = activeFilterCount > 0;
+
+  // C3: Per-column sort state (column ID -> sort option)
+  const [columnSorts, setColumnSorts] = useState<Map<string, SortOption>>(new Map());
+
+  const setColumnSort = useCallback((columnId: Id<"kanbanColumns">, sort: SortOption) => {
+    setColumnSorts((prev) => {
+      const next = new Map(prev);
+      if (sort === "manual") {
+        next.delete(columnId);
+      } else {
+        next.set(columnId, sort);
+      }
+      return next;
+    });
+  }, []);
 
   // Collapsed columns state (A3) -- persisted in localStorage
   const [collapsedColumns, setCollapsedColumns] = useState<Set<string>>(new Set());
@@ -309,42 +336,107 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     return map;
   }, [boardData]);
 
-  // Filter cards by search query (matches card title, role title, member name, labels, priority)
-  const filteredCardsByColumn = useMemo(() => {
-    if (!searchQuery.trim()) return cardsByColumn;
+  // C1: Due date filter helper
+  const matchesDueDateFilter = useCallback((dueDate: number, filter: string): boolean => {
+    if (filter === "all") return true;
+    const now = Date.now();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStart = today.getTime();
+    const todayEnd = todayStart + 24 * 60 * 60 * 1000;
 
-    const query = searchQuery.toLowerCase();
+    if (filter === "overdue") return dueDate < now;
+    if (filter === "today") return dueDate >= todayStart && dueDate < todayEnd;
+    if (filter === "thisWeek") {
+      const dayOfWeek = today.getDay();
+      const weekStart = todayStart - dayOfWeek * 24 * 60 * 60 * 1000;
+      const weekEnd = weekStart + 7 * 24 * 60 * 60 * 1000;
+      return dueDate >= weekStart && dueDate < weekEnd;
+    }
+    if (filter === "later") {
+      const dayOfWeek = today.getDay();
+      const weekStart = todayStart - dayOfWeek * 24 * 60 * 60 * 1000;
+      const weekEnd = weekStart + 7 * 24 * 60 * 60 * 1000;
+      return dueDate >= weekEnd;
+    }
+    return true;
+  }, []);
+
+  // Filter cards by search query AND structured filters (C1)
+  const filteredCardsByColumn = useMemo(() => {
+    const hasSearch = searchQuery.trim().length > 0;
+    if (!hasSearch && !hasActiveFilters) return cardsByColumn;
+
+    const query = hasSearch ? searchQuery.toLowerCase() : "";
     const filtered = new Map<Id<"kanbanColumns">, KanbanCardType[]>();
 
     for (const [columnId, cards] of cardsByColumn) {
       filtered.set(
         columnId,
         cards.filter((card) => {
-          if (card.title.toLowerCase().includes(query)) return true;
-          const role = roleMap.get(card.roleId);
-          if (role) {
-            if (role.title.toLowerCase().includes(query)) return true;
-            const member = memberMap.get(role.memberId);
-            if (member) {
-              const fullName = `${member.firstname} ${member.surname}`.toLowerCase();
-              if (fullName.includes(query)) return true;
+          // --- Structured filters (C1) ---
+          // Role filter
+          if (filters.roleId !== null && card.roleId !== filters.roleId) return false;
+
+          // Label filter
+          if (filters.labelId !== null) {
+            if (!card.labelIds || !card.labelIds.includes(filters.labelId)) return false;
+          }
+
+          // Priority filter
+          if (filters.priority !== null) {
+            if (filters.priority === "none") {
+              if (card.priority !== undefined) return false;
+            } else {
+              if (card.priority !== filters.priority) return false;
             }
           }
-          // B1: Search by label name
-          if (card.labelIds) {
-            for (const labelId of card.labelIds) {
-              const label = labelMap.get(labelId);
-              if (label && label.name.toLowerCase().includes(query)) return true;
-            }
+
+          // Due date filter
+          if (filters.dueDate !== "all") {
+            if (!matchesDueDateFilter(card.dueDate, filters.dueDate)) return false;
           }
-          // B6: Search by priority
-          if (card.priority && card.priority.toLowerCase().includes(query)) return true;
-          return false;
+
+          // --- Text search ---
+          if (hasSearch) {
+            let matchesSearch = false;
+            if (card.title.toLowerCase().includes(query)) matchesSearch = true;
+            if (!matchesSearch) {
+              const role = roleMap.get(card.roleId);
+              if (role) {
+                if (role.title.toLowerCase().includes(query)) matchesSearch = true;
+                if (!matchesSearch) {
+                  const member = memberMap.get(role.memberId);
+                  if (member) {
+                    const fullName = `${member.firstname} ${member.surname}`.toLowerCase();
+                    if (fullName.includes(query)) matchesSearch = true;
+                  }
+                }
+              }
+            }
+            // B1: Search by label name
+            if (!matchesSearch && card.labelIds) {
+              for (const labelId of card.labelIds) {
+                const label = labelMap.get(labelId);
+                if (label && label.name.toLowerCase().includes(query)) {
+                  matchesSearch = true;
+                  break;
+                }
+              }
+            }
+            // B6: Search by priority
+            if (!matchesSearch && card.priority && card.priority.toLowerCase().includes(query)) {
+              matchesSearch = true;
+            }
+            if (!matchesSearch) return false;
+          }
+
+          return true;
         }),
       );
     }
     return filtered;
-  }, [cardsByColumn, searchQuery, roleMap, memberMap, labelMap]);
+  }, [cardsByColumn, searchQuery, hasActiveFilters, filters, roleMap, memberMap, labelMap, matchesDueDateFilter]);
 
   // Card lookup by id
   const cardById = useMemo(() => {
@@ -358,7 +450,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
 
   // Total card count to decide empty state
   const totalCards = boardData?.cards.length ?? 0;
-  const isSearching = searchQuery.trim().length > 0;
+  const isSearching = searchQuery.trim().length > 0 || hasActiveFilters;
 
   // Find which column a card or column-droppable belongs to
   const findColumnId = useCallback((id: UniqueIdentifier): Id<"kanbanColumns"> | null => {
@@ -610,6 +702,16 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
             </button>
           )}
 
+          {/* C1: Filter panel */}
+          {totalCards > 0 && !selectionMode && (
+            <KanbanFilterPanel
+              filters={filters}
+              onFiltersChange={setFilters}
+              roles={roleList}
+              labels={boardData?.labels ?? []}
+            />
+          )}
+
           {/* Search bar */}
           {totalCards > 0 && !selectionMode && (
             <div className="relative">
@@ -744,6 +846,8 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                   labelMap={labelMap}
                   isDimmed={isEmpty}
                   isDraggingColumn={activeColumnId === column._id}
+                  sortOption={columnSorts.get(column._id) ?? "manual"}
+                  onSortChange={(sort) => setColumnSort(column._id, sort)}
                 />
               );
             })}
@@ -848,6 +952,8 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                 isDimmed={false}
                 isDraggingColumn={false}
                 isOverlay
+                sortOption="manual"
+                onSortChange={() => {}}
               />
             </div>
           ) : null}

@@ -2,7 +2,7 @@
 
 This document defines the architecture, data model, and implementation plan for the Kanban board feature in Swarmrise. It is maintained by Kimiko, the Kanban system architect.
 
-**Status:** Phases 1-5 done. Category A (Core Board Enhancements: A1-A6) done. Category B (Card Enhancements: B1-B6) done. Role-based ownership migration complete. Cards display role icon + member avatar, labels, priority, checklist progress.
+**Status:** Phases 1-5 done. Category A (Core Board Enhancements: A1-A6) done. Category B (Card Enhancements: B1-B6) done. Category C (Search/Filter/Sort: C1, C3) done. Role-based ownership migration complete. Cards display role icon + member avatar, labels, priority, checklist progress.
 
 ---
 
@@ -347,6 +347,8 @@ convex/kanban/
 | `kanban.deleteComment` | `{ commentId }` | `null` | Delete a comment (author-only) (B4) |
 | `kanban.ensureTemplateLabel` | `{ boardId }` | `Id<"kanbanLabels">` | Ensure "template" label exists on a board, creating if needed (B5) |
 
+**Note:** Category C features (C1: Advanced Filters, C3: Sort Within Column) are purely frontend. They operate on already-loaded board data via client-side filtering and sorting. No new backend queries or mutations are needed.
+
 ### Board Auto-Creation
 
 The board is auto-created inside `convex/teams/functions.ts::createTeam`, following the same pattern as channel auto-creation:
@@ -444,6 +446,9 @@ src/components/Kanban/
     index.tsx             - Modal for creating/editing a card
   KanbanBoardSettings/
     index.tsx             - Board settings modal for WIP limits per column (A4)
+  KanbanFilterPanel/
+    index.tsx             - Filter panel dropdown with role/label/priority/due date filters (C1),
+                            exports filter types and SortOption type (C3)
   KanbanEmptyState/
     index.tsx             - Empty state when board has no cards
 ```
@@ -942,6 +947,13 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | B6: Priority - Search integration | Done | Cards filterable by priority level in search bar |
 | B1-B6: i18n keys (6 languages) | Done | `labels.*`, `checklist.*`, `attachments.*`, `threadedComments.*`, `templates.*`, `priority.*` |
 | B1-B6: `getBoardWithData` updated | Done | Returns `labels` and `templates` alongside board/columns/cards |
+| **Category C: Search, Filter, and Sort** | | |
+| C1: Advanced Filters - Frontend (`KanbanFilterPanel` component) | Done | Dropdown panel with role, label, priority, due date range filters |
+| C1: Advanced Filters - Integration with existing search | Done | Structured filters AND text search applied simultaneously |
+| C1: Advanced Filters - Active filter count badge | Done | Badge on filter button shows number of active filters |
+| C3: Sort Within Column - Frontend (sort dropdown in column header) | Done | Sort icon in column header; 7 sort options (manual, dueDate, creationDate, titleAZ, titleZA, priority, role) |
+| C3: Sort Within Column - DnD disabled when sorted | Done | `useSortable({ disabled: isSorted })` prevents drag during non-manual sort |
+| C1/C3: i18n keys (6 languages) | Done | `filters.*`, `sort.*` sections in en/fr/es/it/uk/zh-TW |
 
 ---
 
@@ -1087,6 +1099,24 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 
 **Rationale:** This mirrors standard comment systems (GitHub, Slack) and prevents accidental or unauthorized modification of others' contributions. The board is collaborative for card management, but individual comments represent a specific person's input and should be protected. Admin override can be added later if needed.
 
+### 24. Client-side structured filters (not server-side)
+
+**Decision:** Advanced filters (role, label, priority, due date range) are applied client-side from already-loaded board data, in the same pipeline as text search. No backend changes are needed.
+
+**Rationale:** The entire board's data is loaded via `getBoardWithData` (typically <100 cards). Applying filters client-side is instant and avoids additional queries. The filter state is ephemeral (resets on page navigation) since persisting filter presets would require server-side storage and add complexity for minimal value. The filter panel uses simple `<select>` dropdowns rather than multi-select checkboxes, keeping the UI lean. Filters compose with text search: all active filters must pass AND the text search must match.
+
+### 25. Per-column sort is a temporary view state (not persisted)
+
+**Decision:** Column sort options are stored in React state (per column), not persisted to the database or localStorage. When the user navigates away and returns, all columns revert to manual (drag) order.
+
+**Rationale:** Sort is a personal transient view preference, not shared team state. Persisting it would add complexity (per-user-per-column preferences) for minimal benefit. When a sort is active on a column, card drag-and-drop within that column is disabled to prevent confusion -- the user would not expect manual reordering to work while viewing a sorted list. The sort icon in the column header highlights when a non-manual sort is active, providing clear visual feedback.
+
+### 26. Sort disables drag-and-drop per column (not globally)
+
+**Decision:** When a non-manual sort is active on a column, only that column's card DnD is disabled. Other columns with manual sort retain full DnD capability. Cards can still be dragged *into* a sorted column from other columns.
+
+**Rationale:** Disabling DnD globally when any column has a sort active would be too restrictive. The per-column approach lets users sort one column (e.g., by priority) while continuing to manually organize others. Cross-column moves into a sorted column are allowed because the dropped card will simply appear at the position determined by the sort algorithm.
+
 ---
 
 ## Future Enhancements
@@ -1139,9 +1169,9 @@ A comprehensive inventory of potential Kanban features, organized by category. E
 
 | ID | Feature | Description | Complexity | Value | Status |
 |----|---------|-------------|------------|-------|--------|
-| C1 | Advanced Filters | Filter cards by multiple criteria simultaneously: role, due date range, column, label, overdue status. Persistent filter presets. | Medium | High | PROPOSED |
+| C1 | Advanced Filters | Filter cards by multiple criteria simultaneously: role, due date range, label, priority, overdue status. Dropdown panel with active filter count badge. | Medium | High | DONE |
 | C2 | Server-Side Search | Full-text search index on card titles and comments for boards with 100+ cards. Uses Convex search indexes. | Medium | Low | PROPOSED |
-| C3 | Sort Within Column | Sort cards within a column by due date, creation date, title, or role -- in addition to manual drag ordering. | Low | Medium | PROPOSED |
+| C3 | Sort Within Column | Sort cards within a column by due date, creation date, title (A-Z/Z-A), priority, or role -- in addition to manual drag ordering. Per-column sort dropdown in column header. Drag-and-drop disabled when sort is active. | Low | Medium | DONE |
 
 ### Category D: Cross-Entity Views
 

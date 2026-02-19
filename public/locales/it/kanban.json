@@ -129,5 +129,33 @@
     "critical": "Critica",
     "none": "Nessuna priorit\u00e0",
     "selectPriority": "Seleziona priorit\u00e0..."
+  },
+  "filters": {
+    "title": "Filtri",
+    "activeCount": "{{count}} attivo",
+    "clear": "Cancella filtri",
+    "role": "Ruolo",
+    "allRoles": "Tutti i ruoli",
+    "label": "Etichetta",
+    "allLabels": "Tutte le etichette",
+    "priority": "Priorit\u00e0",
+    "allPriorities": "Tutte le priorit\u00e0",
+    "dueDate": "Scadenza",
+    "allDueDates": "Tutte le scadenze",
+    "overdue": "Scaduta",
+    "dueToday": "Scade oggi",
+    "dueThisWeek": "Scade questa settimana",
+    "dueLater": "Scade dopo",
+    "noDueDate": "Nessun risultato"
+  },
+  "sort": {
+    "title": "Ordina",
+    "manual": "Ordine manuale",
+    "dueDate": "Scadenza",
+    "creationDate": "Data di creazione",
+    "titleAZ": "Titolo (A-Z)",
+    "titleZA": "Titolo (Z-A)",
+    "priority": "Priorit\u00e0",
+    "role": "Ruolo"
   }
 }

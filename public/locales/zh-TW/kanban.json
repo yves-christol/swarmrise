@@ -129,5 +129,33 @@
     "critical": "\u7dca\u6025",
     "none": "\u7121\u512a\u5148\u7d1a",
     "selectPriority": "\u9078\u64c7\u512a\u5148\u7d1a..."
+  },
+  "filters": {
+    "title": "\u7be9\u9078",
+    "activeCount": "{{count}} \u500b\u555f\u7528",
+    "clear": "\u6e05\u9664\u7be9\u9078",
+    "role": "\u89d2\u8272",
+    "allRoles": "\u6240\u6709\u89d2\u8272",
+    "label": "\u6a19\u7c64",
+    "allLabels": "\u6240\u6709\u6a19\u7c64",
+    "priority": "\u512a\u5148\u7d1a",
+    "allPriorities": "\u6240\u6709\u512a\u5148\u7d1a",
+    "dueDate": "\u5230\u671f\u65e5",
+    "allDueDates": "\u6240\u6709\u5230\u671f\u65e5",
+    "overdue": "\u5df2\u904e\u671f",
+    "dueToday": "\u4eca\u5929\u5230\u671f",
+    "dueThisWeek": "\u672c\u9031\u5230\u671f",
+    "dueLater": "\u7a0d\u5f8c\u5230\u671f",
+    "noDueDate": "\u7121\u7d50\u679c"
+  },
+  "sort": {
+    "title": "\u6392\u5e8f",
+    "manual": "\u624b\u52d5\u6392\u5e8f",
+    "dueDate": "\u5230\u671f\u65e5",
+    "creationDate": "\u5efa\u7acb\u65e5\u671f",
+    "titleAZ": "\u6a19\u984c (A-Z)",
+    "titleZA": "\u6a19\u984c (Z-A)",
+    "priority": "\u512a\u5148\u7d1a",
+    "role": "\u89d2\u8272"
   }
 }

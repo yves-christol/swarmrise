@@ -4,10 +4,12 @@
  * This module provides:
  *  1. deleteDemoOrga   - Finds the demo orga by name and deletes it with ALL dependencies
  *  2. seedDemoOrga     - Creates a fresh demo orga from the JSON-like config
+ *  2b. seedKanbanData  - Populates Kanban boards, labels, cards, and comments for every team
  *  3. uploadDemoLogo   - Uploads the Infomax logo to Convex storage and updates the orga
  *  4. resetDemoOrga    - Orchestrating action: delete then create (called by the cron)
  *
  * Deletion order (respects referential dependencies):
+ *   kanban (comments -> attachments -> cards -> labels -> columns -> boards) ->
  *   topics -> policies -> decisions -> invitations -> notifications ->
  *   notificationPreferences -> roles -> members (+ patch users) -> teams -> orga ->
  *   orphaned test users
@@ -19,6 +21,7 @@ import { Id } from "../_generated/dataModel";
 import { DEMO_ORGA_CONFIG, TeamTemplate, RoleTemplate } from "./demoOrgaConfig";
 import { getDefaultIconKey } from "../roles/iconDefaults";
 import { ALL_ICON_KEYS } from "../roles/iconKeys";
+import { DEFAULT_COLUMNS } from "../kanban";
 
 // Email domain used for all synthetic demo users
 const DEMO_EMAIL_DOMAIN = "@demo-infomax.test";
@@ -176,7 +179,63 @@ export const deleteDemoOrga = internalMutation({
     const orgaId = orga._id;
     console.log(`[deleteDemoOrga] Deleting orga "${orga.name}" (${orgaId})...`);
 
-    // 0. Chat data (channels, messages, read positions)
+    // 0a. Kanban data (comments, attachments, cards, labels, columns, boards)
+    const kanbanBoards = await ctx.db
+      .query("kanbanBoards")
+      .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+      .collect();
+    for (const board of kanbanBoards) {
+      // Delete comments
+      const kanbanComments = await ctx.db
+        .query("kanbanComments")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const kc of kanbanComments) {
+        await ctx.db.delete(kc._id);
+      }
+      // Delete attachments (including storage files)
+      const kanbanAttachments = await ctx.db
+        .query("kanbanAttachments")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const ka of kanbanAttachments) {
+        try {
+          await ctx.storage.delete(ka.storageId);
+          counts.storageFiles++;
+        } catch {
+          // Storage file may already be deleted
+        }
+        await ctx.db.delete(ka._id);
+      }
+      // Delete cards
+      const kanbanCards = await ctx.db
+        .query("kanbanCards")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const card of kanbanCards) {
+        await ctx.db.delete(card._id);
+      }
+      // Delete labels
+      const kanbanLabels = await ctx.db
+        .query("kanbanLabels")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const kl of kanbanLabels) {
+        await ctx.db.delete(kl._id);
+      }
+      // Delete columns
+      const kanbanColumns = await ctx.db
+        .query("kanbanColumns")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const col of kanbanColumns) {
+        await ctx.db.delete(col._id);
+      }
+      // Delete the board itself
+      await ctx.db.delete(board._id);
+    }
+
+    // 0b. Chat data (channels, messages, read positions)
     const channels = await ctx.db
       .query("channels")
       .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
@@ -808,6 +867,713 @@ export const seedDemoOrga = internalMutation({
 });
 
 // ---------------------------------------------------------------------------
+// 2b. SEED Kanban boards, labels, cards, and comments for every team
+// ---------------------------------------------------------------------------
+
+/**
+ * Label template: name + Tailwind color key.
+ */
+interface LabelDef {
+  name: string;
+  color: string;
+}
+
+const LABEL_POOL: LabelDef[] = [
+  { name: "urgent", color: "red" },
+  { name: "blocked", color: "orange" },
+  { name: "discussion", color: "blue" },
+  { name: "improvement", color: "green" },
+  { name: "documentation", color: "teal" },
+  { name: "research", color: "indigo" },
+  { name: "recurring", color: "gray" },
+];
+
+/**
+ * A card template defining all attributes for a seeded kanban card.
+ * `column` is the index into DEFAULT_COLUMNS (0=New Topics, 1=Actions, 2=Done, 3=Archived).
+ * `labels` refers to label names from LABEL_POOL.
+ * `dueDaysFromNow` can be negative (past) or positive (future).
+ */
+interface CardTemplate {
+  title: string;
+  priority?: "low" | "medium" | "high" | "critical";
+  labels: string[];
+  column: number; // index into DEFAULT_COLUMNS
+  dueDaysFromNow: number;
+  checklist?: { text: string; completed: boolean }[];
+  commentTexts?: string[];
+}
+
+// --- Card template sets keyed by team archetype ---
+
+const ENGINEERING_CARDS: CardTemplate[] = [
+  {
+    title: "Migrate authentication flow to new SDK",
+    priority: "critical",
+    labels: ["urgent"],
+    column: 1,
+    dueDaysFromNow: 3,
+    checklist: [
+      { text: "Audit current auth flow and document endpoints", completed: true },
+      { text: "Set up new SDK in staging environment", completed: true },
+      { text: "Migrate login and signup routes", completed: false },
+      { text: "Migrate token refresh logic", completed: false },
+      { text: "Update integration tests", completed: false },
+    ],
+    commentTexts: [
+      "The new SDK has a breaking change in the token refresh API. We need to handle the migration carefully.",
+      "I have started documenting the current endpoints. Will share the audit by EOD.",
+    ],
+  },
+  {
+    title: "Fix memory leak in dashboard component",
+    priority: "high",
+    labels: ["urgent", "improvement"],
+    column: 1,
+    dueDaysFromNow: 2,
+    checklist: [
+      { text: "Reproduce the leak in local dev", completed: true },
+      { text: "Profile with Chrome DevTools", completed: true },
+      { text: "Fix event listener cleanup", completed: false },
+      { text: "Verify fix with load test", completed: false },
+    ],
+  },
+  {
+    title: "Evaluate server-side rendering for SEO",
+    priority: "low",
+    labels: ["research", "discussion"],
+    column: 0,
+    dueDaysFromNow: 21,
+  },
+  {
+    title: "Define error handling strategy",
+    priority: "medium",
+    labels: ["discussion"],
+    column: 0,
+    dueDaysFromNow: 14,
+  },
+  {
+    title: "Write unit tests for processing module",
+    priority: "medium",
+    labels: ["improvement"],
+    column: 1,
+    dueDaysFromNow: 7,
+    checklist: [
+      { text: "Identify untested edge cases", completed: true },
+      { text: "Write tests for input validation", completed: false },
+      { text: "Write tests for error paths", completed: false },
+      { text: "Reach 80% coverage target", completed: false },
+    ],
+  },
+  {
+    title: "Set up CI pipeline for automated testing",
+    priority: "medium",
+    labels: ["improvement"],
+    column: 2,
+    dueDaysFromNow: -5,
+    checklist: [
+      { text: "Configure GitHub Actions workflow", completed: true },
+      { text: "Add lint and type-check steps", completed: true },
+      { text: "Add unit test step", completed: true },
+      { text: "Set up Slack notifications on failure", completed: true },
+    ],
+  },
+  {
+    title: "Onboard new team member to codebase",
+    labels: ["documentation"],
+    column: 3,
+    dueDaysFromNow: -14,
+    checklist: [
+      { text: "Pair on architecture overview", completed: true },
+      { text: "Walk through deployment process", completed: true },
+      { text: "Assign first starter task", completed: true },
+    ],
+  },
+  {
+    title: "Investigate performance regression",
+    priority: "high",
+    labels: ["urgent", "research"],
+    column: 0,
+    dueDaysFromNow: 5,
+    commentTexts: [
+      "Users are reporting 2-3s load times on the main dashboard since last Thursday's deploy.",
+    ],
+  },
+];
+
+const PRODUCT_CARDS: CardTemplate[] = [
+  {
+    title: "Finalize Q2 roadmap priorities",
+    priority: "critical",
+    labels: ["urgent"],
+    column: 1,
+    dueDaysFromNow: 4,
+    checklist: [
+      { text: "Gather input from all team leads", completed: true },
+      { text: "Score initiatives with RICE framework", completed: true },
+      { text: "Draft roadmap document", completed: false },
+      { text: "Review with leadership", completed: false },
+      { text: "Publish to all-hands", completed: false },
+    ],
+  },
+  {
+    title: "Write PRD for notifications feature",
+    priority: "high",
+    labels: ["documentation"],
+    column: 1,
+    dueDaysFromNow: 10,
+    checklist: [
+      { text: "Define user stories and acceptance criteria", completed: true },
+      { text: "Document notification channels and priorities", completed: false },
+      { text: "Get sign-off from engineering lead", completed: false },
+    ],
+  },
+  {
+    title: "Review competitor product launch",
+    priority: "medium",
+    labels: ["research"],
+    column: 0,
+    dueDaysFromNow: 7,
+  },
+  {
+    title: "Define KPIs for new onboarding flow",
+    priority: "medium",
+    labels: ["discussion"],
+    column: 0,
+    dueDaysFromNow: 12,
+  },
+  {
+    title: "Conduct user interviews for dashboard redesign",
+    priority: "medium",
+    labels: ["research"],
+    column: 1,
+    dueDaysFromNow: 9,
+    checklist: [
+      { text: "Recruit 8 participants", completed: true },
+      { text: "Prepare interview script", completed: true },
+      { text: "Conduct interviews (4/8 done)", completed: false },
+      { text: "Synthesize findings", completed: false },
+    ],
+  },
+  {
+    title: "Prioritize backlog for Sprint 14",
+    priority: "low",
+    labels: ["recurring"],
+    column: 2,
+    dueDaysFromNow: -3,
+    checklist: [
+      { text: "Review all new tickets", completed: true },
+      { text: "Estimate story points", completed: true },
+      { text: "Assign top-priority items", completed: true },
+    ],
+  },
+];
+
+const DESIGN_CARDS: CardTemplate[] = [
+  {
+    title: "Design mobile-responsive dashboard layout",
+    priority: "high",
+    labels: ["urgent"],
+    column: 1,
+    dueDaysFromNow: 6,
+    checklist: [
+      { text: "Audit current breakpoints", completed: true },
+      { text: "Wireframe mobile layout", completed: true },
+      { text: "Design tablet variant", completed: false },
+      { text: "Create interactive prototype", completed: false },
+    ],
+  },
+  {
+    title: "Update design system color tokens for dark mode",
+    priority: "medium",
+    labels: ["improvement"],
+    column: 1,
+    dueDaysFromNow: 11,
+    checklist: [
+      { text: "Audit all existing color tokens", completed: true },
+      { text: "Define dark mode palette", completed: false },
+      { text: "Update Figma library", completed: false },
+      { text: "Coordinate with frontend for implementation", completed: false },
+    ],
+  },
+  {
+    title: "Plan usability study for new search",
+    priority: "medium",
+    labels: ["research"],
+    column: 0,
+    dueDaysFromNow: 15,
+  },
+  {
+    title: "Discuss icon consistency across product",
+    priority: "low",
+    labels: ["discussion", "improvement"],
+    column: 0,
+    dueDaysFromNow: 20,
+  },
+  {
+    title: "Deliver settings page redesign mockups",
+    labels: ["documentation"],
+    column: 2,
+    dueDaysFromNow: -7,
+    checklist: [
+      { text: "Explore 3 layout options", completed: true },
+      { text: "Validate with stakeholders", completed: true },
+      { text: "Finalize high-fidelity mockups", completed: true },
+      { text: "Hand off to engineering", completed: true },
+    ],
+  },
+];
+
+const MARKETING_CARDS: CardTemplate[] = [
+  {
+    title: "Launch Q1 email campaign",
+    priority: "critical",
+    labels: ["urgent"],
+    column: 1,
+    dueDaysFromNow: 2,
+    checklist: [
+      { text: "Finalize email copy and subject lines", completed: true },
+      { text: "Design email templates", completed: true },
+      { text: "Set up audience segments", completed: true },
+      { text: "Schedule sends", completed: false },
+      { text: "Configure tracking and UTM params", completed: false },
+    ],
+  },
+  {
+    title: "Analyze February ad spend performance",
+    priority: "medium",
+    labels: ["recurring"],
+    column: 1,
+    dueDaysFromNow: 5,
+    checklist: [
+      { text: "Pull data from all ad platforms", completed: true },
+      { text: "Calculate ROAS by channel", completed: false },
+      { text: "Draft executive summary", completed: false },
+    ],
+  },
+  {
+    title: "Explore TikTok advertising for Gen Z",
+    priority: "low",
+    labels: ["research", "discussion"],
+    column: 0,
+    dueDaysFromNow: 30,
+  },
+  {
+    title: "Review SEO strategy for new pages",
+    priority: "medium",
+    labels: ["improvement"],
+    column: 0,
+    dueDaysFromNow: 14,
+  },
+  {
+    title: "Prepare board presentation on growth metrics",
+    priority: "high",
+    labels: ["urgent"],
+    column: 1,
+    dueDaysFromNow: 3,
+    checklist: [
+      { text: "Compile Q1 metrics", completed: true },
+      { text: "Build slide deck", completed: false },
+      { text: "Add competitive benchmarks", completed: false },
+      { text: "Rehearse presentation", completed: false },
+    ],
+    commentTexts: [
+      "Board meeting moved up to Friday -- need to finalize by Thursday EOD.",
+    ],
+  },
+];
+
+const SALES_CARDS: CardTemplate[] = [
+  {
+    title: "Close Enterprise deal with Acme Corp",
+    priority: "critical",
+    labels: ["urgent"],
+    column: 1,
+    dueDaysFromNow: 4,
+    checklist: [
+      { text: "Finalize pricing proposal", completed: true },
+      { text: "Legal review of contract terms", completed: true },
+      { text: "Schedule executive sponsor call", completed: false },
+      { text: "Obtain signed MSA", completed: false },
+    ],
+    commentTexts: [
+      "Acme's legal team has requested a custom DPA. Looping in our legal counsel.",
+      "Call with their VP of Engineering went well. They are ready to move forward pending legal.",
+    ],
+  },
+  {
+    title: "Build QBR deck for top 5 accounts",
+    priority: "high",
+    labels: ["recurring"],
+    column: 1,
+    dueDaysFromNow: 8,
+    checklist: [
+      { text: "Pull usage data for each account", completed: true },
+      { text: "Document expansion opportunities", completed: false },
+      { text: "Create individual account slides", completed: false },
+    ],
+  },
+  {
+    title: "Define upsell playbook for mid-market",
+    priority: "medium",
+    labels: ["improvement", "documentation"],
+    column: 0,
+    dueDaysFromNow: 18,
+  },
+  {
+    title: "Review customer churn signals",
+    priority: "high",
+    labels: ["discussion"],
+    column: 0,
+    dueDaysFromNow: 7,
+    commentTexts: [
+      "Three mid-market accounts have gone quiet in the last 2 weeks. We should set up health check calls.",
+    ],
+  },
+  {
+    title: "Deliver monthly sales report",
+    priority: "medium",
+    labels: ["recurring"],
+    column: 2,
+    dueDaysFromNow: -2,
+    checklist: [
+      { text: "Compile pipeline data from CRM", completed: true },
+      { text: "Calculate win/loss ratios", completed: true },
+      { text: "Draft commentary", completed: true },
+      { text: "Submit to VP of Sales", completed: true },
+    ],
+  },
+];
+
+const HR_CARDS: CardTemplate[] = [
+  {
+    title: "Conduct annual compensation benchmarking",
+    priority: "high",
+    labels: ["recurring", "urgent"],
+    column: 1,
+    dueDaysFromNow: 6,
+    checklist: [
+      { text: "Obtain latest salary survey data", completed: true },
+      { text: "Analyze pay bands vs. market", completed: false },
+      { text: "Draft adjustment recommendations", completed: false },
+      { text: "Present to leadership", completed: false },
+    ],
+  },
+  {
+    title: "Roll out updated employee handbook",
+    priority: "medium",
+    labels: ["documentation"],
+    column: 1,
+    dueDaysFromNow: 12,
+    checklist: [
+      { text: "Review legal compliance updates", completed: true },
+      { text: "Revise remote work policy section", completed: true },
+      { text: "Get legal sign-off", completed: false },
+      { text: "Distribute to all employees", completed: false },
+    ],
+  },
+  {
+    title: "Design manager training program",
+    priority: "medium",
+    labels: ["improvement", "discussion"],
+    column: 0,
+    dueDaysFromNow: 25,
+  },
+  {
+    title: "Complete Q4 performance review cycle",
+    priority: "high",
+    labels: ["recurring"],
+    column: 2,
+    dueDaysFromNow: -10,
+    checklist: [
+      { text: "Send review forms to all managers", completed: true },
+      { text: "Collect completed reviews", completed: true },
+      { text: "Run calibration sessions", completed: true },
+      { text: "Deliver feedback to employees", completed: true },
+    ],
+  },
+  {
+    title: "Plan company all-hands meeting",
+    priority: "medium",
+    labels: ["recurring"],
+    column: 1,
+    dueDaysFromNow: 9,
+    checklist: [
+      { text: "Book venue / set up virtual link", completed: true },
+      { text: "Collect department updates", completed: false },
+      { text: "Prepare CEO talking points", completed: false },
+      { text: "Send calendar invite to all-company", completed: false },
+    ],
+  },
+];
+
+const GENERIC_CARDS: CardTemplate[] = [
+  {
+    title: "Review team governance rules",
+    priority: "low",
+    labels: ["discussion"],
+    column: 0,
+    dueDaysFromNow: 14,
+  },
+  {
+    title: "Prepare monthly status report",
+    priority: "medium",
+    labels: ["recurring"],
+    column: 1,
+    dueDaysFromNow: 5,
+  },
+  {
+    title: "Follow up on pending decisions",
+    priority: "high",
+    labels: ["urgent"],
+    column: 1,
+    dueDaysFromNow: 3,
+    commentTexts: [
+      "Two governance decisions have been pending for over a week. Let's resolve them in the next meeting.",
+    ],
+  },
+  {
+    title: "Complete team retrospective",
+    priority: "low",
+    labels: ["recurring"],
+    column: 2,
+    dueDaysFromNow: -4,
+  },
+  {
+    title: "Update team documentation",
+    labels: ["documentation"],
+    column: 3,
+    dueDaysFromNow: -21,
+  },
+];
+
+/**
+ * Classify a team name into an archetype and return the matching card set.
+ */
+function getCardsForTeam(teamName: string): CardTemplate[] {
+  const lower = teamName.toLowerCase();
+
+  if (
+    lower.includes("engineering") ||
+    lower.includes("devops") ||
+    lower.includes("infrastructure") ||
+    lower.includes("platform") ||
+    lower.includes("quality") ||
+    lower.includes("security") ||
+    lower.includes("frontend") ||
+    lower.includes("backend")
+  ) {
+    return ENGINEERING_CARDS;
+  }
+  if (lower.includes("product") || lower.includes("data") || lower.includes("analytics")) {
+    return PRODUCT_CARDS;
+  }
+  if (lower.includes("design")) {
+    return DESIGN_CARDS;
+  }
+  if (
+    lower.includes("marketing") ||
+    lower.includes("growth") ||
+    lower.includes("content") ||
+    lower.includes("brand") ||
+    lower.includes("communications")
+  ) {
+    return MARKETING_CARDS;
+  }
+  if (
+    lower.includes("sales") ||
+    lower.includes("customer") ||
+    lower.includes("enterprise")
+  ) {
+    return SALES_CARDS;
+  }
+  if (
+    lower.includes("people") ||
+    lower.includes("hr") ||
+    lower.includes("talent") ||
+    lower.includes("operations")
+  ) {
+    return HR_CARDS;
+  }
+  if (lower.includes("finance") || lower.includes("legal")) {
+    return GENERIC_CARDS;
+  }
+  if (lower.includes("it")) {
+    return ENGINEERING_CARDS;
+  }
+  return GENERIC_CARDS;
+}
+
+/**
+ * Seeds Kanban boards, labels, cards, and comments for every team in the demo orga.
+ *
+ * For each team:
+ *  1. Creates a board with the 4 default columns
+ *  2. Creates 4-6 labels from the LABEL_POOL
+ *  3. Creates 3-10 cards (randomly selected from the team-archetype template set)
+ *  4. Optionally creates threaded comments on some cards
+ */
+export const seedKanbanData = internalMutation({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.object({
+    boardCount: v.number(),
+    cardCount: v.number(),
+    labelCount: v.number(),
+    commentCount: v.number(),
+  }),
+  handler: async (ctx, args) => {
+    const { orgaId } = args;
+
+    // Fetch all teams in this orga
+    const teams = await ctx.db
+      .query("teams")
+      .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+      .collect();
+
+    // Fetch all members in this orga (for comment authors)
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+      .collect();
+
+    let boardCount = 0;
+    let cardCount = 0;
+    let labelCount = 0;
+    let commentCount = 0;
+
+    const DAY_MS = 24 * 60 * 60 * 1000;
+
+    for (const team of teams) {
+      // 1. Create the board
+      const boardId = await ctx.db.insert("kanbanBoards", {
+        teamId: team._id,
+        orgaId,
+        columnOrder: [],
+      });
+
+      // 2. Create default columns
+      const columnIds: Id<"kanbanColumns">[] = [];
+      for (let i = 0; i < DEFAULT_COLUMNS.length; i++) {
+        const columnId = await ctx.db.insert("kanbanColumns", {
+          boardId,
+          orgaId,
+          name: DEFAULT_COLUMNS[i],
+          position: i,
+        });
+        columnIds.push(columnId);
+      }
+
+      await ctx.db.patch(boardId, { columnOrder: columnIds });
+      boardCount++;
+
+      // 3. Create labels (pick 4-6 random labels from the pool)
+      const labelSubset = getRandomSubset(LABEL_POOL, 4, 6);
+      const labelMap = new Map<string, Id<"kanbanLabels">>();
+      for (const labelDef of labelSubset) {
+        const labelId = await ctx.db.insert("kanbanLabels", {
+          boardId,
+          orgaId,
+          name: labelDef.name,
+          color: labelDef.color,
+        });
+        labelMap.set(labelDef.name, labelId);
+        labelCount++;
+      }
+
+      // 4. Fetch roles in this team (for card assignment)
+      const teamRoles = await ctx.db
+        .query("roles")
+        .withIndex("by_team", (q) => q.eq("teamId", team._id))
+        .collect();
+
+      if (teamRoles.length === 0) continue;
+
+      // 5. Select card templates for this team's archetype
+      const allTemplates = getCardsForTeam(team.name);
+      // Pick 3-10 cards (but no more than available templates)
+      const min = Math.min(3, allTemplates.length);
+      const max = Math.min(10, allTemplates.length);
+      const selectedCards = getRandomSubset(allTemplates, min, max);
+
+      // Track positions per column
+      const columnPositions = new Map<number, number>();
+
+      for (const cardTmpl of selectedCards) {
+        // Resolve role: pick a random role from this team
+        const role = pickRandom(teamRoles);
+
+        // Resolve column
+        const columnIdx = Math.min(cardTmpl.column, columnIds.length - 1);
+        const columnId = columnIds[columnIdx];
+
+        // Calculate position (1024, 2048, 3072, ...)
+        const currentPos = columnPositions.get(columnIdx) ?? 0;
+        const newPos = currentPos + 1024;
+        columnPositions.set(columnIdx, newPos);
+
+        // Resolve label IDs (only use labels that exist on this board)
+        const resolvedLabelIds: Id<"kanbanLabels">[] = [];
+        for (const labelName of cardTmpl.labels) {
+          const labelId = labelMap.get(labelName);
+          if (labelId) {
+            resolvedLabelIds.push(labelId);
+          }
+        }
+
+        // Build checklist with unique IDs
+        const checklist = cardTmpl.checklist?.map((item, idx) => ({
+          id: `chk_${Date.now()}_${cardCount}_${idx}`,
+          text: item.text,
+          completed: item.completed,
+        }));
+
+        // Calculate due date
+        const dueDate = Date.now() + cardTmpl.dueDaysFromNow * DAY_MS;
+
+        const cardId = await ctx.db.insert("kanbanCards", {
+          columnId,
+          boardId,
+          orgaId,
+          roleId: role._id,
+          title: cardTmpl.title,
+          dueDate,
+          comments: "",
+          position: newPos,
+          labelIds: resolvedLabelIds.length > 0 ? resolvedLabelIds : undefined,
+          checklist: checklist,
+          priority: cardTmpl.priority,
+        });
+        cardCount++;
+
+        // 6. Create threaded comments (if template defines them)
+        if (cardTmpl.commentTexts && cardTmpl.commentTexts.length > 0) {
+          for (const text of cardTmpl.commentTexts) {
+            const author = pickRandom(members);
+            await ctx.db.insert("kanbanComments", {
+              cardId,
+              boardId,
+              orgaId,
+              authorId: author._id,
+              text,
+            });
+            commentCount++;
+          }
+        }
+      }
+    }
+
+    console.log(
+      `[seedKanbanData] Created ${boardCount} boards, ${cardCount} cards, ` +
+      `${labelCount} labels, ${commentCount} comments.`
+    );
+
+    return { boardCount, cardCount, labelCount, commentCount };
+  },
+});
+
+// ---------------------------------------------------------------------------
 // 3. UPLOAD the Infomax logo to Convex storage and update the orga
 // ---------------------------------------------------------------------------
 
@@ -948,10 +1714,17 @@ export const resetDemoOrga = internalAction({
       { orgaId: createResult.orgaId }
     );
 
+    // Step 5: Seed Kanban boards, labels, cards, and comments
+    const kanbanResult = await ctx.runMutation(
+      internal.dataTest.createDemoOrga.seedKanbanData,
+      { orgaId: createResult.orgaId }
+    );
+
     console.log(
       `[resetDemoOrga] Reset complete. New orgaId: ${createResult.orgaId}, ` +
       `logo: ${logoResult.logoUrl}, ` +
-      `avatars: ${avatarResult.updatedCount} ok / ${avatarResult.failedCount} failed`
+      `avatars: ${avatarResult.updatedCount} ok / ${avatarResult.failedCount} failed, ` +
+      `kanban: ${kanbanResult.boardCount} boards, ${kanbanResult.cardCount} cards`
     );
 
     return { deleteResult, createResult };

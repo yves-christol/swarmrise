@@ -25,7 +25,8 @@
     "addColumn": "Add column",
     "newColumnName": "Column name...",
     "wipStatus": "{{count}}/{{limit}} cards",
-    "wipExceeded": "WIP limit exceeded"
+    "wipExceeded": "WIP limit exceeded",
+    "dragToReorder": "Drag to reorder column"
   },
   "card": {
     "title": "Title",

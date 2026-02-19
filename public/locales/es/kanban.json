@@ -25,7 +25,8 @@
     "addColumn": "A\u00f1adir columna",
     "newColumnName": "Nombre de la columna...",
     "wipStatus": "{{count}}/{{limit}} tarjetas",
-    "wipExceeded": "L\u00edmite WIP superado"
+    "wipExceeded": "L\u00edmite WIP superado",
+    "dragToReorder": "Arrastrar para reordenar columna"
   },
   "card": {
     "title": "T\u00edtulo",

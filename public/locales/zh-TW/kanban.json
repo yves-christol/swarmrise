@@ -25,7 +25,8 @@
     "addColumn": "\u65b0\u589e\u6b04\u4f4d",
     "newColumnName": "\u6b04\u4f4d\u540d\u7a31...",
     "wipStatus": "{{count}}/{{limit}} \u5f35\u5361\u7247",
-    "wipExceeded": "\u5df2\u8d85\u904e WIP \u9650\u5236"
+    "wipExceeded": "\u5df2\u8d85\u904e WIP \u9650\u5236",
+    "dragToReorder": "\u62d6\u66f3\u4ee5\u91cd\u65b0\u6392\u5e8f\u6b04\u4f4d"
   },
   "card": {
     "title": "\u6a19\u984c",

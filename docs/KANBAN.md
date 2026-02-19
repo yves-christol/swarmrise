@@ -2,7 +2,7 @@
 
 This document defines the architecture, data model, and implementation plan for the Kanban board feature in Swarmrise. It is maintained by Kimiko, the Kanban system architect.
 
-**Status:** Phases 1-5 done. Category A (Core Board Enhancements: A1-A5) done. Role-based ownership migration complete. Cards display role icon + member avatar.
+**Status:** Phases 1-5 done. Category A (Core Board Enhancements: A1-A5) done. A6 (Column drag-and-drop reordering) done. Role-based ownership migration complete. Cards display role icon + member avatar.
 
 ---
 
@@ -563,25 +563,48 @@ bun add @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
 
 ### DnD Architecture
 
+The board has two levels of drag-and-drop:
+
+1. **Column reordering** -- Columns are sortable horizontally via a `SortableContext` with `horizontalListSortingStrategy`. Each column uses `useSortable` with a prefixed ID (`sortable-col:{columnId}`) to distinguish column drags from card drags.
+
+2. **Card movement** -- Within each column, cards are sortable vertically via a per-column `SortableContext` with `verticalListSortingStrategy`. Cards can also be moved across columns.
+
 ```
 <DndContext>                           -- from @dnd-kit/core
-  <SortableContext>                    -- one per column, from @dnd-kit/sortable
-    <KanbanColumn>
-      <SortableCard />                 -- useSortable() from @dnd-kit/sortable
-      <SortableCard />
-      ...
+  <SortableContext                     -- horizontal: column reordering
+    items={columnSortableIds}
+    strategy={horizontalListSortingStrategy}>
+    <KanbanColumn>                     -- useSortable("sortable-col:{id}")
+      <SortableContext                 -- vertical: card reordering within column
+        items={cardIds}
+        strategy={verticalListSortingStrategy}>
+        <SortableCard />               -- useSortable(card._id)
+        ...
+      </SortableContext>
     </KanbanColumn>
+    ...
   </SortableContext>
-  <SortableContext>
-    <KanbanColumn>
-      ...
-    </KanbanColumn>
-  </SortableContext>
-  <DragOverlay>                        -- ghost card during drag
-    <KanbanCard />
+  <DragOverlay>                        -- ghost card OR ghost column during drag
+    <KanbanCard /> | <KanbanColumn isOverlay />
   </DragOverlay>
 </DndContext>
 ```
+
+### ID Namespacing
+
+To distinguish column drags from card drags in the single `DndContext`:
+
+- Column sortable IDs use the prefix `sortable-col:` (e.g., `sortable-col:j57abc123`)
+- Card sortable IDs use the raw Convex card ID (e.g., `j57xyz789`)
+- Column droppable IDs use the prefix `column:` (e.g., `column:j57abc123`)
+
+The `handleDragStart` checks the prefix to set either `activeColumnId` or `activeCardId`. The `handleDragEnd` routes to column reorder logic or card move logic based on the same prefix.
+
+### Column Drag Handle
+
+Expanded columns show a 6-dot grip icon in the header as a dedicated drag handle. The `colAttributes` and `colListeners` from `useSortable` are spread only onto this handle element, so dragging is initiated from the handle while clicks on the column name, collapse toggle, and menu remain unaffected.
+
+Collapsed columns use the entire collapsed bar as both the drag handle and the expand button, using the same activation constraints (5px movement / 250ms touch delay) to separate drags from clicks.
 
 ### DnD Event Handling
 
@@ -590,11 +613,16 @@ function handleDragEnd(event: DragEndEvent) {
   const { active, over } = event;
   if (!over) return;
 
-  const activeCardId = active.id as Id<"kanbanCards">;
-  const overContainerId = over.id; // Could be a column or another card
+  // Column reorder
+  if (isColumnSortableId(String(active.id))) {
+    // Compute new column order and call reorderColumns mutation
+    return;
+  }
 
+  // Card movement
+  const activeCardId = active.id as Id<"kanbanCards">;
   // Determine target column and position
-  // Call kanban.moveCard mutation with optimistic update
+  // Call kanban.moveCard mutation
 }
 ```
 
@@ -870,6 +898,15 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | A5: Bulk Card Actions - Backend (`bulkMoveCards`, `bulkDeleteCards`) | Done | Atomic mutations; verify board access via first card |
 | A5: Bulk Card Actions - Frontend (selection mode, toolbar) | Done | Select button toggles selection mode; checkboxes on cards; bulk move/delete toolbar |
 | A1-A5: i18n keys (6 languages) | Done | `columnActions.*`, `settings.*`, `bulk.*` sections in all language files |
+| **Column Drag-and-Drop Reordering (A6)** | | |
+| Column DnD: Horizontal SortableContext for columns | Done | `horizontalListSortingStrategy` wrapping all columns |
+| Column DnD: `useSortable` per column with prefix ID | Done | `sortable-col:{columnId}` prefix distinguishes from card IDs |
+| Column DnD: Drag handle in column header | Done | 6-dot grip icon; collapsed columns use full bar as handle |
+| Column DnD: DragOverlay for column ghost | Done | Renders semi-transparent column clone during drag |
+| Column DnD: `reorderColumns` mutation wired | Done | Updates `columnOrder` array and column `position` fields |
+| Column DnD: Disabled in selection mode | Done | `useSortable({ disabled: selectionMode })` |
+| Column DnD: Works with collapsed columns | Done | Collapsed columns are draggable via the entire collapsed bar |
+| Column DnD: i18n `dragToReorder` key (6 languages) | Done | `columnActions.dragToReorder` in en/fr/es/it/uk/zh-TW |
 
 ---
 
@@ -961,7 +998,19 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 
 **Rationale:** Mixing drag-and-drop with multi-select (e.g., shift-click) creates confusing interaction patterns where the user's intent is ambiguous. A dedicated selection mode makes the interaction clear: you are either in "organize mode" (drag cards) or "batch mode" (select and act on cards). Disabling drag in selection mode prevents accidental card movement during selection.
 
-### 15. Column deletion cascades to cards
+### 15. Column drag uses a dedicated handle, not the entire header
+
+**Decision:** Expanded columns have a 6-dot grip icon as the drag handle for column reordering, placed to the left of the collapse toggle in the column header. Only dragging from this handle initiates a column drag. Collapsed columns use the entire collapsed bar as the drag handle (since there is no other interactive surface).
+
+**Rationale:** The column header contains clickable elements (collapse toggle, column name for rename, context menu). Attaching drag listeners to the entire header would create ambiguity between drag and click. A dedicated grip handle clearly signals "drag me" and leaves all other header interactions intact. The 5px activation constraint from the PointerSensor still applies, providing additional protection against accidental drags. For collapsed columns, the only interaction is clicking to expand, and the activation constraint adequately separates click from drag.
+
+### 16. Column and card drags use a prefixed ID namespace
+
+**Decision:** Column sortable IDs use the prefix `sortable-col:` while card IDs use their raw Convex IDs. The `handleDragStart` and `handleDragEnd` check this prefix to route to the correct logic.
+
+**Rationale:** A single `DndContext` wraps the entire board (columns and cards). Without namespacing, it would be impossible to distinguish whether a drag operation targets a column or a card. The prefix approach is simple, unambiguous, and avoids needing nested or separate `DndContext` instances, which would complicate cross-column card moves.
+
+### 17. Column deletion cascades to cards
 
 **Decision:** Deleting a column permanently deletes all cards within it. There is no "move cards to another column" option during delete.
 
@@ -999,6 +1048,7 @@ A comprehensive inventory of potential Kanban features, organized by category. E
 | A3 | Column Collapse/Expand | Allow users to collapse columns to save horizontal space, especially "Archived" which is rarely viewed. Persist collapsed state per user. | Low | Medium | DONE |
 | A4 | Board-Level Settings | A settings panel for each board: WIP limits configuration per column. Accessible via gear icon in board header. | Medium | Low | DONE |
 | A5 | Bulk Card Actions | Multi-select cards via checkboxes and perform bulk operations: move to column, delete. Selection mode toggle in board header. | Medium | Medium | DONE |
+| A6 | Column Drag Reorder | Drag-and-drop columns to reorder them. Dedicated grip handle in expanded column headers; collapsed columns use full bar as handle. Persists via `reorderColumns` mutation. Disabled in selection mode. | Medium | Medium | DONE |
 
 ### Category B: Card Enhancements
 
@@ -1059,14 +1109,14 @@ A comprehensive inventory of potential Kanban features, organized by category. E
 
 | Category | Features | Avg Complexity | Avg Value |
 |----------|----------|----------------|-----------|
-| A: Core Board | 5 | Medium | Medium |
+| A: Core Board | 6 | Medium | Medium |
 | B: Card Enhancements | 6 | Medium | Medium |
 | C: Search/Filter/Sort | 3 | Medium | Medium |
 | D: Cross-Entity Views | 5 | Medium | High |
 | E: Notifications/Automation | 4 | Medium | Medium |
 | F: Analytics/Reporting | 3 | High | Medium |
 | G: Collaboration/Integration | 4 | Medium | Medium |
-| **Total** | **30** | | |
+| **Total** | **31** | | |
 
 ---
 

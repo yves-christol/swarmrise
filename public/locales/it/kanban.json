@@ -25,7 +25,8 @@
     "addColumn": "Aggiungi colonna",
     "newColumnName": "Nome colonna...",
     "wipStatus": "{{count}}/{{limit}} schede",
-    "wipExceeded": "Limite WIP superato"
+    "wipExceeded": "Limite WIP superato",
+    "dragToReorder": "Trascina per riordinare la colonna"
   },
   "card": {
     "title": "Titolo",

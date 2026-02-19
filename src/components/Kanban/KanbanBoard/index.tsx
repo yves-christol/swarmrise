@@ -15,9 +15,11 @@ import {
   type DragOverEvent,
   type UniqueIdentifier,
 } from "@dnd-kit/core";
+import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import type { KanbanCard as KanbanCardType } from "../../../../convex/kanban";
+import type { KanbanColumn as KanbanColumnType } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
 import type { Role } from "../../../../convex/roles";
 import { KanbanColumn } from "../KanbanColumn";
@@ -25,6 +27,24 @@ import { KanbanEmptyState } from "../KanbanEmptyState";
 import { KanbanCardModal } from "../KanbanCardModal";
 import { KanbanCard } from "../KanbanCard";
 import { KanbanBoardSettings } from "../KanbanBoardSettings";
+
+/** Prefix to distinguish column sortable IDs from card IDs */
+const COLUMN_SORTABLE_PREFIX = "sortable-col:";
+
+/** Convert a column ID to a sortable ID used by @dnd-kit */
+function toColumnSortableId(columnId: Id<"kanbanColumns">): string {
+  return `${COLUMN_SORTABLE_PREFIX}${columnId}`;
+}
+
+/** Check if a sortable ID represents a column (not a card) */
+function isColumnSortableId(id: string): boolean {
+  return id.startsWith(COLUMN_SORTABLE_PREFIX);
+}
+
+/** Extract the raw column ID from a column sortable ID */
+function fromColumnSortableId(sortableId: string): Id<"kanbanColumns"> {
+  return sortableId.slice(COLUMN_SORTABLE_PREFIX.length) as Id<"kanbanColumns">;
+}
 
 type KanbanBoardProps = {
   teamId: Id<"teams">;
@@ -59,6 +79,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     hasAccess ? { teamId } : "skip",
   );
   const moveCard = useMutation(api.kanban.functions.moveCard);
+  const reorderColumnsMut = useMutation(api.kanban.functions.reorderColumns);
   const ensureBoard = useMutation(api.kanban.functions.ensureBoard);
   const addColumnMut = useMutation(api.kanban.functions.addColumn);
   const renameColumnMut = useMutation(api.kanban.functions.renameColumn);
@@ -103,6 +124,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
 
   // DnD state
   const [activeCardId, setActiveCardId] = useState<Id<"kanbanCards"> | null>(null);
+  const [activeColumnId, setActiveColumnId] = useState<Id<"kanbanColumns"> | null>(null);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -329,7 +351,14 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
 
   // DnD handlers
   const handleDragStart = useCallback((event: DragStartEvent) => {
-    setActiveCardId(event.active.id as Id<"kanbanCards">);
+    const activeId = String(event.active.id);
+    if (isColumnSortableId(activeId)) {
+      setActiveColumnId(fromColumnSortableId(activeId));
+      setActiveCardId(null);
+    } else {
+      setActiveCardId(activeId as Id<"kanbanCards">);
+      setActiveColumnId(null);
+    }
   }, []);
 
   const handleDragOver = useCallback((_event: DragOverEvent) => {
@@ -339,9 +368,39 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     setActiveCardId(null);
+    setActiveColumnId(null);
 
     if (!over || !boardData) return;
 
+    const activeIdStr = String(active.id);
+
+    // ---- Column reordering ----
+    if (isColumnSortableId(activeIdStr)) {
+      const overIdStr = String(over.id);
+      if (!isColumnSortableId(overIdStr)) return;
+      if (activeIdStr === overIdStr) return;
+
+      const draggedColId = fromColumnSortableId(activeIdStr);
+      const overColId = fromColumnSortableId(overIdStr);
+
+      const currentOrder = boardData.columns.map((c) => c._id);
+      const oldIndex = currentOrder.indexOf(draggedColId);
+      const newIndex = currentOrder.indexOf(overColId);
+      if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
+
+      // Reorder: remove from old position, insert at new
+      const newOrder = [...currentOrder];
+      newOrder.splice(oldIndex, 1);
+      newOrder.splice(newIndex, 0, draggedColId);
+
+      void reorderColumnsMut({
+        boardId: boardData.board._id,
+        columnOrder: newOrder,
+      });
+      return;
+    }
+
+    // ---- Card movement (existing logic) ----
     const activeId = active.id as Id<"kanbanCards">;
     const overId = over.id;
 
@@ -398,10 +457,11 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
       targetColumnId,
       targetPosition: newPosition,
     });
-  }, [boardData, cardById, cardsByColumn, findColumnId, moveCard]);
+  }, [boardData, cardById, cardsByColumn, findColumnId, moveCard, reorderColumnsMut]);
 
   const handleDragCancel = useCallback(() => {
     setActiveCardId(null);
+    setActiveColumnId(null);
   }, []);
 
   const collisionDetection = useCallback(
@@ -413,10 +473,22 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     [],
   );
 
+  // Column sortable IDs for horizontal SortableContext
+  const columnSortableIds = useMemo(
+    () => boardData?.columns.map((c) => toColumnSortableId(c._id)) ?? [],
+    [boardData?.columns],
+  );
+
   // Active card for drag overlay
   const activeCard = activeCardId ? cardById.get(activeCardId) : null;
   const activeRole = activeCard ? roleMap.get(activeCard.roleId) : undefined;
   const activeRoleMember = activeRole ? memberMap.get(activeRole.memberId) : undefined;
+
+  // Active column for drag overlay
+  const activeColumn: KanbanColumnType | null = useMemo(() => {
+    if (!activeColumnId || !boardData) return null;
+    return boardData.columns.find((c) => c._id === activeColumnId) ?? null;
+  }, [activeColumnId, boardData]);
 
   // Loading (access check still pending)
   if (hasAccess === undefined) {
@@ -618,21 +690,23 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div
-          className="flex gap-3 sm:gap-4 pb-4"
-          style={{ minHeight: totalCards > 0 ? "20rem" : undefined }}
+        <SortableContext
+          items={columnSortableIds}
+          strategy={horizontalListSortingStrategy}
+          disabled={selectionMode}
         >
-          {boardData.columns.map((column) => {
-            const columnCards = filteredCardsByColumn.get(column._id) ?? [];
-            // During search, dim empty columns but keep them visible
-            const isEmpty = isSearching && columnCards.length === 0;
+          <div
+            className="flex gap-3 sm:gap-4 pb-4"
+            style={{ minHeight: totalCards > 0 ? "20rem" : undefined }}
+          >
+            {boardData.columns.map((column) => {
+              const columnCards = filteredCardsByColumn.get(column._id) ?? [];
+              // During search, dim empty columns but keep them visible
+              const isEmpty = isSearching && columnCards.length === 0;
 
-            return (
-              <div
-                key={column._id}
-                className={`snap-start ${isEmpty ? "opacity-40" : ""} transition-opacity duration-150`}
-              >
+              return (
                 <KanbanColumn
+                  key={column._id}
                   column={column}
                   cards={columnCards}
                   roleMap={roleMap}
@@ -646,79 +720,81 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                   selectionMode={selectionMode}
                   selectedCardIds={selectedCardIds}
                   onToggleCardSelection={toggleCardSelection}
+                  isDimmed={isEmpty}
+                  isDraggingColumn={activeColumnId === column._id}
                 />
-              </div>
-            );
-          })}
+              );
+            })}
 
-          {/* Add column button (A1) */}
-          {!selectionMode && (
-            <div className="flex-shrink-0">
-              {isAddingColumn ? (
-                <div className="w-72 bg-surface-secondary/50 border border-border-default rounded-xl p-3">
-                  <input
-                    ref={newColumnInputRef}
-                    type="text"
-                    value={newColumnName}
-                    onChange={(e) => setNewColumnName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") void handleAddColumn();
-                      if (e.key === "Escape") {
-                        setIsAddingColumn(false);
-                        setNewColumnName("");
-                      }
-                    }}
-                    placeholder={t("columnActions.newColumnName")}
-                    className="w-full px-3 py-2 text-sm rounded-md border border-border-strong
-                      bg-surface-primary text-dark dark:text-light
-                      placeholder:text-gray-400
-                      focus:outline-none focus:ring-2 focus:ring-highlight mb-2"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => void handleAddColumn()}
-                      disabled={!newColumnName.trim()}
-                      className="px-3 py-1.5 text-xs font-bold rounded-md bg-highlight hover:bg-highlight-hover text-dark transition-colors disabled:opacity-50"
-                    >
-                      {t("columnActions.addColumn")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsAddingColumn(false);
-                        setNewColumnName("");
+            {/* Add column button (A1) */}
+            {!selectionMode && (
+              <div className="flex-shrink-0">
+                {isAddingColumn ? (
+                  <div className="w-72 bg-surface-secondary/50 border border-border-default rounded-xl p-3">
+                    <input
+                      ref={newColumnInputRef}
+                      type="text"
+                      value={newColumnName}
+                      onChange={(e) => setNewColumnName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") void handleAddColumn();
+                        if (e.key === "Escape") {
+                          setIsAddingColumn(false);
+                          setNewColumnName("");
+                        }
                       }}
-                      className="px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary"
-                    >
-                      {t("actions.cancel")}
-                    </button>
+                      placeholder={t("columnActions.newColumnName")}
+                      className="w-full px-3 py-2 text-sm rounded-md border border-border-strong
+                        bg-surface-primary text-dark dark:text-light
+                        placeholder:text-gray-400
+                        focus:outline-none focus:ring-2 focus:ring-highlight mb-2"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => void handleAddColumn()}
+                        disabled={!newColumnName.trim()}
+                        className="px-3 py-1.5 text-xs font-bold rounded-md bg-highlight hover:bg-highlight-hover text-dark transition-colors disabled:opacity-50"
+                      >
+                        {t("columnActions.addColumn")}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsAddingColumn(false);
+                          setNewColumnName("");
+                        }}
+                        className="px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary"
+                      >
+                        {t("actions.cancel")}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setIsAddingColumn(true)}
-                  className="
-                    flex items-center gap-1.5
-                    w-48 px-4 py-3
-                    text-sm text-text-secondary
-                    hover:text-dark dark:hover:text-light
-                    bg-surface-secondary/30
-                    hover:bg-surface-secondary/60
-                    border border-dashed border-border-default
-                    hover:border-border-strong
-                    rounded-xl
-                    transition-colors duration-75
-                  "
-                  title={t("columnActions.addColumn")}
-                >
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                    <path d="M7 1v12M1 7h12" />
-                  </svg>
-                  {t("columnActions.addColumn")}
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+                ) : (
+                  <button
+                    onClick={() => setIsAddingColumn(true)}
+                    className="
+                      flex items-center gap-1.5
+                      w-48 px-4 py-3
+                      text-sm text-text-secondary
+                      hover:text-dark dark:hover:text-light
+                      bg-surface-secondary/30
+                      hover:bg-surface-secondary/60
+                      border border-dashed border-border-default
+                      hover:border-border-strong
+                      rounded-xl
+                      transition-colors duration-75
+                    "
+                    title={t("columnActions.addColumn")}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M7 1v12M1 7h12" />
+                    </svg>
+                    {t("columnActions.addColumn")}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </SortableContext>
 
         <DragOverlay dropAnimation={null}>
           {activeCard ? (
@@ -727,6 +803,27 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                 card={activeCard}
                 cardRole={activeRole}
                 roleMember={activeRoleMember}
+              />
+            </div>
+          ) : activeColumn ? (
+            <div className="opacity-80">
+              <KanbanColumn
+                column={activeColumn}
+                cards={filteredCardsByColumn.get(activeColumn._id) ?? []}
+                roleMap={roleMap}
+                memberMap={memberMap}
+                onCardClick={() => {}}
+                onAddCard={() => {}}
+                onRenameColumn={() => {}}
+                onDeleteColumn={() => {}}
+                isCollapsed={collapsedColumns.has(activeColumn._id)}
+                onToggleCollapse={() => {}}
+                selectionMode={selectionMode}
+                selectedCardIds={selectedCardIds}
+                onToggleCardSelection={() => {}}
+                isDimmed={false}
+                isDraggingColumn={false}
+                isOverlay
               />
             </div>
           ) : null}

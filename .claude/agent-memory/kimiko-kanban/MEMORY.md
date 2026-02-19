@@ -107,7 +107,7 @@
 - Cron references internal functions as: `internal.kanban.functions.checkDueDateNotifications`
 
 ## KANBAN.md Feature Catalogue
-- Comprehensive feature catalogue with 30 features across 7 categories (A-G)
+- Comprehensive feature catalogue with 31 features across 7 categories (A-G)
 - D4 (Member Kanban View): DONE
 - E1 (Due Date Notifications): DONE -- hourly cron, approaching (24h) + overdue, dedup via groupKey
 - Updated role-based ownership migration status from Pending to Done
@@ -118,5 +118,14 @@
 - A3 Collapse/Expand: localStorage per board (`kanban-collapsed:{boardId}`); collapsed = vertical name + count; toggle via chevron in column header
 - A4 Board Settings: `KanbanBoardSettings` modal (portal-based); configure WIP limits for all columns; gear icon in board header
 - A5 Bulk Actions: `bulkMoveCards`, `bulkDeleteCards` mutations; selection mode toggle disables DnD; checkbox on each card; bulk toolbar with move-to dropdown + delete
+- A6 Column Drag Reorder: horizontal `SortableContext` for columns; `useSortable` per column with `sortable-col:` prefix; 6-dot grip handle in expanded headers; collapsed columns use full bar; `reorderColumns` mutation persists; disabled in selection mode
 - i18n sections added: `columnActions.*`, `settings.*`, `bulk.*` in all 6 languages
 - Key pattern: selection mode and DnD are mutually exclusive -- `useSortable({ disabled: selectionMode })`
+
+## Column DnD: ID Namespacing Pattern
+- Single DndContext for both columns and cards (no nesting)
+- Column sortable IDs: `sortable-col:{columnId}` prefix
+- Card sortable IDs: raw Convex ID (no prefix)
+- Column droppable IDs: `column:{columnId}` prefix (for card drops into empty columns)
+- `handleDragStart`/`handleDragEnd` check `isColumnSortableId()` to route logic
+- COLUMN_SORTABLE_PREFIX defined in both KanbanBoard and KanbanColumn (must stay in sync)

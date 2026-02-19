@@ -25,7 +25,8 @@
     "addColumn": "Ajouter une colonne",
     "newColumnName": "Nom de la colonne...",
     "wipStatus": "{{count}}/{{limit}} cartes",
-    "wipExceeded": "Limite WIP d\u00e9pass\u00e9e"
+    "wipExceeded": "Limite WIP d\u00e9pass\u00e9e",
+    "dragToReorder": "Glisser pour r\u00e9organiser la colonne"
   },
   "card": {
     "title": "Titre",

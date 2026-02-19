@@ -10,6 +10,9 @@ import type { Role } from "../../../../convex/roles";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { KanbanCard } from "../KanbanCard";
 
+/** Prefix matching the one in KanbanBoard -- must stay in sync */
+const COLUMN_SORTABLE_PREFIX = "sortable-col:";
+
 type KanbanColumnProps = {
   column: KanbanColumnType;
   cards: KanbanCardType[];
@@ -25,6 +28,10 @@ type KanbanColumnProps = {
   selectionMode: boolean;
   selectedCardIds: Set<string>;
   onToggleCardSelection: (cardId: Id<"kanbanCards">) => void;
+  // Column DnD
+  isDimmed?: boolean;
+  isDraggingColumn?: boolean;
+  isOverlay?: boolean;
 };
 
 function SortableCard({
@@ -88,8 +95,32 @@ export function KanbanColumn({
   selectionMode,
   selectedCardIds,
   onToggleCardSelection,
+  isDimmed = false,
+  isDraggingColumn = false,
+  isOverlay = false,
 }: KanbanColumnProps) {
   const { t } = useTranslation("kanban");
+
+  // Column-level sortable (for reordering columns by drag)
+  const columnSortableId = `${COLUMN_SORTABLE_PREFIX}${column._id}`;
+  const {
+    attributes: colAttributes,
+    listeners: colListeners,
+    setNodeRef: setColumnNodeRef,
+    transform: colTransform,
+    transition: colTransition,
+  } = useSortable({
+    id: columnSortableId,
+    disabled: selectionMode || isOverlay,
+  });
+
+  const columnStyle: React.CSSProperties = isOverlay
+    ? {}
+    : {
+        transform: CSS.Translate.toString(colTransform),
+        transition: colTransition,
+        opacity: isDraggingColumn ? 0.3 : isDimmed ? 0.4 : undefined,
+      };
 
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(column.name);
@@ -159,44 +190,58 @@ export function KanbanColumn({
   if (isCollapsed) {
     return (
       <div
-        className="
+        ref={setColumnNodeRef}
+        style={columnStyle}
+        className={`
           flex flex-col items-center
           w-10 flex-shrink-0
           bg-surface-secondary/50
           border border-border-default
           rounded-xl
-          cursor-pointer
           hover:bg-surface-hover
           transition-colors duration-75
           py-3 gap-2
-        "
-        onClick={() => onToggleCollapse(column._id)}
-        title={`${column.name} (${cards.length})`}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onToggleCollapse(column._id);
-          }
-        }}
+          snap-start
+        `}
       >
-        {/* Rotated column name */}
-        <span
-          className="text-xs font-semibold text-dark dark:text-light whitespace-nowrap"
-          style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
+        {/* Drag handle for collapsed column -- the entire collapsed bar is the handle */}
+        <div
+          className="cursor-grab active:cursor-grabbing w-full flex flex-col items-center gap-2"
+          {...(selectionMode ? {} : { ...colAttributes, ...colListeners })}
+          onClick={(e) => {
+            // Only toggle collapse on click, not on drag
+            e.stopPropagation();
+            onToggleCollapse(column._id);
+          }}
+          title={`${column.name} (${cards.length})`}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onToggleCollapse(column._id);
+            }
+          }}
         >
-          {column.name}
-        </span>
-        <span className="text-[10px] text-text-tertiary tabular-nums">
-          {cards.length}
-        </span>
+          {/* Rotated column name */}
+          <span
+            className="text-xs font-semibold text-dark dark:text-light whitespace-nowrap"
+            style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
+          >
+            {column.name}
+          </span>
+          <span className="text-[10px] text-text-tertiary tabular-nums">
+            {cards.length}
+          </span>
+        </div>
       </div>
     );
   }
 
   return (
     <div
+      ref={setColumnNodeRef}
+      style={columnStyle}
       className={`
         flex flex-col
         w-72 flex-shrink-0
@@ -205,12 +250,34 @@ export function KanbanColumn({
         ${isOverWip ? "border-amber-400 dark:border-amber-600" : "border-border-default"}
         rounded-xl
         max-h-full
+        snap-start
+        transition-opacity duration-150
       `}
     >
       {/* Column header */}
       <div className="flex items-center justify-between px-3 py-2.5 border-b border-border-default gap-1">
-        {/* Left: collapse toggle + name */}
+        {/* Left: drag handle + collapse toggle + name */}
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
+          {/* Column drag handle */}
+          {!selectionMode && (
+            <div
+              className="p-0.5 text-text-tertiary hover:text-text-secondary transition-colors flex-shrink-0 cursor-grab active:cursor-grabbing"
+              title={t("columnActions.dragToReorder")}
+              aria-label={t("columnActions.dragToReorder")}
+              {...colAttributes}
+              {...colListeners}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+                <circle cx="4" cy="2.5" r="1" />
+                <circle cx="8" cy="2.5" r="1" />
+                <circle cx="4" cy="6" r="1" />
+                <circle cx="8" cy="6" r="1" />
+                <circle cx="4" cy="9.5" r="1" />
+                <circle cx="8" cy="9.5" r="1" />
+              </svg>
+            </div>
+          )}
+
           {/* Collapse toggle */}
           <button
             onClick={() => onToggleCollapse(column._id)}

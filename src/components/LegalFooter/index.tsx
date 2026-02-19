@@ -8,12 +8,14 @@ type FooterLinkItem = {
 };
 
 export const LegalFooter = () => {
+  const { t: tWelcome } = useTranslation("welcome");
   const { t: tGlossary } = useTranslation("glossary");
   const { t: tLegal } = useTranslation("legal");
   const location = useLocation();
   const currentPath = location.pathname;
 
   const footerLinks: FooterLinkItem[] = [
+    { path: "/welcome", label: tWelcome("explore") },
     { path: "/glossary", label: tGlossary("title") },
     { path: "/principles", label: tLegal("principles.title") },
     { path: "/terms", label: tLegal("terms.title") },

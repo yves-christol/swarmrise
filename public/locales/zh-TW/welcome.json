@@ -1,0 +1,37 @@
+{
+  "title": "為快速前進的組織打造的輕量治理",
+  "subtitle": "swarmrise 是一套治理工具，專為相信做事的人應該對工作如何組織擁有最大發言權的團隊而設計。定義清晰且有目標的角色，一起做出透明的決策，並隨著成長重塑你們的架構——不需要上層的許可，因為根本沒有上層。",
+  "subline": "從簡單開始，按自己的步調導入。",
+  "explore": "探索 swarmrise",
+  "workspace": "你的工作空間",
+  "cards": {
+    "principles": {
+      "description": "引導 swarmrise 的理念與價值觀"
+    },
+    "glossary": {
+      "description": "關鍵概念與詞彙解釋"
+    },
+    "terms": {
+      "description": "平台使用條款"
+    },
+    "privacy": {
+      "description": "我們如何處理你的個人資料"
+    },
+    "organization": {
+      "title": "組織",
+      "description": "一覽團隊、角色與彼此的關聯"
+    },
+    "chat": {
+      "title": "聊天",
+      "description": "團隊對話、議題與治理工具"
+    },
+    "decisions": {
+      "title": "決策",
+      "description": "完整的稽核紀錄，追蹤每一項變更"
+    },
+    "myPage": {
+      "title": "我的頁面",
+      "description": "你的角色、團隊與職責"
+    }
+  }
+}

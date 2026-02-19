@@ -16,7 +16,7 @@ export const Anonymous = () => {
       <SignInForm />
       <div className="flex flex-col items-center gap-4 pt-4 border-t border-border-strong">
         <Link
-          to="/glossary"
+          to="/welcome"
           className="text-sm underline hover:no-underline text-dark dark:text-light transition-opacity hover:opacity-80"
         >
           {t("documentation")}

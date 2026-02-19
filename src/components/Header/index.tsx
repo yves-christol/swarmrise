@@ -205,7 +205,7 @@ export const Header = () => {
       {/* LEFT: Logo */}
       {!selectedOrga ? (
         <Link
-          to="/glossary"
+          to="/welcome"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
         >
           <Logo size={24} begin={2} repeatCount={1} />

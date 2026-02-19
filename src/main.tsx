@@ -18,6 +18,7 @@ const PrinciplesPage = lazy(() => import("./pages/Principles/index.tsx").then(m 
 const GlossaryPage = lazy(() => import("./pages/Glossary/index.tsx").then(m => ({ default: m.GlossaryPage })));
 const TermsPage = lazy(() => import("./pages/Terms/index.tsx").then(m => ({ default: m.TermsPage })));
 const PrivacyPage = lazy(() => import("./pages/Privacy/index.tsx").then(m => ({ default: m.PrivacyPage })));
+const WelcomePage = lazy(() => import("./pages/Welcome/index.tsx").then(m => ({ default: m.WelcomePage })));
 const OrgaRoute = lazy(() => import("./routes/OrgaRoute.tsx").then(m => ({ default: m.OrgaRoute })));
 const OrgaIndexRoute = lazy(() => import("./routes/OrgaIndexRoute.tsx").then(m => ({ default: m.OrgaIndexRoute })));
 
@@ -35,6 +36,7 @@ createRoot(document.getElementById("root")!).render(
               <Routes>
                 <Route path="/" element={<App />} />
                 {/* Static pages */}
+                <Route path="/welcome" element={<WelcomePage />} />
                 <Route path="/principles" element={<PrinciplesPage />} />
                 <Route path="/glossary" element={<GlossaryPage />} />
                 <Route path="/terms" element={<TermsPage />} />

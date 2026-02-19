@@ -14,7 +14,7 @@ export const FloatingLogo = () => {
   if (!isSignedIn || !selectedOrga) return null;
 
   return (
-    <Link to="/glossary" className={BUTTON_CLASS} aria-label="swarmrise">
+    <Link to="/welcome" className={BUTTON_CLASS} aria-label="swarmrise">
       <Logo size={28} begin={2} repeatCount={1} />
     </Link>
   );

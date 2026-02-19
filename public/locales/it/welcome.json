@@ -1,0 +1,37 @@
+{
+  "title": "governance leggera per organizzazioni che si muovono velocemente",
+  "subtitle": "swarmrise è uno strumento di governance per i team che credono che chi fa il lavoro debba avere più voce in capitolo su come viene organizzato. Definisci ruoli chiari con uno scopo, prendi decisioni trasparenti insieme e ridisegna la tua struttura man mano che cresci — senza chiedere il permesso dall'alto, perché non c'è un alto.",
+  "subline": "Inizia in modo semplice. Adotta al tuo ritmo.",
+  "explore": "scopri swarmrise",
+  "workspace": "il tuo spazio di lavoro",
+  "cards": {
+    "principles": {
+      "description": "Le idee e i valori che guidano swarmrise"
+    },
+    "glossary": {
+      "description": "I concetti chiave e il vocabolario spiegati"
+    },
+    "terms": {
+      "description": "Le condizioni di utilizzo della piattaforma"
+    },
+    "privacy": {
+      "description": "Come trattiamo i tuoi dati personali"
+    },
+    "organization": {
+      "title": "Organizzazione",
+      "description": "Visualizza team, ruoli e connessioni a colpo d'occhio"
+    },
+    "chat": {
+      "title": "Chat",
+      "description": "Conversazioni di team, argomenti e strumenti di governance"
+    },
+    "decisions": {
+      "title": "Decisioni",
+      "description": "Tieni traccia di ogni modifica con uno storico completo"
+    },
+    "myPage": {
+      "title": "La mia pagina",
+      "description": "I tuoi ruoli, team e responsabilità"
+    }
+  }
+}

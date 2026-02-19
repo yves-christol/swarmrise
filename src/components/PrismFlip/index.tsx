@@ -107,7 +107,7 @@ export function PrismFlip({
 
   const [flipState, setFlipState] = useState<FlipState>({ phase: "idle" });
   const prevActiveKeyRef = useRef(activeFaceKey);
-  const animationTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const animationTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Stable ref for callback — prevents effect re-runs when identity changes
   const onFlipCompleteRef = useRef(onFlipComplete);

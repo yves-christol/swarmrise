@@ -73,7 +73,6 @@
   "diagram": {
     "loadingMember": "載入成員中...",
     "memberRemovedDescription": "此成員可能已從組織中移除。",
-    "memberDetailsTitle": "{{name}} - 成員詳情",
     "memberDetailsAriaLabel": "成員 {{name}} 的詳情，顯示 {{roleCount}} 個角色，分佈在 {{teamCount}} 個團隊",
     "rolesInTeams": "{{roleCount}} 個角色，在 {{teamCount}} 個團隊中",
     "rolesInTeams_other": "{{roleCount}} 個角色，在 {{teamCount}} 個團隊中",
@@ -86,7 +85,6 @@
     "textRoles": "角色：",
     "textTeams": "團隊：",
     "textRoleList": "角色列表：",
-    "manageAccount": "管理帳戶",
-    "closeContactModal": "關閉 (Esc/C)"
+    "manageAccount": "管理帳戶"
   }
 }

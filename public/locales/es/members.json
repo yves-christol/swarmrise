@@ -73,7 +73,6 @@
   "diagram": {
     "loadingMember": "Cargando miembro...",
     "memberRemovedDescription": "Este miembro puede haber sido eliminado de la organización.",
-    "memberDetailsTitle": "{{name}} - Detalles del miembro",
     "memberDetailsAriaLabel": "Detalles del miembro {{name}} mostrando {{roleCount}} roles en {{teamCount}} equipos",
     "rolesInTeams": "{{roleCount}} rol en {{teamCount}} equipo",
     "rolesInTeams_other": "{{roleCount}} roles en {{teamCount}} equipos",
@@ -86,7 +85,6 @@
     "textRoles": "Roles:",
     "textTeams": "Equipos:",
     "textRoleList": "Lista de roles:",
-    "manageAccount": "Gestionar cuenta",
-    "closeContactModal": "Cerrar (Esc/C)"
+    "manageAccount": "Gestionar cuenta"
   }
 }

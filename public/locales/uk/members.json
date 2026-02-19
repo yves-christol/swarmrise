@@ -73,7 +73,6 @@
   "diagram": {
     "loadingMember": "Завантаження учасника...",
     "memberRemovedDescription": "Цього учасника могло бути видалено з організації.",
-    "memberDetailsTitle": "{{name}} - Деталі учасника",
     "memberDetailsAriaLabel": "Деталі учасника {{name}}, що показує {{roleCount}} ролей у {{teamCount}} командах",
     "rolesInTeams": "{{roleCount}} роль у {{teamCount}} команді",
     "rolesInTeams_other": "{{roleCount}} ролей у {{teamCount}} командах",
@@ -86,7 +85,6 @@
     "textRoles": "Ролі:",
     "textTeams": "Команди:",
     "textRoleList": "Список ролей:",
-    "manageAccount": "Керувати обліковим записом",
-    "closeContactModal": "Закрити (Esc/C)"
+    "manageAccount": "Керувати обліковим записом"
   }
 }

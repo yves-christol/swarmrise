@@ -662,10 +662,10 @@ export function KanbanCardModal({
             </div>
           </div>
 
-          {/* Comments (legacy text field) */}
+          {/* Description (legacy text field, formerly "comments") */}
           <div className="flex flex-col gap-1.5">
             <label htmlFor="card-comments" className="text-sm font-bold text-dark dark:text-light">
-              {t("card.comments")}
+              {t("card.description")}
             </label>
             <textarea
               id="card-comments"

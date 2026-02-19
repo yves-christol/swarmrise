@@ -32,7 +32,7 @@
     "title": "Title",
     "role": "Role",
     "dueDate": "Due date",
-    "comments": "Comments",
+    "description": "Description",
     "overdue": "Overdue",
     "dueIn": "Due {{date}}",
     "create": "Create card",
@@ -44,7 +44,7 @@
     "selectRole": "Select a role...",
     "column": "Column",
     "dueDateRequired": "Due date is required",
-    "noComments": "No comments",
+    "noDescription": "No description",
     "genericError": "An error occurred"
   },
   "actions": {

@@ -426,7 +426,7 @@ export function KanbanColumn({
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
         <div
           ref={setDroppableRef}
-          className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[4rem]"
+          className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[4rem] bg-surface-primary/20"
         >
           {sortedCards.map((card) => {
             const cardRole = roleMap.get(card.roleId);

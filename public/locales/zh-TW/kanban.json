@@ -32,7 +32,7 @@
     "title": "\u6a19\u984c",
     "role": "\u89d2\u8272",
     "dueDate": "\u5230\u671f\u65e5",
-    "comments": "\u7559\u8a00",
+    "description": "\u8aaa\u660e",
     "overdue": "\u5df2\u904e\u671f",
     "dueIn": "{{date}} \u5230\u671f",
     "create": "\u5efa\u7acb\u5361\u7247",
@@ -44,7 +44,7 @@
     "selectRole": "\u9078\u64c7\u89d2\u8272...",
     "column": "\u6b04\u4f4d",
     "dueDateRequired": "\u5230\u671f\u65e5\u70ba\u5fc5\u586b\u6b04\u4f4d",
-    "noComments": "\u7121\u7559\u8a00",
+    "noDescription": "\u7121\u8aaa\u660e",
     "genericError": "\u767c\u751f\u932f\u8aa4"
   },
   "actions": {

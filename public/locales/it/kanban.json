@@ -32,7 +32,7 @@
     "title": "Titolo",
     "role": "Ruolo",
     "dueDate": "Scadenza",
-    "comments": "Commenti",
+    "description": "Descrizione",
     "overdue": "Scaduta",
     "dueIn": "Scade {{date}}",
     "create": "Crea scheda",
@@ -44,7 +44,7 @@
     "selectRole": "Seleziona un ruolo...",
     "column": "Colonna",
     "dueDateRequired": "La data di scadenza \u00e8 obbligatoria",
-    "noComments": "Nessun commento",
+    "noDescription": "Nessuna descrizione",
     "genericError": "Si \u00e8 verificato un errore"
   },
   "actions": {

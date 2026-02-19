@@ -32,7 +32,7 @@
     "title": "Titre",
     "role": "R\u00f4le",
     "dueDate": "\u00c9ch\u00e9ance",
-    "comments": "Commentaires",
+    "description": "Description",
     "overdue": "En retard",
     "dueIn": "\u00c9ch\u00e9ance {{date}}",
     "create": "Cr\u00e9er une carte",
@@ -44,7 +44,7 @@
     "selectRole": "S\u00e9lectionnez un r\u00f4le...",
     "column": "Colonne",
     "dueDateRequired": "La date d'\u00e9ch\u00e9ance est requise",
-    "noComments": "Aucun commentaire",
+    "noDescription": "Aucune description",
     "genericError": "Une erreur est survenue"
   },
   "actions": {

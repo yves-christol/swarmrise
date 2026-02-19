@@ -32,7 +32,7 @@
     "title": "T\u00edtulo",
     "role": "Rol",
     "dueDate": "Fecha l\u00edmite",
-    "comments": "Comentarios",
+    "description": "Descripci\u00f3n",
     "overdue": "Vencida",
     "dueIn": "Vence {{date}}",
     "create": "Crear tarjeta",
@@ -44,7 +44,7 @@
     "selectRole": "Seleccionar un rol...",
     "column": "Columna",
     "dueDateRequired": "La fecha l\u00edmite es obligatoria",
-    "noComments": "Sin comentarios",
+    "noDescription": "Sin descripci\u00f3n",
     "genericError": "Se produjo un error"
   },
   "actions": {

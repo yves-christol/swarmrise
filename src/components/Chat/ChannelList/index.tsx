@@ -238,7 +238,7 @@ const MemberPicker = ({
   }, [onClose]);
 
   return (
-    <div ref={containerRef} className="mx-2 mb-2 rounded-lg border border-border-default bg-light dark:bg-dark shadow-md overflow-hidden">
+    <div ref={containerRef} className="mx-2 mb-2 rounded-lg border border-border-default bg-surface-primary shadow-md overflow-hidden">
       <input
         ref={inputRef}
         type="text"

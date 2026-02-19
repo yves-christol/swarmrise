@@ -34,7 +34,7 @@ export const CreateTopicModal = ({ channelId, onClose }: CreateTopicModalProps) 
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="bg-light dark:bg-dark rounded-lg shadow-xl w-[90vw] max-w-md border border-border-default">
+      <div className="bg-surface-primary rounded-lg shadow-xl w-[90vw] max-w-md border border-border-default">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border-default">
           <h3 className="text-sm font-semibold text-dark dark:text-light">

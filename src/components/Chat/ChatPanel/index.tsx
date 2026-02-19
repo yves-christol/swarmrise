@@ -73,7 +73,7 @@ export const ChatPanel = () => {
 
   const panel = (
     <div
-      className={`fixed top-0 right-0 h-full ${panelWidthClass} z-40 flex flex-col bg-light dark:bg-dark border-l border-border-default shadow-xl animate-slide-in-right`}
+      className={`fixed top-0 right-0 h-full ${panelWidthClass} z-40 flex flex-col bg-surface-primary border-l border-border-default shadow-xl animate-slide-in-right`}
       role="complementary"
       aria-label={t("chat")}
     >
@@ -228,7 +228,7 @@ export const ChatPanel = () => {
       {/* Mobile channel list (shown when no channel selected on small screens) */}
       <div className="sm:hidden">
         {!selectedChannelId && (
-          <div className="absolute inset-0 top-[49px] bg-light dark:bg-dark overflow-y-auto">
+          <div className="absolute inset-0 top-[49px] bg-surface-primary overflow-y-auto">
             <ChannelList />
           </div>
         )}

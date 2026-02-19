@@ -150,7 +150,7 @@ export const MessageInput = ({ channelId, orgaId, isArchived }: MessageInputProp
 
   return (
     <>
-      <div className="p-3 border-t border-border-default bg-light dark:bg-dark">
+      <div className="p-3 border-t border-border-default bg-surface-primary">
         <div className="flex items-end gap-2">
           {/* Add tool button */}
           <div className="relative" ref={toolMenuRef}>

@@ -165,6 +165,24 @@ export function OrgCustomisationProvider({ children }: { children: ReactNode }) 
     return Object.keys(vars).length > 0 ? vars : undefined;
   }, [selectedOrga, resolvedTheme]);
 
+  // Mirror org CSS vars onto :root so that portaled elements (modals, chat panel)
+  // that escape the provider wrapper div still inherit the org's custom colours.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (!style) return;
+
+    const keys = Object.keys(style);
+    for (const key of keys) {
+      root.style.setProperty(key, style[key]);
+    }
+
+    return () => {
+      for (const key of keys) {
+        root.style.removeProperty(key);
+      }
+    };
+  }, [style]);
+
   // Load Google Font when titleFont changes
   useEffect(() => {
     if (!selectedOrga?.titleFont) return;

@@ -144,7 +144,7 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
   }));
 
   return (
-    <div className="flex flex-col h-full bg-light dark:bg-dark">
+    <div className="flex flex-col h-full bg-surface-primary">
       {/* Thread header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border-default shrink-0">
         <span className="text-sm font-semibold text-dark dark:text-light">{t("thread")}</span>

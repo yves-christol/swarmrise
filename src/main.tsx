@@ -50,6 +50,7 @@ createRoot(document.getElementById("root")!).render(
                   <Route path="teams/:teamId/roles/:roleId/manage" element={<App />} />
                   <Route path="members/:memberId" element={<App />} />
                   <Route path="members/:memberId/manage" element={<App />} />
+                  <Route path="members/:memberId/kanban" element={<App />} />
                 </Route>
               </Routes>
               <ChatPanel />

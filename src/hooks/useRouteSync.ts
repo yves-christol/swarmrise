@@ -114,9 +114,11 @@ export function buildUrlFromFocus(
 ): string {
   switch (focus.type) {
     case "member":
-      return viewMode === "manage"
-        ? routes.memberManage(orgaId, focus.memberId)
-        : routes.member(orgaId, focus.memberId);
+      return viewMode === "kanban"
+        ? routes.memberKanban(orgaId, focus.memberId)
+        : viewMode === "manage"
+          ? routes.memberManage(orgaId, focus.memberId)
+          : routes.member(orgaId, focus.memberId);
 
     case "role":
       return viewMode === "manage"

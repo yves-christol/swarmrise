@@ -38,5 +38,12 @@
     "cancel": "Annulla",
     "close": "Chiudi",
     "moveToColumn": "Sposta in {{column}}"
+  },
+  "memberView": {
+    "title": "Schede Kanban",
+    "empty": "Questo membro non ha schede Kanban assegnate a nessuno dei suoi ruoli.",
+    "totalCards": "{{count}} scheda",
+    "totalCards_other": "{{count}} schede",
+    "viewTeamBoard": "Visualizza bacheca del team"
   }
 }

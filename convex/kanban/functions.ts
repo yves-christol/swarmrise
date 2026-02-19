@@ -1,7 +1,7 @@
 import { query, mutation, internalMutation } from "../_generated/server";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
-import { kanbanBoardValidator, kanbanColumnValidator, kanbanCardValidator, DEFAULT_COLUMNS } from ".";
+import { kanbanBoardValidator, kanbanColumnValidator, kanbanCardValidator, memberKanbanTeamGroupValidator, DEFAULT_COLUMNS } from ".";
 import { getMemberInOrga, memberHasTeamAccess } from "../utils";
 import { requireBoardAccess } from "./access";
 
@@ -140,6 +140,116 @@ export const getCardsByMember = query({
     }
 
     return allCards;
+  },
+});
+
+/**
+ * Get all cards owned by a member, enriched with column/role/team context,
+ * grouped by team. Used for the Member Kanban View.
+ *
+ * For each role held by the member, fetches all kanban cards assigned to
+ * that role, resolves the column name and role metadata, then groups
+ * everything by team with team name and color.
+ */
+export const getCardsByMemberWithContext = query({
+  args: { memberId: v.id("members") },
+  returns: v.array(memberKanbanTeamGroupValidator),
+  handler: async (ctx, args) => {
+    const memberDoc = await ctx.db.get(args.memberId);
+    if (!memberDoc) return [];
+
+    await getMemberInOrga(ctx, memberDoc.orgaId);
+
+    // Get all roles held by this member
+    const roles = await ctx.db
+      .query("roles")
+      .withIndex("by_member", (q) => q.eq("memberId", args.memberId))
+      .collect();
+
+    if (roles.length === 0) return [];
+
+    // Build role lookup
+    const roleById = new Map(roles.map((r) => [r._id, r]));
+
+    // Gather all cards across all roles
+    const allCards = [];
+    for (const role of roles) {
+      const cards = await ctx.db
+        .query("kanbanCards")
+        .withIndex("by_role", (q) => q.eq("roleId", role._id))
+        .collect();
+      allCards.push(...cards);
+    }
+
+    if (allCards.length === 0) return [];
+
+    // Resolve column names (deduplicated)
+    const columnIds = [...new Set(allCards.map((c) => c.columnId))];
+    const columnById = new Map<Id<"kanbanColumns">, { name: string }>();
+    for (const colId of columnIds) {
+      const col = await ctx.db.get(colId);
+      if (col) columnById.set(colId, { name: col.name });
+    }
+
+    // Resolve board -> team mapping (deduplicated)
+    const boardIds = [...new Set(allCards.map((c) => c.boardId))];
+    const boardById = new Map<Id<"kanbanBoards">, { teamId: Id<"teams"> }>();
+    for (const boardId of boardIds) {
+      const board = await ctx.db.get(boardId);
+      if (board) boardById.set(boardId, { teamId: board.teamId });
+    }
+
+    // Resolve team names (deduplicated)
+    const teamIds = [...new Set([...boardById.values()].map((b) => b.teamId))];
+    const teamById = new Map<Id<"teams">, { name: string; color?: string }>();
+    for (const teamId of teamIds) {
+      const team = await ctx.db.get(teamId);
+      if (team) teamById.set(teamId, { name: team.name, color: team.color });
+    }
+
+    // Group cards by team
+    const teamGroups = new Map<Id<"teams">, typeof allCards>();
+    for (const card of allCards) {
+      const board = boardById.get(card.boardId);
+      if (!board) continue;
+      const group = teamGroups.get(board.teamId) ?? [];
+      group.push(card);
+      teamGroups.set(board.teamId, group);
+    }
+
+    // Build result
+    const result = [];
+    for (const [teamId, cards] of teamGroups) {
+      const team = teamById.get(teamId);
+      if (!team) continue;
+
+      const enrichedCards = cards.map((card) => {
+        const role = roleById.get(card.roleId);
+        const column = columnById.get(card.columnId);
+        return {
+          ...card,
+          columnName: column?.name ?? "Unknown",
+          roleTitle: role?.title ?? "Unknown",
+          roleIconKey: role?.iconKey,
+          roleType: role?.roleType,
+        };
+      });
+
+      // Sort cards by column position, then card position within column
+      enrichedCards.sort((a, b) => a.position - b.position);
+
+      result.push({
+        teamId,
+        teamName: team.name,
+        teamColor: team.color,
+        cards: enrichedCards,
+      });
+    }
+
+    // Sort teams alphabetically
+    result.sort((a, b) => a.teamName.localeCompare(b.teamName));
+
+    return result;
   },
 });
 

@@ -38,5 +38,12 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "moveToColumn": "D\u00e9placer vers {{column}}"
+  },
+  "memberView": {
+    "title": "Cartes Kanban",
+    "empty": "Ce membre n'a aucune carte Kanban assign\u00e9e \u00e0 ses r\u00f4les.",
+    "totalCards": "{{count}} carte",
+    "totalCards_other": "{{count}} cartes",
+    "viewTeamBoard": "Voir le tableau de l'\u00e9quipe"
   }
 }

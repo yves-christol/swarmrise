@@ -15,6 +15,7 @@ const RoleManageView = lazy(() => import("../RoleManageView").then(m => ({ defau
 const TeamManageView = lazy(() => import("../TeamManageView").then(m => ({ default: m.TeamManageView })));
 const MemberManageView = lazy(() => import("../MemberManageView").then(m => ({ default: m.MemberManageView })));
 const KanbanBoard = lazy(() => import("../Kanban/KanbanBoard").then(m => ({ default: m.KanbanBoard })));
+const MemberKanbanView = lazy(() => import("../MemberKanbanView").then(m => ({ default: m.MemberKanbanView })));
 import { Id } from "../../../convex/_generated/dataModel";
 import type { FocusTarget } from "../../tools/orgaStore/types";
 
@@ -300,12 +301,14 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
   };
 
   const getFlipClass = (): string => {
-    if (viewMode === "kanban" && focus.type === "team") return "kanban";
+    if (viewMode === "kanban" && (focus.type === "team" || focus.type === "member")) return "kanban";
     if (viewMode === "manage") return "manage";
     return "visual";
   };
 
   const isTeamFocused = focus.type === "team";
+  const isMemberFocused = focus.type === "member";
+  const hasKanbanView = isTeamFocused || isMemberFocused;
 
   // Keyboard shortcut for view toggle (V key cycles modes, K jumps to kanban)
   useEffect(() => {
@@ -320,7 +323,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
         return;
       }
       if (e.key === "v" || e.key === "V") {
-        if (isTeamFocused) {
+        if (hasKanbanView) {
           // Cycle: visual -> manage -> kanban -> visual
           const next = viewMode === "visual" ? "manage" : viewMode === "manage" ? "kanban" : "visual";
           changeViewMode(next);
@@ -328,14 +331,14 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           changeViewMode(viewMode === "visual" ? "manage" : "visual");
         }
       }
-      if ((e.key === "k" || e.key === "K") && isTeamFocused) {
+      if ((e.key === "k" || e.key === "K") && hasKanbanView) {
         changeViewMode("kanban");
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [viewMode, changeViewMode, isFocusTransitioning, animationPhase, isTeamFocused]);
+  }, [viewMode, changeViewMode, isFocusTransitioning, animationPhase, hasKanbanView]);
 
   // --- Render helper ---
 
@@ -343,7 +346,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     if (viewType === "member" && focusTarget.type === "member") {
       return (
         <PrismFlip
-          geometry="coin"
+          geometry="prism"
           activeFaceKey={flipClass}
           faces={[
             {
@@ -372,6 +375,14 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
                       : focusOnOrgaFromMember
                   }
                 />
+              ),
+            },
+            {
+              key: "kanban",
+              content: (
+                <div className="absolute inset-0 overflow-auto p-4">
+                  <MemberKanbanView memberId={focusTarget.memberId} />
+                </div>
               ),
             },
           ]}

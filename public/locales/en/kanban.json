@@ -38,5 +38,12 @@
     "cancel": "Cancel",
     "close": "Close",
     "moveToColumn": "Move to {{column}}"
+  },
+  "memberView": {
+    "title": "Kanban Cards",
+    "empty": "This member has no Kanban cards assigned to any of their roles.",
+    "totalCards": "{{count}} card",
+    "totalCards_other": "{{count}} cards",
+    "viewTeamBoard": "View team board"
   }
 }

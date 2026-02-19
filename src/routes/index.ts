@@ -13,4 +13,5 @@ export const routes = {
     `/o/${orgaId}/teams/${teamId}/roles/${roleId}/manage`,
   member: (orgaId: Id<"orgas">, memberId: Id<"members">) => `/o/${orgaId}/members/${memberId}`,
   memberManage: (orgaId: Id<"orgas">, memberId: Id<"members">) => `/o/${orgaId}/members/${memberId}/manage`,
+  memberKanban: (orgaId: Id<"orgas">, memberId: Id<"members">) => `/o/${orgaId}/members/${memberId}/kanban`,
 } as const;

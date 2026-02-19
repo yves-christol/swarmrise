@@ -38,5 +38,12 @@
     "cancel": "Cancelar",
     "close": "Cerrar",
     "moveToColumn": "Mover a {{column}}"
+  },
+  "memberView": {
+    "title": "Tarjetas Kanban",
+    "empty": "Este miembro no tiene tarjetas Kanban asignadas a ninguno de sus roles.",
+    "totalCards": "{{count}} tarjeta",
+    "totalCards_other": "{{count}} tarjetas",
+    "viewTeamBoard": "Ver tablero del equipo"
   }
 }

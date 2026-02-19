@@ -14,6 +14,19 @@
     "done": "Hecho",
     "archived": "Archivado"
   },
+  "columnActions": {
+    "rename": "Renombrar",
+    "delete": "Eliminar columna",
+    "deleteConfirm": "\u00bfEliminar esta columna y sus {{count}} tarjetas?",
+    "confirmDelete": "Eliminar",
+    "collapse": "Contraer",
+    "expand": "Expandir",
+    "menu": "Opciones de columna",
+    "addColumn": "A\u00f1adir columna",
+    "newColumnName": "Nombre de la columna...",
+    "wipStatus": "{{count}}/{{limit}} tarjetas",
+    "wipExceeded": "L\u00edmite WIP superado"
+  },
   "card": {
     "title": "T\u00edtulo",
     "role": "Rol",
@@ -38,6 +51,20 @@
     "cancel": "Cancelar",
     "close": "Cerrar",
     "moveToColumn": "Mover a {{column}}"
+  },
+  "settings": {
+    "title": "Configuraci\u00f3n del tablero",
+    "wipLimits": "L\u00edmites WIP",
+    "wipDescription": "Establece el n\u00famero m\u00e1ximo de tarjetas permitidas por columna. Deja vac\u00edo para sin l\u00edmite.",
+    "noLimit": "Sin l\u00edmite"
+  },
+  "bulk": {
+    "select": "Seleccionar",
+    "exit": "Listo",
+    "selected": "{{count}} seleccionada",
+    "selected_other": "{{count}} seleccionadas",
+    "moveTo": "Mover a...",
+    "delete": "Eliminar"
   },
   "memberView": {
     "title": "Tarjetas Kanban",

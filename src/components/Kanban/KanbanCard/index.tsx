@@ -11,10 +11,12 @@ type KanbanCardProps = {
   roleMember: Member | undefined;
   onClick?: () => void;
   style?: React.CSSProperties;
+  selectionMode?: boolean;
+  isSelected?: boolean;
 };
 
 export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
-  function KanbanCard({ card, cardRole, roleMember, onClick, style, ...props }, ref) {
+  function KanbanCard({ card, cardRole, roleMember, onClick, style, selectionMode, isSelected, ...props }, ref) {
     const { t } = useTranslation("kanban");
     const isOverdue = card.dueDate < Date.now();
 
@@ -36,74 +38,100 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
           p-3 rounded-lg
           bg-surface-primary
           border
-          ${isOverdue ? "border-red-300 dark:border-red-700" : "border-border-default"}
+          ${isSelected ? "border-highlight ring-2 ring-highlight/30" : isOverdue ? "border-red-300 dark:border-red-700" : "border-border-default"}
           ${onClick ? "hover:shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-highlight" : "shadow-lg"}
           transition-shadow duration-75
         `}
         aria-label={`${card.title} - ${cardRole ? cardRole.title : ""} ${roleMember ? `${roleMember.firstname} ${roleMember.surname}` : ""}`}
         {...props}
       >
-        {/* Title */}
-        <p className="text-sm font-medium text-dark dark:text-light leading-snug line-clamp-2">
-          {card.title}
-        </p>
-
-        {/* Footer: role icon + member avatar + due date */}
-        <div className="flex items-center justify-between mt-2 gap-2">
-          {/* Role + Member */}
-          <div className="flex items-center gap-1.5 min-w-0">
-            {/* Role icon */}
-            {cardRole && (
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 40 40"
-                className="flex-shrink-0 text-dark dark:text-light"
-                aria-hidden="true"
+        <div className="flex items-start gap-2">
+          {/* Selection checkbox */}
+          {selectionMode && (
+            <div className="flex-shrink-0 mt-0.5">
+              <div
+                className={`
+                  w-4 h-4 rounded border-2 flex items-center justify-center
+                  transition-colors duration-75
+                  ${isSelected
+                    ? "bg-highlight border-highlight"
+                    : "border-border-strong bg-transparent"
+                  }
+                `}
               >
-                <path
-                  d={getRoleIconPath(cardRole.iconKey, cardRole.roleType)}
-                  fill="currentColor"
-                />
-              </svg>
-            )}
+                {isSelected && (
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" strokeWidth="2" aria-hidden="true">
+                    <path d="M2 5l2.5 2.5L8 3" />
+                  </svg>
+                )}
+              </div>
+            </div>
+          )}
 
-            {/* Member avatar */}
-            {roleMember && (
-              <>
-                <div className="w-5 h-5 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0">
-                  {roleMember.pictureURL ? (
-                    <img
-                      src={roleMember.pictureURL}
-                      alt={`${roleMember.firstname} ${roleMember.surname}`}
-                      className="w-full h-full object-cover"
+          <div className="flex-1 min-w-0">
+            {/* Title */}
+            <p className="text-sm font-medium text-dark dark:text-light leading-snug line-clamp-2">
+              {card.title}
+            </p>
+
+            {/* Footer: role icon + member avatar + due date */}
+            <div className="flex items-center justify-between mt-2 gap-2">
+              {/* Role + Member */}
+              <div className="flex items-center gap-1.5 min-w-0">
+                {/* Role icon */}
+                {cardRole && (
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 40 40"
+                    className="flex-shrink-0 text-dark dark:text-light"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d={getRoleIconPath(cardRole.iconKey, cardRole.roleType)}
+                      fill="currentColor"
                     />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[10px] font-medium text-text-secondary">
-                      {roleMember.firstname.charAt(0)}{roleMember.surname.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                <span className="text-xs text-text-secondary truncate">
-                  {roleMember.firstname}
-                </span>
-              </>
-            )}
-          </div>
+                  </svg>
+                )}
 
-          {/* Due date */}
-          <span
-            className={`
-              text-xs flex-shrink-0
-              ${isOverdue
-                ? "text-red-600 dark:text-red-400 font-medium"
-                : "text-text-tertiary"
-              }
-            `}
-            title={isOverdue ? t("card.overdue") : t("card.dueIn", { date: dueDateStr })}
-          >
-            {dueDateStr}
-          </span>
+                {/* Member avatar */}
+                {roleMember && (
+                  <>
+                    <div className="w-5 h-5 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0">
+                      {roleMember.pictureURL ? (
+                        <img
+                          src={roleMember.pictureURL}
+                          alt={`${roleMember.firstname} ${roleMember.surname}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[10px] font-medium text-text-secondary">
+                          {roleMember.firstname.charAt(0)}{roleMember.surname.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-xs text-text-secondary truncate">
+                      {roleMember.firstname}
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {/* Due date */}
+              <span
+                className={`
+                  text-xs flex-shrink-0
+                  ${isOverdue
+                    ? "text-red-600 dark:text-red-400 font-medium"
+                    : "text-text-tertiary"
+                  }
+                `}
+                title={isOverdue ? t("card.overdue") : t("card.dueIn", { date: dueDateStr })}
+              >
+                {dueDateStr}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     );

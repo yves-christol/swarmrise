@@ -14,6 +14,19 @@
     "done": "Termin\u00e9",
     "archived": "Archiv\u00e9"
   },
+  "columnActions": {
+    "rename": "Renommer",
+    "delete": "Supprimer la colonne",
+    "deleteConfirm": "Supprimer cette colonne et ses {{count}} cartes ?",
+    "confirmDelete": "Supprimer",
+    "collapse": "R\u00e9duire",
+    "expand": "D\u00e9velopper",
+    "menu": "Options de colonne",
+    "addColumn": "Ajouter une colonne",
+    "newColumnName": "Nom de la colonne...",
+    "wipStatus": "{{count}}/{{limit}} cartes",
+    "wipExceeded": "Limite WIP d\u00e9pass\u00e9e"
+  },
   "card": {
     "title": "Titre",
     "role": "R\u00f4le",
@@ -38,6 +51,20 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "moveToColumn": "D\u00e9placer vers {{column}}"
+  },
+  "settings": {
+    "title": "Param\u00e8tres du tableau",
+    "wipLimits": "Limites WIP",
+    "wipDescription": "D\u00e9finissez le nombre maximum de cartes autoris\u00e9es par colonne. Laissez vide pour aucune limite.",
+    "noLimit": "Sans limite"
+  },
+  "bulk": {
+    "select": "S\u00e9lectionner",
+    "exit": "Termin\u00e9",
+    "selected": "{{count}} s\u00e9lectionn\u00e9e",
+    "selected_other": "{{count}} s\u00e9lectionn\u00e9es",
+    "moveTo": "D\u00e9placer vers...",
+    "delete": "Supprimer"
   },
   "memberView": {
     "title": "Cartes Kanban",

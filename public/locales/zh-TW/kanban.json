@@ -14,6 +14,19 @@
     "done": "\u5df2\u5b8c\u6210",
     "archived": "\u5df2\u6b78\u6a94"
   },
+  "columnActions": {
+    "rename": "\u91cd\u65b0\u547d\u540d",
+    "delete": "\u522a\u9664\u6b04\u4f4d",
+    "deleteConfirm": "\u522a\u9664\u6b64\u6b04\u4f4d\u53ca\u5176 {{count}} \u5f35\u5361\u7247\uff1f",
+    "confirmDelete": "\u522a\u9664",
+    "collapse": "\u6536\u5408",
+    "expand": "\u5c55\u958b",
+    "menu": "\u6b04\u4f4d\u9078\u9805",
+    "addColumn": "\u65b0\u589e\u6b04\u4f4d",
+    "newColumnName": "\u6b04\u4f4d\u540d\u7a31...",
+    "wipStatus": "{{count}}/{{limit}} \u5f35\u5361\u7247",
+    "wipExceeded": "\u5df2\u8d85\u904e WIP \u9650\u5236"
+  },
   "card": {
     "title": "\u6a19\u984c",
     "role": "\u89d2\u8272",
@@ -38,6 +51,20 @@
     "cancel": "\u53d6\u6d88",
     "close": "\u95dc\u9589",
     "moveToColumn": "\u79fb\u81f3 {{column}}"
+  },
+  "settings": {
+    "title": "\u770b\u677f\u8a2d\u5b9a",
+    "wipLimits": "WIP \u9650\u5236",
+    "wipDescription": "\u8a2d\u5b9a\u6bcf\u6b04\u5141\u8a31\u7684\u6700\u5927\u5361\u7247\u6578\u3002\u7559\u7a7a\u8868\u793a\u7121\u9650\u5236\u3002",
+    "noLimit": "\u7121\u9650\u5236"
+  },
+  "bulk": {
+    "select": "\u9078\u53d6",
+    "exit": "\u5b8c\u6210",
+    "selected": "\u5df2\u9078\u53d6 {{count}} \u9805",
+    "selected_other": "\u5df2\u9078\u53d6 {{count}} \u9805",
+    "moveTo": "\u79fb\u81f3...",
+    "delete": "\u522a\u9664"
   },
   "memberView": {
     "title": "\u770b\u677f\u5361\u7247",

@@ -14,6 +14,19 @@
     "done": "Done",
     "archived": "Archived"
   },
+  "columnActions": {
+    "rename": "Rename",
+    "delete": "Delete column",
+    "deleteConfirm": "Delete this column and its {{count}} cards?",
+    "confirmDelete": "Delete",
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "menu": "Column options",
+    "addColumn": "Add column",
+    "newColumnName": "Column name...",
+    "wipStatus": "{{count}}/{{limit}} cards",
+    "wipExceeded": "WIP limit exceeded"
+  },
   "card": {
     "title": "Title",
     "role": "Role",
@@ -38,6 +51,20 @@
     "cancel": "Cancel",
     "close": "Close",
     "moveToColumn": "Move to {{column}}"
+  },
+  "settings": {
+    "title": "Board Settings",
+    "wipLimits": "WIP Limits",
+    "wipDescription": "Set the maximum number of cards allowed per column. Leave empty for no limit.",
+    "noLimit": "No limit"
+  },
+  "bulk": {
+    "select": "Select",
+    "exit": "Done",
+    "selected": "{{count}} selected",
+    "selected_other": "{{count}} selected",
+    "moveTo": "Move to...",
+    "delete": "Delete"
   },
   "memberView": {
     "title": "Kanban Cards",

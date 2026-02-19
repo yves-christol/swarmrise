@@ -2,7 +2,7 @@
 
 This document defines the architecture, data model, and implementation plan for the Kanban board feature in Swarmrise. It is maintained by Kimiko, the Kanban system architect.
 
-**Status:** Phases 1-4 done. Design evolution in progress: migrating from member-based to role-based card ownership (`ownerId` -> `roleId`). Cards will display role icon + member avatar.
+**Status:** Phases 1-5 done. Category A (Core Board Enhancements: A1-A5) done. Role-based ownership migration complete. Cards display role icon + member avatar.
 
 ---
 
@@ -104,6 +104,7 @@ A Kanban board attached to each team in Swarmrise. Team members can create cards
 | orgaId         |  --> orgas._id
 | name           |  string
 | position       |  number (ordering within board)
+| wipLimit?      |  number (optional; A2: max cards allowed)
 +--------+-------+
          |
          | 1:N
@@ -161,6 +162,7 @@ export const kanbanColumnType = v.object({
   orgaId: v.id("orgas"),
   name: v.string(),
   position: v.number(),
+  wipLimit: v.optional(v.number()),  // A2: max cards allowed in this column
 });
 
 export const kanbanColumnValidator = v.object({
@@ -325,6 +327,12 @@ convex/kanban/
 | `kanban.moveCard` | `{ cardId, targetColumnId, targetPosition }` | `null` | Move a card to a different column and/or position (drag and drop) |
 | `kanban.deleteCard` | `{ cardId }` | `null` | Delete a card permanently |
 | `kanban.reorderColumns` | `{ boardId, columnOrder: Id<"kanbanColumns">[] }` | `null` | Reorder columns on a board |
+| `kanban.addColumn` | `{ boardId, name }` | `Id<"kanbanColumns">` | Add a new column to the board (A1) |
+| `kanban.renameColumn` | `{ columnId, name }` | `null` | Rename an existing column (A1) |
+| `kanban.deleteColumn` | `{ columnId }` | `null` | Delete a column and all its cards (A1) |
+| `kanban.setColumnWipLimit` | `{ columnId, wipLimit: number \| null }` | `null` | Set or clear the WIP limit for a column (A2) |
+| `kanban.bulkMoveCards` | `{ cardIds, targetColumnId }` | `null` | Move multiple cards to a column at once (A5) |
+| `kanban.bulkDeleteCards` | `{ cardIds }` | `null` | Delete multiple cards at once (A5) |
 
 ### Board Auto-Creation
 
@@ -411,15 +419,18 @@ This avoids rewriting every card's position on every drag operation.
 ```
 src/components/Kanban/
   KanbanBoard/
-    index.tsx             - Main board container, fetches data, provides DnD context
+    index.tsx             - Main board container, fetches data, provides DnD context,
+                            manages collapsed state (A3), selection mode (A5), add column (A1)
   KanbanColumn/
-    index.tsx             - Single column with header and card list
+    index.tsx             - Single column with header, card list, inline rename (A1),
+                            delete confirmation (A1), collapse toggle (A3), WIP indicator (A2),
+                            selection checkboxes (A5), column context menu
   KanbanCard/
-    index.tsx             - Card component (draggable)
+    index.tsx             - Card component (draggable), supports selection mode with checkbox (A5)
   KanbanCardModal/
     index.tsx             - Modal for creating/editing a card
-  KanbanSearchBar/
-    index.tsx             - Search bar to filter cards across columns
+  KanbanBoardSettings/
+    index.tsx             - Board settings modal for WIP limits per column (A4)
   KanbanEmptyState/
     index.tsx             - Empty state when board has no cards
 ```
@@ -848,6 +859,17 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | Dedup via `groupKey` | Done | `kanban_due:{cardId}:{approaching\|overdue}`, checked before creation |
 | Frontend `NotificationItem` rendering | Done | Clock icon, red (overdue) / amber (approaching) color, title + team |
 | i18n notification keys (6 languages) | Done | `kanbanDueApproachingTitle`, `kanbanDueOverdueTitle`, `kanbanDueSubtitle` |
+| **Category A: Core Board Enhancements** | | |
+| A1: Custom Columns - Backend (`addColumn`, `renameColumn`, `deleteColumn`) | Done | Mutations with board access control, column order management |
+| A1: Custom Columns - Frontend (inline rename, delete confirm, add column) | Done | Column header context menu, inline rename input, add column button at end of board |
+| A2: Column WIP Limits - Schema (`wipLimit` optional field on `kanbanColumnType`) | Done | `v.optional(v.number())` in column type |
+| A2: Column WIP Limits - Backend (`setColumnWipLimit` mutation) | Done | Set or clear WIP limit; pass null/0 to remove |
+| A2: Column WIP Limits - Frontend (visual indicators) | Done | Amber border + warning icon when exceeded; count/limit display in header |
+| A3: Column Collapse/Expand - Frontend (localStorage persistence) | Done | Collapsed columns show vertical name + count; stored per board in localStorage |
+| A4: Board Settings Modal - Frontend (`KanbanBoardSettings` component) | Done | Portal-based modal; configure WIP limits for all columns at once |
+| A5: Bulk Card Actions - Backend (`bulkMoveCards`, `bulkDeleteCards`) | Done | Atomic mutations; verify board access via first card |
+| A5: Bulk Card Actions - Frontend (selection mode, toolbar) | Done | Select button toggles selection mode; checkboxes on cards; bulk move/delete toolbar |
+| A1-A5: i18n keys (6 languages) | Done | `columnActions.*`, `settings.*`, `bulk.*` sections in all language files |
 
 ---
 
@@ -921,17 +943,41 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 
 **Migration:** Existing cards with `ownerId: Id<"members">` must be migrated to `roleId: Id<"roles">`. Each card's `ownerId` maps to `member -> member.roleIds -> find role in same team as the card's board`. If a member holds multiple roles in the team, the migration script should use a heuristic (e.g., pick the first role, or flag for manual review). If a member has no role in the team, the card should be flagged for manual assignment.
 
+### 12. Soft WIP limits (warning, not blocking)
+
+**Decision:** WIP limits are advisory -- exceeding the limit changes the column header to amber and shows a warning icon, but does not prevent cards from being added or moved into the column.
+
+**Rationale:** Kanban WIP limits are a signal to the team that a bottleneck is forming. Hard limits would frustrate users during drag-and-drop and create awkward UX when moving cards. The visual warning is sufficient to prompt a conversation about work distribution without blocking workflow.
+
+### 13. Column collapse state stored in localStorage (not server)
+
+**Decision:** Which columns are collapsed is a per-user visual preference stored in localStorage keyed by board ID, not persisted to the database.
+
+**Rationale:** Collapse state is a personal display preference, not shared team state. Storing it in the database would require a per-user-per-board preferences table, which is over-engineered for this use case. localStorage is simple, fast, and appropriately scoped. If the user switches browsers, columns start expanded -- an acceptable tradeoff.
+
+### 14. Bulk actions use selection mode toggle (not drag multi-select)
+
+**Decision:** Bulk card operations require entering a dedicated "selection mode" via a toggle button. In this mode, drag-and-drop is disabled and each card shows a checkbox. Exiting selection mode clears all selections.
+
+**Rationale:** Mixing drag-and-drop with multi-select (e.g., shift-click) creates confusing interaction patterns where the user's intent is ambiguous. A dedicated selection mode makes the interaction clear: you are either in "organize mode" (drag cards) or "batch mode" (select and act on cards). Disabling drag in selection mode prevents accidental card movement during selection.
+
+### 15. Column deletion cascades to cards
+
+**Decision:** Deleting a column permanently deletes all cards within it. There is no "move cards to another column" option during delete.
+
+**Rationale:** The delete confirmation dialog shows the number of cards that will be deleted, making the consequence explicit. Requiring card migration before deletion adds complexity and slows the operation. Cards in a column being deleted are likely irrelevant -- if they were important, the user would move them first. A future enhancement could offer a "move cards first" option if user feedback warrants it.
+
 ---
 
 ## Future Enhancements
 
 Listed roughly in priority order:
 
-1. **Custom columns** - Add, rename, reorder, delete columns (requires UI for column management and schema support for user-defined column names)
-2. **Dedicated full-screen route** - `/o/:orgaId/teams/:teamId/kanban` with maximized board view
+1. ~~**Custom columns**~~ - DONE (A1). Add, rename, delete columns via context menu and add-column button.
+2. **Dedicated full-screen route** - `/o/:orgaId/teams/:teamId/kanban` with maximized board view (D1)
 3. ~~**Member view integration**~~ - DONE (D4). See Feature Catalogue below.
 4. **Card labels/tags** - Color-coded labels for categorization
-5. **Column WIP limits** - Optional maximum card count per column, visual warning when exceeded
+5. ~~**Column WIP limits**~~ - DONE (A2). Optional wipLimit field on columns; amber visual warning when exceeded.
 6. ~~**Due date notifications**~~ - DONE (E1). Hourly cron checks cards; "approaching" (within 24h) and "overdue" notifications sent to role holder. Dedup via groupKey.
 7. **Card attachments** - File uploads using Convex storage (`convex/storage.ts`)
 8. **Decision trail integration** - Record card creation, moves, and edits as Decision entries
@@ -948,11 +994,11 @@ A comprehensive inventory of potential Kanban features, organized by category. E
 
 | ID | Feature | Description | Complexity | Value | Status |
 |----|---------|-------------|------------|-------|--------|
-| A1 | Custom Columns | Add, rename, reorder, and delete columns beyond the default four. Requires column management UI and schema support for user-defined names. | Medium | High | PROPOSED |
-| A2 | Column WIP Limits | Optional maximum card count per column. Visual warning (color change, icon) when the limit is reached or exceeded. Configurable per-column. | Low | Medium | PROPOSED |
-| A3 | Column Collapse/Expand | Allow users to collapse columns to save horizontal space, especially "Archived" which is rarely viewed. Persist collapsed state per user. | Low | Medium | PROPOSED |
-| A4 | Board-Level Settings | A settings panel for each board: default column config, WIP limits, archived card retention policy. Accessible to team leaders. | Medium | Low | PROPOSED |
-| A5 | Bulk Card Actions | Multi-select cards (via checkboxes or shift-click) and perform bulk operations: move to column, change owner, delete. | Medium | Medium | PROPOSED |
+| A1 | Custom Columns | Add, rename, reorder, and delete columns beyond the default four. Requires column management UI and schema support for user-defined names. | Medium | High | DONE |
+| A2 | Column WIP Limits | Optional maximum card count per column. Visual warning (color change, icon) when the limit is reached or exceeded. Configurable per-column. | Low | Medium | DONE |
+| A3 | Column Collapse/Expand | Allow users to collapse columns to save horizontal space, especially "Archived" which is rarely viewed. Persist collapsed state per user. | Low | Medium | DONE |
+| A4 | Board-Level Settings | A settings panel for each board: WIP limits configuration per column. Accessible via gear icon in board header. | Medium | Low | DONE |
+| A5 | Bulk Card Actions | Multi-select cards via checkboxes and perform bulk operations: move to column, delete. Selection mode toggle in board header. | Medium | Medium | DONE |
 
 ### Category B: Card Enhancements
 

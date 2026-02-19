@@ -14,6 +14,19 @@
     "done": "Completato",
     "archived": "Archiviato"
   },
+  "columnActions": {
+    "rename": "Rinomina",
+    "delete": "Elimina colonna",
+    "deleteConfirm": "Eliminare questa colonna e le sue {{count}} schede?",
+    "confirmDelete": "Elimina",
+    "collapse": "Comprimi",
+    "expand": "Espandi",
+    "menu": "Opzioni colonna",
+    "addColumn": "Aggiungi colonna",
+    "newColumnName": "Nome colonna...",
+    "wipStatus": "{{count}}/{{limit}} schede",
+    "wipExceeded": "Limite WIP superato"
+  },
   "card": {
     "title": "Titolo",
     "role": "Ruolo",
@@ -38,6 +51,20 @@
     "cancel": "Annulla",
     "close": "Chiudi",
     "moveToColumn": "Sposta in {{column}}"
+  },
+  "settings": {
+    "title": "Impostazioni bacheca",
+    "wipLimits": "Limiti WIP",
+    "wipDescription": "Imposta il numero massimo di schede consentite per colonna. Lascia vuoto per nessun limite.",
+    "noLimit": "Nessun limite"
+  },
+  "bulk": {
+    "select": "Seleziona",
+    "exit": "Fatto",
+    "selected": "{{count}} selezionata",
+    "selected_other": "{{count}} selezionate",
+    "moveTo": "Sposta in...",
+    "delete": "Elimina"
   },
   "memberView": {
     "title": "Schede Kanban",

@@ -432,6 +432,226 @@ export const reorderColumns = mutation({
   },
 });
 
+// ============================================================
+// Column Management (A1: Custom Columns)
+// ============================================================
+
+/**
+ * Add a new column to a board.
+ * Appends it at the end of the column order.
+ */
+export const addColumn = mutation({
+  args: {
+    boardId: v.id("kanbanBoards"),
+    name: v.string(),
+  },
+  returns: v.id("kanbanColumns"),
+  handler: async (ctx, args) => {
+    const { board } = await requireBoardAccess(ctx, args.boardId);
+
+    if (!args.name.trim()) {
+      throw new Error("Column name cannot be empty");
+    }
+
+    // Calculate next position
+    const existingColumns = await ctx.db
+      .query("kanbanColumns")
+      .withIndex("by_board_and_position", (q) => q.eq("boardId", args.boardId))
+      .collect();
+
+    const maxPosition =
+      existingColumns.length > 0
+        ? Math.max(...existingColumns.map((c) => c.position))
+        : -1;
+
+    const columnId = await ctx.db.insert("kanbanColumns", {
+      boardId: args.boardId,
+      orgaId: board.orgaId,
+      name: args.name.trim(),
+      position: maxPosition + 1,
+    });
+
+    // Update board column order
+    await ctx.db.patch(args.boardId, {
+      columnOrder: [...board.columnOrder, columnId],
+    });
+
+    return columnId;
+  },
+});
+
+/**
+ * Rename a column.
+ */
+export const renameColumn = mutation({
+  args: {
+    columnId: v.id("kanbanColumns"),
+    name: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const column = await ctx.db.get(args.columnId);
+    if (!column) throw new Error("Column not found");
+
+    await requireBoardAccess(ctx, column.boardId);
+
+    if (!args.name.trim()) {
+      throw new Error("Column name cannot be empty");
+    }
+
+    await ctx.db.patch(args.columnId, { name: args.name.trim() });
+    return null;
+  },
+});
+
+/**
+ * Delete a column and all its cards.
+ * Removes the column from the board's columnOrder array.
+ */
+export const deleteColumn = mutation({
+  args: {
+    columnId: v.id("kanbanColumns"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const column = await ctx.db.get(args.columnId);
+    if (!column) throw new Error("Column not found");
+
+    const { board } = await requireBoardAccess(ctx, column.boardId);
+
+    // Delete all cards in this column
+    const cards = await ctx.db
+      .query("kanbanCards")
+      .withIndex("by_column", (q) => q.eq("columnId", args.columnId))
+      .collect();
+
+    for (const card of cards) {
+      await ctx.db.delete(card._id);
+    }
+
+    // Remove column from board's columnOrder
+    const newOrder = board.columnOrder.filter((id) => id !== args.columnId);
+    await ctx.db.patch(board._id, { columnOrder: newOrder });
+
+    // Delete the column itself
+    await ctx.db.delete(args.columnId);
+
+    return null;
+  },
+});
+
+// ============================================================
+// Column WIP Limits (A2)
+// ============================================================
+
+/**
+ * Set or clear the WIP limit for a column.
+ * Pass null or 0 to clear the limit.
+ */
+export const setColumnWipLimit = mutation({
+  args: {
+    columnId: v.id("kanbanColumns"),
+    wipLimit: v.union(v.number(), v.null()),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const column = await ctx.db.get(args.columnId);
+    if (!column) throw new Error("Column not found");
+
+    await requireBoardAccess(ctx, column.boardId);
+
+    const limit = args.wipLimit && args.wipLimit > 0 ? args.wipLimit : undefined;
+    await ctx.db.patch(args.columnId, { wipLimit: limit });
+
+    return null;
+  },
+});
+
+// ============================================================
+// Bulk Card Actions (A5)
+// ============================================================
+
+/**
+ * Move multiple cards to a target column at once.
+ * Cards are appended to the end of the target column in order.
+ */
+export const bulkMoveCards = mutation({
+  args: {
+    cardIds: v.array(v.id("kanbanCards")),
+    targetColumnId: v.id("kanbanColumns"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    if (args.cardIds.length === 0) return null;
+
+    // Verify access via the first card's board
+    const firstCard = await ctx.db.get(args.cardIds[0]);
+    if (!firstCard) throw new Error("Card not found");
+
+    await requireBoardAccess(ctx, firstCard.boardId);
+
+    // Verify target column belongs to the same board
+    const targetColumn = await ctx.db.get(args.targetColumnId);
+    if (!targetColumn || targetColumn.boardId !== firstCard.boardId) {
+      throw new Error("Target column not found on this board");
+    }
+
+    // Get the current max position in the target column
+    const existingCards = await ctx.db
+      .query("kanbanCards")
+      .withIndex("by_column_and_position", (q) => q.eq("columnId", args.targetColumnId))
+      .collect();
+
+    let nextPosition =
+      existingCards.length > 0
+        ? Math.max(...existingCards.map((c) => c.position)) + 1024
+        : 1024;
+
+    for (const cardId of args.cardIds) {
+      const card = await ctx.db.get(cardId);
+      if (!card) continue;
+      if (card.boardId !== firstCard.boardId) continue;
+
+      await ctx.db.patch(cardId, {
+        columnId: args.targetColumnId,
+        position: nextPosition,
+      });
+      nextPosition += 1024;
+    }
+
+    return null;
+  },
+});
+
+/**
+ * Delete multiple cards at once.
+ */
+export const bulkDeleteCards = mutation({
+  args: {
+    cardIds: v.array(v.id("kanbanCards")),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    if (args.cardIds.length === 0) return null;
+
+    // Verify access via the first card's board
+    const firstCard = await ctx.db.get(args.cardIds[0]);
+    if (!firstCard) throw new Error("Card not found");
+
+    await requireBoardAccess(ctx, firstCard.boardId);
+
+    for (const cardId of args.cardIds) {
+      const card = await ctx.db.get(cardId);
+      if (!card) continue;
+      if (card.boardId !== firstCard.boardId) continue;
+
+      await ctx.db.delete(cardId);
+    }
+
+    return null;
+  },
+});
+
 /**
  * Ensure a Kanban board exists for a team, creating one with default columns if needed.
  * Called by the frontend when no board is found.

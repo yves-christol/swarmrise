@@ -23,6 +23,7 @@ export const kanbanColumnType = v.object({
   orgaId: v.id("orgas"),
   name: v.string(),
   position: v.number(),
+  wipLimit: v.optional(v.number()),
 });
 
 export const kanbanColumnValidator = v.object({

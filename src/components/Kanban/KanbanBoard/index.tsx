@@ -24,6 +24,7 @@ import { KanbanColumn } from "../KanbanColumn";
 import { KanbanEmptyState } from "../KanbanEmptyState";
 import { KanbanCardModal } from "../KanbanCardModal";
 import { KanbanCard } from "../KanbanCard";
+import { KanbanBoardSettings } from "../KanbanBoardSettings";
 
 type KanbanBoardProps = {
   teamId: Id<"teams">;
@@ -33,11 +34,16 @@ type KanbanBoardProps = {
 /** Position gap between cards. When rebalancing, cards get multiples of this. */
 const POSITION_GAP = 1024;
 
+/** localStorage key for collapsed columns per board */
+function collapseStorageKey(boardId: string): string {
+  return `kanban-collapsed:${boardId}`;
+}
+
 export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   const { t } = useTranslation("kanban");
   const { t: tCommon } = useTranslation("common");
 
-  // Check team access first — skip all other queries if the user is not a member
+  // Check team access first -- skip all other queries if the user is not a member
   const hasAccess = useQuery(api.kanban.functions.checkTeamAccess, { teamId });
 
   const boardData = useQuery(
@@ -54,6 +60,11 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   );
   const moveCard = useMutation(api.kanban.functions.moveCard);
   const ensureBoard = useMutation(api.kanban.functions.ensureBoard);
+  const addColumnMut = useMutation(api.kanban.functions.addColumn);
+  const renameColumnMut = useMutation(api.kanban.functions.renameColumn);
+  const deleteColumnMut = useMutation(api.kanban.functions.deleteColumn);
+  const bulkMoveCardsMut = useMutation(api.kanban.functions.bulkMoveCards);
+  const bulkDeleteCardsMut = useMutation(api.kanban.functions.bulkDeleteCards);
 
   // Auto-create board for teams that don't have one yet (only when we have access)
   const ensureBoardCalledRef = useRef(false);
@@ -87,11 +98,142 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
   const [editingCard, setEditingCard] = useState<KanbanCardType | undefined>();
   const [createColumnId, setCreateColumnId] = useState<Id<"kanbanColumns"> | undefined>();
 
+  // Settings modal state (A4)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   // DnD state
   const [activeCardId, setActiveCardId] = useState<Id<"kanbanCards"> | null>(null);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Collapsed columns state (A3) -- persisted in localStorage
+  const [collapsedColumns, setCollapsedColumns] = useState<Set<string>>(new Set());
+
+  // Load collapsed state from localStorage when board changes
+  useEffect(() => {
+    if (!boardData?.board._id) return;
+    try {
+      const stored = localStorage.getItem(collapseStorageKey(boardData.board._id));
+      if (stored) {
+        setCollapsedColumns(new Set(JSON.parse(stored) as string[]));
+      } else {
+        setCollapsedColumns(new Set());
+      }
+    } catch {
+      setCollapsedColumns(new Set());
+    }
+  }, [boardData?.board._id]);
+
+  const toggleColumnCollapse = useCallback(
+    (columnId: Id<"kanbanColumns">) => {
+      setCollapsedColumns((prev) => {
+        const next = new Set(prev);
+        if (next.has(columnId)) {
+          next.delete(columnId);
+        } else {
+          next.add(columnId);
+        }
+        // Persist to localStorage
+        if (boardData?.board._id) {
+          try {
+            localStorage.setItem(
+              collapseStorageKey(boardData.board._id),
+              JSON.stringify([...next]),
+            );
+          } catch {
+            // Ignore storage errors
+          }
+        }
+        return next;
+      });
+    },
+    [boardData?.board._id],
+  );
+
+  // Bulk selection state (A5)
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedCardIds, setSelectedCardIds] = useState<Set<string>>(new Set());
+
+  const toggleCardSelection = useCallback((cardId: Id<"kanbanCards">) => {
+    setSelectedCardIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(cardId)) {
+        next.delete(cardId);
+      } else {
+        next.add(cardId);
+      }
+      return next;
+    });
+  }, []);
+
+  const exitSelectionMode = useCallback(() => {
+    setSelectionMode(false);
+    setSelectedCardIds(new Set());
+  }, []);
+
+  const handleBulkMove = useCallback(
+    async (targetColumnId: Id<"kanbanColumns">) => {
+      if (selectedCardIds.size === 0) return;
+      try {
+        await bulkMoveCardsMut({
+          cardIds: [...selectedCardIds] as Id<"kanbanCards">[],
+          targetColumnId,
+        });
+      } finally {
+        exitSelectionMode();
+      }
+    },
+    [selectedCardIds, bulkMoveCardsMut, exitSelectionMode],
+  );
+
+  const handleBulkDelete = useCallback(async () => {
+    if (selectedCardIds.size === 0) return;
+    try {
+      await bulkDeleteCardsMut({
+        cardIds: [...selectedCardIds] as Id<"kanbanCards">[],
+      });
+    } finally {
+      exitSelectionMode();
+    }
+  }, [selectedCardIds, bulkDeleteCardsMut, exitSelectionMode]);
+
+  // Add column state (A1)
+  const [isAddingColumn, setIsAddingColumn] = useState(false);
+  const [newColumnName, setNewColumnName] = useState("");
+  const newColumnInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isAddingColumn) {
+      newColumnInputRef.current?.focus();
+    }
+  }, [isAddingColumn]);
+
+  const handleAddColumn = useCallback(async () => {
+    const name = newColumnName.trim();
+    if (!name || !boardData?.board._id) return;
+    try {
+      await addColumnMut({ boardId: boardData.board._id, name });
+      setNewColumnName("");
+      setIsAddingColumn(false);
+    } catch {
+      // Error handled by Convex
+    }
+  }, [newColumnName, boardData?.board._id, addColumnMut]);
+
+  const handleRenameColumn = useCallback(
+    (columnId: Id<"kanbanColumns">, name: string) => {
+      void renameColumnMut({ columnId, name });
+    },
+    [renameColumnMut],
+  );
+
+  const handleDeleteColumn = useCallback(
+    (columnId: Id<"kanbanColumns">) => {
+      void deleteColumnMut({ columnId });
+    },
+    [deleteColumnMut],
+  );
 
   // Build member lookup map
   const memberMap = useMemo(() => {
@@ -285,7 +427,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     );
   }
 
-  // User is not a member of this team — show nothing (the Kanban view is inaccessible)
+  // User is not a member of this team -- show nothing (the Kanban view is inaccessible)
   if (!hasAccess) {
     return (
       <div className="py-8 text-center text-text-secondary">
@@ -333,57 +475,135 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
 
   return (
     <div>
-      {/* Board header + search */}
+      {/* Board header + search + actions */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h2 className="text-lg font-semibold text-dark dark:text-light">
-          {t("board.title")}
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-dark dark:text-light">
+            {t("board.title")}
+          </h2>
 
-        {/* Search bar */}
-        {totalCards > 0 && (
-          <div className="relative">
-            <svg
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
+          {/* Settings button (A4) */}
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            className="p-1.5 text-text-tertiary hover:text-text-secondary transition-colors rounded-md hover:bg-surface-hover"
+            title={t("settings.title")}
+            aria-label={t("settings.title")}
+          >
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
               <path
                 fillRule="evenodd"
-                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                d="M7.84 1.804A1 1 0 018.82 1h2.36a1 1 0 01.98.804l.331 1.652a6.993 6.993 0 011.929 1.115l1.598-.54a1 1 0 011.186.447l1.18 2.044a1 1 0 01-.205 1.251l-1.267 1.113a7.047 7.047 0 010 2.228l1.267 1.113a1 1 0 01.206 1.25l-1.18 2.045a1 1 0 01-1.187.447l-1.598-.54a6.993 6.993 0 01-1.929 1.115l-.33 1.652a1 1 0 01-.98.804H8.82a1 1 0 01-.98-.804l-.331-1.652a6.993 6.993 0 01-1.929-1.115l-1.598.54a1 1 0 01-1.186-.447l-1.18-2.044a1 1 0 01.205-1.251l1.267-1.114a7.05 7.05 0 010-2.227L1.821 7.773a1 1 0 01-.206-1.25l1.18-2.045a1 1 0 011.187-.447l1.598.54A6.993 6.993 0 017.51 3.456l.33-1.652zM10 13a3 3 0 100-6 3 3 0 000 6z"
                 clipRule="evenodd"
               />
             </svg>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("board.search")}
-              className="
-                pl-8 pr-8 py-1.5 text-sm
-                w-full sm:w-56
-                rounded-lg border border-border-strong
-                bg-surface-primary
-                text-dark dark:text-light
-                placeholder:text-gray-400
-                focus:outline-none focus:ring-2 focus:ring-highlight
-                transition-colors
-              "
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                aria-label={t("actions.close")}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Bulk selection toggle (A5) */}
+          {totalCards > 0 && (
+            <button
+              onClick={selectionMode ? exitSelectionMode : () => setSelectionMode(true)}
+              className={`
+                px-3 py-1.5 text-xs font-medium rounded-md transition-colors
+                ${selectionMode
+                  ? "bg-highlight text-dark"
+                  : "text-text-secondary hover:text-dark dark:hover:text-light hover:bg-surface-hover border border-border-default"
+                }
+              `}
+              title={selectionMode ? t("bulk.exit") : t("bulk.select")}
+            >
+              {selectionMode ? t("bulk.exit") : t("bulk.select")}
+            </button>
+          )}
+
+          {/* Search bar */}
+          {totalCards > 0 && !selectionMode && (
+            <div className="relative">
+              <svg
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
               >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-                </svg>
-              </button>
-            )}
-          </div>
-        )}
+                <path
+                  fillRule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t("board.search")}
+                className="
+                  pl-8 pr-8 py-1.5 text-sm
+                  w-full sm:w-56
+                  rounded-lg border border-border-strong
+                  bg-surface-primary
+                  text-dark dark:text-light
+                  placeholder:text-gray-400
+                  focus:outline-none focus:ring-2 focus:ring-highlight
+                  transition-colors
+                "
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  aria-label={t("actions.close")}
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Bulk action toolbar (A5) */}
+      {selectionMode && selectedCardIds.size > 0 && (
+        <div className="flex items-center gap-3 mb-3 p-2.5 bg-surface-secondary/80 border border-border-default rounded-lg">
+          <span className="text-sm text-dark dark:text-light font-medium">
+            {t("bulk.selected", { count: selectedCardIds.size })}
+          </span>
+          <div className="flex items-center gap-1.5 ml-auto">
+            {/* Move to column dropdown */}
+            <select
+              onChange={(e) => {
+                if (e.target.value) {
+                  void handleBulkMove(e.target.value as Id<"kanbanColumns">);
+                  e.target.value = "";
+                }
+              }}
+              defaultValue=""
+              className="px-2.5 py-1 text-xs rounded-md border border-border-strong
+                bg-surface-primary text-dark dark:text-light
+                focus:outline-none focus:ring-2 focus:ring-highlight"
+            >
+              <option value="" disabled>
+                {t("bulk.moveTo")}
+              </option>
+              {boardData.columns.map((col) => (
+                <option key={col._id} value={col._id}>
+                  {col.name}
+                </option>
+              ))}
+            </select>
+
+            {/* Delete selected */}
+            <button
+              onClick={() => void handleBulkDelete()}
+              className="px-2.5 py-1 text-xs font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 border border-red-200 dark:border-red-800 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            >
+              {t("bulk.delete")}
+            </button>
+          </div>
+        </div>
+      )}
 
       {totalCards === 0 && !isSearching ? (
         <KanbanEmptyState />
@@ -419,10 +639,85 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                   memberMap={memberMap}
                   onCardClick={handleCardClick}
                   onAddCard={handleAddCard}
+                  onRenameColumn={handleRenameColumn}
+                  onDeleteColumn={handleDeleteColumn}
+                  isCollapsed={collapsedColumns.has(column._id)}
+                  onToggleCollapse={toggleColumnCollapse}
+                  selectionMode={selectionMode}
+                  selectedCardIds={selectedCardIds}
+                  onToggleCardSelection={toggleCardSelection}
                 />
               </div>
             );
           })}
+
+          {/* Add column button (A1) */}
+          {!selectionMode && (
+            <div className="flex-shrink-0">
+              {isAddingColumn ? (
+                <div className="w-72 bg-surface-secondary/50 border border-border-default rounded-xl p-3">
+                  <input
+                    ref={newColumnInputRef}
+                    type="text"
+                    value={newColumnName}
+                    onChange={(e) => setNewColumnName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") void handleAddColumn();
+                      if (e.key === "Escape") {
+                        setIsAddingColumn(false);
+                        setNewColumnName("");
+                      }
+                    }}
+                    placeholder={t("columnActions.newColumnName")}
+                    className="w-full px-3 py-2 text-sm rounded-md border border-border-strong
+                      bg-surface-primary text-dark dark:text-light
+                      placeholder:text-gray-400
+                      focus:outline-none focus:ring-2 focus:ring-highlight mb-2"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => void handleAddColumn()}
+                      disabled={!newColumnName.trim()}
+                      className="px-3 py-1.5 text-xs font-bold rounded-md bg-highlight hover:bg-highlight-hover text-dark transition-colors disabled:opacity-50"
+                    >
+                      {t("columnActions.addColumn")}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsAddingColumn(false);
+                        setNewColumnName("");
+                      }}
+                      className="px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary"
+                    >
+                      {t("actions.cancel")}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAddingColumn(true)}
+                  className="
+                    flex items-center gap-1.5
+                    w-48 px-4 py-3
+                    text-sm text-text-secondary
+                    hover:text-dark dark:hover:text-light
+                    bg-surface-secondary/30
+                    hover:bg-surface-secondary/60
+                    border border-dashed border-border-default
+                    hover:border-border-strong
+                    rounded-xl
+                    transition-colors duration-75
+                  "
+                  title={t("columnActions.addColumn")}
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M7 1v12M1 7h12" />
+                  </svg>
+                  {t("columnActions.addColumn")}
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <DragOverlay dropAnimation={null}>
@@ -448,6 +743,13 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
         memberMap={memberMap}
         columnId={createColumnId}
         card={editingCard}
+      />
+
+      {/* Board settings modal (A4) */}
+      <KanbanBoardSettings
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        columns={boardData.columns}
       />
     </div>
   );

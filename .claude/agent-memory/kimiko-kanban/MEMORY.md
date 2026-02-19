@@ -111,3 +111,12 @@
 - D4 (Member Kanban View): DONE
 - E1 (Due Date Notifications): DONE -- hourly cron, approaching (24h) + overdue, dedup via groupKey
 - Updated role-based ownership migration status from Pending to Done
+
+## Category A: Core Board Enhancements (ALL DONE)
+- A1 Custom Columns: `addColumn`, `renameColumn`, `deleteColumn` mutations; inline rename in column header via context menu; add column button at board end
+- A2 WIP Limits: `wipLimit: v.optional(v.number())` on `kanbanColumnType`; `setColumnWipLimit` mutation; amber border + warning icon when exceeded; count/limit in header
+- A3 Collapse/Expand: localStorage per board (`kanban-collapsed:{boardId}`); collapsed = vertical name + count; toggle via chevron in column header
+- A4 Board Settings: `KanbanBoardSettings` modal (portal-based); configure WIP limits for all columns; gear icon in board header
+- A5 Bulk Actions: `bulkMoveCards`, `bulkDeleteCards` mutations; selection mode toggle disables DnD; checkbox on each card; bulk toolbar with move-to dropdown + delete
+- i18n sections added: `columnActions.*`, `settings.*`, `bulk.*` in all 6 languages
+- Key pattern: selection mode and DnD are mutually exclusive -- `useSortable({ disabled: selectionMode })`

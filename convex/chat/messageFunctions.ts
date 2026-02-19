@@ -1,6 +1,7 @@
 import { query, mutation } from "../_generated/server";
 import { internal } from "../_generated/api";
 import { v } from "convex/values";
+import { Id } from "../_generated/dataModel";
 import { embeddedToolType } from ".";
 import { requireChannelAccess, requireNotArchived } from "./access";
 import {
@@ -295,6 +296,74 @@ export const sendThreadReply = mutation({
       isEdited: false,
       mentions,
     });
+
+    // --- Thread reply notifications (coalesced) ---
+    // Recipients: parent author + all reply authors, minus the sender
+    const recipientMemberIds = new Set<Id<"members">>();
+    recipientMemberIds.add(parentMsg.authorId);
+
+    const existingReplies = await ctx.db
+      .query("messages")
+      .withIndex("by_thread_parent", (q) => q.eq("threadParentId", args.threadParentId))
+      .collect();
+    for (const reply of existingReplies) {
+      recipientMemberIds.add(reply.authorId);
+    }
+    recipientMemberIds.delete(member._id);
+
+    if (recipientMemberIds.size > 0) {
+      const channelName = await getChannelDisplayName(ctx, channel, member._id);
+      const senderName = `${member.firstname} ${member.surname}`;
+      const preview = trimmed.length > 80 ? trimmed.slice(0, 80) + "..." : trimmed;
+      const FIVE_MINUTES = 5 * 60 * 1000;
+      const now = Date.now();
+
+      const notifications: Array<ReturnType<typeof buildMessageNotification>> = [];
+      for (const recipientMemberId of recipientMemberIds) {
+        const recipientMember = await ctx.db.get(recipientMemberId);
+        if (!recipientMember) continue;
+
+        // Check if user read the channel recently (within 5 min)
+        const readPos = await ctx.db
+          .query("channelReadPositions")
+          .withIndex("by_channel_and_member", (q) =>
+            q.eq("channelId", args.channelId).eq("memberId", recipientMember._id)
+          )
+          .unique();
+        if (readPos && now - readPos.lastReadTimestamp < FIVE_MINUTES) continue;
+
+        // Check if an unread notification already exists for this thread+user
+        const groupKey = `chat-thread-${args.threadParentId}-${recipientMember.personId}`;
+        const existing = await ctx.db
+          .query("notifications")
+          .withIndex("by_group_key", (q) => q.eq("groupKey", groupKey))
+          .first();
+        if (existing && !existing.isRead) continue;
+
+        notifications.push(
+          buildMessageNotification({
+            userId: recipientMember.personId,
+            orgaId: channel.orgaId,
+            memberId: recipientMember._id,
+            messageId,
+            channelId: args.channelId,
+            channelName,
+            teamId: channel.teamId,
+            teamName: channel.teamId
+              ? (await ctx.db.get(channel.teamId))?.name
+              : undefined,
+            senderName,
+            preview,
+            groupKey,
+          })
+        );
+      }
+      if (notifications.length > 0) {
+        await ctx.scheduler.runAfter(0, internal.notifications.functions.createBatch, {
+          notifications,
+        });
+      }
+    }
 
     return messageId;
   },

@@ -897,6 +897,7 @@ Card creation, moves, and edits could be recorded as Decisions for governance tr
 | Frontend: `MemberKanbanView` component | Done | `src/components/MemberKanbanView/index.tsx` |
 | i18n: `memberView` keys in all 6 languages | Done | title, empty, totalCards, viewTeamBoard |
 | Integration into FocusContainer PrismFlip | Done | Third "kanban" face on member prism (wired by Giuseppe) |
+| Card click opens team board with card modal | Done | Navigate with `openCardId` in Router state; `KanbanBoard` auto-opens modal on mount |
 | **Due Date Notifications (E1)** | | |
 | Notification category `kanban_due` | Done | Added to `notifications/index.ts` discriminated union |
 | Kanban due payload type | Done | `cardId`, `cardTitle`, `teamId`, `teamName`, `dueDate`, `dueType` |

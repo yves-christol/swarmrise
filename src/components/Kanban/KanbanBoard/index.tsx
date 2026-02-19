@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router";
 import {
   DndContext,
   DragOverlay,
@@ -53,6 +54,15 @@ function isColumnSortableId(id: string): boolean {
 function fromColumnSortableId(sortableId: string): Id<"kanbanColumns"> {
   return sortableId.slice(COLUMN_SORTABLE_PREFIX.length) as Id<"kanbanColumns">;
 }
+
+/**
+ * Navigation state passed via React Router when navigating to the team kanban
+ * board from external views (e.g. MemberKanbanView). When `openCardId` is set,
+ * the board will auto-open the card's detail modal once data has loaded.
+ */
+export type KanbanNavigationState = {
+  openCardId?: Id<"kanbanCards">;
+};
 
 type KanbanBoardProps = {
   teamId: Id<"teams">;
@@ -121,6 +131,12 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     activationConstraint: { delay: 250, tolerance: 5 },
   });
   const sensors = useSensors(pointerSensor, touchSensor);
+
+  // Navigation state: auto-open a card modal when navigating from MemberKanbanView
+  const location = useLocation();
+  const pendingOpenCardIdRef = useRef<Id<"kanbanCards"> | null>(
+    (location.state as KanbanNavigationState | null)?.openCardId ?? null,
+  );
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -447,6 +463,24 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     }
     return map;
   }, [boardData]);
+
+  // Auto-open card modal when navigated from MemberKanbanView with openCardId state
+  useEffect(() => {
+    const cardId = pendingOpenCardIdRef.current;
+    if (!cardId || cardById.size === 0) return;
+
+    const card = cardById.get(cardId);
+    if (card) {
+      // Consume the pending card ID so we don't re-open on subsequent renders
+      pendingOpenCardIdRef.current = null;
+      // Clear the navigation state to prevent re-open on back/forward navigation
+      window.history.replaceState({}, "");
+      // Open the modal
+      setEditingCard(card);
+      setCreateColumnId(undefined);
+      setIsModalOpen(true);
+    }
+  }, [cardById]);
 
   // Total card count to decide empty state
   const totalCards = boardData?.cards.length ?? 0;

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import type { MemberKanbanCard, MemberKanbanTeamGroup } from "../../../convex/kanban";
+import type { KanbanNavigationState } from "../Kanban/KanbanBoard";
 import { getRoleIconPath } from "../../utils/roleIconDefaults";
 import { useFocus, useSelectedOrga } from "../../tools/orgaStore";
 import { routes } from "../../routes";
@@ -95,9 +96,10 @@ export function MemberKanbanView({ memberId }: MemberKanbanViewProps) {
             key={group.teamId}
             group={group}
             onNavigateToTeam={() => focusOnTeam(group.teamId)}
-            onNavigateToKanban={() => {
+            onCardClick={(cardId) => {
               if (selectedOrgaId) {
-                void navigate(routes.teamKanban(selectedOrgaId, group.teamId));
+                const state: KanbanNavigationState = { openCardId: cardId };
+                void navigate(routes.teamKanban(selectedOrgaId, group.teamId), { state });
               }
             }}
           />
@@ -114,11 +116,11 @@ export function MemberKanbanView({ memberId }: MemberKanbanViewProps) {
 function TeamCardGroup({
   group,
   onNavigateToTeam,
-  onNavigateToKanban,
+  onCardClick,
 }: {
   group: MemberKanbanTeamGroup;
   onNavigateToTeam: () => void;
-  onNavigateToKanban: () => void;
+  onCardClick: (cardId: Id<"kanbanCards">) => void;
 }) {
   const { t } = useTranslation("kanban");
 
@@ -196,7 +198,7 @@ function TeamCardGroup({
                 <MemberKanbanCardItem
                   key={card._id}
                   card={card}
-                  onClick={onNavigateToKanban}
+                  onClick={() => onCardClick(card._id)}
                 />
               ))}
             </div>

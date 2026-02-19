@@ -106,6 +106,9 @@
 - Member resolution chain: card.roleId -> role.memberId -> member.personId (= userId for notifications)
 - Cron references internal functions as: `internal.kanban.functions.checkDueDateNotifications`
 
+## Cross-View Navigation
+- See `navigation-patterns.md` for details on Router state-based card modal opening
+
 ## KANBAN.md Feature Catalogue
 - Comprehensive feature catalogue with 31 features across 7 categories (A-G)
 - Category A (A1-A6): ALL DONE

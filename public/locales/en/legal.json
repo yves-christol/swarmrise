@@ -153,7 +153,7 @@
     "effectiveDateLabel": "Effective Date",
     "lastUpdatedLabel": "Last Updated",
     "intro": {
-      "welcome": "Welcome to swarmrise. These Terms of Service (\"Terms\") govern your access to and use of the swarmrise platform, including our website, applications, and services (collectively, the \"Service\"). By accessing or using the Service, you agree to be bound by these Terms.",
+      "welcome": "Welcome to swarmrise. The swarmrise hosted service is published and operated by Yorga, a French SASU (Societe par Actions Simplifiee Unipersonnelle, SIREN 889 512 406). swarmrise is also available as an open source project under the Apache License 2.0. These Terms of Service (\"Terms\") govern your access to and use of the hosted swarmrise platform, including our website, applications, and services (collectively, the \"Service\"). By accessing or using the Service, you agree to be bound by these Terms.",
       "readCarefully": "Please read these Terms carefully before using the Service. If you do not agree to these Terms, you may not access or use the Service."
     },
     "sections": {
@@ -229,8 +229,8 @@
       },
       "intellectualProperty": {
         "title": "intellectual property",
-        "license": "The Service, including its source code, design, features, and documentation, is licensed under the Apache License 2.0. This license allows you to use, modify, and distribute the software under certain conditions.",
-        "brandElements": "The swarmrise name, logo, and brand elements are proprietary and may not be used without our express written permission, except as permitted by the Apache License 2.0 for attribution purposes.",
+        "license": "The swarmrise source code is available as open source under the Apache License 2.0. This license allows you to use, modify, and distribute the software under certain conditions. The hosted service operated by Yorga is subject to these Terms in addition to the open source license.",
+        "brandElements": "The swarmrise name, logo, and brand elements are trademarks of Yorga and may not be used without express written permission, except as permitted by the Apache License 2.0 for attribution purposes.",
         "thirdParty": "Third-party components included in the Service are subject to their respective licenses, which are documented in our legal documentation."
       },
       "dataProtection": {
@@ -269,7 +269,7 @@
       },
       "indemnification": {
         "title": "indemnification",
-        "intro": "You agree to indemnify, defend, and hold harmless swarmrise and its affiliates, officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable legal fees) arising out of or in any way connected with:",
+        "intro": "You agree to indemnify, defend, and hold harmless Yorga (the publisher of swarmrise) and its affiliates, officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable legal fees) arising out of or in any way connected with:",
         "items": {
           "accessUse": "Your access to or use of the Service",
           "violationTerms": "Your violation of these Terms",
@@ -289,12 +289,12 @@
       },
       "disputeResolution": {
         "title": "dispute resolution",
-        "informal": "We encourage you to contact us first to resolve any disputes informally. If a dispute cannot be resolved informally, you agree that any legal action or proceeding shall be brought exclusively in the courts of competent jurisdiction.",
+        "informal": "We encourage you to contact us first to resolve any disputes informally. If a dispute cannot be resolved informally, you agree that any legal action or proceeding shall be brought exclusively in the competent courts of France.",
         "euNote": "For users in the European Union, this provision does not affect your rights under consumer protection laws or your right to bring claims before the courts of your country of residence."
       },
       "governingLaw": {
         "title": "governing law",
-        "law": "These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which the Service operator is established, without regard to conflict of law principles.",
+        "law": "These Terms shall be governed by and construed in accordance with the laws of France, where Yorga (the Service operator) is established. Yorga is a French SASU registered under SIREN 889 512 406.",
         "eeaNote": "For users in the European Economic Area, nothing in these Terms affects your rights as a consumer under applicable EU consumer protection laws."
       },
       "generalProvisions": {
@@ -311,6 +311,8 @@
       "contactInformation": {
         "title": "contact information",
         "intro": "If you have any questions about these Terms, please contact us:",
+        "publisher": "Publisher:",
+        "publisherText": "Yorga (SASU, SIREN 889 512 406)",
         "github": "GitHub:"
       }
     },
@@ -319,7 +321,7 @@
     "privacyDescription": "How we handle your personal data",
     "principlesLink": "Our Principles",
     "principlesDescription": "Learn about the values that guide swarmrise",
-    "footer": "swarmrise is licensed under Apache License 2.0"
+    "footer": "Published by Yorga (SASU, SIREN 889 512 406) -- Open source under Apache License 2.0"
   },
   "privacy": {
     "title": "privacy policy",
@@ -334,8 +336,8 @@
     "sections": {
       "dataController": {
         "title": "data controller",
-        "p1": "For the purposes of GDPR and other applicable data protection laws, swarmrise acts as the data controller for personal data collected through the Service. This means we determine the purposes and means of processing your personal data.",
-        "p2": "If you have questions about our data practices or wish to exercise your rights, please contact us through the channels listed in the Contact Information section below."
+        "p1": "The hosted swarmrise service is published and operated by Yorga, a French SASU (Societe par Actions Simplifiee Unipersonnelle) registered under SIREN 889 512 406. For the purposes of GDPR and other applicable data protection laws, Yorga acts as the data controller for personal data collected through the Service. This means Yorga determines the purposes and means of processing your personal data.",
+        "p2": "If you have questions about our data practices or wish to exercise your rights, please contact us through the channels listed in the Contact Information section below. You may also lodge a complaint with the CNIL (Commission nationale de l'informatique et des libertes), which is the French data protection supervisory authority."
       },
       "informationWeCollect": {
         "title": "information we collect",
@@ -501,7 +503,7 @@
         },
         "rightToComplaint": {
           "title": "6.8 Right to Lodge a Complaint",
-          "text": "You have the right to lodge a complaint with a supervisory authority if you believe our processing of your personal data violates applicable data protection laws."
+          "text": "You have the right to lodge a complaint with a supervisory authority if you believe our processing of your personal data violates applicable data protection laws. As Yorga is established in France, you may contact the CNIL (Commission nationale de l'informatique et des libertes) at cnil.fr."
         },
         "exerciseRights": "To exercise any of these rights, please contact us using the information in the Contact section below. We will respond to your request within 30 days."
       },
@@ -583,7 +585,11 @@
       "contactInformation": {
         "title": "contact information",
         "intro": "If you have questions about this Privacy Policy, wish to exercise your data protection rights, or have concerns about our data practices, please contact us:",
+        "publisher": "Publisher:",
+        "publisherText": "Yorga (SASU, SIREN 889 512 406)",
         "github": "GitHub:",
+        "supervisoryAuthority": "Supervisory authority:",
+        "supervisoryAuthorityText": "CNIL (Commission nationale de l'informatique et des libertes) -- cnil.fr",
         "responseTime": "We will respond to all legitimate requests within 30 days. In some cases, we may need to verify your identity before processing your request."
       }
     },
@@ -592,6 +598,6 @@
     "termsDescription": "Our terms and conditions for using swarmrise",
     "principlesLink": "Our Principles",
     "principlesDescription": "Learn about the values that guide swarmrise",
-    "footer": "swarmrise is licensed under Apache License 2.0"
+    "footer": "Published by Yorga (SASU, SIREN 889 512 406) -- Open source under Apache License 2.0"
   }
 }

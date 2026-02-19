@@ -1,30 +1,87 @@
 # LEGAL.md - Swarmrise Legal Compliance Documentation
 
-**Document Version:** 1.0.0
-**Last Updated:** 2026-02-01
+**Document Version:** 2.0.0
+**Last Updated:** 2026-02-19
 **Legal Advisor:** Helen (Claude Code Agent)
-**Next Review Date:** 2026-08-01
+**Next Review Date:** 2026-08-19
 
 ---
 
 ## Table of Contents
 
-1. [Project License](#1-project-license)
-2. [Third-Party License Inventory](#2-third-party-license-inventory)
-3. [Data Protection & GDPR Compliance](#3-data-protection--gdpr-compliance)
-4. [Cookie & Local Storage Policy](#4-cookie--local-storage-policy)
-5. [Third-Party Services](#5-third-party-services)
-6. [Terms & Conditions Recommendations](#6-terms--conditions-recommendations)
-7. [Compliance Checklist](#7-compliance-checklist)
-8. [Action Items](#8-action-items)
+1. [Publisher Identity](#1-publisher-identity)
+2. [Project Nature and Distribution Model](#2-project-nature-and-distribution-model)
+3. [Project License](#3-project-license)
+4. [Third-Party License Inventory](#4-third-party-license-inventory)
+5. [French Legal Requirements (Mentions Legales)](#5-french-legal-requirements-mentions-legales)
+6. [Data Protection & GDPR Compliance](#6-data-protection--gdpr-compliance)
+7. [Cookie & Local Storage Policy](#7-cookie--local-storage-policy)
+8. [Third-Party Services](#8-third-party-services)
+9. [Terms & Conditions Status](#9-terms--conditions-status)
+10. [Compliance Checklist](#10-compliance-checklist)
+11. [Action Items](#11-action-items)
 
 ---
 
-## 1. Project License
+## 1. Publisher Identity
+
+| Field | Value |
+|-------|-------|
+| **Company Name** | Yorga |
+| **Legal Form** | SASU (Societe par Actions Simplifiee Unipersonnelle) |
+| **SIREN Number** | 889 512 406 |
+| **Country of Incorporation** | France |
+| **Applicable Registry** | Registre du Commerce et des Societes (RCS) |
+| **Applicable Law** | French law (Code de commerce, LCEN, RGPD/GDPR) |
+| **Supervisory Authority (Data Protection)** | CNIL (Commission nationale de l'informatique et des libertes) |
+
+Yorga is the sole publisher and operator of the Swarmrise platform and the holder of the intellectual property rights over the Swarmrise codebase (excluding third-party dependencies licensed under their own terms).
+
+---
+
+## 2. Project Nature and Distribution Model
+
+Swarmrise has a **dual nature**:
+
+### 2.1 Open Source Project
+
+- **Repository:** [github.com/yves-christol/swarmrise](https://github.com/yves-christol/swarmrise)
+- **License:** Apache License 2.0 (see [Section 3](#3-project-license))
+- **Copyright Holder:** Yorga
+- The source code is publicly available on GitHub under the Apache 2.0 license
+- Anyone may use, modify, and distribute the source code under the terms of the Apache 2.0 license
+- Community contributions are welcome and governed by the Apache 2.0 license contribution terms
+- Self-hosting is permitted under the license terms
+
+### 2.2 Hosted Service (SaaS)
+
+- **Publisher:** Yorga (French SASU, SIREN 889 512 406)
+- **Service Type:** Software as a Service (SaaS)
+- Yorga operates a hosted instance of Swarmrise as a paying service
+- The hosted service is subject to the [Terms of Service](/terms) and [Privacy Policy](/privacy)
+- Yorga is the data controller for all personal data processed through the hosted service
+- The hosted service may include features, configurations, or integrations not present in the open source release
+- Service availability, support, and data processing guarantees apply only to the hosted service operated by Yorga
+
+### 2.3 Distinction Between Open Source and Hosted Service
+
+| Aspect | Open Source | Hosted Service |
+|--------|------------|----------------|
+| **License** | Apache 2.0 | Terms of Service by Yorga |
+| **Data Controller** | Self-hoster's responsibility | Yorga |
+| **Support** | Community (GitHub Issues) | Yorga (per service agreement) |
+| **Cost** | Free (self-hosted) | Paid subscription |
+| **Availability** | Self-managed | Managed by Yorga |
+| **Compliance** | Self-hoster's responsibility | Yorga ensures GDPR compliance |
+| **Updates** | Manual (pull from repository) | Automatic |
+
+---
+
+## 3. Project License
 
 **License Type:** Apache License 2.0
 **License File:** `/LICENSE.txt`
-**Copyright Holder:** Convex, Inc. (2024)
+**Copyright Holder:** Yorga
 
 ### Notes
 
@@ -34,11 +91,11 @@ The project is licensed under the Apache License 2.0, which is a permissive open
 - Provides an express grant of patent rights
 - Does not require derivative works to use the same license (non-copyleft)
 
-**Discrepancy Noted:** The README.md states "Private repository - All rights reserved" which contradicts the Apache 2.0 license file. This should be reconciled to avoid confusion about the project's licensing status.
+The "swarmrise" name, logo, and brand elements are trademarks of Yorga and are not covered by the Apache 2.0 license. Use of these marks requires express written permission from Yorga, except as permitted for attribution purposes.
 
 ---
 
-## 2. Third-Party License Inventory
+## 4. Third-Party License Inventory
 
 ### Production Dependencies
 
@@ -83,9 +140,61 @@ All dependencies use permissive licenses (MIT, Apache-2.0) that are compatible w
 
 ---
 
-## 3. Data Protection & GDPR Compliance
+## 5. French Legal Requirements (Mentions Legales)
 
-### 3.1 Personal Data Inventory
+As a French SASU operating a SaaS platform, Yorga must comply with several French-specific legal obligations:
+
+### 5.1 LCEN Obligations (Loi pour la Confiance dans l'Economie Numerique)
+
+Under Article 6 of Law No. 2004-575 (LCEN), the following information must be made available to users of the hosted service:
+
+| Required Information | Value |
+|---------------------|-------|
+| **Publisher (Editeur)** | Yorga |
+| **Legal Form** | SASU |
+| **SIREN** | 889 512 406 |
+| **Registered Office** | (To be completed with registered address) |
+| **President** | (To be completed with President's name) |
+| **Contact Email** | (To be completed) |
+| **Hosting Provider** | Convex, Inc. (backend); Vercel/Cloudflare (frontend -- to be confirmed) |
+
+**Status:** NEEDS COMPLETION -- The registered address, President's name, and contact email must be added. These are mandatory under LCEN.
+
+### 5.2 CGV/CGU (Conditions Generales de Vente / d'Utilisation)
+
+- **Terms of Service (CGU):** Implemented at `/terms` route -- Version 1.0.0 (2026-02-01)
+- **Terms of Sale (CGV):** NEEDED for the paid hosted service -- Must include pricing, payment terms, right of withdrawal (14-day cooling-off period for consumers per Article L221-18 Code de la consommation), and service description
+
+### 5.3 CNIL Compliance
+
+As a French entity, Yorga must:
+- Register processing activities with CNIL if applicable (or maintain an internal record under GDPR Art. 30)
+- Appoint a DPO if processing meets the thresholds in GDPR Art. 37
+- Report data breaches to CNIL within 72 hours (GDPR Art. 33)
+- The supervisory authority for data protection complaints is the **CNIL** (3 Place de Fontenoy, TSA 80715, 75334 Paris Cedex 07, France)
+
+### 5.4 French Tax and Commercial Obligations
+
+For the paid SaaS offering:
+- VAT obligations (TVA) apply; VAT number should be displayed
+- Electronic invoicing requirements under French law
+- Compliance with Article L441-3 of the Code de commerce for B2B invoicing
+
+---
+
+## 6. Data Protection & GDPR Compliance
+
+### 6.1 Data Controller
+
+**Data Controller for the Hosted Service:**
+- **Entity:** Yorga (SASU)
+- **SIREN:** 889 512 406
+- **Country:** France
+- **Supervisory Authority:** CNIL
+
+For self-hosted instances, the entity operating the instance is the data controller.
+
+### 6.2 Personal Data Inventory
 
 Based on code analysis, the following personal data is collected and processed:
 
@@ -116,7 +225,7 @@ Duplicates user data within organization context plus:
 - `authorEmail` - Email of person making changes
 - All change history including before/after states
 
-### 3.2 Data Processing Activities
+### 6.3 Data Processing Activities
 
 | Activity | Purpose | Legal Basis | Retention |
 |----------|---------|-------------|-----------|
@@ -126,11 +235,11 @@ Duplicates user data within organization context plus:
 | Decision audit trail | Accountability, compliance | Legitimate interest (Art. 6(1)(f)) | To be defined |
 | Invitation processing | Service functionality | Consent (Art. 6(1)(a)) | Until accepted/rejected |
 
-### 3.3 GDPR Compliance Status
+### 6.4 GDPR Compliance Status
 
 | Requirement | Status | Notes |
 |-------------|--------|-------|
-| **Lawful basis documented** | NEEDS ATTENTION | Requires Privacy Policy |
+| **Lawful basis documented** | COMPLIANT | Privacy Policy implemented (v1.0.0) |
 | **Purpose limitation** | COMPLIANT | Data used only for stated purposes |
 | **Data minimization** | NEEDS REVIEW | Contact info collection is optional, good practice |
 | **Accuracy** | COMPLIANT | Users can update their profiles |
@@ -143,25 +252,30 @@ Duplicates user data within organization context plus:
 | **Consent management** | NEEDS ATTENTION | No granular consent for optional data |
 | **DPO appointment** | TO ASSESS | Depends on processing scale |
 | **Privacy by design** | PARTIAL | Multi-tenant isolation is good; needs privacy features |
+| **CNIL breach notification** | TO IMPLEMENT | 72-hour breach notification process needed |
 
-### 3.4 Data Flow Analysis
+### 6.5 Data Flow Analysis
 
 ```
 User (Browser) --> Clerk (Authentication) --> Convex (Database)
                          |                         |
                    Identity data            Application data
                    (US servers)             (US servers)
+
+Data Controller: Yorga (France, SASU, SIREN 889 512 406)
+Supervisory Authority: CNIL (France)
 ```
 
 **Cross-Border Transfer Considerations:**
 - Clerk: US-based service (requires Standard Contractual Clauses or equivalent)
 - Convex: US-based service (requires Standard Contractual Clauses or equivalent)
+- As a French data controller transferring data to the US, Yorga must ensure compliance with CJEU Schrems II ruling and implement appropriate supplementary measures
 
 ---
 
-## 4. Cookie & Local Storage Policy
+## 7. Cookie & Local Storage Policy
 
-### 4.1 Current Storage Usage
+### 7.1 Current Storage Usage
 
 The application uses browser `localStorage` for the following purposes:
 
@@ -170,7 +284,7 @@ The application uses browser `localStorage` for the following purposes:
 | `swarmrise_locale` | Language preference | Strictly Necessary | Persistent | No |
 | `swarmrise_selected_orga` | Selected organization ID | Strictly Necessary | Persistent | No |
 
-### 4.2 Third-Party Cookies/Storage
+### 7.2 Third-Party Cookies/Storage
 
 | Service | Cookie/Storage | Purpose | Category | Consent Required |
 |---------|----------------|---------|----------|------------------|
@@ -178,7 +292,7 @@ The application uses browser `localStorage` for the following purposes:
 | Clerk | `__clerk_*` cookies | Auth state | Strictly Necessary | No |
 | Google Fonts | None (preconnect only) | Font loading | N/A | No |
 
-### 4.3 Cookie Banner Requirements
+### 7.3 Cookie Banner Requirements
 
 **Current Status:** NOT IMPLEMENTED
 
@@ -191,9 +305,9 @@ The application uses browser `localStorage` for the following purposes:
 
 ---
 
-## 5. Third-Party Services
+## 8. Third-Party Services
 
-### 5.1 Clerk (Authentication)
+### 8.1 Clerk (Authentication)
 
 **Service:** Clerk.com
 **Purpose:** User authentication and identity management
@@ -207,7 +321,7 @@ The application uses browser `localStorage` for the following purposes:
 3. Implement appropriate transfer mechanism (SCCs)
 4. Document in Privacy Policy
 
-### 5.2 Convex (Backend Database)
+### 8.2 Convex (Backend Database)
 
 **Service:** Convex.dev
 **Purpose:** Real-time database and serverless functions
@@ -221,7 +335,7 @@ The application uses browser `localStorage` for the following purposes:
 3. Implement appropriate transfer mechanism (SCCs)
 4. Document in Privacy Policy
 
-### 5.3 Google Fonts
+### 8.3 Google Fonts
 
 **Service:** Google Fonts CDN
 **Purpose:** Font loading (Montserrat Alternates)
@@ -234,52 +348,32 @@ The application uses browser `localStorage` for the following purposes:
 
 ---
 
-## 6. Terms & Conditions Recommendations
+## 9. Terms & Conditions Status
 
-### 6.1 Required Legal Documents
+### 9.1 Required Legal Documents
 
-The application should implement the following legal documents:
+#### Privacy Policy (IMPLEMENTED)
+- Route: `/privacy`
+- Version: 1.0.0 (2026-02-01) -- **needs update to v2.0.0 with Yorga identity**
+- Must be updated to name Yorga as data controller with full SASU details
 
-#### Privacy Policy (CRITICAL)
-Must include:
-- Identity and contact details of data controller
-- Types of personal data collected
-- Purposes and legal bases for processing
-- Data retention periods
-- Third-party recipients (Clerk, Convex)
-- International data transfers
-- User rights under GDPR
-- Complaint procedure (supervisory authority)
-- Cookie/storage policy
+#### Terms of Service (IMPLEMENTED)
+- Route: `/terms`
+- Version: 1.0.0 (2026-02-01) -- **needs update to v2.0.0 with Yorga identity**
+- Must be updated to reference French governing law and Yorga as publisher
 
-#### Terms of Service (CRITICAL)
-Must include:
-- Service description
-- User obligations and acceptable use
-- Account registration requirements
-- Intellectual property rights
-- Limitation of liability
-- Dispute resolution
-- Termination conditions
-- Governing law and jurisdiction
+#### Terms of Sale / CGV (NEEDED for paid service)
+- Not yet implemented
+- Required for the hosted paid service under French consumer law
+- Must include pricing, 14-day withdrawal right, payment terms
 
 #### Cookie Notice (RECOMMENDED)
-- List of cookies/storage used
-- Purposes of each
-- How to manage preferences
+- Covered in Privacy Policy Section 7
 
-### 6.2 Implementation Status
+### 9.2 Implementation Recommendations
 
-| Document | Route | Status | Version |
-|----------|-------|--------|---------|
-| Terms of Service | `/terms` | IMPLEMENTED | 1.0.0 (2026-02-01) |
-| Privacy Policy | `/privacy` | IMPLEMENTED | 1.0.0 (2026-02-01) |
-| Cookie Notice | - | PENDING (covered in Privacy Policy Section 7) | - |
-
-### 6.3 Implementation Recommendations
-
-1. ~~**Create Legal Pages:** Add `/privacy` and `/terms` routes~~ Completed
-2. ~~**Privacy Policy:** Create `/privacy` route with comprehensive privacy policy~~ Completed (2026-02-01)
+1. **Update existing legal pages** to reference Yorga as publisher and data controller (v2.0.0)
+2. **Create CGV page** for the paid hosted service when commercial launch occurs
 3. **Consent Capture:** Record user acceptance of terms at registration
 4. **Version Control:** Track legal document versions (implemented in both Terms and Privacy pages)
 5. **User Notification:** Notify users when terms change
@@ -287,26 +381,31 @@ Must include:
 
 ---
 
-## 7. Compliance Checklist
+## 10. Compliance Checklist
 
 ### Immediate Priority (0-30 days)
 
 - [x] Draft and implement Privacy Policy (completed 2026-02-01, route: `/privacy`)
 - [x] Draft and implement Terms of Service (completed 2026-02-01, route: `/terms`)
+- [x] Add cookie/storage information notice (covered in Privacy Policy Section 7)
+- [x] Document Yorga as publisher with SASU details (completed 2026-02-19)
+- [x] Resolve project license discrepancy -- Apache 2.0 confirmed, copyright holder is Yorga (completed 2026-02-19)
+- [x] Update legal pages with Yorga identity and French jurisdiction (completed 2026-02-19)
+- [ ] Complete LCEN mentions legales (registered address, President name, contact email)
 - [ ] Execute DPA with Clerk
 - [ ] Execute DPA with Convex
-- [x] Add cookie/storage information notice (covered in Privacy Policy Section 7)
-- [ ] Clarify project license status (Apache 2.0 vs "All rights reserved")
 - [ ] Implement account deletion functionality (GDPR Art. 17)
 
 ### Short-term (30-90 days)
 
+- [ ] Create CGV (Conditions Generales de Vente) for paid hosted service
 - [ ] Implement data export functionality (GDPR Art. 20)
 - [ ] Add consent management for optional contact information
 - [ ] Define and implement data retention policy
 - [ ] Consider self-hosting Google Fonts
-- [ ] Create Records of Processing Activities (ROPA)
+- [ ] Create Records of Processing Activities (ROPA) as required by GDPR Art. 30
 - [ ] Implement privacy preference center
+- [ ] Obtain and display VAT number (TVA) for commercial service
 
 ### Medium-term (90-180 days)
 
@@ -315,27 +414,29 @@ Must include:
 - [ ] Regular dependency license audits (quarterly)
 - [ ] Security audit of data handling practices
 - [ ] Review and update legal documents based on feature changes
+- [ ] Establish CNIL breach notification process (72-hour requirement)
+- [ ] Assess DPO appointment necessity
 
 ---
 
-## 8. Action Items
+## 11. Action Items
 
 ### For Development Team
 
-1. ~~**Create legal document routes** (`/privacy`, `/terms`, `/cookies`)~~ Completed (`/terms`, `/privacy`)
-2. ~~**Create privacy policy route** (`/privacy`)~~ Completed (2026-02-01)
-3. **Add account deletion mutation** in `convex/users/functions.ts`
-3. **Add data export query** for user to download their data
-4. **Add consent field** for optional contact information collection
-5. **Consider self-hosting Montserrat Alternates font**
+1. **Add account deletion mutation** in `convex/users/functions.ts`
+2. **Add data export query** for user to download their data
+3. **Add consent field** for optional contact information collection
+4. **Consider self-hosting Montserrat Alternates font**
+5. **Create CGV route** (`/cgv` or `/terms-of-sale`) when paid service launches
 
-### For Legal/Compliance
+### For Legal/Compliance (Yorga)
 
-1. ~~**Draft Privacy Policy** using template based on findings above~~ Completed (2026-02-01)
-2. ~~**Draft Terms of Service** appropriate for SaaS platform~~ Completed (2026-02-01)
-3. **Review and execute DPAs** with Clerk and Convex
-4. **Assess necessity of DPO** based on processing activities
-5. **Determine appropriate supervisory authority** based on establishment
+1. **Complete LCEN mentions legales** with registered address, President name, and contact email
+2. **Review and execute DPAs** with Clerk and Convex
+3. **Assess necessity of DPO** based on processing activities
+4. **Register with CNIL** if required or maintain internal ROPA
+5. **Draft CGV** for the paid hosted service
+6. **Obtain and display VAT number** for commercial invoicing
 
 ### For Product/Business
 
@@ -343,6 +444,7 @@ Must include:
 2. **Document lawful basis** for each processing activity
 3. **Establish process** for handling data subject requests
 4. **Create user communication** about legal document updates
+5. **Define pricing and payment terms** for CGV
 
 ---
 
@@ -351,15 +453,19 @@ Must include:
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0.0 | 2026-02-01 | Helen (Legal Advisor Agent) | Initial legal audit and documentation |
+| 2.0.0 | 2026-02-19 | Helen (Legal Advisor Agent) | Added Yorga SASU identity (SIREN 889 512 406), dual-nature model (open source + hosted SaaS), French legal requirements (LCEN, CNIL, CGV), updated copyright holder, added French jurisdiction details |
 
 ---
 
 ## Contact
 
 For legal inquiries related to this project:
+- **Publisher:** Yorga (SASU, SIREN 889 512 406)
 - **Technical Contact:** See repository maintainers
+- **GitHub:** [github.com/yves-christol/swarmrise](https://github.com/yves-christol/swarmrise)
 - **Legal Advisor Agent:** Helen (`@helen` in Claude Code)
+- **Data Protection Authority:** CNIL (cnil.fr)
 
 ---
 
-*This document should be reviewed and updated whenever significant changes are made to data processing activities, third-party integrations, or legal requirements.*
+*This document should be reviewed and updated whenever significant changes are made to data processing activities, third-party integrations, or legal requirements. As a French SASU, Yorga must ensure ongoing compliance with LCEN, GDPR (via CNIL), and French commercial law.*

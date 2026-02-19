@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 export const TermsPage = () => {
   const { t } = useTranslation("legal");
   const effectiveDate = "February 1, 2026";
-  const lastUpdated = "February 1, 2026";
+  const lastUpdated = "February 19, 2026";
 
   return (
     <div className="swarmrise-page">
@@ -194,6 +194,9 @@ export const TermsPage = () => {
           <TermsSection number={16} title={t("terms.sections.contactInformation.title")}>
             <p>{t("terms.sections.contactInformation.intro")}</p>
             <ul className="list-none space-y-2">
+              <li><strong>{t("terms.sections.contactInformation.publisher")}</strong>{" "}
+                {t("terms.sections.contactInformation.publisherText")}
+              </li>
               <li><strong>{t("terms.sections.contactInformation.github")}</strong>{" "}
                 <a
                   href="https://github.com/yves-christol/swarmrise"

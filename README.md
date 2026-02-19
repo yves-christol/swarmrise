@@ -157,6 +157,14 @@ The `docs/` directory contains project documentation:
 3. Run `bun install`
 4. Run `bun run dev`
 
+## Publisher
+
+swarmrise is published by **Yorga**, a French SASU (Societe par Actions Simplifiee Unipersonnelle), SIREN 889 512 406.
+
+swarmrise has a dual nature:
+- **Open source project** -- The source code is available on GitHub under the Apache License 2.0
+- **Hosted service (SaaS)** -- Yorga operates a paying hosted instance, subject to its [Terms of Service](/terms) and [Privacy Policy](/privacy)
+
 ## License
 
 Apache 2.0 - See [LICENSE.txt](LICENSE.txt)

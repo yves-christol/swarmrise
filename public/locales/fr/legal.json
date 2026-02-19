@@ -153,7 +153,7 @@
     "effectiveDateLabel": "Date d'effet",
     "lastUpdatedLabel": "Dernière mise à jour",
     "intro": {
-      "welcome": "Bienvenue sur swarmrise. Ces Conditions d'utilisation (\"Conditions\") régissent votre accès et votre utilisation de la plateforme swarmrise, y compris notre site web, nos applications et nos services (collectivement, le \"Service\"). En accédant ou en utilisant le Service, vous acceptez d'être lié par ces Conditions.",
+      "welcome": "Bienvenue sur swarmrise. Le service hébergé swarmrise est édité et exploité par Yorga, une SASU (Société par Actions Simplifiée Unipersonnelle) française immatriculée sous le SIREN 889 512 406. swarmrise est également disponible en tant que projet open source sous la licence Apache 2.0. Ces Conditions d'utilisation (\"Conditions\") régissent votre accès et votre utilisation de la plateforme hébergée swarmrise, y compris notre site web, nos applications et nos services (collectivement, le \"Service\"). En accédant ou en utilisant le Service, vous acceptez d'être lié par ces Conditions.",
       "readCarefully": "Veuillez lire attentivement ces Conditions avant d'utiliser le Service. Si vous n'acceptez pas ces Conditions, vous ne pouvez pas accéder au Service ni l'utiliser."
     },
     "sections": {
@@ -229,8 +229,8 @@
       },
       "intellectualProperty": {
         "title": "propriété intellectuelle",
-        "license": "Le Service, y compris son code source, sa conception, ses fonctionnalités et sa documentation, est sous licence Apache License 2.0. Cette licence vous permet d'utiliser, de modifier et de distribuer le logiciel sous certaines conditions.",
-        "brandElements": "Le nom swarmrise, le logo et les éléments de marque sont propriétaires et ne peuvent pas être utilisés sans notre permission écrite expresse, sauf dans les cas permis par la Licence Apache 2.0 à des fins d'attribution.",
+        "license": "Le code source de swarmrise est disponible en open source sous la licence Apache 2.0. Cette licence vous permet d'utiliser, de modifier et de distribuer le logiciel sous certaines conditions. Le service hébergé exploité par Yorga est soumis aux présentes Conditions en complément de la licence open source.",
+        "brandElements": "Le nom swarmrise, le logo et les éléments de marque sont des marques de Yorga et ne peuvent pas être utilisés sans permission écrite expresse, sauf dans les cas permis par la Licence Apache 2.0 à des fins d'attribution.",
         "thirdParty": "Les composants tiers inclus dans le Service sont soumis à leurs licences respectives, qui sont documentées dans notre documentation juridique."
       },
       "dataProtection": {
@@ -269,7 +269,7 @@
       },
       "indemnification": {
         "title": "indemnisation",
-        "intro": "Vous acceptez d'indemniser, de défendre et de dégager de toute responsabilité swarmrise et ses affiliés, dirigeants, directeurs, employés et agents contre toute réclamation, responsabilité, dommage, perte et dépense (y compris les frais juridiques raisonnables) découlant de ou liés de quelque manière que ce soit à :",
+        "intro": "Vous acceptez d'indemniser, de défendre et de dégager de toute responsabilité Yorga (l'éditeur de swarmrise) et ses affiliés, dirigeants, directeurs, employés et agents contre toute réclamation, responsabilité, dommage, perte et dépense (y compris les frais juridiques raisonnables) découlant de ou liés de quelque manière que ce soit à :",
         "items": {
           "accessUse": "Votre accès ou utilisation du Service",
           "violationTerms": "Votre violation de ces Conditions",
@@ -289,12 +289,12 @@
       },
       "disputeResolution": {
         "title": "résolution des litiges",
-        "informal": "Nous vous encourageons à nous contacter d'abord pour résoudre tout litige de manière informelle. Si un litige ne peut être résolu de manière informelle, vous acceptez que toute action ou procédure judiciaire soit exclusivement portée devant les tribunaux compétents.",
+        "informal": "Nous vous encourageons à nous contacter d'abord pour résoudre tout litige de manière informelle. Si un litige ne peut être résolu de manière informelle, vous acceptez que toute action ou procédure judiciaire soit exclusivement portée devant les tribunaux compétents en France.",
         "euNote": "Pour les utilisateurs de l'Union européenne, cette disposition n'affecte pas vos droits en vertu des lois de protection des consommateurs ou votre droit d'intenter des actions devant les tribunaux de votre pays de résidence."
       },
       "governingLaw": {
         "title": "droit applicable",
-        "law": "Ces Conditions seront régies et interprétées conformément aux lois de la juridiction dans laquelle l'opérateur du Service est établi, sans tenir compte des principes de conflit de lois.",
+        "law": "Ces Conditions seront régies et interprétées conformément au droit français, Yorga (l'opérateur du Service) étant établie en France. Yorga est une SASU française immatriculée sous le SIREN 889 512 406.",
         "eeaNote": "Pour les utilisateurs de l'Espace économique européen, rien dans ces Conditions n'affecte vos droits en tant que consommateur en vertu des lois de protection des consommateurs de l'UE applicables."
       },
       "generalProvisions": {
@@ -311,6 +311,8 @@
       "contactInformation": {
         "title": "informations de contact",
         "intro": "Si vous avez des questions concernant ces Conditions, veuillez nous contacter :",
+        "publisher": "Éditeur :",
+        "publisherText": "Yorga (SASU, SIREN 889 512 406)",
         "github": "GitHub :"
       }
     },
@@ -319,7 +321,7 @@
     "privacyDescription": "Comment nous traitons vos données personnelles",
     "principlesLink": "Nos Principes",
     "principlesDescription": "Découvrez les valeurs qui guident swarmrise",
-    "footer": "swarmrise est sous licence Apache License 2.0"
+    "footer": "Édité par Yorga (SASU, SIREN 889 512 406) -- Open source sous licence Apache 2.0"
   },
   "privacy": {
     "title": "politique de confidentialité",
@@ -334,8 +336,8 @@
     "sections": {
       "dataController": {
         "title": "responsable du traitement",
-        "p1": "Aux fins du RGPD et des autres lois applicables en matière de protection des données, swarmrise agit en tant que responsable du traitement des données personnelles collectées via le Service. Cela signifie que nous déterminons les finalités et les moyens du traitement de vos données personnelles.",
-        "p2": "Si vous avez des questions sur nos pratiques en matière de données ou si vous souhaitez exercer vos droits, veuillez nous contacter via les canaux indiqués dans la section Informations de contact ci-dessous."
+        "p1": "Le service hébergé swarmrise est édité et exploité par Yorga, une SASU (Société par Actions Simplifiée Unipersonnelle) française immatriculée sous le SIREN 889 512 406. Aux fins du RGPD et des autres lois applicables en matière de protection des données, Yorga agit en tant que responsable du traitement des données personnelles collectées via le Service. Cela signifie que Yorga détermine les finalités et les moyens du traitement de vos données personnelles.",
+        "p2": "Si vous avez des questions sur nos pratiques en matière de données ou si vous souhaitez exercer vos droits, veuillez nous contacter via les canaux indiqués dans la section Informations de contact ci-dessous. Vous pouvez également déposer une réclamation auprès de la CNIL (Commission nationale de l'informatique et des libertés), l'autorité française de protection des données."
       },
       "informationWeCollect": {
         "title": "informations que nous collectons",
@@ -501,7 +503,7 @@
         },
         "rightToComplaint": {
           "title": "6.8 Droit de déposer une plainte",
-          "text": "Vous avez le droit de déposer une plainte auprès d'une autorité de contrôle si vous estimez que notre traitement de vos données personnelles viole les lois applicables en matière de protection des données."
+          "text": "Vous avez le droit de déposer une plainte auprès d'une autorité de contrôle si vous estimez que notre traitement de vos données personnelles viole les lois applicables en matière de protection des données. Yorga étant établie en France, vous pouvez contacter la CNIL (Commission nationale de l'informatique et des libertés) sur cnil.fr."
         },
         "exerciseRights": "Pour exercer l'un de ces droits, veuillez nous contacter en utilisant les informations de la section Contact ci-dessous. Nous répondrons à votre demande dans les 30 jours."
       },
@@ -583,7 +585,11 @@
       "contactInformation": {
         "title": "informations de contact",
         "intro": "Si vous avez des questions sur cette Politique de confidentialité, souhaitez exercer vos droits en matière de protection des données ou avez des préoccupations concernant nos pratiques en matière de données, veuillez nous contacter :",
+        "publisher": "Éditeur :",
+        "publisherText": "Yorga (SASU, SIREN 889 512 406)",
         "github": "GitHub :",
+        "supervisoryAuthority": "Autorité de contrôle :",
+        "supervisoryAuthorityText": "CNIL (Commission nationale de l'informatique et des libertés) -- cnil.fr",
         "responseTime": "Nous répondrons à toutes les demandes légitimes dans les 30 jours. Dans certains cas, nous pouvons avoir besoin de vérifier votre identité avant de traiter votre demande."
       }
     },
@@ -592,6 +598,6 @@
     "termsDescription": "Nos conditions d'utilisation de swarmrise",
     "principlesLink": "Nos Principes",
     "principlesDescription": "Découvrez les valeurs qui guident swarmrise",
-    "footer": "swarmrise est sous licence Apache License 2.0"
+    "footer": "Édité par Yorga (SASU, SIREN 889 512 406) -- Open source sous licence Apache 2.0"
   }
 }

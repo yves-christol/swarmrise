@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 export const PrivacyPage = () => {
   const { t } = useTranslation("legal");
   const effectiveDate = "February 1, 2026";
-  const lastUpdated = "February 1, 2026";
+  const lastUpdated = "February 19, 2026";
 
   return (
     <div className="swarmrise-page">
@@ -368,6 +368,10 @@ export const PrivacyPage = () => {
             <p>{t("privacy.sections.contactInformation.intro")}</p>
             <ul className="list-none space-y-2">
               <li>
+                <strong>{t("privacy.sections.contactInformation.publisher")}</strong>{" "}
+                {t("privacy.sections.contactInformation.publisherText")}
+              </li>
+              <li>
                 <strong>{t("privacy.sections.contactInformation.github")}</strong>{" "}
                 <a
                   href="https://github.com/yves-christol/swarmrise"
@@ -376,6 +380,17 @@ export const PrivacyPage = () => {
                   className="text-gold hover:underline"
                 >
                   github.com/yves-christol/swarmrise
+                </a>
+              </li>
+              <li>
+                <strong>{t("privacy.sections.contactInformation.supervisoryAuthority")}</strong>{" "}
+                <a
+                  href="https://www.cnil.fr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gold hover:underline"
+                >
+                  {t("privacy.sections.contactInformation.supervisoryAuthorityText")}
                 </a>
               </li>
             </ul>

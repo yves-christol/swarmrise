@@ -1,10 +1,9 @@
 import { memo } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import remarkBreaks from "remark-breaks";
 import type { Components } from "react-markdown";
 
-const REMARK_PLUGINS = [remarkBreaks, [remarkGfm, { singleTilde: false }]] as Parameters<typeof Markdown>[0]["remarkPlugins"];
+const REMARK_PLUGINS = [[remarkGfm, { singleTilde: false }]] as Parameters<typeof Markdown>[0]["remarkPlugins"];
 
 const COMPONENTS: Components = {
   h1({ node: _node, children, ...props }) {
@@ -60,7 +59,7 @@ const COMPONENTS: Components = {
     );
   },
   strong({ node: _node, children, ...props }) {
-    return <strong className="font-semibold" {...props}>{children}</strong>;
+    return <strong className="font-semibold text-highlight" {...props}>{children}</strong>;
   },
   em({ node: _node, children, ...props }) {
     return <em className="italic" {...props}>{children}</em>;

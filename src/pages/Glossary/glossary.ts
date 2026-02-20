@@ -56,6 +56,11 @@ export const useGlossary = (): GlossaryEntry[] => {
       example: t("items.duty.example", { defaultValue: "" }),
     },
     {
+      title: t("items.policy.title"),
+      description: t("items.policy.description"),
+      example: t("items.policy.example", { defaultValue: "" }),
+    },
+    {
       title: t("items.topic.title"),
       description: t("items.topic.description"),
       example: t("items.topic.example", { defaultValue: "" }),

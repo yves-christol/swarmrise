@@ -9,6 +9,8 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as bugReports_functions from "../bugReports/functions.js";
+import type * as bugReports_index from "../bugReports/index.js";
 import type * as chat_access from "../chat/access.js";
 import type * as chat_channelFunctions from "../chat/channelFunctions.js";
 import type * as chat_dmFunctions from "../chat/dmFunctions.js";
@@ -31,6 +33,7 @@ import type * as dataTest_orga from "../dataTest/orga.js";
 import type * as dataTest_users from "../dataTest/users.js";
 import type * as decisions_functions from "../decisions/functions.js";
 import type * as decisions_index from "../decisions/index.js";
+import type * as emails_sendBugReportEmail from "../emails/sendBugReportEmail.js";
 import type * as emails_sendInvitationEmail from "../emails/sendInvitationEmail.js";
 import type * as http from "../http.js";
 import type * as invitations_functions from "../invitations/functions.js";
@@ -74,6 +77,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  "bugReports/functions": typeof bugReports_functions;
+  "bugReports/index": typeof bugReports_index;
   "chat/access": typeof chat_access;
   "chat/channelFunctions": typeof chat_channelFunctions;
   "chat/dmFunctions": typeof chat_dmFunctions;
@@ -96,6 +101,7 @@ declare const fullApi: ApiFromModules<{
   "dataTest/users": typeof dataTest_users;
   "decisions/functions": typeof decisions_functions;
   "decisions/index": typeof decisions_index;
+  "emails/sendBugReportEmail": typeof emails_sendBugReportEmail;
   "emails/sendInvitationEmail": typeof emails_sendInvitationEmail;
   http: typeof http;
   "invitations/functions": typeof invitations_functions;

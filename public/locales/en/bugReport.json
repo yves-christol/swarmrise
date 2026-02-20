@@ -1,0 +1,16 @@
+{
+  "title": "report an issue",
+  "subtitle": "Found something that doesn't work as expected? Let us know and we'll look into it.",
+  "titleLabel": "Summary",
+  "titlePlaceholder": "Brief description of the issue",
+  "titleRequired": "Please provide a summary",
+  "descriptionLabel": "What happened?",
+  "descriptionPlaceholder": "Describe what you experienced and what you expected to happen...",
+  "descriptionRequired": "Please describe the issue",
+  "descriptionHint": "Include any steps to reproduce if possible",
+  "submitButton": "Send report",
+  "submittingButton": "Sending...",
+  "successTitle": "report received",
+  "successMessage": "Thank you for helping improve swarmrise. We'll look into this.",
+  "backToHome": "Back to home"
+}

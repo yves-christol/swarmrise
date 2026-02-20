@@ -66,6 +66,14 @@ const UserIcon = () => (
   </svg>
 );
 
+const ReportIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="15" x2="12.01" y2="15" />
+  </svg>
+);
+
 // --- NavigationCard ---
 
 type NavigationCardProps = {
@@ -146,6 +154,12 @@ export const WelcomePage = () => {
       title: tLegal("privacy.title"),
       description: t("cards.privacy.description"),
       to: "/privacy",
+    },
+    {
+      icon: <ReportIcon />,
+      title: t("cards.bugReport.title"),
+      description: t("cards.bugReport.description"),
+      to: "/report",
     },
   ];
 

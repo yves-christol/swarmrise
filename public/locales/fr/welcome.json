@@ -32,6 +32,10 @@
     "myPage": {
       "title": "Ma page",
       "description": "Vos rôles, équipes et responsabilités"
+    },
+    "bugReport": {
+      "title": "Signaler un problème",
+      "description": "Quelque chose ne va pas ? Dites-le nous"
     }
   }
 }

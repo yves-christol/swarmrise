@@ -32,6 +32,10 @@
     "myPage": {
       "title": "My page",
       "description": "Your roles, teams, and responsibilities"
+    },
+    "bugReport": {
+      "title": "Report an issue",
+      "description": "Found something wrong? Let us know"
     }
   }
 }

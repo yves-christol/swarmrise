@@ -13,6 +13,7 @@ import type enGlossary from '../../public/locales/en/glossary.json'
 import type enChat from '../../public/locales/en/chat.json'
 import type enKanban from '../../public/locales/en/kanban.json'
 import type enWelcome from '../../public/locales/en/welcome.json'
+import type enBugReport from '../../public/locales/en/bugReport.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -32,6 +33,7 @@ declare module 'i18next' {
       chat: typeof enChat
       kanban: typeof enKanban
       welcome: typeof enWelcome
+      bugReport: typeof enBugReport
     }
   }
 }

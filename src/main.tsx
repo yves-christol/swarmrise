@@ -19,6 +19,7 @@ const GlossaryPage = lazy(() => import("./pages/Glossary/index.tsx").then(m => (
 const TermsPage = lazy(() => import("./pages/Terms/index.tsx").then(m => ({ default: m.TermsPage })));
 const PrivacyPage = lazy(() => import("./pages/Privacy/index.tsx").then(m => ({ default: m.PrivacyPage })));
 const WelcomePage = lazy(() => import("./pages/Welcome/index.tsx").then(m => ({ default: m.WelcomePage })));
+const BugReportPage = lazy(() => import("./pages/BugReport/index.tsx").then(m => ({ default: m.BugReportPage })));
 const OrgaRoute = lazy(() => import("./routes/OrgaRoute.tsx").then(m => ({ default: m.OrgaRoute })));
 const OrgaIndexRoute = lazy(() => import("./routes/OrgaIndexRoute.tsx").then(m => ({ default: m.OrgaIndexRoute })));
 
@@ -41,6 +42,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/glossary" element={<GlossaryPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/report" element={<BugReportPage />} />
                 {/* Organization routes */}
                 <Route path="/o/:orgaId" element={<OrgaRoute />}>
                   <Route index element={<OrgaIndexRoute />} />

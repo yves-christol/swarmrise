@@ -11,6 +11,7 @@ export const LegalFooter = () => {
   const { t: tWelcome } = useTranslation("welcome");
   const { t: tGlossary } = useTranslation("glossary");
   const { t: tLegal } = useTranslation("legal");
+  const { t: tBugReport } = useTranslation("bugReport");
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -20,6 +21,7 @@ export const LegalFooter = () => {
     { path: "/principles", label: tLegal("principles.title") },
     { path: "/terms", label: tLegal("terms.title") },
     { path: "/privacy", label: tLegal("privacy.title") },
+    { path: "/report", label: tBugReport("title") },
   ];
 
   return (

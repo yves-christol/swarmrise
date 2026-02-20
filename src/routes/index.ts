@@ -2,6 +2,7 @@ import { Id } from "../../convex/_generated/dataModel";
 
 export const routes = {
   home: "/",
+  report: "/report",
   orga: (orgaId: Id<"orgas">) => `/o/${orgaId}`,
   orgaManage: (orgaId: Id<"orgas">) => `/o/${orgaId}/manage`,
   team: (orgaId: Id<"orgas">, teamId: Id<"teams">) => `/o/${orgaId}/teams/${teamId}`,

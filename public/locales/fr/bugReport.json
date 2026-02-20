@@ -1,0 +1,16 @@
+{
+  "title": "signaler un problème",
+  "subtitle": "Vous avez trouvé quelque chose qui ne fonctionne pas comme prévu ? Faites-le nous savoir et nous examinerons le problème.",
+  "titleLabel": "Résumé",
+  "titlePlaceholder": "Brève description du problème",
+  "titleRequired": "Veuillez fournir un résumé",
+  "descriptionLabel": "Que s'est-il passé ?",
+  "descriptionPlaceholder": "Décrivez ce que vous avez constaté et ce que vous attendiez...",
+  "descriptionRequired": "Veuillez décrire le problème",
+  "descriptionHint": "Incluez les étapes pour reproduire le problème si possible",
+  "submitButton": "Envoyer le rapport",
+  "submittingButton": "Envoi en cours...",
+  "successTitle": "rapport reçu",
+  "successMessage": "Merci de nous aider à améliorer swarmrise. Nous allons examiner cela.",
+  "backToHome": "Retour à l'accueil"
+}

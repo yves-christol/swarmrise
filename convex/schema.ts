@@ -15,6 +15,7 @@ import { messageType } from "./chat"
 import { channelReadPositionType } from "./chat"
 import { topicClarificationType, topicAnswerType, topicResponseType, voteType, electionNominationType, electionResponseType, reactionType } from "./chat"
 import { kanbanBoardType, kanbanColumnType, kanbanCardType, kanbanLabelType, kanbanAttachmentType, kanbanCommentType } from "./kanban"
+import { bugReportType } from "./bugReports"
 /**
  * Swarmrise Data Model Schema
  *
@@ -191,5 +192,9 @@ export default defineSchema({
     .index("by_orga", ["orgaId"])
     .index("by_card", ["cardId"])
     .index("by_board", ["boardId"]),
+
+  // Bug reports - platform-scoped, not org-scoped
+  bugReports: defineTable({ ...bugReportType.fields })
+    .index("by_user", ["userId"]),
 
 });

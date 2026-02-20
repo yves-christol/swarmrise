@@ -3,6 +3,7 @@ import { v, Infer } from "convex/values";
 export const storageFilePurpose = v.union(
   v.literal("kanban_attachment"),
   v.literal("org_logo"),
+  v.literal("policy_attachment"),
 );
 
 export const storageFileType = v.object({

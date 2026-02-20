@@ -1,0 +1,47 @@
+{
+  "list": {
+    "title": "政策",
+    "searchPlaceholder": "搜尋政策...",
+    "empty": "尚無政策",
+    "emptySearch": "沒有符合的政策",
+    "showingCount": "顯示 {{shown}} / {{total}}",
+    "loadMore": "載入更多"
+  },
+  "detail": {
+    "backToList": "返回列表",
+    "policyNumber": "政策 #{{number}}",
+    "ownedBy": "負責角色：{{role}}",
+    "abstract": "摘要",
+    "fullText": "全文",
+    "edit": "編輯",
+    "delete": "刪除",
+    "deleteConfirm": "確定要刪除此政策嗎？",
+    "confirmDelete": "確認刪除",
+    "deleted": "政策已刪除",
+    "deleteFailed": "刪除政策失敗"
+  },
+  "form": {
+    "createTitle": "新政策",
+    "editTitle": "編輯政策",
+    "titleLabel": "標題",
+    "titlePlaceholder": "政策標題",
+    "abstractLabel": "摘要",
+    "abstractPlaceholder": "此政策的簡短摘要...",
+    "textLabel": "全文",
+    "textPlaceholder": "以 markdown 撰寫完整政策文字...",
+    "write": "撰寫",
+    "preview": "預覽",
+    "save": "儲存",
+    "saving": "儲存中...",
+    "cancel": "取消",
+    "titleRequired": "標題為必填",
+    "abstractRequired": "摘要為必填",
+    "created": "政策已建立",
+    "updated": "政策已更新",
+    "saveFailed": "儲存政策失敗"
+  },
+  "role": {
+    "newPolicy": "新政策",
+    "noPolicies": "此角色尚無政策"
+  }
+}

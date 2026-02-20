@@ -51,6 +51,11 @@
       "description": "Una responsabilità specifica e attuabile assegnata a un ruolo. Mentre una missione definisce lo scopo generale, i doveri la scompongono in compiti o obblighi concreti che il titolare del ruolo è tenuto a svolgere. Un ruolo può avere più doveri.",
       "example": "Un ruolo di Responsabile contenuti potrebbe avere doveri come 'Scrivere articoli settimanali per il blog', 'Esaminare i contributi della comunità' e 'Mantenere il calendario editoriale'."
     },
+    "policy": {
+      "title": "Politica",
+      "description": "Una regola permanente che l'organizzazione si dà, di proprietà di un ruolo specifico. Solo il membro che detiene quel ruolo può creare, modificare o eliminare la politica. Le politiche hanno un numero automatico, un titolo, un sommario e un testo completo in formato markdown che può includere immagini, URL e allegati. Sono visibili a tutti i membri dell'organizzazione e ricercabili per titolo e sommario. Quando un ruolo viene eliminato, le sue politiche vengono trasferite al leader del team, in modo che nessuna regola scompaia silenziosamente. Le politiche completano il modello di governance: i ruoli definiscono chi è responsabile, i doveri definiscono cosa fanno, e le politiche definiscono le regole con cui operano.",
+      "example": "Il Segretario delle Finanze crea la politica n. 12, 'Processo di approvazione delle spese', che definisce come i membri del team inviano e approvano le spese. Qualsiasi membro dell'organizzazione può leggerla, ma solo il Segretario delle Finanze può modificarla."
+    },
     "topic": {
       "title": "Argomento",
       "description": "Una proposta sollevata nel canale di discussione di un team che segue un processo strutturato di decisione per consenso. Un argomento attraversa tre fasi: proposizione (l'autore formula la proposta), chiarificazione (i membri pongono domande per comprenderla) e giro di consenso (il gruppo accetta o solleva obiezioni argomentate). Gli argomenti trasformano le discussioni informali in atti di governance senza uscire dalla conversazione.",

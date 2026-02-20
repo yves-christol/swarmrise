@@ -16,6 +16,8 @@ const TeamManageView = lazy(() => import("../TeamManageView").then(m => ({ defau
 const MemberManageView = lazy(() => import("../MemberManageView").then(m => ({ default: m.MemberManageView })));
 const KanbanBoard = lazy(() => import("../Kanban/KanbanBoard").then(m => ({ default: m.KanbanBoard })));
 const MemberKanbanView = lazy(() => import("../MemberKanbanView").then(m => ({ default: m.MemberKanbanView })));
+const OrgaPoliciesView = lazy(() => import("../OrgaPoliciesView").then(m => ({ default: m.OrgaPoliciesView })));
+const RolePoliciesView = lazy(() => import("../RolePoliciesView").then(m => ({ default: m.RolePoliciesView })));
 import { Id } from "../../../convex/_generated/dataModel";
 import type { FocusTarget } from "../../tools/orgaStore/types";
 
@@ -300,17 +302,21 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     return {};
   };
 
+  const isOrgaFocused = focus.type === "orga";
+  const isTeamFocused = focus.type === "team";
+  const isRoleFocused = focus.type === "role";
+  const isMemberFocused = focus.type === "member";
+  const hasKanbanView = isTeamFocused || isMemberFocused;
+  const hasPoliciesView = isOrgaFocused || isRoleFocused;
+
   const getFlipClass = (): string => {
-    if (viewMode === "kanban" && (focus.type === "team" || focus.type === "member")) return "kanban";
+    if (viewMode === "policies" && hasPoliciesView) return "policies";
+    if (viewMode === "kanban" && hasKanbanView) return "kanban";
     if (viewMode === "manage") return "manage";
     return "visual";
   };
 
-  const isTeamFocused = focus.type === "team";
-  const isMemberFocused = focus.type === "member";
-  const hasKanbanView = isTeamFocused || isMemberFocused;
-
-  // Keyboard shortcut for view toggle (V key cycles modes, K jumps to kanban)
+  // Keyboard shortcut for view toggle (V key cycles modes, K jumps to kanban, P jumps to policies)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -327,6 +333,10 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           // Cycle: visual -> manage -> kanban -> visual
           const next = viewMode === "visual" ? "manage" : viewMode === "manage" ? "kanban" : "visual";
           changeViewMode(next);
+        } else if (hasPoliciesView) {
+          // Cycle: visual -> manage -> policies -> visual
+          const next = viewMode === "visual" ? "manage" : viewMode === "manage" ? "policies" : "visual";
+          changeViewMode(next);
         } else {
           changeViewMode(viewMode === "visual" ? "manage" : "visual");
         }
@@ -334,11 +344,14 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
       if ((e.key === "k" || e.key === "K") && hasKanbanView) {
         changeViewMode("kanban");
       }
+      if ((e.key === "p" || e.key === "P") && hasPoliciesView) {
+        changeViewMode("policies");
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [viewMode, changeViewMode, isFocusTransitioning, animationPhase, hasKanbanView]);
+  }, [viewMode, changeViewMode, isFocusTransitioning, animationPhase, hasKanbanView, hasPoliciesView]);
 
   // --- Render helper ---
 
@@ -393,7 +406,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     if (viewType === "role" && focusTarget.type === "role") {
       return (
         <PrismFlip
-          geometry="coin"
+          geometry="prism"
           activeFaceKey={flipClass}
           faces={[
             {
@@ -416,6 +429,12 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
                   roleId={focusTarget.roleId}
                   onZoomOut={focusOnTeamFromRole}
                 />
+              ),
+            },
+            {
+              key: "policies",
+              content: (
+                <RolePoliciesView roleId={focusTarget.roleId} />
               ),
             },
           ]}
@@ -463,7 +482,7 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
     // Default: orga view
     return (
       <PrismFlip
-        geometry="coin"
+        geometry="prism"
         activeFaceKey={flipClass}
         faces={[
           {
@@ -478,6 +497,10 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
           {
             key: "manage",
             content: <OrgaManageView orgaId={orgaId} />,
+          },
+          {
+            key: "policies",
+            content: <OrgaPoliciesView orgaId={orgaId} />,
           },
         ]}
       />
@@ -552,11 +575,13 @@ export function FocusContainer({ orgaId }: FocusContainerProps) {
       {/* Screen reader announcement for view mode */}
       <div role="status" aria-live="polite" className="sr-only">
         {swapPhase === "idle" &&
-          (displayedMode === "kanban"
-            ? "Now viewing Kanban board. Press V to cycle views."
-            : displayedMode === "visual"
-              ? "Now viewing visual diagram. Press V to switch to management view."
-              : "Now viewing management options. Press V to switch to visual diagram.")}
+          (displayedMode === "policies"
+            ? "Now viewing policies. Press V to cycle views."
+            : displayedMode === "kanban"
+              ? "Now viewing Kanban board. Press V to cycle views."
+              : displayedMode === "visual"
+                ? "Now viewing visual diagram. Press V to switch to management view."
+                : "Now viewing management options. Press V to switch to visual diagram.")}
       </div>
     </div>
   );

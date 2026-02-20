@@ -14,6 +14,7 @@ import type enChat from '../../public/locales/en/chat.json'
 import type enKanban from '../../public/locales/en/kanban.json'
 import type enWelcome from '../../public/locales/en/welcome.json'
 import type enBugReport from '../../public/locales/en/bugReport.json'
+import type enPolicies from '../../public/locales/en/policies.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -34,6 +35,7 @@ declare module 'i18next' {
       kanban: typeof enKanban
       welcome: typeof enWelcome
       bugReport: typeof enBugReport
+      policies: typeof enPolicies
     }
   }
 }

@@ -1,26 +1,63 @@
-import { query, mutation } from "../_generated/server";
+import { query, mutation, internalMutation } from "../_generated/server";
 import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
-import { policyValidator, PolicyVisibility } from ".";
+import { policyValidator } from ".";
 import {
   getMemberInOrga,
   getAuthenticatedUserEmail,
   getRoleAndTeamInfo,
   getOrgaFromRole,
-  getOrgaFromTeam,
 } from "../utils";
 import {
   buildPolicyGlobalNotification,
-  buildPolicyTeamNotification,
   getOrgaMemberUsers,
-  getTeamMemberUsers,
 } from "../notifications/helpers";
+
+/**
+ * Helper: get the next policy number for an organization.
+ * Queries the max existing number and returns max + 1 (or 1 if none exist).
+ */
+async function getNextPolicyNumber(
+  ctx: { db: { query: (table: "policies") => any } },
+  orgaId: Id<"orgas">
+): Promise<number> {
+  // Query policies by orga in descending order of number to find the max
+  const lastPolicy = await ctx.db
+    .query("policies")
+    .withIndex("by_orga_and_number", (q: any) => q.eq("orgaId", orgaId))
+    .order("desc")
+    .first();
+  return lastPolicy ? lastPolicy.number + 1 : 1;
+}
+
+/**
+ * Helper: verify the caller holds the specified role.
+ * Returns the member document if authorized, throws otherwise.
+ */
+async function verifyRoleOwnership(
+  ctx: any,
+  roleId: Id<"roles">,
+  orgaId: Id<"orgas">
+) {
+  const member = await getMemberInOrga(ctx, orgaId);
+  const role = await ctx.db.get(roleId);
+  if (!role) {
+    throw new Error("Role not found");
+  }
+  if (role.orgaId !== orgaId) {
+    throw new Error("Role does not belong to this organization");
+  }
+  if (role.memberId !== member._id) {
+    throw new Error("Only the role holder can manage policies for this role");
+  }
+  return { member, role };
+}
 
 /**
  * Get a policy by ID
  */
-export const getPolicyById = query({
+export const get = query({
   args: {
     policyId: v.id("policies"),
   },
@@ -36,54 +73,73 @@ export const getPolicyById = query({
 });
 
 /**
- * List all policies in an organization
+ * List all policies in an organization, optionally filtered by search term.
+ * Search uses the search index on title; for abstract search, client-side
+ * filtering is used as Convex search indexes support a single searchField.
  */
-export const listPoliciesInOrga = query({
+export const list = query({
   args: {
     orgaId: v.id("orgas"),
-    visibility: v.optional(v.union(v.literal("private"), v.literal("public"))),
+    search: v.optional(v.string()),
   },
   returns: v.array(policyValidator),
   handler: async (ctx, args) => {
     await getMemberInOrga(ctx, args.orgaId);
-    if (args.visibility) {
-      return await ctx.db
+
+    if (args.search && args.search.trim().length > 0) {
+      const searchTerm = args.search.trim();
+      // Use the search index on title, filtered by orgaId
+      const titleMatches = await ctx.db
         .query("policies")
-        .withIndex("by_orga_and_visibility", (q) =>
-          q.eq("orgaId", args.orgaId).eq("visibility", args.visibility as PolicyVisibility)
+        .withSearchIndex("search_title_abstract", (q: any) =>
+          q.search("title", searchTerm).eq("orgaId", args.orgaId)
         )
         .collect();
-    } else {
-      return await ctx.db
+
+      // Also search by abstract client-side from the full list
+      // (Convex only supports one searchField per search index)
+      const allPolicies = await ctx.db
         .query("policies")
         .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
         .collect();
-    }
-  },
-});
 
-/**
- * List all policies in a team
- */
-export const listPoliciesInTeam = query({
-  args: {
-    teamId: v.id("teams"),
-  },
-  returns: v.array(policyValidator),
-  handler: async (ctx, args) => {
-    const orgaId = await getOrgaFromTeam(ctx, args.teamId);
-    await getMemberInOrga(ctx, orgaId);
+      const lowerSearch = searchTerm.toLowerCase();
+      const abstractMatches = allPolicies.filter(
+        (p) => p.abstract.toLowerCase().includes(lowerSearch)
+      );
+
+      // Merge results, deduplicating by _id
+      const seen = new Set<string>();
+      const merged = [];
+      for (const p of titleMatches) {
+        if (!seen.has(p._id)) {
+          seen.add(p._id);
+          merged.push(p);
+        }
+      }
+      for (const p of abstractMatches) {
+        if (!seen.has(p._id)) {
+          seen.add(p._id);
+          merged.push(p);
+        }
+      }
+
+      // Sort by number ascending
+      merged.sort((a, b) => a.number - b.number);
+      return merged;
+    }
+
     return await ctx.db
       .query("policies")
-      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
+      .withIndex("by_orga", (q) => q.eq("orgaId", args.orgaId))
       .collect();
   },
 });
 
 /**
- * List policies by role
+ * List all policies owned by a specific role
  */
-export const listPoliciesByRole = query({
+export const listByRole = query({
   args: {
     roleId: v.id("roles"),
   },
@@ -99,62 +155,46 @@ export const listPoliciesByRole = query({
 });
 
 /**
- * Create a new policy
+ * Create a new policy.
+ * Only the member holding the specified role can create a policy for it.
+ * The policy number is auto-incremented per organization.
  */
-export const createPolicy = mutation({
+export const create = mutation({
   args: {
     orgaId: v.id("orgas"),
-    teamId: v.id("teams"),
     roleId: v.id("roles"),
     title: v.string(),
+    abstract: v.string(),
     text: v.string(),
-    visibility: v.union(v.literal("private"), v.literal("public")),
-    expirationDate: v.optional(v.number()),
+    attachmentIds: v.optional(v.array(v.id("_storage"))),
   },
   returns: v.id("policies"),
   handler: async (ctx, args) => {
-    const member = await getMemberInOrga(ctx, args.orgaId);
-    
-    // Validate team belongs to organization
-    const team = await ctx.db.get(args.teamId);
-    if (!team) {
-      throw new Error("Team not found");
-    }
-    if (team.orgaId !== args.orgaId) {
-      throw new Error("Team must belong to the organization");
-    }
-    
-    // Validate role belongs to team
-    const role = await ctx.db.get(args.roleId);
-    if (!role) {
-      throw new Error("Role not found");
-    }
-    if (role.teamId !== args.teamId) {
-      throw new Error("Role must belong to the team");
-    }
-    
-    // Create policy
+    const { member, role } = await verifyRoleOwnership(ctx, args.roleId, args.orgaId);
+
+    // Auto-increment policy number
+    const number = await getNextPolicyNumber(ctx, args.orgaId);
+
     const policyId = await ctx.db.insert("policies", {
       orgaId: args.orgaId,
-      teamId: args.teamId,
       roleId: args.roleId,
-      issuedDate: Date.now(),
+      number,
       title: args.title,
+      abstract: args.abstract,
       text: args.text,
-      visibility: args.visibility,
-      expirationDate: args.expirationDate,
+      attachmentIds: args.attachmentIds,
     });
-    
+
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
     const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, args.orgaId);
-    
+
     await ctx.db.insert("decisions", {
       orgaId: args.orgaId,
       authorEmail: email,
       roleName,
       teamName,
-      targetTeamId: args.teamId,
+      targetTeamId: role.teamId,
       targetId: policyId,
       targetType: "policies",
       diff: {
@@ -162,69 +202,38 @@ export const createPolicy = mutation({
         before: undefined,
         after: {
           orgaId: args.orgaId,
-          teamId: args.teamId,
           roleId: args.roleId,
-          issuedDate: Date.now(),
+          number,
           title: args.title,
+          abstract: args.abstract,
           text: args.text,
-          visibility: args.visibility,
-          expirationDate: args.expirationDate,
         },
       },
     });
 
-    // Get organization name for notifications
+    // Notify all organization members except the creator
     const orga = await ctx.db.get(args.orgaId);
     const orgaName = orga?.name ?? "Unknown Organization";
+    const orgaMembers = await getOrgaMemberUsers(ctx, args.orgaId);
+    const notifications = orgaMembers
+      .filter((m) => m.userId !== member.personId)
+      .map((m) =>
+        buildPolicyGlobalNotification({
+          userId: m.userId,
+          orgaId: args.orgaId,
+          memberId: m.memberId,
+          policyId: policyId,
+          policyTitle: args.title,
+          orgaName: orgaName,
+        })
+      );
 
-    // Create notifications based on policy visibility
-    if (args.visibility === "public") {
-      // Public policy: notify all organization members except the creator
-      const orgaMembers = await getOrgaMemberUsers(ctx, args.orgaId);
-      const notifications = orgaMembers
-        .filter((m) => m.userId !== member.personId) // Don't notify the creator
-        .map((m) =>
-          buildPolicyGlobalNotification({
-            userId: m.userId,
-            orgaId: args.orgaId,
-            memberId: m.memberId,
-            policyId: policyId,
-            policyTitle: args.title,
-            orgaName: orgaName,
-          })
-        );
-
-      if (notifications.length > 0) {
-        await ctx.scheduler.runAfter(
-          0,
-          internal.notifications.functions.createBatch,
-          { notifications }
-        );
-      }
-    } else {
-      // Private policy: notify only team members with roles in that team
-      const teamMembers = await getTeamMemberUsers(ctx, args.teamId);
-      const notifications = teamMembers
-        .filter((m) => m.userId !== member.personId) // Don't notify the creator
-        .map((m) =>
-          buildPolicyTeamNotification({
-            userId: m.userId,
-            orgaId: args.orgaId,
-            memberId: m.memberId,
-            policyId: policyId,
-            policyTitle: args.title,
-            teamId: args.teamId,
-            teamName: team.name,
-          })
-        );
-
-      if (notifications.length > 0) {
-        await ctx.scheduler.runAfter(
-          0,
-          internal.notifications.functions.createBatch,
-          { notifications }
-        );
-      }
+    if (notifications.length > 0) {
+      await ctx.scheduler.runAfter(
+        0,
+        internal.notifications.functions.createBatch,
+        { notifications }
+      );
     }
 
     return policyId;
@@ -232,15 +241,16 @@ export const createPolicy = mutation({
 });
 
 /**
- * Update a policy
+ * Update a policy.
+ * Only the member holding the policy's owning role can update it.
  */
-export const updatePolicy = mutation({
+export const update = mutation({
   args: {
     policyId: v.id("policies"),
     title: v.optional(v.string()),
+    abstract: v.optional(v.string()),
     text: v.optional(v.string()),
-    visibility: v.optional(v.union(v.literal("private"), v.literal("public"))),
-    expirationDate: v.optional(v.union(v.number(), v.null())),
+    attachmentIds: v.optional(v.array(v.id("_storage"))),
   },
   returns: v.id("policies"),
   handler: async (ctx, args) => {
@@ -248,73 +258,61 @@ export const updatePolicy = mutation({
     if (!policy) {
       throw new Error("Policy not found");
     }
-    
-    const member = await getMemberInOrga(ctx, policy.orgaId);
-    
-    // Update policy
+
+    const { member } = await verifyRoleOwnership(ctx, policy.roleId, policy.orgaId);
+
+    // Build updates
     const updates: {
       title?: string;
+      abstract?: string;
       text?: string;
-      visibility?: PolicyVisibility;
-      expirationDate?: number;
+      attachmentIds?: Id<"_storage">[];
     } = {};
-    
+
     if (args.title !== undefined) updates.title = args.title;
+    if (args.abstract !== undefined) updates.abstract = args.abstract;
     if (args.text !== undefined) updates.text = args.text;
-    if (args.visibility !== undefined) updates.visibility = args.visibility;
-    if (args.expirationDate !== undefined) updates.expirationDate = args.expirationDate ?? undefined;
-    
-    // Build before and after with only modified fields
+    if (args.attachmentIds !== undefined) updates.attachmentIds = args.attachmentIds;
+
+    // Build before/after diff with only modified fields
     const before: {
-      orgaId?: Id<"orgas">;
-      teamId?: Id<"teams">;
-      roleId?: Id<"roles">;
-      issuedDate?: number;
       title?: string;
+      abstract?: string;
       text?: string;
-      visibility?: PolicyVisibility;
-      expirationDate?: number;
     } = {};
     const after: {
-      orgaId?: Id<"orgas">;
-      teamId?: Id<"teams">;
-      roleId?: Id<"roles">;
-      issuedDate?: number;
       title?: string;
+      abstract?: string;
       text?: string;
-      visibility?: PolicyVisibility;
-      expirationDate?: number;
     } = {};
-    
+
     if (args.title !== undefined) {
       before.title = policy.title;
       after.title = args.title;
+    }
+    if (args.abstract !== undefined) {
+      before.abstract = policy.abstract;
+      after.abstract = args.abstract;
     }
     if (args.text !== undefined) {
       before.text = policy.text;
       after.text = args.text;
     }
-    if (args.visibility !== undefined) {
-      before.visibility = policy.visibility;
-      after.visibility = args.visibility;
-    }
-    if (args.expirationDate !== undefined) {
-      before.expirationDate = policy.expirationDate;
-      after.expirationDate = args.expirationDate ?? undefined;
-    }
-    
+
     await ctx.db.patch(args.policyId, updates);
-    
+
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
     const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, policy.orgaId);
-    
+
+    const role = await ctx.db.get(policy.roleId);
+
     await ctx.db.insert("decisions", {
       orgaId: policy.orgaId,
       authorEmail: email,
       roleName,
       teamName,
-      targetTeamId: policy.teamId,
+      targetTeamId: role?.teamId,
       targetId: args.policyId,
       targetType: "policies",
       diff: {
@@ -323,15 +321,16 @@ export const updatePolicy = mutation({
         after: Object.keys(after).length > 0 ? after : undefined,
       },
     });
-    
+
     return args.policyId;
   },
 });
 
 /**
- * Delete a policy
+ * Delete a policy.
+ * Only the member holding the policy's owning role can delete it.
  */
-export const deletePolicy = mutation({
+export const remove = mutation({
   args: {
     policyId: v.id("policies"),
   },
@@ -341,34 +340,52 @@ export const deletePolicy = mutation({
     if (!policy) {
       throw new Error("Policy not found");
     }
-    
-    const member = await getMemberInOrga(ctx, policy.orgaId);
-    
-    // Store before state
+
+    const { member } = await verifyRoleOwnership(ctx, policy.roleId, policy.orgaId);
+
+    // Delete associated storage files if any
+    if (policy.attachmentIds && policy.attachmentIds.length > 0) {
+      for (const storageId of policy.attachmentIds) {
+        try {
+          await ctx.storage.delete(storageId);
+        } catch {
+          // Storage file may already be deleted
+        }
+        // Also delete tracking record if it exists
+        const trackingRecord = await ctx.db
+          .query("storageFiles")
+          .withIndex("by_storage_id", (q) => q.eq("storageId", storageId))
+          .unique();
+        if (trackingRecord) {
+          await ctx.db.delete(trackingRecord._id);
+        }
+      }
+    }
+
+    // Store before state for decision record
     const before = {
       orgaId: policy.orgaId,
-      teamId: policy.teamId,
       roleId: policy.roleId,
-      issuedDate: policy.issuedDate,
+      number: policy.number,
       title: policy.title,
+      abstract: policy.abstract,
       text: policy.text,
-      visibility: policy.visibility,
-      expirationDate: policy.expirationDate,
     };
-    
-    // Delete policy
+
+    const role = await ctx.db.get(policy.roleId);
+
     await ctx.db.delete(args.policyId);
-    
+
     // Create decision record
     const email = await getAuthenticatedUserEmail(ctx);
     const { roleName, teamName } = await getRoleAndTeamInfo(ctx, member._id, policy.orgaId);
-    
+
     await ctx.db.insert("decisions", {
       orgaId: policy.orgaId,
       authorEmail: email,
       roleName,
       teamName,
-      targetTeamId: policy.teamId,
+      targetTeamId: role?.teamId,
       targetId: args.policyId,
       targetType: "policies",
       diff: {
@@ -377,8 +394,35 @@ export const deletePolicy = mutation({
         after: undefined,
       },
     });
-    
+
     return null;
   },
 });
 
+/**
+ * Transfer all policies from one role to another.
+ * Internal mutation called when a role is deleted -- policies are transferred
+ * to the leader of the related team.
+ */
+export const transferToLeader = internalMutation({
+  args: {
+    fromRoleId: v.id("roles"),
+    toRoleId: v.id("roles"),
+    orgaId: v.id("orgas"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const policies = await ctx.db
+      .query("policies")
+      .withIndex("by_role", (q) => q.eq("roleId", args.fromRoleId))
+      .collect();
+
+    for (const policy of policies) {
+      await ctx.db.patch(policy._id, {
+        roleId: args.toRoleId,
+      });
+    }
+
+    return null;
+  },
+});

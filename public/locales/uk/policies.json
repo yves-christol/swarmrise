@@ -1,0 +1,47 @@
+{
+  "list": {
+    "title": "Полiтики",
+    "searchPlaceholder": "Шукати полiтики...",
+    "empty": "Полiтик ще немає",
+    "emptySearch": "Жодна полiтика не знайдена",
+    "showingCount": "{{shown}} з {{total}}",
+    "loadMore": "Завантажити бiльше"
+  },
+  "detail": {
+    "backToList": "Назад до списку",
+    "policyNumber": "Полiтика #{{number}}",
+    "ownedBy": "Власник: {{role}}",
+    "abstract": "Короткий опис",
+    "fullText": "Повний текст",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "deleteConfirm": "Ви впевненi, що хочете видалити цю полiтику?",
+    "confirmDelete": "Пiдтвердити видалення",
+    "deleted": "Полiтику видалено",
+    "deleteFailed": "Не вдалося видалити полiтику"
+  },
+  "form": {
+    "createTitle": "Нова полiтика",
+    "editTitle": "Редагувати полiтику",
+    "titleLabel": "Назва",
+    "titlePlaceholder": "Назва полiтики",
+    "abstractLabel": "Короткий опис",
+    "abstractPlaceholder": "Короткий опис цiєї полiтики...",
+    "textLabel": "Повний текст",
+    "textPlaceholder": "Напишiть повний текст полiтики у markdown...",
+    "write": "Писати",
+    "preview": "Попереднiй перегляд",
+    "save": "Зберегти",
+    "saving": "Збереження...",
+    "cancel": "Скасувати",
+    "titleRequired": "Назва обов'язкова",
+    "abstractRequired": "Короткий опис обов'язковий",
+    "created": "Полiтику створено",
+    "updated": "Полiтику оновлено",
+    "saveFailed": "Не вдалося зберегти полiтику"
+  },
+  "role": {
+    "newPolicy": "Нова полiтика",
+    "noPolicies": "Цей рол ще не має полiтик"
+  }
+}

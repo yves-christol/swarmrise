@@ -1,0 +1,47 @@
+{
+  "list": {
+    "title": "Politiche",
+    "searchPlaceholder": "Cerca politiche...",
+    "empty": "Nessuna politica",
+    "emptySearch": "Nessuna politica trovata",
+    "showingCount": "{{shown}} di {{total}}",
+    "loadMore": "Carica altro"
+  },
+  "detail": {
+    "backToList": "Torna alla lista",
+    "policyNumber": "Politica #{{number}}",
+    "ownedBy": "Gestita da {{role}}",
+    "abstract": "Riepilogo",
+    "fullText": "Testo completo",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "deleteConfirm": "Sei sicuro di voler eliminare questa politica?",
+    "confirmDelete": "Conferma eliminazione",
+    "deleted": "Politica eliminata",
+    "deleteFailed": "Eliminazione fallita"
+  },
+  "form": {
+    "createTitle": "Nuova politica",
+    "editTitle": "Modifica politica",
+    "titleLabel": "Titolo",
+    "titlePlaceholder": "Titolo della politica",
+    "abstractLabel": "Riepilogo",
+    "abstractPlaceholder": "Breve riepilogo di questa politica...",
+    "textLabel": "Testo completo",
+    "textPlaceholder": "Scrivi il testo completo in markdown...",
+    "write": "Scrivi",
+    "preview": "Anteprima",
+    "save": "Salva",
+    "saving": "Salvataggio...",
+    "cancel": "Annulla",
+    "titleRequired": "Il titolo e obbligatorio",
+    "abstractRequired": "Il riepilogo e obbligatorio",
+    "created": "Politica creata",
+    "updated": "Politica aggiornata",
+    "saveFailed": "Salvataggio fallito"
+  },
+  "role": {
+    "newPolicy": "Nuova politica",
+    "noPolicies": "Questo ruolo non ha ancora politiche"
+  }
+}

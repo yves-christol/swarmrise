@@ -51,6 +51,11 @@
       "description": "Una responsabilidad específica y accionable asignada a un rol. Mientras que una misión define el propósito general, los deberes la descomponen en tareas u obligaciones concretas que se espera que el titular del rol cumpla. Un rol puede tener múltiples deberes.",
       "example": "Un rol de Líder de contenido podría tener deberes como 'Escribir publicaciones semanales en el blog', 'Revisar las contribuciones de la comunidad' y 'Mantener el calendario editorial'."
     },
+    "policy": {
+      "title": "Política",
+      "description": "Una regla permanente que la organización se da a sí misma, perteneciente a un rol específico. Solo el miembro que ostenta ese rol puede crear, editar o eliminar la política. Las políticas tienen un número automático, un título, un resumen y un texto completo en formato markdown que puede incluir imágenes, URLs y adjuntos. Son visibles para todos los miembros de la organización y se pueden buscar por título y resumen. Cuando un rol se elimina, sus políticas se transfieren al líder del equipo para que ninguna regla desaparezca silenciosamente. Las políticas completan el modelo de gobernanza: los roles definen quién es responsable, los deberes definen qué hacen, y las políticas definen las reglas con las que operan.",
+      "example": "El Secretario de Finanzas crea la política n.º 12, 'Proceso de aprobación de gastos', que define cómo los miembros del equipo envían y aprueban gastos. Cualquier miembro de la organización puede leerla, pero solo el Secretario de Finanzas puede modificarla."
+    },
     "topic": {
       "title": "Tema",
       "description": "Una propuesta planteada en el canal de conversación de un equipo que sigue un proceso estructurado de decisión por consentimiento. Un tema pasa por tres fases: proposición (el autor formula su propuesta), clarificación (los miembros hacen preguntas para comprenderla) y ronda de consentimiento (el grupo acepta o plantea objeciones argumentadas). Los temas transforman las discusiones informales en actos de gobernanza sin salir de la conversación.",

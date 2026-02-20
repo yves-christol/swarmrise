@@ -81,13 +81,15 @@ export default defineSchema({
     .index("by_role", ["roleId"])
     .index("by_team_and_date", ["teamId", "issuedDate"]),
 
-  // Policies collection - Policies belonging to an Organization, from a Team, emitted by a Role
+  // Policies collection - Permanent rules owned by a role, scoped to an organization
   policies: defineTable({ ...policyType.fields })
     .index("by_orga", ["orgaId"])
-    .index("by_team", ["teamId"])
     .index("by_role", ["roleId"])
-    .index("by_orga_and_visibility", ["orgaId", "visibility"])
-    .index("by_team_and_date", ["teamId", "issuedDate"]),
+    .index("by_orga_and_number", ["orgaId", "number"])
+    .searchIndex("search_title_abstract", {
+      searchField: "title",
+      filterFields: ["orgaId"],
+    }),
 
   // Notifications collection - User notifications across all categories
   notifications: defineTable({ ...notificationType.fields })

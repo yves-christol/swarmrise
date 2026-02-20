@@ -43,5 +43,6 @@
   "searchRoles": "Buscar roles...",
   "searchMembers": "Buscar miembros...",
   "noResults": "Sin resultados",
+  "policies": "Políticas",
   "focusedEntity": "Elemento enfocado"
 }

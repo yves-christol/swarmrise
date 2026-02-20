@@ -15,9 +15,10 @@ This document defines the user experience philosophy that guides all interface d
 5. [Interaction Patterns](#interaction-patterns)
 6. [Feedback and States](#feedback-and-states)
 7. [Notifications](#notifications)
-8. [Accessibility](#accessibility)
-9. [Language Guidelines](#language-guidelines)
-10. [Anti-Patterns](#anti-patterns)
+8. [Policies](#policies)
+9. [Accessibility](#accessibility)
+10. [Language Guidelines](#language-guidelines)
+11. [Anti-Patterns](#anti-patterns)
 
 ---
 
@@ -669,6 +670,493 @@ Prefer language that emphasizes:
 
 ---
 
+## Policies
+
+Policies are permanent rules an organization gives itself to operate with clarity, transparency, and consistency. They are a first-class governance primitive -- not buried in settings, not hidden in documents. They live at the surface of the UI because they shape how the organization behaves.
+
+### Core Principles for Policies
+
+1. **Ownership through Roles** - A policy is ALWAYS owned by a specific role, never by a person directly. When a role changes hands, its policies stay with the role. This reinforces that governance belongs to the structure, not to individuals.
+2. **Universal Readability** - Every member of the organization can read and search all policies. Transparency is non-negotiable.
+3. **Scoped Editability** - Only the member currently holding the owning role can create, edit, or delete that role's policies. The UI must make this permission boundary visible without creating friction for readers.
+4. **Automatic Numbering** - Policies are numbered sequentially within the organization (POL-1, POL-2, ...). Users never choose or manage numbers. The system guarantees uniqueness and order.
+5. **Searchable** - Full-text search on title and abstract. Policies are only useful if people can find them.
+
+### Data Model (UI-Relevant Fields)
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `number` | Auto-incremented integer | Permanent identifier (POL-1, POL-2, ...) |
+| `title` | String | Short, descriptive name |
+| `abstract` | String | One-paragraph summary for scanning |
+| `text` | Markdown string | Full policy content with embedded images, links |
+| `attachmentIds` | Optional array of storage IDs | Files attached to the policy |
+| `roleId` | Reference | Owning role |
+| `orgaId` | Reference | Organization scope |
+
+### Where Policies Appear
+
+Policies surface in two contexts, each serving a different user need.
+
+#### 1. Organization-Level Policies View (Third View Mode)
+
+At the orga level, policies appear as a third view mode alongside "visual" and "manage". This is where users go to browse, search, and read all policies across the entire organization.
+
+**HeaderViewToggle Change:**
+
+The toggle button in the menu bar must accommodate the new "policies" option. The existing pattern uses icon-only tab buttons separated by vertical dividers, with `role="tab"` and `aria-selected` attributes.
+
+```
++-------+---+-------+---+----------+
+| [net] | | [list] | | [scroll] |
++-------+---+-------+---+----------+
+ visual     manage       policies
+```
+
+- The policies icon should be a scroll/document glyph (lines of text with a seal or ribbon motif) to visually distinguish it from the manage view's stacked-rectangles icon
+- The policies tab is always visible at the orga level (unlike kanban, which is conditional on team/member focus)
+- At team and member focus levels, the policies tab is NOT shown -- policies are an org-level and role-level concern only
+
+**Implementation for HeaderViewToggle:**
+
+```tsx
+// New icon for policies tab (scroll/document)
+<button
+  role="tab"
+  aria-selected={viewMode === "policies"}
+  onClick={() => handleChange("policies")}
+  disabled={disabled}
+  className={tabClass(viewMode === "policies", disabled)}
+  title={`${t("policies")} (P)`}
+>
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    aria-hidden="true"
+  >
+    <rect x="4" y="2" width="10" height="14" rx="1.5" />
+    <line x1="7" y1="6" x2="11" y2="6" />
+    <line x1="7" y1="9" x2="11" y2="9" />
+    <line x1="7" y1="12" x2="9" y2="12" />
+  </svg>
+</button>
+```
+
+**ViewMode Type Update:**
+
+```typescript
+// Updated type
+export type ViewMode = "visual" | "manage" | "kanban" | "policies";
+```
+
+**PrismFlip Geometry Update:**
+
+The orga-level `PrismFlip` must change from `"coin"` (2 faces) to `"prism"` (3 faces) to support the third policies view. The FocusContainer render logic becomes:
+
+```tsx
+// Orga view: now 3 faces (was coin, now prism)
+<PrismFlip
+  geometry="prism"
+  activeFaceKey={getFlipClass()}
+  faces={[
+    { key: "visual", content: <OrgaVisualView ... /> },
+    { key: "manage", content: <OrgaManageView ... /> },
+    { key: "policies", content: <OrgaPoliciesView orgaId={orgaId} /> },
+  ]}
+/>
+```
+
+**Keyboard Shortcut:**
+
+- `P` key jumps to policies view (consistent with `V` for visual cycling and `K` for kanban)
+- `V` key cycle at orga level becomes: visual -> manage -> policies -> visual
+
+**OrgaPoliciesView Layout:**
+
+The policies list view follows the same layout conventions as `OrgaManageView`: scrollable, `max-w-4xl mx-auto`, with `pt-8 px-8 pb-8` padding.
+
+```
++--------------------------------------------------+
+| Policies                           [Search...]   |
+| Permanent rules of the organization              |
++--------------------------------------------------+
+|                                                   |
+| +----------------------------------------------+ |
+| | POL-1  Data Retention Policy                  | |
+| | Defines how long member data is retained...   | |
+| | Secretary, Finance Team         Jan 15, 2026  | |
+| +----------------------------------------------+ |
+| | POL-2  Decision Quorum Rules                  | |
+| | Minimum participation thresholds for...       | |
+| | Referee, General Assembly       Feb 3, 2026   | |
+| +----------------------------------------------+ |
+| | POL-3  Onboarding Process                     | |
+| | Steps for integrating new members into...     | |
+| | Leader, HR Team                 Feb 10, 2026  | |
+| +----------------------------------------------+ |
+|                                                   |
+| Showing 3 of 12 policies        [Load more]      |
++--------------------------------------------------+
+```
+
+**Policy List Item Structure:**
+
+Each row in the policy list contains:
+
+```tsx
+<div className="px-4 py-4 hover:bg-surface-hover-subtle transition-colors duration-75 cursor-pointer">
+  <div className="flex items-start gap-3">
+    {/* Policy number badge */}
+    <span className="shrink-0 px-2 py-0.5 rounded bg-surface-tertiary text-xs font-mono text-text-secondary">
+      POL-{policy.number}
+    </span>
+
+    {/* Content */}
+    <div className="flex-1 min-w-0">
+      <h3 className="text-sm font-medium text-dark dark:text-light">
+        {policy.title}
+      </h3>
+      <p className="text-sm text-text-description mt-0.5 line-clamp-2">
+        {policy.abstract}
+      </p>
+      <div className="flex items-center gap-2 mt-2 text-xs text-text-tertiary">
+        <span>{roleName}, {teamName}</span>
+        <span aria-hidden="true">-</span>
+        <time>{formatDate(policy.issuedDate)}</time>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+**Information hierarchy within each policy row:**
+
+1. **Primary**: Policy number + title (font-medium, full color)
+2. **Secondary**: Abstract (text-description, line-clamped to 2 lines)
+3. **Tertiary**: Owning role, team, and date (text-tertiary, smallest)
+
+**Search UX:**
+
+- Search input sits in the section header row, right-aligned, matching the pattern from `OrgaManageView`'s member/team search
+- Searches title and abstract fields
+- Results update in real-time via Convex subscription (not debounced -- Convex handles this efficiently)
+- When a search query is active and returns no results, show: "No policies match your search"
+- When no policies exist at all, show an empty state with the Logo and guidance text
+
+**Empty State:**
+
+```tsx
+<div className="px-4 py-12 text-center">
+  <Logo size={48} begin={0} repeatCount={2} />
+  <h3 className="font-swarm text-xl font-bold mt-4 text-dark dark:text-light">
+    No policies yet
+  </h3>
+  <p className="text-text-description text-sm mt-2 max-w-sm mx-auto">
+    Policies are created by role holders. When a role publishes a policy,
+    it will appear here for everyone to read.
+  </p>
+</div>
+```
+
+Note: There is no "Create policy" button in this view. Policies are created from the role context only, because every policy must be owned by a role. This avoids orphan policies and reinforces the role-ownership principle.
+
+#### 2. Role-Level Policies View (Third Tab in Role Component)
+
+Within the role component, policies appear as a third view alongside visual (SVG circle) and manage (form). This is where the role holder creates and edits their policies.
+
+**PrismFlip Geometry Update for Roles:**
+
+The role-level `PrismFlip` must change from `"coin"` (2 faces) to `"prism"` (3 faces):
+
+```tsx
+// Role view: now 3 faces (was coin, now prism)
+<PrismFlip
+  geometry="prism"
+  activeFaceKey={flipClass}
+  faces={[
+    { key: "visual", content: <RoleVisualView ... /> },
+    { key: "manage", content: <RoleManageView ... /> },
+    { key: "policies", content: <RolePoliciesView roleId={focusTarget.roleId} /> },
+  ]}
+/>
+```
+
+**HeaderViewToggle at Role Focus:**
+
+When the user has navigated into a role (focus.type === "role"), the toggle shows three tabs: visual, manage, policies. The policies tab replaces the absence of kanban (roles never had kanban).
+
+**RolePoliciesView Layout:**
+
+This view serves a dual purpose: reading (for everyone) and editing (for the role holder only). It follows the `RoleManageView` layout conventions: scrollable, `max-w-2xl mx-auto`, `pt-8 px-8 pb-8`.
+
+```
++--------------------------------------------------+
+| Policies for {Role Title}         [+ New policy]  |
+| Managed by {Member Name}                          |
++--------------------------------------------------+
+|                                                   |
+| +----------------------------------------------+ |
+| | POL-1  Data Retention Policy         [Edit]  | |
+| | Defines how long member data is retained      | |
+| | after a member leaves the organization.       | |
+| | Issued Jan 15, 2026                           | |
+| +----------------------------------------------+ |
+| | POL-5  Annual Review Process         [Edit]  | |
+| | Steps for conducting the yearly review of...  | |
+| | Issued Feb 10, 2026                           | |
+| +----------------------------------------------+ |
+|                                                   |
++--------------------------------------------------+
+```
+
+**Editable vs. Read-Only Indication:**
+
+The permission boundary must be visible but not intrusive.
+
+- **If the current user holds the role**: Show "New policy" button in the header and "Edit" links next to each policy. These use the established `text-highlight-hover dark:text-highlight hover:underline` pattern from `RoleManageView`.
+- **If the current user does NOT hold the role**: The "New policy" button and "Edit" links simply do not render. No disabled states, no "you can't do this" messages. The absence of controls IS the signal. This follows our principle of removing elements rather than disabling them.
+
+```tsx
+// Editable indicator: only render controls when user is role holder
+{isRoleHolder && (
+  <button
+    onClick={() => setShowCreateForm(true)}
+    className="
+      flex items-center gap-1.5
+      px-3 py-1.5
+      text-sm
+      text-text-description
+      hover:text-dark dark:hover:text-light
+      hover:bg-surface-hover
+      rounded-md
+      transition-colors duration-75
+      focus:outline-none focus:ring-2 focus:ring-highlight
+    "
+  >
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+         stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <path d="M8 3v10M3 8h10" />
+    </svg>
+    <span>{t("policies.newPolicy")}</span>
+  </button>
+)}
+```
+
+### Policy Detail and Edit View
+
+When a user clicks on a policy row (either in the orga-level list or the role-level list), the policy opens in a detail view. This is NOT a separate page or modal -- it replaces the list content within the same scrollable container, with a back arrow to return to the list.
+
+**Detail View Layout:**
+
+```
++--------------------------------------------------+
+| <- Back to policies                               |
+|                                                   |
+| POL-3                                             |
+| Onboarding Process                        [Edit]  |
+|                                                   |
+| Defines the steps for integrating new members     |
+| into the organization, including orientation,     |
+| role assignment, and mentoring period.             |
+|                                                   |
+| ------------------------------------------------- |
+|                                                   |
+| [Full markdown-rendered policy text here]         |
+| Including headings, lists, images, links...       |
+|                                                   |
+| ------------------------------------------------- |
+|                                                   |
+| Issued: January 15, 2026                          |
+| Owner: Secretary, Finance Team                    |
++--------------------------------------------------+
+```
+
+**Information hierarchy:**
+
+1. **Prominent**: Policy number as a monospace badge, title as h1
+2. **Clear**: Abstract as a full paragraph below the title (not truncated)
+3. **Separated**: Full markdown text below a divider
+4. **Tertiary**: Metadata (date, owner) at the bottom
+
+**Edit Mode:**
+
+When the role holder clicks "Edit", the detail view transitions to an edit form. This follows the in-place editing pattern established by `RoleManageView` (section-by-section editing with Save/Cancel buttons).
+
+```tsx
+// Policy edit form structure
+<section className="mb-8">
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-dark dark:text-light">
+      {t("policies.title")}
+    </h2>
+  </div>
+  <div className="bg-surface-primary border border-border-default rounded-lg p-4">
+    <input
+      type="text"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      className="
+        w-full px-3 py-2
+        border border-border-strong
+        rounded-lg
+        bg-surface-primary
+        text-dark dark:text-light
+        focus:outline-none focus:ring-2 focus:ring-highlight
+      "
+      placeholder={t("policies.titlePlaceholder")}
+    />
+  </div>
+</section>
+
+<section className="mb-8">
+  <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
+    {t("policies.abstract")}
+  </h2>
+  <div className="bg-surface-primary border border-border-default rounded-lg p-4">
+    <textarea
+      value={abstract}
+      onChange={(e) => setAbstract(e.target.value)}
+      rows={3}
+      className="
+        w-full px-3 py-2
+        border border-border-strong
+        rounded-lg
+        bg-surface-primary
+        text-dark dark:text-light
+        focus:outline-none focus:ring-2 focus:ring-highlight
+        resize-none
+      "
+      placeholder={t("policies.abstractPlaceholder")}
+    />
+  </div>
+</section>
+
+<section className="mb-8">
+  <h2 className="text-lg font-semibold mb-4 text-dark dark:text-light">
+    {t("policies.text")}
+  </h2>
+  <div className="bg-surface-primary border border-border-default rounded-lg p-4">
+    {/* Markdown editor with preview toggle */}
+    <MarkdownEditor
+      value={text}
+      onChange={setText}
+      placeholder={t("policies.textPlaceholder")}
+    />
+  </div>
+</section>
+```
+
+**Markdown Editor:**
+
+The text field uses a markdown editor with a write/preview toggle. This is a textarea for writing and a rendered markdown view for previewing. The toggle sits above the content area.
+
+```
++--------------------------------------------------+
+| [Write]  [Preview]                                |
++--------------------------------------------------+
+| # Section heading                                 |
+|                                                   |
+| Policy text with **bold**, *italic*, and:         |
+| - Bullet lists                                    |
+| - [Links](https://...)                            |
+| - ![Images](https://...)                          |
++--------------------------------------------------+
+```
+
+- Write mode: plain textarea with monospace font (`font-mono`)
+- Preview mode: rendered markdown with standard prose styling
+- The toggle uses the same tab pattern as the view toggle but at smaller scale
+- No WYSIWYG toolbar -- markdown is the input format, keeping the interface pure and simple
+
+### Policy Creation Flow
+
+Creating a new policy follows this flow:
+
+1. User is viewing the role-level policies tab
+2. User clicks "New policy"
+3. An empty edit form appears (replacing the list), with fields for title, abstract, and text
+4. User fills in the fields and clicks "Publish"
+5. The system assigns the next sequential policy number
+6. The new policy appears in both the role's policy list and the org-level policy list
+7. A notification is sent to all org members (category: Policy, priority: Normal)
+
+**Create vs. Edit distinction:**
+
+- Creating: Shows "Publish" button (primary action, `bg-highlight hover:bg-highlight-hover text-dark`)
+- Editing: Shows "Save changes" button (same styling)
+- Both show "Cancel" link (text-only, `text-text-description hover:text-gray-800`)
+
+### Policy Deletion
+
+Deleting a policy is a destructive action. Follow the established danger zone pattern from `RoleManageView`:
+
+- Show a confirmation step: "Delete this policy?" with "Yes, delete" (red) and "Cancel" buttons
+- The delete button only appears for the role holder
+- After deletion, return to the policy list
+- The policy number is NOT reused (POL-3 is retired forever if deleted)
+
+### Policies and Role Transitions
+
+When a role changes hands (member reassignment):
+
+- All policies remain attached to the role
+- The new role holder inherits edit/delete permissions
+- The previous holder loses edit access immediately (real-time via Convex)
+- No notification is needed for this -- the permission change is implicit in the role reassignment
+
+When a role is deleted:
+
+- Policies owned by the role should be transferred to the team's leader role
+- This preserves institutional knowledge
+- A decision audit entry should record the transfer
+
+### Policies Anti-Patterns
+
+| Anti-Pattern | Why It Is Wrong | Better Approach |
+|--------------|-----------------|-----------------|
+| "Create policy" button in the org list | Policies without role ownership are orphans | Only create from role context |
+| Disabling edit buttons for non-holders | Disabled controls create confusion and frustration | Simply do not render the controls |
+| Inline editing in the list view | Policy text is rich and complex | Navigate to detail view for editing |
+| Version history in the UI | Adds complexity without clear user need | Rely on decision journal for audit trail |
+| Separate policies page/route | Breaks the spatial navigation model | Policies live within the existing view toggle |
+| WYSIWYG rich text editor | Complex, bloated, inconsistent output | Markdown with write/preview toggle |
+| Policy numbers as editable fields | Users will create conflicting or vanity numbers | Auto-increment, system-managed only |
+
+### Accessibility for Policies
+
+1. **Policy List**: Use `role="list"` with `role="listitem"` for each policy row
+2. **Policy Number**: Announced as part of the item label (e.g., `aria-label="Policy 3: Onboarding Process"`)
+3. **Search**: The search input has a descriptive `aria-label="Search policies by title or abstract"`
+4. **Edit Controls**: Clearly labeled with `aria-label="Edit policy"` and `aria-label="Delete policy"`
+5. **Markdown Preview**: The preview area uses `role="document"` with appropriate heading structure
+6. **Back Navigation**: The back arrow uses `aria-label="Back to policies list"`
+
+### Policies Checklist Before Shipping
+
+- [ ] Policies tab visible at orga level in the HeaderViewToggle?
+- [ ] Policies tab visible at role level in the HeaderViewToggle?
+- [ ] Policies tab hidden at team and member focus levels?
+- [ ] PrismFlip geometry updated (coin to prism) for orga and role?
+- [ ] V key cycling includes policies at orga level?
+- [ ] P key shortcut works for policies view?
+- [ ] Policy list shows number, title, abstract, owning role, date?
+- [ ] Search filters policies by title and abstract?
+- [ ] Empty state shows Logo and guidance text?
+- [ ] Edit controls only appear for the role holder?
+- [ ] Non-holders see a clean read-only view (no disabled buttons)?
+- [ ] Policy detail view renders markdown correctly?
+- [ ] Markdown editor has write/preview toggle?
+- [ ] Policy creation assigns automatic sequential number?
+- [ ] Policy deletion uses confirmation pattern (not modal)?
+- [ ] All interactive elements are keyboard accessible?
+- [ ] Screen reader labels are meaningful for policy content?
+
+---
+
 ## Anti-Patterns
 
 ### What NOT to Do
@@ -710,6 +1198,9 @@ Watch for subtle ways hierarchy sneaks back in:
 - [ ] Notifications update in real-time?
 - [ ] Actionable notifications have clear actions?
 - [ ] Notification count is accessible (not color-only)?
+- [ ] Policies view mode integrated into HeaderViewToggle?
+- [ ] Policy edit controls visible only to role holder?
+- [ ] Policy search works on title and abstract?
 
 ### Key Tailwind Patterns
 
@@ -734,6 +1225,7 @@ className="p-8 gap-8" // Page sections
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-02-20 | 1.3.0 | Added comprehensive Policies section with org-level and role-level UX patterns |
 | 2026-02-07 | 1.2.0 | Added language guidelines section - "hierarchy" reserved for external systems |
 | 2026-02-06 | 1.1.0 | Added comprehensive notification patterns section |
 | 2026-02-02 | 1.0.0 | Initial UX principles established |

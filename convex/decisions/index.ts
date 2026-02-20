@@ -1,5 +1,4 @@
 import { v, Infer } from "convex/values"
-import { policyVisibilityType } from "../policies";
 import { invitationStatusType } from "../invitations";
 
 export const targetType = v.union(
@@ -110,28 +109,25 @@ const invitationDiff = v.object({
 });
 
 // Policy diff
+// Legacy fields (teamId, issuedDate, visibility, expirationDate) kept for historical decision records
+const policyDiffFields = v.object({
+  orgaId: v.optional(v.id("orgas")),
+  roleId: v.optional(v.id("roles")),
+  number: v.optional(v.number()),
+  title: v.optional(v.string()),
+  abstract: v.optional(v.string()),
+  text: v.optional(v.string()),
+  // Legacy fields preserved for backward compatibility with existing decision records
+  teamId: v.optional(v.id("teams")),
+  issuedDate: v.optional(v.number()),
+  visibility: v.optional(v.union(v.literal("private"), v.literal("public"))),
+  expirationDate: v.optional(v.number()),
+});
+
 const policyDiff = v.object({
   type: v.literal("Policy"),
-  before: v.optional(v.object({
-    orgaId: v.optional(v.id("orgas")),
-    teamId: v.optional(v.id("teams")),
-    roleId: v.optional(v.id("roles")),
-    issuedDate: v.optional(v.number()),
-    title: v.optional(v.string()),
-    text: v.optional(v.string()),
-    visibility: v.optional(policyVisibilityType),
-    expirationDate: v.optional(v.number()),
-  })),
-  after: v.optional(v.object({
-    orgaId: v.optional(v.id("orgas")),
-    teamId: v.optional(v.id("teams")),
-    roleId: v.optional(v.id("roles")),
-    issuedDate: v.optional(v.number()),
-    title: v.optional(v.string()),
-    text: v.optional(v.string()),
-    visibility: v.optional(policyVisibilityType),
-    expirationDate: v.optional(v.number()),
-  })),
+  before: v.optional(policyDiffFields),
+  after: v.optional(policyDiffFields),
 });
 
 // Member diff

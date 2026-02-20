@@ -602,6 +602,33 @@ export const deleteRole = mutation({
       }
     }
 
+    // Transfer policies owned by this role to the team leader
+    const rolePolicies = await ctx.db
+      .query("policies")
+      .withIndex("by_role", (q) => q.eq("roleId", args.roleId))
+      .collect();
+    if (rolePolicies.length > 0) {
+      // Find the leader role for this team
+      const leaderRole = await ctx.db
+        .query("roles")
+        .withIndex("by_team_and_role_type", (q) =>
+          q.eq("teamId", role.teamId).eq("roleType", "leader")
+        )
+        .first();
+      if (leaderRole && leaderRole._id !== args.roleId) {
+        // Transfer policies synchronously within this transaction
+        for (const policy of rolePolicies) {
+          await ctx.db.patch(policy._id, { roleId: leaderRole._id });
+        }
+      } else {
+        // If the deleted role IS the leader (edge case) or no leader exists,
+        // delete the policies as there is no valid transfer target
+        for (const policy of rolePolicies) {
+          await ctx.db.delete(policy._id);
+        }
+      }
+    }
+
     // Clean up kanban cards owned by this role
     const roleCards = await ctx.db
       .query("kanbanCards")

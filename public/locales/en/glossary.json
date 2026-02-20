@@ -51,6 +51,11 @@
       "description": "A specific, actionable responsibility assigned to a role. While a mission defines the overarching purpose, duties break it down into concrete tasks or obligations that the role holder is expected to fulfill. A role can have multiple duties.",
       "example": "A Content Lead role might have duties like 'Write weekly blog posts', 'Review community submissions', and 'Maintain the editorial calendar'."
     },
+    "policy": {
+      "title": "Policy",
+      "description": "A permanent rule the organization gives itself, owned by a specific role. Only the member holding that role can create, edit, or delete the policy. Policies have an automatic number, a title, an abstract, and a full text in markdown format that can include images, URLs, and attachments. They are visible to all members of the organization and searchable by title and abstract. When a role is deleted, its policies transfer to the team's leader so that no rule silently disappears. Policies complete the governance model: roles define who is responsible, duties define what they do, and policies define the rules they operate by.",
+      "example": "The Finance Secretary creates policy #12, 'Expense Approval Process', which defines how team members submit and approve expenses. Any member of the organization can read it, but only the Finance Secretary can update it."
+    },
     "topic": {
       "title": "Topic",
       "description": "A proposal raised within a team's chat channel that follows a structured consent-based decision process. A topic moves through three phases: proposition (the author states the proposal), clarification (members ask questions to understand it), and consent round (the group accepts or raises reasoned objections). Topics turn informal discussion into actionable governance without leaving the conversation.",

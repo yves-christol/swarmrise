@@ -1,0 +1,47 @@
+{
+  "list": {
+    "title": "Policies",
+    "searchPlaceholder": "Search policies...",
+    "empty": "No policies yet",
+    "emptySearch": "No policies match your search",
+    "showingCount": "Showing {{shown}} of {{total}}",
+    "loadMore": "Load more"
+  },
+  "detail": {
+    "backToList": "Back to list",
+    "policyNumber": "Policy #{{number}}",
+    "ownedBy": "Owned by {{role}}",
+    "abstract": "Summary",
+    "fullText": "Full text",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this policy?",
+    "confirmDelete": "Confirm delete",
+    "deleted": "Policy deleted",
+    "deleteFailed": "Failed to delete policy"
+  },
+  "form": {
+    "createTitle": "New policy",
+    "editTitle": "Edit policy",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Policy title",
+    "abstractLabel": "Summary",
+    "abstractPlaceholder": "Brief summary of this policy...",
+    "textLabel": "Full text",
+    "textPlaceholder": "Write the full policy text in markdown...",
+    "write": "Write",
+    "preview": "Preview",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "titleRequired": "Title is required",
+    "abstractRequired": "Summary is required",
+    "created": "Policy created",
+    "updated": "Policy updated",
+    "saveFailed": "Failed to save policy"
+  },
+  "role": {
+    "newPolicy": "New policy",
+    "noPolicies": "This role has no policies yet"
+  }
+}

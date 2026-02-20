@@ -24,6 +24,7 @@ export const HeaderViewToggle = () => {
   const { viewMode } = useViewModeNavigation();
   const disabled = swapPhase !== "idle" || isFocusTransitioning;
   const hasKanbanView = focus.type === "team" || focus.type === "member";
+  const hasPoliciesView = focus.type === "orga" || focus.type === "role";
 
   const handleChange = (mode: ViewMode) => {
     if (!disabled) changeViewMode(mode);
@@ -107,6 +108,34 @@ export const HeaderViewToggle = () => {
               <rect x="2" y="3" width="3.5" height="12" rx="1" />
               <rect x="7.25" y="3" width="3.5" height="8" rx="1" />
               <rect x="12.5" y="3" width="3.5" height="10" rx="1" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      {hasPoliciesView && (
+        <>
+          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" aria-hidden="true" />
+          <button
+            role="tab"
+            aria-selected={viewMode === "policies"}
+            onClick={() => handleChange("policies")}
+            disabled={disabled}
+            className={tabClass(viewMode === "policies", disabled)}
+            title={`${t("policies")} (P)`}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              aria-hidden="true"
+            >
+              <path d="M4 2h7l4 4v10a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" />
+              <path d="M11 2v4h4" />
+              <path d="M6 9h6M6 12h4" />
             </svg>
           </button>
         </>

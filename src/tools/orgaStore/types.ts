@@ -5,7 +5,7 @@ import type { Member } from "../../../convex/members";
 export type { Orga };
 
 // View mode types for switching between visual (SVG), manage (web), and kanban views
-export type ViewMode = "visual" | "manage" | "kanban";
+export type ViewMode = "visual" | "manage" | "kanban" | "policies";
 export type SwapPhase = "idle" | "swapping-out" | "swapping-in";
 export type SwapDirection = "up" | "down";
 

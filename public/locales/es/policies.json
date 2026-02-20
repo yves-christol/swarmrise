@@ -1,0 +1,47 @@
+{
+  "list": {
+    "title": "Politicas",
+    "searchPlaceholder": "Buscar politicas...",
+    "empty": "Sin politicas",
+    "emptySearch": "Ninguna politica coincide",
+    "showingCount": "{{shown}} de {{total}}",
+    "loadMore": "Cargar mas"
+  },
+  "detail": {
+    "backToList": "Volver a la lista",
+    "policyNumber": "Politica #{{number}}",
+    "ownedBy": "Gestionada por {{role}}",
+    "abstract": "Resumen",
+    "fullText": "Texto completo",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "deleteConfirm": "Esta seguro de que desea eliminar esta politica?",
+    "confirmDelete": "Confirmar eliminacion",
+    "deleted": "Politica eliminada",
+    "deleteFailed": "Error al eliminar la politica"
+  },
+  "form": {
+    "createTitle": "Nueva politica",
+    "editTitle": "Editar politica",
+    "titleLabel": "Titulo",
+    "titlePlaceholder": "Titulo de la politica",
+    "abstractLabel": "Resumen",
+    "abstractPlaceholder": "Breve resumen de esta politica...",
+    "textLabel": "Texto completo",
+    "textPlaceholder": "Escriba el texto completo en markdown...",
+    "write": "Escribir",
+    "preview": "Vista previa",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "cancel": "Cancelar",
+    "titleRequired": "El titulo es obligatorio",
+    "abstractRequired": "El resumen es obligatorio",
+    "created": "Politica creada",
+    "updated": "Politica actualizada",
+    "saveFailed": "Error al guardar la politica"
+  },
+  "role": {
+    "newPolicy": "Nueva politica",
+    "noPolicies": "Este rol no tiene politicas"
+  }
+}

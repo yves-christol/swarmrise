@@ -560,13 +560,15 @@ export const deleteTeam = mutation({
       await ctx.db.delete(topic._id);
     }
 
-    // Clean up policies belonging to this team
-    const teamPolicies = await ctx.db
-      .query("policies")
-      .withIndex("by_team", (q) => q.eq("teamId", args.teamId))
-      .collect();
-    for (const policy of teamPolicies) {
-      await ctx.db.delete(policy._id);
+    // Clean up policies belonging to roles in this team
+    for (const role of teamRoles) {
+      const rolePolicies = await ctx.db
+        .query("policies")
+        .withIndex("by_role", (q) => q.eq("roleId", role._id))
+        .collect();
+      for (const policy of rolePolicies) {
+        await ctx.db.delete(policy._id);
+      }
     }
 
     // Clean up Kanban data

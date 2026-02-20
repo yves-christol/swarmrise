@@ -119,9 +119,53 @@ Topics are discussion items that can be addressed synchronously (in meetings) or
 
 This is essential for distributed and remote organizations.
 
-### Policies as Living Rules
+### Policies: Self-Governance Made Explicit
 
-Policies are the permanent rules a team or organization gives itself. They are authored by role holders, scoped to teams, versioned, and visible. Unlike decisions (which record a single change), policies codify ongoing expectations. They answer: "How do we operate here?"
+Policies are the permanent rules an organization gives itself to behave in a clear, transparent, and consistent way. If decisions record *what changed*, policies codify *how we operate from now on*. They are the organizational memory that outlives any single decision.
+
+#### Role Ownership
+
+Every policy is owned by a specific role. Only the member currently holding that role can create, edit, or delete the policy. This is a deliberate design choice: accountability for a rule is tied to a role, not to a person. When someone leaves a role, the new holder inherits the policies and the responsibility to maintain them. There is no ambiguity about who is accountable for any given rule.
+
+This reinforces the principle that roles are the unit of accountability in swarmrise. People rotate; roles endure; policies persist.
+
+#### Transfer on Role Deletion
+
+When a role is deleted, its policies do not disappear. They are automatically transferred to the leader of the team the role belonged to. The leader then decides whether to keep, reassign, or retire those policies. This prevents governance gaps: rules should never silently vanish because a structural change was made.
+
+#### Structure and Content
+
+Each policy has:
+- An **automatic number** for easy reference in conversation and documentation.
+- A **title** that identifies the rule at a glance.
+- An **abstract** that summarizes the intent in a sentence or two.
+- A **text body** in markdown format that can embed images, URLs, and attachments for full detail.
+
+The combination of title + abstract makes policies scannable. The full text makes them precise. This mirrors how real-world constitutions, bylaws, and operational handbooks are structured: a quick label, a short summary, and the complete rule.
+
+#### Visibility and Access
+
+Policies are surfaced in two places:
+
+1. **Organization level**: A dedicated policies view sits alongside the visual and manage views, accessible via a toggle in the menu bar. This gives every member a single place to browse all the rules the organization has defined for itself.
+2. **Role level**: Policies attached to a role appear as a view within the role component. This answers the question: "What rules does this role govern?"
+
+Every member of the organization can read every policy. Editing and deleting are restricted to the member holding the owning role. This balance -- universal readability, scoped editability -- is transparency in practice.
+
+#### Searchability
+
+Policies are searchable by title and abstract through plain text search. In an organization with dozens of policies, members should never have to wonder "do we have a rule about this?" A quick search surfaces relevant policies instantly.
+
+#### Why Policies Matter for the Vision
+
+Policies are the mechanism through which organizations exercise self-governance. Without them, rules live in people's heads, in scattered documents, or in the oral tradition of "that is just how we do things here." With policies in swarmrise:
+
+- **Transparency**: Every rule is written down, visible, and attributed to a responsible role.
+- **Empowerment**: Any role holder can author policies within their domain. Rule-making is distributed, not reserved for leadership.
+- **Adaptiveness**: Policies can be updated by the role holder at any time. They are living documents, not carved in stone.
+- **Accountability**: The audit trail records every policy creation, update, and deletion as a decision. The organization always knows what changed, when, and by whom.
+
+Policies complete the governance loop: roles define *who is responsible*, duties define *what they do*, and policies define *the rules they operate by*.
 
 ### The Template Library
 
@@ -188,10 +232,10 @@ When evaluating any new feature, ask these questions:
 
 swarmrise is a governance tool for organizations that believe authority should be distributed, decisions should be transparent, and the people who do the work should have the most agency.
 
-It provides a simple, progressive model: organizations, teams, roles with purpose, consent-based decisions, integrated communication, and a culture of sharing. It respects people's intelligence, defaults to trust, and records everything so that trust is earned, not assumed.
+It provides a simple, progressive model: organizations, teams, roles with purpose, policies as self-defined rules, consent-based decisions, integrated communication, and a culture of sharing. It respects people's intelligence, defaults to trust, and records everything so that trust is earned, not assumed.
 
 The tool should feel light, fast, and obvious. The governance it enables should feel fair, adaptive, and human.
 
 ---
 
-*This document is maintained by Ivan, the Vision Agent. Last updated: 2026-02-13.*
+*This document is maintained by Ivan, the Vision Agent. Last updated: 2026-02-20.*

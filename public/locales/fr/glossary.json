@@ -51,6 +51,11 @@
       "description": "Une responsabilité spécifique et actionnable attribuée à un rôle. Alors qu'une mission définit l'objectif global, les devoirs la décomposent en tâches ou obligations concrètes que le titulaire du rôle est censé remplir. Un rôle peut avoir plusieurs devoirs.",
       "example": "Un rôle de Responsable du contenu pourrait avoir des devoirs comme 'Rédiger des articles de blog hebdomadaires', 'Examiner les contributions de la communauté' et 'Maintenir le calendrier éditorial'."
     },
+    "policy": {
+      "title": "Politique",
+      "description": "Une règle permanente que l'organisation se donne, détenue par un rôle spécifique. Seul le membre titulaire de ce rôle peut créer, modifier ou supprimer la politique. Les politiques ont un numéro automatique, un titre, un résumé et un texte complet en format markdown pouvant inclure des images, des URLs et des pièces jointes. Elles sont visibles par tous les membres de l'organisation et recherchables par titre et résumé. Lorsqu'un rôle est supprimé, ses politiques sont transférées au leader de l'équipe afin qu'aucune règle ne disparaisse silencieusement. Les politiques complètent le modèle de gouvernance : les rôles définissent qui est responsable, les devoirs définissent ce qu'ils font, et les politiques définissent les règles selon lesquelles ils opèrent.",
+      "example": "Le Secrétaire des Finances crée la politique n°12, 'Processus d'approbation des dépenses', qui définit comment les membres de l'équipe soumettent et approuvent les dépenses. Tout membre de l'organisation peut la lire, mais seul le Secrétaire des Finances peut la modifier."
+    },
     "topic": {
       "title": "Sujet",
       "description": "Une proposition soulevée dans le canal de discussion d'une équipe qui suit un processus structuré de décision par consentement. Un sujet passe par trois phases : proposition (l'auteur formule sa proposition), clarification (les membres posent des questions pour la comprendre) et tour de consentement (le groupe accepte ou soulève des objections argumentées). Les sujets transforment les discussions informelles en actes de gouvernance sans quitter la conversation.",

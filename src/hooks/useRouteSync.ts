@@ -65,9 +65,10 @@ function parseRouteToFocus(
 
   if (!orgaId) return null;
 
+  const isPoliciesView = pathname.endsWith("/policies");
   const isManageView = pathname.endsWith("/manage");
   const isKanbanView = pathname.endsWith("/kanban");
-  const viewMode: ViewMode = isKanbanView ? "kanban" : isManageView ? "manage" : "visual";
+  const viewMode: ViewMode = isPoliciesView ? "policies" : isKanbanView ? "kanban" : isManageView ? "manage" : "visual";
 
   // Member route: /o/:orgaId/members/:memberId
   if (memberId) {
@@ -121,9 +122,11 @@ export function buildUrlFromFocus(
           : routes.member(orgaId, focus.memberId);
 
     case "role":
-      return viewMode === "manage"
-        ? routes.roleManage(orgaId, focus.teamId, focus.roleId)
-        : routes.role(orgaId, focus.teamId, focus.roleId);
+      return viewMode === "policies"
+        ? routes.rolePolicies(orgaId, focus.teamId, focus.roleId)
+        : viewMode === "manage"
+          ? routes.roleManage(orgaId, focus.teamId, focus.roleId)
+          : routes.role(orgaId, focus.teamId, focus.roleId);
 
     case "team":
       return viewMode === "kanban"
@@ -134,7 +137,11 @@ export function buildUrlFromFocus(
 
     case "orga":
     default:
-      return viewMode === "manage" ? routes.orgaManage(orgaId) : routes.orga(orgaId);
+      return viewMode === "policies"
+        ? routes.orgaPolicies(orgaId)
+        : viewMode === "manage"
+          ? routes.orgaManage(orgaId)
+          : routes.orga(orgaId);
   }
 }
 

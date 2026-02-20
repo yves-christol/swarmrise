@@ -1,6 +1,6 @@
 {
   "invitation": "邀請",
-  "invitations": "邀請",
+  "invitations": "邀請管理",
   "pendingInvitations": "待處理的邀請",
   "accept": "接受",
   "decline": "拒絕",
@@ -21,5 +21,15 @@
   "alreadyMember": "此人已是成員",
   "alreadyInvited": "此電子郵件已有待處理的邀請",
   "rateLimitExceeded": "您已達到每日邀請上限",
-  "errorSending": "邀請發送失敗"
+  "errorSending": "邀請發送失敗",
+  "bulkImport": "從檔案匯入",
+  "bulkImportHint": "CSV 或 TXT 檔案。每行一個電子郵件，或以逗號/分號分隔。",
+  "chooseFile": "選擇檔案",
+  "emailsFound": "找到 {{count}} 個電子郵件",
+  "sendAll": "全部發送",
+  "bulkProgress": "正在發送 {{current}}/{{total}}...",
+  "bulkComplete": "完成：{{sent}} 個已發送，{{failed}} 個失敗，{{skipped}} 個已跳過",
+  "remove": "移除",
+  "noValidEmails": "檔案中未找到有效的電子郵件",
+  "duplicateRemoved": "已移除 {{count}} 個重複項"
 }

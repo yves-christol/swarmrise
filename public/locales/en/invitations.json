@@ -1,6 +1,6 @@
 {
   "invitation": "invitation",
-  "invitations": "invitations",
+  "invitations": "Invitations",
   "pendingInvitations": "Pending Invitations",
   "accept": "Accept",
   "decline": "Decline",
@@ -21,5 +21,15 @@
   "alreadyMember": "This person is already a member",
   "alreadyInvited": "An invitation is already pending for this email",
   "rateLimitExceeded": "You have reached the daily invitation limit",
-  "errorSending": "Failed to send invitation"
+  "errorSending": "Failed to send invitation",
+  "bulkImport": "Import from file",
+  "bulkImportHint": "CSV or TXT file. One email per line, or comma/semicolon separated.",
+  "chooseFile": "Choose file",
+  "emailsFound": "{{count}} email(s) found",
+  "sendAll": "Send all",
+  "bulkProgress": "Sending {{current}}/{{total}}...",
+  "bulkComplete": "Done: {{sent}} sent, {{failed}} failed, {{skipped}} skipped",
+  "remove": "Remove",
+  "noValidEmails": "No valid emails found in file",
+  "duplicateRemoved": "{{count}} duplicate(s) removed"
 }

@@ -1,6 +1,6 @@
 {
   "invitation": "запрошення",
-  "invitations": "запрошення",
+  "invitations": "Запрошення",
   "pendingInvitations": "Очікують запрошення",
   "accept": "Прийняти",
   "decline": "Відхилити",
@@ -21,5 +21,15 @@
   "alreadyMember": "Ця особа вже є учасником",
   "alreadyInvited": "Запрошення для цієї електронної пошти вже очікує",
   "rateLimitExceeded": "Ви досягли денного ліміту запрошень",
-  "errorSending": "Не вдалося надіслати запрошення"
+  "errorSending": "Не вдалося надіслати запрошення",
+  "bulkImport": "Імпортувати з файлу",
+  "bulkImportHint": "CSV або TXT файл. Одна електронна адреса на рядок, або через кому/крапку з комою.",
+  "chooseFile": "Обрати файл",
+  "emailsFound": "Знайдено {{count}} адрес(у/и)",
+  "sendAll": "Надіслати всі",
+  "bulkProgress": "Надсилання {{current}}/{{total}}...",
+  "bulkComplete": "Готово: {{sent}} надіслано, {{failed}} не вдалося, {{skipped}} пропущено",
+  "remove": "Видалити",
+  "noValidEmails": "У файлі не знайдено дійсних адрес електронної пошти",
+  "duplicateRemoved": "Видалено {{count}} дублікат(ів)"
 }

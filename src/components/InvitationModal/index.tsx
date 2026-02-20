@@ -68,11 +68,21 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
   const [sendSuccess, setSendSuccess] = useState(false);
   const [cancellingId, setCancellingId] = useState<Id<"invitations"> | null>(null);
 
+  // Bulk import state
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkEmails, setBulkEmails] = useState<string[]>([]);
+  const [bulkResults, setBulkResults] = useState<Map<string, "pending" | "sending" | "sent" | "error" | "skipped">>(new Map());
+  const [bulkError, setBulkError] = useState<string | null>(null);
+  const [isBulkSending, setIsBulkSending] = useState(false);
+  const [bulkSummary, setBulkSummary] = useState<{ sent: number; failed: number; skipped: number } | null>(null);
+  const [duplicateCount, setDuplicateCount] = useState(0);
+
   // Animation state
   const [isVisible, setIsVisible] = useState(false);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Handle open/close animation
   useEffect(() => {
@@ -92,6 +102,13 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
         setSendError(null);
         setSendSuccess(false);
         setCancellingId(null);
+        setBulkOpen(false);
+        setBulkEmails([]);
+        setBulkResults(new Map());
+        setBulkError(null);
+        setIsBulkSending(false);
+        setBulkSummary(null);
+        setDuplicateCount(0);
       }, 150);
       return () => clearTimeout(timer);
     }
@@ -203,6 +220,94 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setBulkError(null);
+    setBulkSummary(null);
+    setBulkResults(new Map());
+    setDuplicateCount(0);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      // Split by newlines, commas, or semicolons
+      const raw = text.split(/[\n,;]+/).map((s) => s.trim()).filter(Boolean);
+      // Validate and deduplicate
+      const seen = new Set<string>();
+      const valid: string[] = [];
+      let dupes = 0;
+      for (const entry of raw) {
+        const lower = entry.toLowerCase();
+        if (!EMAIL_REGEX.test(entry)) continue;
+        if (seen.has(lower)) {
+          dupes++;
+          continue;
+        }
+        seen.add(lower);
+        valid.push(entry);
+      }
+
+      setDuplicateCount(dupes);
+
+      if (valid.length === 0) {
+        setBulkError(t("noValidEmails"));
+        setBulkEmails([]);
+      } else {
+        setBulkEmails(valid);
+      }
+    };
+    reader.readAsText(file);
+    // Reset so the same file can be re-selected
+    e.target.value = "";
+  };
+
+  const handleRemoveBulkEmail = (index: number) => {
+    setBulkEmails((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleBulkSend = async () => {
+    if (bulkEmails.length === 0) return;
+    setIsBulkSending(true);
+    setBulkSummary(null);
+
+    const results = new Map<string, "pending" | "sending" | "sent" | "error" | "skipped">();
+    for (const em of bulkEmails) {
+      results.set(em, "pending");
+    }
+    setBulkResults(new Map(results));
+
+    let sent = 0;
+    let failed = 0;
+    let skipped = 0;
+
+    for (const em of bulkEmails) {
+      results.set(em, "sending");
+      setBulkResults(new Map(results));
+
+      try {
+        await createInvitation({ orgaId, email: em.trim() });
+        results.set(em, "sent");
+        sent++;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        const i18nKey = mapErrorToI18nKey(message);
+        if (i18nKey === "alreadyMember" || i18nKey === "alreadyInvited") {
+          results.set(em, "skipped");
+          skipped++;
+        } else {
+          results.set(em, "error");
+          failed++;
+        }
+      }
+      setBulkResults(new Map(results));
+    }
+
+    setBulkSummary({ sent, failed, skipped });
+    setIsBulkSending(false);
+  };
+
   if (!isOpen) return null;
 
   const modal = (
@@ -227,7 +332,7 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
             id="invitation-modal-title"
             className="text-xl font-bold text-dark dark:text-light"
           >
-            {t("pendingInvitations")}
+            {t("invitations")}
           </h2>
           <button
             type="button"
@@ -312,6 +417,169 @@ export function InvitationModal({ isOpen, onClose, orgaId }: InvitationModalProp
                 <CheckIcon className="w-4 h-4 flex-shrink-0" />
                 {t("invitationSent")}
               </p>
+            )}
+          </section>
+
+          {/* Bulk import from file */}
+          <section>
+            <button
+              type="button"
+              onClick={() => setBulkOpen((prev) => !prev)}
+              disabled={isBulkSending}
+              className="flex items-center gap-1.5 text-sm font-semibold text-dark dark:text-light hover:text-highlight transition-colors disabled:opacity-50"
+            >
+              <svg
+                className={`w-3.5 h-3.5 transition-transform duration-150 ${bulkOpen ? "rotate-90" : ""}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+              {t("bulkImport")}
+            </button>
+
+            {bulkOpen && (
+              <div className="mt-3 flex flex-col gap-3">
+                <p className="text-xs text-text-tertiary">
+                  {t("bulkImportHint")}
+                </p>
+
+                {/* File input */}
+                <div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".csv,.txt"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    disabled={isBulkSending}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isBulkSending}
+                    className="
+                      px-3 py-1.5 text-sm rounded-md border border-border-strong
+                      text-dark dark:text-light bg-surface-primary
+                      hover:bg-surface-secondary transition-colors duration-75
+                      disabled:opacity-50 disabled:cursor-not-allowed
+                    "
+                  >
+                    {t("chooseFile")}
+                  </button>
+                </div>
+
+                {/* Parse error */}
+                {bulkError && (
+                  <p className="flex items-center gap-1 text-sm text-red-600 dark:text-red-400" role="alert">
+                    <ErrorIcon className="w-4 h-4 flex-shrink-0" />
+                    {bulkError}
+                  </p>
+                )}
+
+                {/* Duplicate notice */}
+                {duplicateCount > 0 && (
+                  <p className="text-xs text-text-tertiary">
+                    {t("duplicateRemoved", { count: duplicateCount })}
+                  </p>
+                )}
+
+                {/* Email preview list */}
+                {bulkEmails.length > 0 && (
+                  <>
+                    <p className="text-sm text-dark dark:text-light font-medium">
+                      {t("emailsFound", { count: bulkEmails.length })}
+                    </p>
+                    <div className="border border-border-default rounded-lg overflow-hidden divide-y divide-border-default max-h-48 overflow-y-auto">
+                      {bulkEmails.map((em, i) => {
+                        const status = bulkResults.get(em);
+                        return (
+                          <div
+                            key={em}
+                            className="flex items-center justify-between px-3 py-1.5 bg-surface-primary text-sm"
+                          >
+                            <span className="text-dark dark:text-light truncate min-w-0">
+                              {em}
+                            </span>
+                            <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+                              {status === "sending" && <SpinnerIcon className="w-3.5 h-3.5 text-highlight" />}
+                              {status === "sent" && <CheckIcon className="w-3.5 h-3.5 text-green-500" />}
+                              {status === "error" && <ErrorIcon className="w-3.5 h-3.5 text-red-500" />}
+                              {status === "skipped" && <span className="text-xs text-text-tertiary">-</span>}
+                              {!status && !isBulkSending && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveBulkEmail(i)}
+                                  className="p-0.5 text-gray-400 hover:text-red-500 transition-colors"
+                                  aria-label={t("remove")}
+                                >
+                                  <XIcon className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Progress indicator */}
+                    {isBulkSending && !bulkSummary && (
+                      <p className="flex items-center gap-1.5 text-sm text-text-tertiary">
+                        <SpinnerIcon className="w-3.5 h-3.5" />
+                        {t("bulkProgress", {
+                          current: Array.from(bulkResults.values()).filter((s) => s !== "pending" && s !== "sending").length,
+                          total: bulkEmails.length,
+                        })}
+                      </p>
+                    )}
+
+                    {/* Summary */}
+                    {bulkSummary && (
+                      <p
+                        className={`flex items-center gap-1 text-sm ${
+                          bulkSummary.failed > 0
+                            ? "text-red-600 dark:text-red-400"
+                            : "text-green-600 dark:text-green-400"
+                        }`}
+                        role="status"
+                      >
+                        <CheckIcon className="w-4 h-4 flex-shrink-0" />
+                        {t("bulkComplete", bulkSummary)}
+                      </p>
+                    )}
+
+                    {/* Send all button */}
+                    {!bulkSummary && (
+                      <button
+                        type="button"
+                        onClick={() => void handleBulkSend()}
+                        disabled={isBulkSending || bulkEmails.length === 0}
+                        className="
+                          self-start px-4 py-2 text-sm font-bold rounded-md
+                          bg-highlight hover:bg-highlight-hover text-dark
+                          transition-colors duration-75
+                          disabled:opacity-50 disabled:cursor-not-allowed
+                          flex items-center gap-1.5
+                        "
+                      >
+                        {isBulkSending ? (
+                          <>
+                            <SpinnerIcon className="w-3.5 h-3.5" />
+                            {t("bulkProgress", {
+                              current: Array.from(bulkResults.values()).filter((s) => s !== "pending" && s !== "sending").length,
+                              total: bulkEmails.length,
+                            })}
+                          </>
+                        ) : (
+                          t("sendAll")
+                        )}
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
             )}
           </section>
 

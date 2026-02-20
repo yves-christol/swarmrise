@@ -84,6 +84,7 @@ function SortableCard({
     transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0 : undefined,
+    touchAction: (selectionMode || dragDisabled) ? undefined : 'none',
   };
 
   return (
@@ -289,6 +290,7 @@ export function KanbanColumn({
         {/* Drag handle for collapsed column -- the entire collapsed bar is the handle */}
         <div
           className="cursor-grab active:cursor-grabbing w-full flex flex-col items-center gap-2"
+          style={{ touchAction: selectionMode ? undefined : 'none' }}
           {...(selectionMode ? {} : { ...colAttributes, ...colListeners })}
           onClick={(e) => {
             // Only toggle collapse on click, not on drag
@@ -343,6 +345,7 @@ export function KanbanColumn({
           {!selectionMode && (
             <div
               className="p-0.5 text-text-tertiary hover:text-text-secondary transition-colors flex-shrink-0 cursor-grab active:cursor-grabbing"
+              style={{ touchAction: 'none' }}
               title={t("columnActions.dragToReorder")}
               aria-label={t("columnActions.dragToReorder")}
               {...colAttributes}

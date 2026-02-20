@@ -35,12 +35,27 @@
 - Used in: RoleVisualView duties modal, ChatPanel, create modals
 - See also user memory note about this pattern
 
+### Kanban Board DnD Architecture
+- Uses `@dnd-kit/core` v6.3.1 + `@dnd-kit/sortable` v10.0.0
+- `TouchSensor` configured with `{ delay: 250, tolerance: 5 }` activation constraint
+- `PointerSensor` configured with `{ distance: 5 }` activation constraint
+- Root issue for mobile drag failure: **no `touch-action: none`** on draggable cards
+  - During the 250ms delay, browser intercepts `touchmove` for native scroll
+  - Browser cancels touch sequence, dnd-kit never activates
+  - The `TouchSensor.setup()` adds a non-passive `touchmove` listener on `window` for iOS Safari `preventDefault` to work, but `preventDefault` is never called during the delay period
+- Board parent: `<div className="absolute inset-0 overflow-auto p-4">` (in FocusContainer)
+- Columns: `w-72 flex-shrink-0` in a `flex gap-3` container -- horizontal scroll via parent `overflow-auto`
+- Cards use `useSortable` with spread `{...attributes, ...listeners}` directly on the card div
+- Column DnD uses dedicated grip handle with separate `colAttributes`/`colListeners`
+- See detailed analysis in `kanban-mobile-dnd.md`
+
 ### Known Issues to Address
 - DetailsPanel fixed at `w-80` -- fills entire 320px screen, needs mobile adaptation
 - Keyboard hint badges on RoleVisualView/MemberVisualView not useful on touch devices
 - No `env(safe-area-inset-*)` usage for notched devices
 - iOS input zoom prevention not audited (need 16px+ font-size on inputs)
 - ZoomControls buttons are 40x40px, slightly under 44px WCAG recommendation
+- Kanban card drag broken on mobile -- see `kanban-mobile-dnd.md` for full analysis
 
 ### Documentation
 - RESPONSIVE.md created in docs/ (2026-02-15) -- comprehensive mobile patterns doc

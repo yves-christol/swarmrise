@@ -21,6 +21,23 @@ import {
 import { getMemberInOrga, memberHasTeamAccess } from "../utils";
 import { requireBoardAccess } from "./access";
 
+const ALLOWED_ATTACHMENT_MIME_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/svg+xml",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "text/plain",
+  "text/csv",
+  "text/markdown",
+  "application/zip",
+]);
+
 // ============================================================
 // Queries
 // ============================================================
@@ -546,6 +563,11 @@ export const deleteCard = mutation({
       .collect();
     for (const attachment of attachments) {
       await ctx.storage.delete(attachment.storageId);
+      const sfRecord = await ctx.db
+        .query("storageFiles")
+        .withIndex("by_storage_id", (q) => q.eq("storageId", attachment.storageId))
+        .unique();
+      if (sfRecord) await ctx.db.delete(sfRecord._id);
       await ctx.db.delete(attachment._id);
     }
 
@@ -687,6 +709,11 @@ export const deleteColumn = mutation({
         .collect();
       for (const attachment of attachments) {
         await ctx.storage.delete(attachment.storageId);
+        const sfRecord = await ctx.db
+          .query("storageFiles")
+          .withIndex("by_storage_id", (q) => q.eq("storageId", attachment.storageId))
+          .unique();
+        if (sfRecord) await ctx.db.delete(sfRecord._id);
         await ctx.db.delete(attachment._id);
       }
       await ctx.db.delete(card._id);
@@ -823,6 +850,11 @@ export const bulkDeleteCards = mutation({
         .collect();
       for (const attachment of attachments) {
         await ctx.storage.delete(attachment.storageId);
+        const sfRecord = await ctx.db
+          .query("storageFiles")
+          .withIndex("by_storage_id", (q) => q.eq("storageId", attachment.storageId))
+          .unique();
+        if (sfRecord) await ctx.db.delete(sfRecord._id);
         await ctx.db.delete(attachment._id);
       }
 
@@ -998,7 +1030,11 @@ export const addAttachment = mutation({
       throw new Error("File size exceeds the 10MB limit");
     }
 
-    return await ctx.db.insert("kanbanAttachments", {
+    if (!ALLOWED_ATTACHMENT_MIME_TYPES.has(args.mimeType)) {
+      throw new Error("File type not allowed");
+    }
+
+    const attachmentId = await ctx.db.insert("kanbanAttachments", {
       cardId: args.cardId,
       boardId: card.boardId,
       orgaId: board.orgaId,
@@ -1008,6 +1044,19 @@ export const addAttachment = mutation({
       mimeType: args.mimeType,
       uploadedBy: member._id,
     });
+
+    // Track in storageFiles
+    await ctx.db.insert("storageFiles", {
+      storageId: args.storageId,
+      orgaId: board.orgaId,
+      uploadedBy: member.personId,
+      purpose: "kanban_attachment",
+      fileName: args.fileName,
+      mimeType: args.mimeType,
+      fileSize: args.fileSize,
+    });
+
+    return attachmentId;
   },
 });
 
@@ -1024,6 +1073,12 @@ export const deleteAttachment = mutation({
     await requireBoardAccess(ctx, attachment.boardId);
 
     await ctx.storage.delete(attachment.storageId);
+    // Clean up storageFiles tracking record
+    const sfRecord = await ctx.db
+      .query("storageFiles")
+      .withIndex("by_storage_id", (q) => q.eq("storageId", attachment.storageId))
+      .unique();
+    if (sfRecord) await ctx.db.delete(sfRecord._id);
     await ctx.db.delete(args.attachmentId);
     return null;
   },

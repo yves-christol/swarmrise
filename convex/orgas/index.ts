@@ -14,6 +14,7 @@ export type ColorScheme = Infer<typeof colorScheme>;
 export const orgaType = v.object({
   name: v.string(),
   logoUrl: v.optional(v.string()),
+  logoStorageId: v.optional(v.id("_storage")),
   // New color model (3 fields)
   accentColor: v.optional(v.string()),         // Single brand accent (hex "#RRGGBB")
   surfaceColorLight: v.optional(v.string()),   // Background tint for light mode

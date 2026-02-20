@@ -998,6 +998,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
       <KanbanCardModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        orgaId={orgaId}
         boardId={boardData.board._id}
         columns={boardData.columns}
         roles={roleList}

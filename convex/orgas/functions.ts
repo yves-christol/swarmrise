@@ -1,5 +1,6 @@
 import { query, mutation } from "../_generated/server";
 import { v } from "convex/values";
+import { Id } from "../_generated/dataModel";
 import { orgaValidator } from ".";
 import {
   getMemberInOrga,
@@ -118,6 +119,7 @@ export const createOrganization = mutation({
     const orgaId = await ctx.db.insert("orgas", {
       name: args.name,
       logoUrl,
+      logoStorageId: args.logoStorageId,
       accentColor: args.accentColor,
       surfaceColorLight: args.surfaceColorLight,
       surfaceColorDark: args.surfaceColorDark,
@@ -125,6 +127,16 @@ export const createOrganization = mutation({
       owner: user._id,
       ...(normalizedDomains && { authorizedEmailDomains: normalizedDomains }),
     });
+
+    // Track the logo file in storageFiles
+    if (args.logoStorageId) {
+      await ctx.db.insert("storageFiles", {
+        storageId: args.logoStorageId,
+        orgaId,
+        uploadedBy: user._id,
+        purpose: "org_logo",
+      });
+    }
 
     // Create member document for the user (ensure email is in contactInfos)
     const memberId = await ctx.db.insert("members", {
@@ -336,11 +348,34 @@ export const updateOrga = mutation({
 
     if (args.name !== undefined) updates.name = args.name;
     if (args.logoStorageId !== undefined) {
+      // Clean up old logo storage file + tracking record
+      if (orga.logoStorageId) {
+        try {
+          await ctx.storage.delete(orga.logoStorageId);
+        } catch {
+          // Storage file may already be deleted
+        }
+        const oldRecord = await ctx.db
+          .query("storageFiles")
+          .withIndex("by_storage_id", (q) => q.eq("storageId", orga.logoStorageId!))
+          .unique();
+        if (oldRecord) await ctx.db.delete(oldRecord._id);
+      }
+
       if (args.logoStorageId === null) {
         updates.logoUrl = undefined;
+        updates.logoStorageId = undefined;
       } else {
         const url = await ctx.storage.getUrl(args.logoStorageId);
         updates.logoUrl = url ?? undefined;
+        updates.logoStorageId = args.logoStorageId;
+        // Track the new logo file
+        await ctx.db.insert("storageFiles", {
+          storageId: args.logoStorageId,
+          orgaId: args.orgaId,
+          uploadedBy: member.personId,
+          purpose: "org_logo",
+        });
       }
     }
     // New color fields
@@ -533,6 +568,18 @@ export const deleteOrganization = mutation({
     await ctx.db.patch(user._id, {
       orgaIds: user.orgaIds.filter((id) => id !== args.orgaId),
     });
+
+    // Delete the orga logo from storage if present
+    if (orga.logoUrl) {
+      const match = orga.logoUrl.match(/\/api\/storage\/([a-f0-9-]+)$/);
+      if (match) {
+        try {
+          await ctx.storage.delete(match[1] as Id<"_storage">);
+        } catch {
+          // Storage file may already be deleted
+        }
+      }
+    }
 
     // Finally delete the organization
     await ctx.db.delete(args.orgaId);

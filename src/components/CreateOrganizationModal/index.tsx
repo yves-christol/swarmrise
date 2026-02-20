@@ -37,7 +37,7 @@ export const CreateOrganizationModal = ({
   const { t } = useTranslation("orgs");
   const { selectOrga } = useOrgaStore();
   const createOrganization = useMutation(api.orgas.functions.createOrganization);
-  const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
+  const generateUploadUrl = useMutation(api.storage.functions.generateUploadUrl);
 
   const [name, setName] = useState("");
   const [accentColor, setAccentColor] = useState<string | null>(null);
@@ -166,7 +166,7 @@ export const CreateOrganizationModal = ({
     if (!logoFile) return null;
     setIsUploadingLogo(true);
     try {
-      const uploadUrl = await generateUploadUrl();
+      const uploadUrl = await generateUploadUrl({});
       const response = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": logoFile.type }, body: logoFile });
       if (!response.ok) throw new Error("Upload failed");
       const { storageId } = await response.json();

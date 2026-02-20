@@ -53,9 +53,22 @@ export async function deleteAllOrgaData(ctx: MutationCtx, orgaId: Id<"orgas">) {
     await ctx.db.delete(channel._id);
   }
 
-  // --- Kanban (all have by_orga) ---
+  // --- Kanban: attachments first (need to delete storage files) ---
+  const kanbanAttachments = await ctx.db
+    .query("kanbanAttachments")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const att of kanbanAttachments) {
+    try {
+      await ctx.storage.delete(att.storageId);
+    } catch {
+      // Storage file may already be deleted
+    }
+    await ctx.db.delete(att._id);
+  }
+
+  // --- Kanban: remaining tables (all have by_orga) ---
   const kanbanTables = [
-    "kanbanAttachments",
     "kanbanComments",
     "kanbanCards",
     "kanbanLabels",
@@ -71,6 +84,15 @@ export async function deleteAllOrgaData(ctx: MutationCtx, orgaId: Id<"orgas">) {
     for (const doc of docs) {
       await ctx.db.delete(doc._id);
     }
+  }
+
+  // --- Storage file tracking records (by_orga) ---
+  const storageFiles = await ctx.db
+    .query("storageFiles")
+    .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+    .collect();
+  for (const sf of storageFiles) {
+    await ctx.db.delete(sf._id);
   }
 
   // --- Notifications + notificationPreferences (both have by_orga) ---

@@ -26,6 +26,7 @@ const PRIORITY_DOT: Record<Priority, string> = {
 type KanbanCardModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  orgaId: Id<"orgas">;
   boardId: Id<"kanbanBoards">;
   columns: KanbanColumn[];
   roles: Role[];
@@ -40,6 +41,7 @@ type KanbanCardModalProps = {
 export function KanbanCardModal({
   isOpen,
   onClose,
+  orgaId,
   boardId,
   columns,
   roles,
@@ -58,7 +60,7 @@ export function KanbanCardModal({
   // B1
   const createLabelMut = useMutation(api.kanban.functions.createLabel);
   // B3
-  const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
+  const generateUploadUrl = useMutation(api.storage.functions.generateUploadUrl);
   const addAttachmentMut = useMutation(api.kanban.functions.addAttachment);
   const deleteAttachmentMut = useMutation(api.kanban.functions.deleteAttachment);
   // B4
@@ -248,7 +250,7 @@ export function KanbanCardModal({
 
     setIsUploading(true);
     try {
-      const uploadUrl = await generateUploadUrl();
+      const uploadUrl = await generateUploadUrl({ orgaId });
       const result = await fetch(uploadUrl, {
         method: "POST",
         headers: { "Content-Type": file.type },
@@ -268,7 +270,7 @@ export function KanbanCardModal({
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
-  }, [card, generateUploadUrl, addAttachmentMut, t]);
+  }, [card, orgaId, generateUploadUrl, addAttachmentMut, t]);
 
   // B4: Add comment
   const handleAddComment = useCallback(async () => {
@@ -719,6 +721,7 @@ export function KanbanCardModal({
                 <input
                   ref={fileInputRef}
                   type="file"
+                  accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.md,.zip"
                   onChange={(e) => void handleFileUpload(e)}
                   className="hidden"
                 />

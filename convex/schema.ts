@@ -15,6 +15,7 @@ import { messageType } from "./chat"
 import { channelReadPositionType } from "./chat"
 import { topicClarificationType, topicAnswerType, topicResponseType, voteType, electionNominationType, electionResponseType, reactionType } from "./chat"
 import { kanbanBoardType, kanbanColumnType, kanbanCardType, kanbanLabelType, kanbanAttachmentType, kanbanCommentType } from "./kanban"
+import { storageFileType } from "./storage"
 import { bugReportType } from "./bugReports"
 /**
  * Swarmrise Data Model Schema
@@ -192,6 +193,11 @@ export default defineSchema({
     .index("by_orga", ["orgaId"])
     .index("by_card", ["cardId"])
     .index("by_board", ["boardId"]),
+
+  // Storage file tracking - maps storage IDs to orgs for access control
+  storageFiles: defineTable({ ...storageFileType.fields })
+    .index("by_orga", ["orgaId"])
+    .index("by_storage_id", ["storageId"]),
 
   // Bug reports - platform-scoped, not org-scoped
   bugReports: defineTable({ ...bugReportType.fields })

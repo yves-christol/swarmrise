@@ -148,7 +148,7 @@ export const OrgaSettingsModal = ({
   const updateOrga = useMutation(api.orgas.functions.updateOrga);
   const deleteOrga = useMutation(api.orgas.functions.deleteOrganization);
   const transferOwnership = useMutation(api.orgas.functions.transferOwnership);
-  const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
+  const generateUploadUrl = useMutation(api.storage.functions.generateUploadUrl);
 
   // Form state
   const [name, setName] = useState("");
@@ -373,7 +373,7 @@ export const OrgaSettingsModal = ({
     if (!logoFile) return null;
     setIsUploadingLogo(true);
     try {
-      const uploadUrl = await generateUploadUrl();
+      const uploadUrl = await generateUploadUrl({ orgaId });
       const response = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": logoFile.type }, body: logoFile });
       if (!response.ok) throw new Error("Upload failed");
       const { storageId } = await response.json();

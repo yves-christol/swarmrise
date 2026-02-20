@@ -14,6 +14,61 @@ type TeamLinkProps = {
   onTeamClick?: () => void;
 };
 
+/**
+ * Wrap a team name into up to three lines that fit within the circle.
+ * Matches the wrapping logic used by OrgaVisualView/TeamNode and
+ * TeamVisualView/TeamNameText for visual consistency.
+ */
+function wrapTeamName(name: string, maxCharsPerLine: number): string[] {
+  if (name.length <= maxCharsPerLine) {
+    return [name];
+  }
+
+  const words = name.split(/\s+/);
+
+  // Single long word: hard-split across lines
+  if (words.length === 1) {
+    if (name.length <= maxCharsPerLine * 2) {
+      const mid = Math.ceil(name.length / 2);
+      return [name.slice(0, mid), name.slice(mid)];
+    }
+    return [
+      name.slice(0, maxCharsPerLine),
+      name.slice(maxCharsPerLine, maxCharsPerLine * 2 - 1) + "\u2026",
+    ];
+  }
+
+  // Build lines word by word, up to 3 lines
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (let i = 0; i < words.length; i++) {
+    const candidate = currentLine ? `${currentLine} ${words[i]}` : words[i];
+    if (candidate.length > maxCharsPerLine && currentLine.length > 0) {
+      lines.push(currentLine);
+      if (lines.length === 2) {
+        // 3rd line: take all remaining words, truncate if needed
+        const remaining = words.slice(i).join(" ");
+        if (remaining.length > maxCharsPerLine) {
+          lines.push(remaining.slice(0, maxCharsPerLine - 1) + "\u2026");
+        } else {
+          lines.push(remaining);
+        }
+        return lines;
+      }
+      currentLine = words[i];
+    } else {
+      currentLine = candidate;
+    }
+  }
+
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+
+  return lines;
+}
+
 export function TeamLink({
   team,
   centerX,
@@ -24,16 +79,21 @@ export function TeamLink({
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation("teams");
 
-  // Resolve team colour
-  const teamFill = team.color ?? "var(--diagram-node-fill)";
+  // Fill: team color at 20% opacity (80% transparency), matching OrgaVisualView and TeamVisualView
+  const fillColor = team.color ? team.color + "33" : "var(--diagram-node-fill)";
+  // Stroke: team color when available, matching other visual views
+  const strokeColor = team.color ?? "var(--diagram-node-stroke)";
 
   // Position at top of circle, symmetric to member link at bottom
   const linkX = centerX;
   const linkY = centerY - maxRadius - 30;
   const linkRadius = 36;
 
-  // Calculate connection line from circle edge to team link
-  const circleEdgeY = centerY - maxRadius;
+  // Wrap team name into up to 3 lines inside the circle
+  const fontSize = 10;
+  const lineHeight = fontSize * 1.2;
+  const maxCharsPerLine = Math.floor(linkRadius / 5); // ~7 chars, matches OrgaVisualView formula
+  const nameLines = wrapTeamName(team.name, maxCharsPerLine);
 
   const handleClick = () => {
     onTeamClick?.();
@@ -45,13 +105,6 @@ export function TeamLink({
       onTeamClick?.();
     }
   };
-
-  // Get initials for team name (first letter of first two words, or first two letters)
-  const words = team.name.trim().split(/\s+/);
-  const initials =
-    words.length >= 2
-      ? `${words[0][0] || ""}${words[1][0] || ""}`.toUpperCase()
-      : team.name.slice(0, 2).toUpperCase();
 
   return (
     <g
@@ -70,18 +123,6 @@ export function TeamLink({
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
-      {/* Connection line from main circle to team */}
-      <line
-        x1={linkX}
-        y1={circleEdgeY}
-        x2={linkX}
-        y2={linkY + linkRadius}
-        stroke={isHovered ? "#a2dbed" : "var(--diagram-node-stroke)"}
-        strokeWidth={2}
-        opacity={isHovered ? 0.8 : 0.4}
-        style={{ transition: "stroke 150ms ease-out, opacity 150ms ease-out" }}
-      />
-
       {/* Hover glow effect */}
       {isHovered && (
         <circle
@@ -98,13 +139,13 @@ export function TeamLink({
         />
       )}
 
-      {/* Team circle background */}
+      {/* Team circle background - color with 80% transparency */}
       <circle
         cx={linkX}
         cy={linkY}
         r={linkRadius}
-        fill={teamFill}
-        stroke={isHovered ? "#a2dbed" : "var(--diagram-node-stroke)"}
+        fill={fillColor}
+        stroke={isHovered ? "#a2dbed" : strokeColor}
         strokeWidth={2}
         style={{
           transition: "stroke 150ms ease-out",
@@ -112,31 +153,43 @@ export function TeamLink({
         }}
       />
 
-      {/* Team initials */}
+      {/* Team name inside circle (up to 3 lines) */}
       <text
         x={linkX}
-        y={linkY}
         textAnchor="middle"
         dominantBaseline="central"
         fill="var(--diagram-node-text)"
-        fontSize={14}
-        fontWeight={600}
+        fontSize={fontSize}
+        fontWeight={400}
         fontFamily="var(--org-title-font, Arial, Helvetica, sans-serif)"
         style={{ pointerEvents: "none", userSelect: "none" }}
       >
-        {initials}
-      </text>
-
-      {/* Team name above circle */}
-      <text
-        x={linkX}
-        y={linkY - linkRadius - 14}
-        textAnchor="middle"
-        fill="var(--diagram-muted-text)"
-        fontSize={11}
-        style={{ pointerEvents: "none", userSelect: "none" }}
-      >
-        {team.name}
+        {nameLines.length === 1 ? (
+          <tspan x={linkX} y={linkY}>
+            {nameLines[0]}
+          </tspan>
+        ) : nameLines.length === 2 ? (
+          <>
+            <tspan x={linkX} y={linkY - lineHeight * 0.5}>
+              {nameLines[0]}
+            </tspan>
+            <tspan x={linkX} y={linkY + lineHeight * 0.5}>
+              {nameLines[1]}
+            </tspan>
+          </>
+        ) : (
+          <>
+            <tspan x={linkX} y={linkY - lineHeight}>
+              {nameLines[0]}
+            </tspan>
+            <tspan x={linkX} y={linkY}>
+              {nameLines[1]}
+            </tspan>
+            <tspan x={linkX} y={linkY + lineHeight}>
+              {nameLines[2]}
+            </tspan>
+          </>
+        )}
       </text>
     </g>
   );

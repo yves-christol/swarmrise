@@ -5,6 +5,7 @@
  *  1. deleteDemoOrga   - Finds the demo orga by name and deletes it with ALL dependencies
  *  2. seedDemoOrga     - Creates a fresh demo orga from the JSON-like config
  *  2b. seedKanbanData  - Populates Kanban boards, labels, cards, and comments for every team
+ *  2c. seedPolicyData  - Creates demo policies owned by leader roles, matched to team archetype
  *  3. uploadDemoLogo   - Uploads the Infomax logo to Convex storage and updates the orga
  *  4. resetDemoOrga    - Orchestrating action: delete then create (called by the cron)
  *
@@ -18,7 +19,7 @@ import { internalMutation, internalAction } from "../_generated/server";
 import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
-import { DEMO_ORGA_CONFIG, TeamTemplate, RoleTemplate } from "./demoOrgaConfig";
+import { DEMO_ORGA_CONFIG, TeamTemplate, RoleTemplate, POLICY_TEMPLATES } from "./demoOrgaConfig";
 import { getDefaultIconKey } from "../roles/iconDefaults";
 import { ALL_ICON_KEYS } from "../roles/iconKeys";
 import { DEFAULT_COLUMNS } from "../kanban";
@@ -1574,6 +1575,119 @@ export const seedKanbanData = internalMutation({
 });
 
 // ---------------------------------------------------------------------------
+// 2c. SEED demo policies for leader roles, matched by team archetype
+// ---------------------------------------------------------------------------
+
+/**
+ * Classify a team name to a policy archetype key from POLICY_TEMPLATES.
+ * Returns the matching key or undefined if no archetype matches.
+ */
+function getPolicyArchetype(teamName: string): string | undefined {
+  const lower = teamName.toLowerCase();
+
+  // Order matters: more specific matches first
+  if (lower.includes("frontend")) return "frontend";
+  if (lower.includes("backend")) return "backend";
+  if (lower.includes("devops")) return "devops";
+  if (lower.includes("platform") || lower.includes("infrastructure")) return "platform";
+  if (lower.includes("security")) return "security";
+  if (lower.includes("quality")) return undefined; // no specific policies
+  if (lower.includes("engineering")) return "engineering";
+  if (lower.includes("design")) return "design";
+  if (lower.includes("data") || lower.includes("analytics")) return "data";
+  if (lower.includes("product")) return "product";
+  if (lower.includes("growth")) return "growth";
+  if (lower.includes("content") || lower.includes("brand")) return undefined;
+  if (lower.includes("communications")) return "communications";
+  if (lower.includes("marketing")) return "marketing";
+  if (lower.includes("enterprise")) return undefined;
+  if (lower.includes("sales operations")) return undefined;
+  if (lower.includes("customer")) return "customer";
+  if (lower.includes("sales")) return "sales";
+  if (lower.includes("legal")) return "legal";
+  if (lower.includes("finance")) return "finance";
+  if (lower.includes("talent")) return undefined;
+  if (lower.includes("people")) return "people";
+  if (lower.includes("it")) return "it";
+  if (lower.includes("operations")) return "operations";
+
+  return undefined;
+}
+
+/**
+ * Seeds demo policies for the demo orga.
+ *
+ * For each team, finds the leader role and matches the team name to a policy
+ * archetype. If a match is found, inserts the corresponding policy templates
+ * owned by the leader role.
+ */
+export const seedPolicyData = internalMutation({
+  args: {
+    orgaId: v.id("orgas"),
+  },
+  returns: v.object({
+    policyCount: v.number(),
+    teamsCovered: v.number(),
+  }),
+  handler: async (ctx, args) => {
+    const { orgaId } = args;
+
+    // Fetch all teams in this orga
+    const teams = await ctx.db
+      .query("teams")
+      .withIndex("by_orga", (q) => q.eq("orgaId", orgaId))
+      .collect();
+
+    let policyCount = 0;
+    let teamsCovered = 0;
+
+    // Track the org-wide policy number (auto-incremented)
+    let nextNumber = 1;
+
+    for (const team of teams) {
+      // Find the archetype for this team
+      const archetype = getPolicyArchetype(team.name);
+      if (!archetype) continue;
+
+      // Get policy templates for this archetype
+      const templates = POLICY_TEMPLATES[archetype];
+      if (!templates || templates.length === 0) continue;
+
+      // Find the leader role for this team
+      const leaderRole = await ctx.db
+        .query("roles")
+        .withIndex("by_team_and_role_type", (q) =>
+          q.eq("teamId", team._id).eq("roleType", "leader")
+        )
+        .first();
+
+      if (!leaderRole) continue;
+
+      teamsCovered++;
+
+      // Insert each policy template
+      for (const template of templates) {
+        await ctx.db.insert("policies", {
+          orgaId,
+          roleId: leaderRole._id,
+          number: nextNumber++,
+          title: template.title,
+          abstract: template.abstract,
+          text: template.text,
+        });
+        policyCount++;
+      }
+    }
+
+    console.log(
+      `[seedPolicyData] Created ${policyCount} policies across ${teamsCovered} teams.`
+    );
+
+    return { policyCount, teamsCovered };
+  },
+});
+
+// ---------------------------------------------------------------------------
 // 3. UPLOAD the Infomax logo to Convex storage and update the orga
 // ---------------------------------------------------------------------------
 
@@ -1720,11 +1834,18 @@ export const resetDemoOrga = internalAction({
       { orgaId: createResult.orgaId }
     );
 
+    // Step 6: Seed demo policies for leader roles
+    const policyResult = await ctx.runMutation(
+      internal.dataTest.createDemoOrga.seedPolicyData,
+      { orgaId: createResult.orgaId }
+    );
+
     console.log(
       `[resetDemoOrga] Reset complete. New orgaId: ${createResult.orgaId}, ` +
       `logo: ${logoResult.logoUrl}, ` +
       `avatars: ${avatarResult.updatedCount} ok / ${avatarResult.failedCount} failed, ` +
-      `kanban: ${kanbanResult.boardCount} boards, ${kanbanResult.cardCount} cards`
+      `kanban: ${kanbanResult.boardCount} boards, ${kanbanResult.cardCount} cards, ` +
+      `policies: ${policyResult.policyCount} across ${policyResult.teamsCovered} teams`
     );
 
     return { deleteResult, createResult };

@@ -5,12 +5,14 @@
     "empty": "Aucune politique",
     "emptySearch": "Aucune politique ne correspond",
     "showingCount": "{{shown}} sur {{total}}",
-    "loadMore": "Charger plus"
+    "loadMore": "Charger plus",
+    "goToRole": "Aller au role {{role}}"
   },
   "detail": {
     "backToList": "Retour a la liste",
     "policyNumber": "Politique #{{number}}",
     "ownedBy": "Geree par {{role}}",
+    "ownedByPrefix": "Geree par",
     "abstract": "Resume",
     "fullText": "Texte complet",
     "edit": "Modifier",

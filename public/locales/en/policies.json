@@ -5,12 +5,14 @@
     "empty": "No policies yet",
     "emptySearch": "No policies match your search",
     "showingCount": "Showing {{shown}} of {{total}}",
-    "loadMore": "Load more"
+    "loadMore": "Load more",
+    "goToRole": "Go to role {{role}}"
   },
   "detail": {
     "backToList": "Back to list",
     "policyNumber": "Policy #{{number}}",
     "ownedBy": "Owned by {{role}}",
+    "ownedByPrefix": "Owned by",
     "abstract": "Summary",
     "fullText": "Full text",
     "edit": "Edit",

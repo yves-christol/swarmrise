@@ -5,12 +5,14 @@
     "empty": "Полiтик ще немає",
     "emptySearch": "Жодна полiтика не знайдена",
     "showingCount": "{{shown}} з {{total}}",
-    "loadMore": "Завантажити бiльше"
+    "loadMore": "Завантажити бiльше",
+    "goToRole": "Перейти до ролi {{role}}"
   },
   "detail": {
     "backToList": "Назад до списку",
     "policyNumber": "Полiтика #{{number}}",
     "ownedBy": "Власник: {{role}}",
+    "ownedByPrefix": "Власник:",
     "abstract": "Короткий опис",
     "fullText": "Повний текст",
     "edit": "Редагувати",

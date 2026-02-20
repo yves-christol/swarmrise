@@ -4,7 +4,10 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import type { Policy } from "../../../convex/policies";
+import type { Role } from "../../../convex/roles";
 import { PolicyMarkdown } from "../shared/PolicyMarkdown";
+import { getRoleIconPath } from "../../utils/roleIconDefaults";
+import { useFocus, useViewMode } from "../../tools/orgaStore";
 
 type OrgaPoliciesViewProps = {
   orgaId: Id<"orgas">;
@@ -21,6 +24,9 @@ export function OrgaPoliciesView({ orgaId }: OrgaPoliciesViewProps) {
   const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
   const [selectedPolicy, setSelectedPolicy] = useState<Policy | null>(null);
 
+  const { focusOnRole } = useFocus();
+  const { setViewMode } = useViewMode();
+
   // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchInput), 300);
@@ -36,6 +42,23 @@ export function OrgaPoliciesView({ orgaId }: OrgaPoliciesViewProps) {
     orgaId,
     search: debouncedSearch || undefined,
   });
+
+  // Fetch all roles in the org for efficient lookup
+  const roles = useQuery(api.roles.functions.listRolesInOrga, { orgaId });
+
+  const roleMap = useMemo(() => {
+    const map = new Map<Id<"roles">, Role>();
+    roles?.forEach((role) => map.set(role._id, role));
+    return map;
+  }, [roles]);
+
+  const handleNavigateToRole = useCallback(
+    (roleId: Id<"roles">, teamId: Id<"teams">) => {
+      setViewMode("visual");
+      focusOnRole(roleId, teamId);
+    },
+    [focusOnRole, setViewMode]
+  );
 
   const displayedPolicies = useMemo(() => {
     if (!policies) return [];
@@ -58,6 +81,8 @@ export function OrgaPoliciesView({ orgaId }: OrgaPoliciesViewProps) {
       <PolicyDetail
         policy={selectedPolicy}
         onBack={handleBack}
+        roleMap={roleMap}
+        onNavigateToRole={handleNavigateToRole}
       />
     );
   }
@@ -107,7 +132,9 @@ export function OrgaPoliciesView({ orgaId }: OrgaPoliciesViewProps) {
                 <PolicyListItem
                   key={policy._id}
                   policy={policy}
+                  role={roleMap.get(policy.roleId)}
                   onSelect={handleSelectPolicy}
+                  onNavigateToRole={handleNavigateToRole}
                 />
               ))}
             </div>
@@ -148,10 +175,14 @@ export function OrgaPoliciesView({ orgaId }: OrgaPoliciesViewProps) {
 
 function PolicyListItem({
   policy,
+  role,
   onSelect,
+  onNavigateToRole,
 }: {
   policy: Policy;
+  role: Role | undefined;
   onSelect: (policy: Policy) => void;
+  onNavigateToRole: (roleId: Id<"roles">, teamId: Id<"teams">) => void;
 }) {
   return (
     <button
@@ -169,8 +200,16 @@ function PolicyListItem({
         #{policy.number}
       </span>
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-dark dark:text-light truncate">
-          {policy.title}
+        <div className="flex items-center gap-2">
+          <span className="font-medium text-dark dark:text-light truncate">
+            {policy.title}
+          </span>
+          {role && (
+            <RoleBadge
+              role={role}
+              onNavigateToRole={onNavigateToRole}
+            />
+          )}
         </div>
         <div className="text-sm text-text-description line-clamp-2 mt-0.5">
           {policy.abstract}
@@ -192,19 +231,79 @@ function PolicyListItem({
   );
 }
 
-function PolicyDetail({
-  policy,
-  onBack,
+function RoleBadge({
+  role,
+  onNavigateToRole,
 }: {
-  policy: Policy;
-  onBack: () => void;
+  role: Role;
+  onNavigateToRole: (roleId: Id<"roles">, teamId: Id<"teams">) => void;
 }) {
   const { t } = useTranslation("policies");
 
-  // Fetch the owning role to display its name
-  const role = useQuery(api.roles.functions.getRoleById, {
-    roleId: policy.roleId,
-  });
+  return (
+    <span
+      role="link"
+      tabIndex={0}
+      onClick={(e) => {
+        e.stopPropagation();
+        onNavigateToRole(role._id, role.teamId);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          e.stopPropagation();
+          onNavigateToRole(role._id, role.teamId);
+        }
+      }}
+      title={t("list.goToRole", { role: role.title })}
+      className="
+        inline-flex items-center gap-1 shrink-0
+        px-1.5 py-0.5
+        text-xs text-text-secondary
+        bg-surface-tertiary
+        rounded
+        hover:bg-highlight/10 hover:text-highlight
+        transition-colors duration-75
+        cursor-pointer
+        focus:outline-none focus:ring-2 focus:ring-highlight
+      "
+    >
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 40 40"
+        className="shrink-0"
+        aria-hidden="true"
+      >
+        <path
+          d={getRoleIconPath(role.iconKey, role.roleType)}
+          fill="currentColor"
+        />
+      </svg>
+      <span className="truncate max-w-[10rem]">{role.title}</span>
+    </span>
+  );
+}
+
+function PolicyDetail({
+  policy,
+  onBack,
+  roleMap,
+  onNavigateToRole,
+}: {
+  policy: Policy;
+  onBack: () => void;
+  roleMap: Map<Id<"roles">, Role>;
+  onNavigateToRole: (roleId: Id<"roles">, teamId: Id<"teams">) => void;
+}) {
+  const { t } = useTranslation("policies");
+
+  // Use the pre-fetched role from the map, fall back to individual query
+  const fetchedRole = useQuery(
+    api.roles.functions.getRoleById,
+    roleMap.has(policy.roleId) ? "skip" : { roleId: policy.roleId }
+  );
+  const role = roleMap.get(policy.roleId) ?? fetchedRole;
 
   return (
     <div className="absolute inset-0 bg-light dark:bg-dark overflow-auto">
@@ -237,9 +336,13 @@ function PolicyDetail({
             {policy.title}
           </h1>
           {role && (
-            <p className="text-sm text-text-secondary">
-              {t("detail.ownedBy", { role: role.title })}
-            </p>
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <span>{t("detail.ownedByPrefix")}</span>
+              <RoleBadge
+                role={role}
+                onNavigateToRole={onNavigateToRole}
+              />
+            </div>
           )}
         </header>
 

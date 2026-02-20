@@ -5,12 +5,14 @@
     "empty": "尚無政策",
     "emptySearch": "沒有符合的政策",
     "showingCount": "顯示 {{shown}} / {{total}}",
-    "loadMore": "載入更多"
+    "loadMore": "載入更多",
+    "goToRole": "前往角色 {{role}}"
   },
   "detail": {
     "backToList": "返回列表",
     "policyNumber": "政策 #{{number}}",
     "ownedBy": "負責角色：{{role}}",
+    "ownedByPrefix": "負責角色：",
     "abstract": "摘要",
     "fullText": "全文",
     "edit": "編輯",

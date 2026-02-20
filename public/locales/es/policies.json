@@ -5,12 +5,14 @@
     "empty": "Sin politicas",
     "emptySearch": "Ninguna politica coincide",
     "showingCount": "{{shown}} de {{total}}",
-    "loadMore": "Cargar mas"
+    "loadMore": "Cargar mas",
+    "goToRole": "Ir al rol {{role}}"
   },
   "detail": {
     "backToList": "Volver a la lista",
     "policyNumber": "Politica #{{number}}",
     "ownedBy": "Gestionada por {{role}}",
+    "ownedByPrefix": "Gestionada por",
     "abstract": "Resumen",
     "fullText": "Texto completo",
     "edit": "Editar",

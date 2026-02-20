@@ -1,8 +1,9 @@
 # Ivan Vision Agent Memory
 
 ## VISION.md
-- Created 2026-02-13 at `/Users/yc/dev/swarmrise/VISION.md`
+- Created 2026-02-13 at `/Users/yc/dev/swarmrise/docs/VISION.md` (NOT repo root)
 - Based on thorough codebase research + 8 clarifying questions answered by founder
+- Updated 2026-02-20: Expanded Policies section from 3 lines to full subsection
 
 ## Key Vision Decisions (from founder)
 
@@ -49,13 +50,24 @@
 - Apache 2.0, community-driven
 - Commercial hosted SaaS for revenue (pricing TBD)
 
+### Policies (2026-02-20, from founder)
+- Permanent rules the org gives itself for clear, transparent, consistent behavior
+- ALWAYS owned by a specific role (not a person, not a team)
+- Only the role holder can create/edit/delete
+- Auto-numbered, have title + abstract + markdown text (images, URLs, attachments)
+- Surfaced at org level (third view) and role level (third view)
+- Searchable by title and abstract (plain text search)
+- On role deletion: transferred to team leader (governance continuity)
+- Completes the governance triad: roles (who) + duties (what) + policies (rules)
+- Glossary entry added to all 6 locales
+
 ## Key Source Documents
 - `docs/SWARMRISE.md` - Original manifesto (principles)
 - `docs/BRAND.md` - Visual identity and brand guidelines
 - `docs/UX_PRINCIPLES.md` - UX philosophy including flat design, anti-hierarchy visuals
 - `docs/DESIGN_PRINCIPLES.md` - Interaction patterns and design system
 - `docs/DATA_MODEL.md` - Entity relationships and architecture rationale
-- `src/i18n/locales/en/glossary.json` - Canonical terminology definitions
+- `public/locales/en/glossary.json` - Canonical terminology definitions (moved from src/i18n)
 
 ## Terminology
 - Use "team connections" not "team hierarchy"

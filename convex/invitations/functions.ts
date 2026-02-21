@@ -108,8 +108,9 @@ export const createInvitation = mutation({
     const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
     const recentInvitations = await ctx.db
       .query("invitations")
-      .withIndex("by_emitter", (q) => q.eq("emitterMemberId", member._id))
-      .filter((q) => q.gte(q.field("sentDate"), oneDayAgo))
+      .withIndex("by_emitter_and_sent_date", (q) =>
+        q.eq("emitterMemberId", member._id).gte("sentDate", oneDayAgo)
+      )
       .collect();
     if (recentInvitations.length >= 50) {
       throw new Error("Rate limit exceeded: maximum 50 invitations per day");

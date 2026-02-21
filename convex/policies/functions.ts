@@ -1,4 +1,4 @@
-import { query, mutation, internalMutation } from "../_generated/server";
+import { query, mutation, internalMutation, QueryCtx, MutationCtx } from "../_generated/server";
 import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
@@ -19,13 +19,12 @@ import {
  * Queries the max existing number and returns max + 1 (or 1 if none exist).
  */
 async function getNextPolicyNumber(
-  ctx: { db: { query: (table: "policies") => any } },
+  ctx: QueryCtx | MutationCtx,
   orgaId: Id<"orgas">
 ): Promise<number> {
-  // Query policies by orga in descending order of number to find the max
   const lastPolicy = await ctx.db
     .query("policies")
-    .withIndex("by_orga_and_number", (q: any) => q.eq("orgaId", orgaId))
+    .withIndex("by_orga_and_number", (q) => q.eq("orgaId", orgaId))
     .order("desc")
     .first();
   return lastPolicy ? lastPolicy.number + 1 : 1;
@@ -36,7 +35,7 @@ async function getNextPolicyNumber(
  * Returns the member document if authorized, throws otherwise.
  */
 async function verifyRoleOwnership(
-  ctx: any,
+  ctx: QueryCtx | MutationCtx,
   roleId: Id<"roles">,
   orgaId: Id<"orgas">
 ) {
@@ -91,7 +90,7 @@ export const list = query({
       // Use the search index on title, filtered by orgaId
       const titleMatches = await ctx.db
         .query("policies")
-        .withSearchIndex("search_title_abstract", (q: any) =>
+        .withSearchIndex("search_title_abstract", (q) =>
           q.search("title", searchTerm).eq("orgaId", args.orgaId)
         )
         .collect();

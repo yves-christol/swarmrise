@@ -8,8 +8,10 @@
 - Auth helpers in `convex/utils.ts`: `getAuthenticatedUserEmail`, `getAuthenticatedUser`, `getMemberInOrga`
 - Access control: `convex/chat/access.ts` (also used by kanban), `convex/kanban/access.ts`
 - Chat split into 8 domain files with barrel re-export in `convex/chat/functions.ts`
+- Kanban split into 7 domain files with barrel re-export in `convex/kanban/functions.ts`
 - Color system uses hex strings (migration from RGB completed)
 - Index naming: `by_field` or `by_field1_and_field2`
+- Notification helpers in `convex/notifications/helpers.ts` (builders, recipients)
 
 ### Frontend
 - Components: PascalCase dirs with `index.tsx`; functions: camelCase
@@ -18,6 +20,8 @@
 - State: `orgaStore` and `chatStore` under `src/tools/`
 - Shared types: `src/components/shared/visualTypes.ts`
 - Shared viewport hook: `src/components/shared/useViewport.ts`
+- Color utilities consolidated in `src/utils/colorContrast.ts`
+- Shared icon components in `src/components/Icons.tsx` (SpinnerIcon, CheckIcon, XIcon, ErrorIcon, PlusIcon)
 
 ## Completed Cleanup
 
@@ -26,36 +30,35 @@
 2. Split `convex/chat/functions.ts` (2660 lines) into 8 domain files
 3. Unified color system from RGB to hex
 4. Split large frontend components (RoleManageView, MemberManageView)
-5. topics/ directory confirmed clean
 
-## Round 3 Audit Findings (2026-02-19)
+### Round 2 (2026-02-17)
+- ResourceCard removed, COLOR_PRESETS consolidated into ACCENT_PRESETS
 
-### Resolved from Round 2
-- ResourceCard component removed
-- COLOR_PRESETS consolidated into ACCENT_PRESETS
+### Round 4 cleanup (2026-02-21) -- ALL 7 ITEMS COMPLETED
+1. Removed ~400 lines dead notification functions/helpers
+2. Consolidated color utils into `src/utils/colorContrast.ts`
+3. Replaced 8 inline spinner SVGs with SpinnerIcon
+4. Removed ~170 lines dead user/storage functions
+5. Split `convex/kanban/functions.ts` (1489 lines) into 7 domain files + barrel
+6. Removed legacy color field handling from mutations/frontend
+7. Added `by_channel_and_thread_parent` index
 
-### Remaining Issues (Critical)
-- Org deletion (`deleteOrganization`) does NOT clean up: topics, policies, kanban, notifications, chat tool tables
-- `leaveOrganization` (owner-as-last-member) also has incomplete cleanup -- duplicates partial org deletion logic
-- `policies/functions.ts` is entirely dead (never called from frontend or backend)
-- `notificationPreferences/functions.ts` is entirely dead (never called)
+## Round 5 Audit (2026-02-21) -- Post-Cleanup Assessment
 
-### Remaining Issues (Moderate)
-- Spinner SVG inlined ~15 times instead of using SpinnerIcon from Icons.tsx
-- `getContactLink` duplicated in MemberVisualView/ContactInfo.tsx vs utils/contacts.tsx
-- `createDefaultPreferences` takes `string` instead of `Id<"users">`
-- `memberHasTeamAccess` re-exported from chat/access.ts but unused re-export
-- Inconsistent semicolons and quote styles in schema.ts
-- `getMemberById` in members/functions.ts has indentation issue (line 45-46)
+### Rating: B+ (Good)
+All critical items from round 4 resolved. Remaining issues are low-medium priority.
 
-### Dead Code
-- `convex/storage.ts`: `getStorageUrl`, `deleteStorageFile`
-- `convex/users/functions.ts`: `listMyInvitations`, `syncProfileToMembers`
-- `convex/notifications/functions.ts`: `getAll`, `getUnread`, `getByOrga`, `getById`, `markAsUnread`, `markAllAsReadByOrga`, `archive`, `unarchive`, `remove`, `removeAllArchived`, `deleteByUserAndOrga`, `cleanupExpired`
-- `convex/invitations/functions.ts`: `getInvitationById` (never from frontend)
-
-### Stale Documentation
-- CLAUDE.md references `aggregates.ts` which does not exist
+### Remaining Issues
+- **notificationPreferences/functions.ts** (426 lines, 7 exports): Entire module never called from frontend or backend
+- **Legacy color fields** still in orga schema + migrations.ts (safe to remove now)
+- **getDefaultIconKey** duplicated: `convex/roles/iconDefaults.ts` + `src/utils/roleIconDefaults.ts`
+- **chat/access.ts line 7**: Dead re-export of `memberHasTeamAccess` (nobody imports from there)
+- **listChildTeams**: Exported public query in teams/functions.ts, never called
+- **3 Convex .filter()** usages remaining (invitations, decisions, channelFunctions)
+- **3 `any` types** in policies/functions.ts (lines 22, 28, 39)
+- **CLAUDE.md** references nonexistent `aggregates.ts`
+- **Stale docs**: COLOR_MODEL_REFACTOR_PROPOSAL.md, ROUTING_MIGRATION_PLAN.md
+- **TODO placeholders** in orgas/functions.ts (leader/secretary/referee missions)
 
 ## Agent-Documentation Mapping
 

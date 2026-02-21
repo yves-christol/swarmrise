@@ -4,8 +4,6 @@ import { getMemberInOrga, memberHasTeamAccess } from "../utils";
 import type { Channel } from ".";
 import type { Member } from "../members";
 
-export { memberHasTeamAccess };
-
 /**
  * Verify that the authenticated user has access to a channel.
  * Returns the channel and the member document.

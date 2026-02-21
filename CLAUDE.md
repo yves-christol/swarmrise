@@ -39,7 +39,9 @@ Each domain entity has its own directory under `convex/`:
 
 **Notifications:** `notifications/` and `notificationPreferences/` - Real-time notification delivery with per-user category/priority preferences.
 
-**Infrastructure:** `emails/` (Resend), `webhooks/` (Clerk webhooks via Svix), `crons.ts` (scheduled tasks), `http.ts` (HTTP routes), `aggregates.ts`, `storage.ts`
+**Kanban:** `kanban/` - Board per team with columns, cards, labels, attachments, comments. Split into domain files (`boardFunctions.ts`, `columnFunctions.ts`, `cardFunctions.ts`, `labelFunctions.ts`, `attachmentFunctions.ts`, `commentFunctions.ts`) re-exported via `functions.ts` barrel.
+
+**Infrastructure:** `emails/` (Resend), `webhooks/` (Clerk webhooks via Svix), `crons.ts` (scheduled tasks), `http.ts` (HTTP routes), `storage.ts`
 
 **Shared utilities:** `convex/utils.ts` contains auth helpers (`getAuthenticatedUser`, `requireAuthAndMembership`, `getMemberInOrga`) and cross-entity lookups.
 
@@ -75,7 +77,7 @@ Use `internalQuery`/`internalMutation`/`internalAction` for private functions, r
 ### Data Model
 
 - **User** - Root entity, holds `orgaIds[]` for organizations they belong to
-- **Orga** (Organization) - Has owner, color scheme. Multi-tenant isolation via `orgaId` on all child entities
+- **Orga** (Organization) - Has owner, accent/surface colors, title font. Multi-tenant isolation via `orgaId` on all child entities
 - **Member** - User's membership in an organization (denormalizes user data), holds `roleIds[]`
 - **Team** - Belongs to an orga
 - **Role** - Belongs to a team, optional `roleType` ("leader" | "secretary" | "referee"), assigned to a member

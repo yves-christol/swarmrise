@@ -64,6 +64,7 @@ export default defineSchema({
     .index("by_orga_and_status", ["orgaId", "status"])
     .index("by_status_and_sentDate", ["status", "sentDate"])
     .index("by_emitter", ["emitterMemberId"])
+    .index("by_emitter_and_sent_date", ["emitterMemberId", "sentDate"])
     .index("by_email_and_status", ["email", "status"])
     .index("by_orga_and_status_and_email", ["orgaId", "status", "email"])
     .index("by_email_and_status_and_orga", ["email", "status", "orgaId"]),

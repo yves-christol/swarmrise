@@ -109,37 +109,6 @@ export const listTeamsInOrga = query({
 });
 
 /**
- * List child teams of a parent team
- * Child teams are identified by having a leader role with parentTeamId pointing to the parent
- */
-export const listChildTeams = query({
-  args: {
-    parentTeamId: v.id("teams"),
-  },
-  returns: v.array(teamValidator),
-  handler: async (ctx, args) => {
-    const orgaId = await getOrgaFromTeam(ctx, args.parentTeamId);
-    await getMemberInOrga(ctx, orgaId);
-    
-    // Find all leader roles that have this team as parent
-    const leaderRoles = await ctx.db
-      .query("roles")
-      .withIndex("by_parent_team_and_role_type", (q) => q.eq("parentTeamId", args.parentTeamId).eq("roleType", "leader"))
-      .collect();
-    
-    // Get unique team IDs from these leader roles
-    const childTeamIds = [...new Set(leaderRoles.map(role => role.teamId))];
-    
-    // Fetch and return the teams
-    const childTeams = await Promise.all(
-      childTeamIds.map(teamId => ctx.db.get(teamId))
-    );
-    
-    return childTeams.filter((team): team is NonNullable<typeof team> => team !== null);
-  },
-});
-
-/**
  * List connected teams (parent + children) for a given team.
  * Parent is found via the team's leader role's parentTeamId.
  * Children are teams whose leader role has parentTeamId pointing to this team.

@@ -8,7 +8,7 @@ import { EmailDomainsInput } from "../EmailDomainsInput";
 import { SpinnerIcon, CheckIcon, XIcon, ErrorIcon } from "../Icons";
 import { FONT_OPTIONS, ALL_GOOGLE_FONTS_URL } from "./fonts";
 import { ACCENT_PRESETS } from "../../utils/colorPresets";
-import { contrastRatio, getHslLightness } from "../../utils/colorContrast";
+import { contrastRatio, getHslLightness, relativeLuminance, darkenHex, lightenHex } from "../../utils/colorContrast";
 
 const arraysEqual = (a: string[], b: string[]): boolean =>
   a.length === b.length && a.every((v, i) => v === b[i]);
@@ -65,16 +65,12 @@ function PreviewCard({ surfaceColor, accentColor, label, fontFamily }: {
   fontFamily?: string;
 }) {
   const { t } = useTranslation("orgs");
-  const lum = (() => {
-    const { r, g, b } = hexToRgbLocal(accentColor);
-    const toLinear = (c: number) => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
-    return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
-  })();
+  const lum = relativeLuminance(accentColor);
   const accentText = lum > 0.4 ? "#111111" : "#ffffff";
   const isDark = getHslLightness(surfaceColor) < 50;
   const textColor = isDark ? "#e5e7eb" : "#1f2937";
   const mutedColor = isDark ? "#9ca3af" : "#6b7280";
-  const secondarySurface = isDark ? lightenLocal(surfaceColor, 0.08) : darkenLocal(surfaceColor, 0.04);
+  const secondarySurface = isDark ? lightenHex(surfaceColor, 0.08) : darkenHex(surfaceColor, 0.04);
 
   return (
     <div className="flex-1 rounded-md overflow-hidden border border-border-default transition-colors" style={{ backgroundColor: surfaceColor }}>
@@ -105,23 +101,6 @@ function PreviewCard({ surfaceColor, accentColor, label, fontFamily }: {
   );
 }
 
-// Inline color helpers for the preview (avoid importing from provider to keep component self-contained)
-function hexToRgbLocal(hex: string) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-    : { r: 0, g: 0, b: 0 };
-}
-function darkenLocal(hex: string, amount: number): string {
-  const { r, g, b } = hexToRgbLocal(hex);
-  const h = (n: number) => Math.round(n * (1 - amount)).toString(16).padStart(2, "0");
-  return `#${h(r)}${h(g)}${h(b)}`;
-}
-function lightenLocal(hex: string, amount: number): string {
-  const { r, g, b } = hexToRgbLocal(hex);
-  const h = (n: number) => Math.round(n + (255 - n) * amount).toString(16).padStart(2, "0");
-  return `#${h(r)}${h(g)}${h(b)}`;
-}
 
 type OrgaSettingsModalProps = {
   isOpen: boolean;
@@ -185,10 +164,9 @@ export const OrgaSettingsModal = ({
       setName(orga.name);
       setEmailDomains(orga.authorizedEmailDomains ?? []);
 
-      // Appearance — prefer new fields, fall back to legacy
-      setAccentColor(orga.accentColor ?? orga.highlightColorLight ?? null);
-      setSurfaceColorLight(orga.surfaceColorLight ?? orga.paperColorLight ?? null);
-      setSurfaceColorDark(orga.surfaceColorDark ?? orga.paperColorDark ?? null);
+      setAccentColor(orga.accentColor ?? null);
+      setSurfaceColorLight(orga.surfaceColorLight ?? null);
+      setSurfaceColorDark(orga.surfaceColorDark ?? null);
       setTitleFont(orga.titleFont ?? "");
 
       // Reset logo state
@@ -212,9 +190,9 @@ export const OrgaSettingsModal = ({
   const hasChanges = useMemo(() => {
     if (!orga) return false;
 
-    const origAccent = orga.accentColor ?? orga.highlightColorLight ?? null;
-    const origSurfaceLight = orga.surfaceColorLight ?? orga.paperColorLight ?? null;
-    const origSurfaceDark = orga.surfaceColorDark ?? orga.paperColorDark ?? null;
+    const origAccent = orga.accentColor ?? null;
+    const origSurfaceLight = orga.surfaceColorLight ?? null;
+    const origSurfaceDark = orga.surfaceColorDark ?? null;
     const originalDomains = orga.authorizedEmailDomains ?? [];
 
     return (
@@ -401,9 +379,9 @@ export const OrgaSettingsModal = ({
         logoStorageId = null;
       }
 
-      const origAccent = orga?.accentColor ?? orga?.highlightColorLight ?? null;
-      const origSurfaceLight = orga?.surfaceColorLight ?? orga?.paperColorLight ?? null;
-      const origSurfaceDark = orga?.surfaceColorDark ?? orga?.paperColorDark ?? null;
+      const origAccent = orga?.accentColor ?? null;
+      const origSurfaceLight = orga?.surfaceColorLight ?? null;
+      const origSurfaceDark = orga?.surfaceColorDark ?? null;
 
       const args: Record<string, unknown> = { orgaId, name: name.trim() };
       if (logoStorageId !== undefined) args.logoStorageId = logoStorageId;

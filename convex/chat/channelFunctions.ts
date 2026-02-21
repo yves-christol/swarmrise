@@ -137,8 +137,9 @@ export const getMessages = query({
     // Only return top-level messages (not thread replies)
     const paginatedMessages = await ctx.db
       .query("messages")
-      .withIndex("by_channel", (q) => q.eq("channelId", args.channelId))
-      .filter((q) => q.eq(q.field("threadParentId"), undefined))
+      .withIndex("by_channel_and_thread_parent", (q) =>
+        q.eq("channelId", args.channelId).eq("threadParentId", undefined)
+      )
       .order("desc")
       .paginate(args.paginationOpts);
 

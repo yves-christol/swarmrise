@@ -1,103 +1,7 @@
 import { MutationCtx, QueryCtx } from "../_generated/server";
 import { Id } from "../_generated/dataModel";
-import { NotificationCategory, NotificationPriority } from "./index";
-import { ChannelPreferences } from "../notificationPreferences";
+import { NotificationPriority } from "./index";
 import { Channel } from "../chat";
-
-/**
- * Check if a user should receive a notification based on their preferences
- * Returns the delivery channels that are enabled
- */
-export async function shouldNotify(
-  ctx: QueryCtx | MutationCtx,
-  userId: Id<"users">,
-  orgaId: Id<"orgas"> | undefined,
-  category: NotificationCategory
-): Promise<ChannelPreferences> {
-  // Default preferences if none exist
-  const defaultPrefs: ChannelPreferences = {
-    inApp: true,
-    email: true,
-    push: false,
-  };
-
-  // Check org-specific preferences first
-  if (orgaId) {
-    const orgPrefs = await ctx.db
-      .query("notificationPreferences")
-      .withIndex("by_user_and_orga", (q) =>
-        q.eq("userId", userId).eq("orgaId", orgaId)
-      )
-      .unique();
-
-    if (orgPrefs) {
-      return orgPrefs[category] ?? defaultPrefs;
-    }
-  }
-
-  // Fall back to global preferences
-  const globalPrefs = await ctx.db
-    .query("notificationPreferences")
-    .withIndex("by_user_and_orga", (q) =>
-      q.eq("userId", userId).eq("orgaId", undefined)
-    )
-    .unique();
-
-  if (globalPrefs) {
-    return globalPrefs[category] ?? defaultPrefs;
-  }
-
-  // Return defaults if no preferences exist
-  return defaultPrefs;
-}
-
-/**
- * Check if current time is within user's quiet hours
- */
-export async function isInQuietHours(
-  ctx: QueryCtx | MutationCtx,
-  userId: Id<"users">,
-  orgaId: Id<"orgas"> | undefined
-): Promise<boolean> {
-  // Get preferences
-  let prefs = null;
-
-  if (orgaId) {
-    prefs = await ctx.db
-      .query("notificationPreferences")
-      .withIndex("by_user_and_orga", (q) =>
-        q.eq("userId", userId).eq("orgaId", orgaId)
-      )
-      .unique();
-  }
-
-  if (!prefs) {
-    prefs = await ctx.db
-      .query("notificationPreferences")
-      .withIndex("by_user_and_orga", (q) =>
-        q.eq("userId", userId).eq("orgaId", undefined)
-      )
-      .unique();
-  }
-
-  if (!prefs || prefs.quietHoursStart === undefined || prefs.quietHoursEnd === undefined) {
-    return false;
-  }
-
-  const now = new Date();
-  const currentHour = now.getUTCHours(); // Note: Using UTC, may need timezone handling
-
-  const start = prefs.quietHoursStart;
-  const end = prefs.quietHoursEnd;
-
-  // Handle overnight quiet hours (e.g., 22:00 to 07:00)
-  if (start > end) {
-    return currentHour >= start || currentHour < end;
-  }
-
-  // Normal range (e.g., 00:00 to 06:00)
-  return currentHour >= start && currentHour < end;
-}
 
 /**
  * Get all members with roles in a specific team
@@ -207,34 +111,6 @@ export function buildPolicyGlobalNotification(
 }
 
 /**
- * Create a team policy notification
- */
-export function buildPolicyTeamNotification(
-  params: CreateNotificationParams & {
-    policyId: Id<"policies">;
-    policyTitle: string;
-    teamId: Id<"teams">;
-    teamName: string;
-  }
-) {
-  return {
-    userId: params.userId,
-    orgaId: params.orgaId,
-    memberId: params.memberId,
-    payload: {
-      category: "policy_team" as const,
-      policyId: params.policyId,
-      policyTitle: params.policyTitle,
-      teamId: params.teamId,
-      teamName: params.teamName,
-    },
-    priority: params.priority ?? ("normal" as const),
-    expiresAt: params.expiresAt,
-    groupKey: params.groupKey ?? `policy-${params.policyId}`,
-  };
-}
-
-/**
  * Create a role assignment notification
  */
 export function buildRoleAssignmentNotification(
@@ -260,56 +136,6 @@ export function buildRoleAssignmentNotification(
     priority: params.priority ?? ("normal" as const),
     expiresAt: params.expiresAt,
     groupKey: params.groupKey ?? `role-${params.roleId}`,
-  };
-}
-
-/**
- * Create a decision notification
- */
-export function buildDecisionNotification(
-  params: CreateNotificationParams & {
-    decisionId: Id<"decisions">;
-    targetType: string;
-    summary: string;
-  }
-) {
-  return {
-    userId: params.userId,
-    orgaId: params.orgaId,
-    memberId: params.memberId,
-    payload: {
-      category: "decision" as const,
-      decisionId: params.decisionId,
-      targetType: params.targetType,
-      summary: params.summary,
-    },
-    priority: params.priority ?? ("low" as const),
-    expiresAt: params.expiresAt,
-    groupKey: params.groupKey ?? `decision-${params.decisionId}`,
-  };
-}
-
-/**
- * Create a system notification
- */
-export function buildSystemNotification(
-  params: CreateNotificationParams & {
-    title: string;
-    message: string;
-  }
-) {
-  return {
-    userId: params.userId,
-    orgaId: params.orgaId,
-    memberId: params.memberId,
-    payload: {
-      category: "system" as const,
-      title: params.title,
-      message: params.message,
-    },
-    priority: params.priority ?? ("normal" as const),
-    expiresAt: params.expiresAt,
-    groupKey: params.groupKey,
   };
 }
 

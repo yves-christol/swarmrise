@@ -1,8 +1,7 @@
 import { query, mutation, internalMutation } from "../_generated/server";
 import { internal } from "../_generated/api";
 import { v } from "convex/values";
-import { userValidator, contactInfos, ContactInfos } from ".";
-import { orgaValidator } from "../orgas";
+import { userValidator } from ".";
 import { invitationValidator } from "../invitations";
 import {
   getAuthenticatedUser,
@@ -44,40 +43,6 @@ export const acceptTerms = mutation({
       privacyVersion: CURRENT_PRIVACY_VERSION,
     });
     return null;
-  },
-});
-
-/**
- * List all organizations the authenticated user belongs to
- */
-export const listMyOrgas = query({
-  args: {},
-  returns: v.array(orgaValidator),
-  handler: async (ctx) => {
-    const user = await getAuthenticatedUser(ctx);
-    const orgas = [];
-    for (const orgaId of user.orgaIds) {
-      const orga = await ctx.db.get(orgaId);
-      if (orga) {
-        orgas.push(orga);
-      }
-    }
-    return orgas;
-  },
-});
-
-/**
- * List invitations received by the authenticated user's email
- */
-export const listMyInvitations = query({
-  args: {},
-  returns: v.array(invitationValidator),
-  handler: async (ctx) => {
-    const user = await getAuthenticatedUser(ctx);
-    return await ctx.db
-      .query("invitations")
-      .withIndex("by_email", (q) => q.eq("email", user.email))
-      .collect();
   },
 });
 
@@ -129,76 +94,6 @@ export const listMyPendingInvitationsWithOrga = query({
     }
 
     return result;
-  },
-});
-
-/**
- * Update user information
- * Note: This updates the user globally. If you need to update member-specific data,
- * use the members functions instead.
- * Security: Users can only update their own profile.
- */
-export const updateUser = mutation({
-  args: {
-    userId: v.id("users"),
-    firstname: v.optional(v.string()),
-    surname: v.optional(v.string()),
-    pictureURL: v.optional(v.union(v.string(), v.null())),
-    contactInfos: contactInfos,
-  },
-  returns: v.id("users"),
-  handler: async (ctx, args) => {
-    // Authorization check: users can only update their own profile
-    const authenticatedUser = await getAuthenticatedUser(ctx);
-    if (authenticatedUser._id !== args.userId) {
-      throw new Error("Unauthorized: You can only update your own profile");
-    }
-
-    const user = await ctx.db.get(args.userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    
-    // Update user
-    const updates: {
-      firstname?: string;
-      surname?: string;
-      pictureURL?: string;
-      contactInfos?: ContactInfos;
-    } = {};
-    
-    if (args.firstname !== undefined) updates.firstname = args.firstname;
-    if (args.surname !== undefined) updates.surname = args.surname;
-    if (args.pictureURL !== undefined) updates.pictureURL = args.pictureURL ?? undefined;
-    if (args.contactInfos !== undefined) {
-      // Ensure the user's own email is always present in contactInfos
-      updates.contactInfos = ensureEmailInContactInfos(args.contactInfos, user.email);
-    }
-    
-    await ctx.db.patch(args.userId, updates);
-    
-    // Get updated user to sync with related members
-    const updatedUser = await ctx.db.get(args.userId);
-    if (!updatedUser) {
-      throw new Error("Failed to retrieve updated user");
-    }
-    
-    // Update all related members to keep them in sync
-    const relatedMembers = await ctx.db
-      .query("members")
-      .withIndex("by_person", (q) => q.eq("personId", args.userId))
-      .collect();
-    
-    for (const relatedMember of relatedMembers) {
-      await ctx.db.patch(relatedMember._id, {
-        firstname: updatedUser.firstname,
-        surname: updatedUser.surname,
-        pictureURL: updatedUser.pictureURL,
-        contactInfos: updatedUser.contactInfos,
-      });
-    }
-    
-    return args.userId;
   },
 });
 
@@ -365,38 +260,6 @@ export const rejectInvitation = mutation({
   },
 });
 
-
-/**
- * Sync current user's profile data (including pictureURL) to all their member records.
- * Useful for backfilling existing members or manual re-sync after profile update.
- */
-export const syncProfileToMembers = mutation({
-  args: {},
-  returns: v.number(),
-  handler: async (ctx) => {
-    const user = await getAuthenticatedUser(ctx);
-
-    // Find all members linked to this user
-    const members = await ctx.db
-      .query("members")
-      .withIndex("by_person", (q) => q.eq("personId", user._id))
-      .collect();
-
-    // Update each member with current user profile data
-    let syncedCount = 0;
-    for (const member of members) {
-      await ctx.db.patch(member._id, {
-        firstname: user.firstname,
-        surname: user.surname,
-        pictureURL: user.pictureURL,
-        contactInfos: user.contactInfos,
-      });
-      syncedCount++;
-    }
-
-    return syncedCount;
-  },
-});
 
 /**
  * Internal: Sync a user's profile data to all their member records by email.

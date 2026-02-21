@@ -87,11 +87,6 @@ export const createOrganization = mutation({
     accentColor: v.optional(v.string()),         // Brand accent color
     surfaceColorLight: v.optional(v.string()),   // Background tint for light mode
     surfaceColorDark: v.optional(v.string()),    // Background tint for dark mode
-    // Legacy field kept for backward compat during migration
-    colorScheme: v.optional(v.object({
-      primary: v.string(),
-      secondary: v.string(),
-    })),
     firstTeamName: v.optional(v.string()), // Optional name for the first team, defaults to organization name
     authorizedEmailDomains: v.optional(v.array(v.string())), // Optional: restrict invitations to these email domains
   },
@@ -123,7 +118,6 @@ export const createOrganization = mutation({
       accentColor: args.accentColor,
       surfaceColorLight: args.surfaceColorLight,
       surfaceColorDark: args.surfaceColorDark,
-      colorScheme: args.colorScheme,
       owner: user._id,
       ...(normalizedDomains && { authorizedEmailDomains: normalizedDomains }),
     });
@@ -224,7 +218,6 @@ export const createOrganization = mutation({
           ...(args.accentColor && { accentColor: args.accentColor }),
           ...(args.surfaceColorLight && { surfaceColorLight: args.surfaceColorLight }),
           ...(args.surfaceColorDark && { surfaceColorDark: args.surfaceColorDark }),
-          colorScheme: args.colorScheme,
         },
       },
     });
@@ -293,21 +286,9 @@ export const updateOrga = mutation({
     accentColor: v.optional(v.union(v.string(), v.null())),
     surfaceColorLight: v.optional(v.union(v.string(), v.null())),
     surfaceColorDark: v.optional(v.union(v.string(), v.null())),
-    // Legacy fields (kept during migration)
-    colorScheme: v.optional(
-      v.object({
-        primary: v.string(),
-        secondary: v.string(),
-      })
-    ),
     // Optional: list of authorized email domains for invitations (owner-only)
     // Pass null to remove the restriction, empty array is treated the same as null
     authorizedEmailDomains: v.optional(v.union(v.array(v.string()), v.null())),
-    // Customisation fields (hex strings like "#RRGGBB", pass null to clear)
-    paperColorLight: v.optional(v.union(v.string(), v.null())),
-    paperColorDark: v.optional(v.union(v.string(), v.null())),
-    highlightColorLight: v.optional(v.union(v.string(), v.null())),
-    highlightColorDark: v.optional(v.union(v.string(), v.null())),
     titleFont: v.optional(v.union(v.string(), v.null())),
   },
   returns: v.id("orgas"),
@@ -330,11 +311,6 @@ export const updateOrga = mutation({
       args.accentColor !== undefined ||
       args.surfaceColorLight !== undefined ||
       args.surfaceColorDark !== undefined ||
-      args.colorScheme !== undefined ||
-      args.paperColorLight !== undefined ||
-      args.paperColorDark !== undefined ||
-      args.highlightColorLight !== undefined ||
-      args.highlightColorDark !== undefined ||
       args.titleFont !== undefined;
     if (hasAppearanceChange && !isOwner) {
       throw new Error("Only the organization owner can modify appearance settings");
@@ -382,12 +358,6 @@ export const updateOrga = mutation({
     if (args.accentColor !== undefined) updates.accentColor = args.accentColor ?? undefined;
     if (args.surfaceColorLight !== undefined) updates.surfaceColorLight = args.surfaceColorLight ?? undefined;
     if (args.surfaceColorDark !== undefined) updates.surfaceColorDark = args.surfaceColorDark ?? undefined;
-    // Legacy fields
-    if (args.colorScheme !== undefined) updates.colorScheme = args.colorScheme;
-    if (args.paperColorLight !== undefined) updates.paperColorLight = args.paperColorLight ?? undefined;
-    if (args.paperColorDark !== undefined) updates.paperColorDark = args.paperColorDark ?? undefined;
-    if (args.highlightColorLight !== undefined) updates.highlightColorLight = args.highlightColorLight ?? undefined;
-    if (args.highlightColorDark !== undefined) updates.highlightColorDark = args.highlightColorDark ?? undefined;
     if (args.titleFont !== undefined) updates.titleFont = args.titleFont ?? undefined;
     if (args.authorizedEmailDomains !== undefined) {
       if (args.authorizedEmailDomains === null || args.authorizedEmailDomains.length === 0) {
@@ -423,11 +393,6 @@ export const updateOrga = mutation({
     if (args.surfaceColorDark !== undefined) {
       before.surfaceColorDark = orga.surfaceColorDark;
       after.surfaceColorDark = args.surfaceColorDark ?? undefined;
-    }
-    // Legacy fields
-    if (args.colorScheme !== undefined) {
-      before.colorScheme = orga.colorScheme;
-      after.colorScheme = args.colorScheme;
     }
     if (args.authorizedEmailDomains !== undefined) {
       before.authorizedEmailDomains = orga.authorizedEmailDomains;

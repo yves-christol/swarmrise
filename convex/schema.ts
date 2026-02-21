@@ -116,6 +116,7 @@ export default defineSchema({
 
   messages: defineTable({ ...messageType.fields })
     .index("by_channel", ["channelId"])
+    .index("by_channel_and_thread_parent", ["channelId", "threadParentId"])
     .index("by_thread_parent", ["threadParentId"])
     .index("by_orga", ["orgaId"])
     .index("by_author", ["authorId"])

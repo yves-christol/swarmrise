@@ -13,38 +13,6 @@ import {
 // ============================================================================
 
 /**
- * Get all notifications for the authenticated user
- */
-export const getAll = query({
-  args: {},
-  returns: v.array(notificationValidator),
-  handler: async (ctx) => {
-    const user = await getAuthenticatedUser(ctx);
-    return await ctx.db
-      .query("notifications")
-      .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .collect();
-  },
-});
-
-/**
- * Get unread notifications for the authenticated user
- */
-export const getUnread = query({
-  args: {},
-  returns: v.array(notificationValidator),
-  handler: async (ctx) => {
-    const user = await getAuthenticatedUser(ctx);
-    return await ctx.db
-      .query("notifications")
-      .withIndex("by_user_and_read", (q) =>
-        q.eq("userId", user._id).eq("isRead", false)
-      )
-      .collect();
-  },
-});
-
-/**
  * Get unread notification count for the authenticated user
  */
 export const getUnreadCount = query({
@@ -63,23 +31,6 @@ export const getUnreadCount = query({
 });
 
 /**
- * Get notifications for a specific organization
- */
-export const getByOrga = query({
-  args: { orgaId: v.id("orgas") },
-  returns: v.array(notificationValidator),
-  handler: async (ctx, args) => {
-    const user = await getAuthenticatedUser(ctx);
-    return await ctx.db
-      .query("notifications")
-      .withIndex("by_user_and_orga", (q) =>
-        q.eq("userId", user._id).eq("orgaId", args.orgaId)
-      )
-      .collect();
-  },
-});
-
-/**
  * Get non-archived notifications for the authenticated user
  */
 export const getActive = query({
@@ -93,25 +44,6 @@ export const getActive = query({
         q.eq("userId", user._id).eq("isArchived", false)
       )
       .collect();
-  },
-});
-
-/**
- * Get a single notification by ID
- */
-export const getById = query({
-  args: { notificationId: v.id("notifications") },
-  returns: v.union(notificationValidator, v.null()),
-  handler: async (ctx, args) => {
-    const user = await getAuthenticatedUser(ctx);
-    const notification = await ctx.db.get(args.notificationId);
-
-    // Ensure the notification belongs to the authenticated user
-    if (!notification || notification.userId !== user._id) {
-      return null;
-    }
-
-    return notification;
   },
 });
 
@@ -149,40 +81,11 @@ export const markAsRead = mutation({
 });
 
 /**
- * Mark a notification as unread
- */
-export const markAsUnread = mutation({
-  args: { notificationId: v.id("notifications") },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const user = await getAuthenticatedUser(ctx);
-    const notification = await ctx.db.get(args.notificationId);
-
-    if (!notification) {
-      throw new Error("Notification not found");
-    }
-
-    if (notification.userId !== user._id) {
-      throw new Error("Not authorized to modify this notification");
-    }
-
-    if (notification.isRead) {
-      await ctx.db.patch(args.notificationId, {
-        isRead: false,
-        readAt: undefined,
-      });
-    }
-
-    return null;
-  },
-});
-
-/**
  * Mark all notifications as read for the authenticated user
  */
 export const markAllAsRead = mutation({
   args: {},
-  returns: v.number(), // Returns count of notifications marked as read
+  returns: v.number(),
   handler: async (ctx) => {
     const user = await getAuthenticatedUser(ctx);
     const unreadNotifications = await ctx.db
@@ -201,141 +104,6 @@ export const markAllAsRead = mutation({
     }
 
     return unreadNotifications.length;
-  },
-});
-
-/**
- * Mark all notifications as read for a specific organization
- */
-export const markAllAsReadByOrga = mutation({
-  args: { orgaId: v.id("orgas") },
-  returns: v.number(),
-  handler: async (ctx, args) => {
-    const user = await getAuthenticatedUser(ctx);
-    const notifications = await ctx.db
-      .query("notifications")
-      .withIndex("by_user_and_orga", (q) =>
-        q.eq("userId", user._id).eq("orgaId", args.orgaId)
-      )
-      .collect();
-
-    const now = Date.now();
-    let count = 0;
-    for (const notification of notifications) {
-      if (!notification.isRead) {
-        await ctx.db.patch(notification._id, {
-          isRead: true,
-          readAt: now,
-        });
-        count++;
-      }
-    }
-
-    return count;
-  },
-});
-
-/**
- * Archive a notification
- */
-export const archive = mutation({
-  args: { notificationId: v.id("notifications") },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const user = await getAuthenticatedUser(ctx);
-    const notification = await ctx.db.get(args.notificationId);
-
-    if (!notification) {
-      throw new Error("Notification not found");
-    }
-
-    if (notification.userId !== user._id) {
-      throw new Error("Not authorized to modify this notification");
-    }
-
-    if (!notification.isArchived) {
-      await ctx.db.patch(args.notificationId, {
-        isArchived: true,
-        archivedAt: Date.now(),
-      });
-    }
-
-    return null;
-  },
-});
-
-/**
- * Unarchive a notification
- */
-export const unarchive = mutation({
-  args: { notificationId: v.id("notifications") },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const user = await getAuthenticatedUser(ctx);
-    const notification = await ctx.db.get(args.notificationId);
-
-    if (!notification) {
-      throw new Error("Notification not found");
-    }
-
-    if (notification.userId !== user._id) {
-      throw new Error("Not authorized to modify this notification");
-    }
-
-    if (notification.isArchived) {
-      await ctx.db.patch(args.notificationId, {
-        isArchived: false,
-        archivedAt: undefined,
-      });
-    }
-
-    return null;
-  },
-});
-
-/**
- * Delete a notification
- */
-export const remove = mutation({
-  args: { notificationId: v.id("notifications") },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const user = await getAuthenticatedUser(ctx);
-    const notification = await ctx.db.get(args.notificationId);
-
-    if (!notification) {
-      throw new Error("Notification not found");
-    }
-
-    if (notification.userId !== user._id) {
-      throw new Error("Not authorized to delete this notification");
-    }
-
-    await ctx.db.delete(args.notificationId);
-    return null;
-  },
-});
-
-/**
- * Delete all archived notifications for the authenticated user
- */
-export const removeAllArchived = mutation({
-  args: {},
-  returns: v.number(),
-  handler: async (ctx) => {
-    const user = await getAuthenticatedUser(ctx);
-    const archivedNotifications = await ctx.db
-      .query("notifications")
-      .withIndex("by_user_and_archived", (q) =>
-        q.eq("userId", user._id).eq("isArchived", true)
-      )
-      .collect();
-
-    for (const notification of archivedNotifications) {
-      await ctx.db.delete(notification._id);
-    }
-
-    return archivedNotifications.length;
   },
 });
 
@@ -434,55 +202,5 @@ export const deleteByGroupKey = internalMutation({
     }
 
     return notifications.length;
-  },
-});
-
-/**
- * Delete notifications for a specific user in an organization (internal use only)
- * Useful when a member is removed from an organization
- */
-export const deleteByUserAndOrga = internalMutation({
-  args: {
-    userId: v.id("users"),
-    orgaId: v.id("orgas"),
-  },
-  returns: v.number(),
-  handler: async (ctx, args) => {
-    const notifications = await ctx.db
-      .query("notifications")
-      .withIndex("by_user_and_orga", (q) =>
-        q.eq("userId", args.userId).eq("orgaId", args.orgaId)
-      )
-      .collect();
-
-    for (const notification of notifications) {
-      await ctx.db.delete(notification._id);
-    }
-
-    return notifications.length;
-  },
-});
-
-/**
- * Clean up expired notifications (internal use only)
- * Should be called periodically by a scheduled function
- */
-export const cleanupExpired = internalMutation({
-  args: {},
-  returns: v.number(),
-  handler: async (ctx) => {
-    const now = Date.now();
-
-    // Query only notifications that have already expired using index ordering
-    const expiredNotifications = await ctx.db
-      .query("notifications")
-      .withIndex("by_expires", (q) => q.lt("expiresAt", now))
-      .collect();
-
-    for (const notification of expiredNotifications) {
-      await ctx.db.delete(notification._id);
-    }
-
-    return expiredNotifications.length;
   },
 });

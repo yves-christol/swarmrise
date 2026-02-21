@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Navigate, Outlet } from "react-router";
 import { Id } from "../../convex/_generated/dataModel";
 import { useOrgaStore } from "../tools/orgaStore";
+import { SpinnerIcon } from "../components/Icons";
 
 type OrgaRouteState = "loading" | "validating" | "switching" | "invalid" | "ready";
 
@@ -66,7 +67,7 @@ export const OrgaRoute = () => {
   if (state === "loading" || state === "validating" || state === "switching") {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-current border-t-transparent" />
+        <SpinnerIcon className="h-8 w-8 text-text-secondary" />
       </div>
     );
   }

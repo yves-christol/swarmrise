@@ -1,4 +1,4 @@
-import { mutation, internalQuery, internalMutation } from "../_generated/server";
+import { mutation, internalQuery } from "../_generated/server";
 import { v } from "convex/values";
 import { getAuthenticatedUser, getMemberInOrga } from "../utils";
 
@@ -17,35 +17,6 @@ export const generateUploadUrl = mutation({
       await getAuthenticatedUser(ctx);
     }
     return await ctx.storage.generateUploadUrl();
-  },
-});
-
-/**
- * Get the URL for a stored file.
- * Internal only — not exposed to clients.
- */
-export const getStorageUrl = internalQuery({
-  args: {
-    storageId: v.id("_storage"),
-  },
-  returns: v.union(v.string(), v.null()),
-  handler: async (ctx, args) => {
-    return await ctx.storage.getUrl(args.storageId);
-  },
-});
-
-/**
- * Delete a file from storage.
- * Internal only - not exposed to clients.
- */
-export const deleteStorageFile = internalMutation({
-  args: {
-    storageId: v.id("_storage"),
-  },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    await ctx.storage.delete(args.storageId);
-    return null;
   },
 });
 

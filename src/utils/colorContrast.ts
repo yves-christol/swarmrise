@@ -1,5 +1,5 @@
 /** Parse hex "#RRGGBB" to {r,g,b} */
-function hexToRgb(hex: string): { r: number; g: number; b: number } {
+export function hexToRgb(hex: string): { r: number; g: number; b: number } {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
@@ -7,7 +7,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 }
 
 /** Compute relative luminance (WCAG formula) */
-function relativeLuminance(hex: string): number {
+export function relativeLuminance(hex: string): number {
   const { r, g, b } = hexToRgb(hex);
   const toLinear = (c: number) => {
     const s = c / 255;
@@ -31,4 +31,18 @@ export function getHslLightness(hex: string): number {
   const max = Math.max(r, g, b) / 255;
   const min = Math.min(r, g, b) / 255;
   return Math.round(((max + min) / 2) * 100);
+}
+
+/** Darken a hex color by mixing with black (0-1 factor, 0.15 = 15% darker) */
+export function darkenHex(hex: string, amount: number): string {
+  const { r, g, b } = hexToRgb(hex);
+  const toHex = (n: number) => Math.round(n * (1 - amount)).toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+/** Lighten a hex color by mixing with white (0-1 factor, 0.15 = 15% lighter) */
+export function lightenHex(hex: string, amount: number): string {
+  const { r, g, b } = hexToRgb(hex);
+  const toHex = (n: number) => Math.round(n + (255 - n) * amount).toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }

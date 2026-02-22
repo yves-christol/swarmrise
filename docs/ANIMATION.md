@@ -21,6 +21,7 @@ The Swarmrise codebase has a well-developed animation system with consistent pat
 | Theme Transition | Complete | `index.css` | Background/text color transitions |
 | Micro-interactions | Complete | Various components | Hover, focus, active states |
 | Loading States | Complete | Various | Spinners and skeleton pulses |
+| Lottery Tool | Specified | `Chat/LotteryTool/` | Random member selection roulette in chat |
 
 ---
 
@@ -345,6 +346,283 @@ body {
 }
 ```
 
+### Lottery Tool (Chat Embedded)
+
+Random member selection animation for task assignment. Embedded in chat messages alongside VotingTool, ElectionTool, and TopicTool.
+
+**Location**: `src/components/Chat/LotteryTool/`
+
+**Design Rationale**: The lottery exists to save time -- picking someone randomly instead of debating who should do a task. The animation must feel fun enough to be satisfying, but short enough that it does not undermine the time-saving purpose. The visual metaphor is a "name roulette" -- member avatars shuffle rapidly in a fixed slot, decelerate, and land on the chosen member. This is more personal than a spinning wheel (you see faces, not abstract segments) and more compact than a full wheel (fits in a chat message).
+
+#### Animation Phases
+
+The animation has four distinct phases, progressing linearly:
+
+| Phase | Name | Duration | Purpose |
+|-------|------|----------|---------|
+| 1 | **Idle** | Indefinite | Static state before/after animation; shows the task description and a "Draw" button (pre-draw) or the result (post-draw) |
+| 2 | **Shuffle** | 1200ms | Rapid cycling through member names/avatars to build anticipation |
+| 3 | **Deceleration** | 800ms | Cycling slows down, landing on the selected member |
+| 4 | **Reveal** | 600ms | Selected member is highlighted with a celebratory pulse |
+
+**Total active animation**: ~2600ms (under 3 seconds). Short enough to not annoy, long enough to build a moment of shared fun.
+
+#### Phase 1: Idle (Pre-Draw)
+
+The tool renders in its chat message card with the task description, the pool of eligible members (shown as a compact avatar row), and a "Draw" button styled with the org highlight color.
+
+```
++------------------------------------------+
+|  [dice icon]  Lottery: [task title]       |
+|                                           |
+|  [av][av][av][av][av]  5 members          |
+|                                           |
+|  [ Draw ]                                 |
++------------------------------------------+
+```
+
+No animation. Static layout. The avatar row uses the same avatar pattern as `MessageItem` (32px circles with image or initials).
+
+#### Phase 2: Shuffle (1200ms)
+
+When the user clicks "Draw" (or when the component mounts with a result that hasn't been animated yet), the shuffle begins.
+
+**Visual**: A single "slot" area (48px tall, full width of the tool body) shows member names vertically sliding through it, like a slot machine reel. Only one name is visible at a time. Names slide upward and out, replaced by the next name sliding in from below.
+
+**Timing**:
+- First 400ms: Each name visible for ~80ms (very fast, ~5 names/second)
+- Next 400ms: Each name visible for ~120ms (fast, starting to perceive names)
+- Final 400ms: Each name visible for ~160ms (noticeably slowing)
+
+**Easing**: Each individual name swap uses `ease-out` for the slide. The overall deceleration curve across the phase is achieved by increasing the interval between swaps, not by changing the per-swap easing.
+
+**Keyframe for each name swap**:
+
+```css
+@keyframes lotterySlotUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+```
+
+**Implementation note**: The shuffle is driven by a `requestAnimationFrame` loop or `setInterval` with decreasing frequency. The component picks random members from the pool for display during this phase. The actual selected member is predetermined (received from the backend) but not revealed until Phase 3 ends.
+
+#### Phase 3: Deceleration (800ms)
+
+The shuffle continues to slow down, with the final few "slots" taking progressively longer:
+
+| Slot | Visible duration | Notes |
+|------|-----------------|-------|
+| n-4 | 160ms | Continuing from shuffle |
+| n-3 | 200ms | Noticeably slower |
+| n-2 | 280ms | Almost readable |
+| n-1 | 360ms | User can read the name |
+| **n (winner)** | Holds | Final position -- stays |
+
+The last slot lands on the selected member and holds. The deceleration follows the `ease-emphasized` curve (`cubic-bezier(0.4, 0, 0.2, 1)`) applied to the interval timing.
+
+**Keyframe for the final landing**:
+
+```css
+@keyframes lotterySlotLand {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+```
+
+**Duration**: 300ms with `cubic-bezier(0.34, 1.56, 0.64, 1)` (the `ease-spring` curve from our easing tokens) -- a slight overshoot gives a satisfying "click into place" feeling.
+
+#### Phase 4: Reveal (600ms)
+
+Once the selected member's name is in position, a celebration effect plays:
+
+**Visual sequence** (all simultaneous, staggered starts):
+
+1. **Ring pulse** (0ms delay): A circular ring expands outward from behind the member's avatar, using `var(--org-highlight-color)` at 40% opacity, scaling from 1x to 2x and fading to 0. This is a single SVG `<circle>` animated via CSS.
+
+2. **Name glow** (100ms delay): The selected member's name gets a brief text-shadow glow using `var(--org-highlight-color)`, fading in and then settling to a subtle permanent glow.
+
+3. **Badge appear** (200ms delay): A small "Selected" badge fades in and slides up next to the member name.
+
+```css
+@keyframes lotteryPulseRing {
+  from {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes lotteryGlow {
+  0% {
+    text-shadow: 0 0 0 transparent;
+  }
+  50% {
+    text-shadow: 0 0 12px var(--org-highlight-color, #eac840);
+  }
+  100% {
+    text-shadow: 0 0 6px color-mix(in srgb, var(--org-highlight-color, #eac840) 30%, transparent);
+  }
+}
+
+@keyframes lotteryBadgeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+```
+
+**Durations**:
+- Ring pulse: 600ms, `ease-out`, no repeat
+- Name glow: 500ms, `ease-out`, fills forward
+- Badge appear: 300ms, `ease-out`, 200ms delay
+
+#### Phase 5: Idle (Post-Draw)
+
+After animation completes, the tool settles into a static result state:
+
+```
++------------------------------------------+
+|  [dice icon]  Lottery: [task title]       |
+|                                           |
+|  [avatar]  Jane Doe         [Selected]    |
+|                                           |
+|  Drawn from 5 members                     |
++------------------------------------------+
+```
+
+The selected member's avatar is displayed at 40px with their full name. The subtle glow from Phase 4 persists as a faint highlight. The "Draw" button is gone, replaced by the result.
+
+#### Reduced Motion Behavior
+
+When `prefers-reduced-motion: reduce` is active:
+
+- **Skip Phases 2 and 3 entirely**. No shuffling, no deceleration.
+- **Phase 4 simplified**: The ring pulse is removed. The name glow is replaced by a simple background color highlight (no animation). The badge appears instantly (no slide).
+- The transition from "Draw" button to result uses a simple 150ms opacity crossfade.
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .lottery-slot {
+    animation: none !important;
+  }
+  .lottery-pulse-ring {
+    display: none !important;
+  }
+  .lottery-result {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+```
+
+#### SVG Structure
+
+The ring pulse uses a lightweight inline SVG:
+
+```jsx
+<svg
+  className="lottery-pulse-ring"
+  width="48"
+  height="48"
+  viewBox="0 0 48 48"
+  aria-hidden="true"
+>
+  <circle
+    cx="24"
+    cy="24"
+    r="20"
+    fill="none"
+    stroke="var(--org-highlight-color, #eac840)"
+    strokeWidth="2"
+    style={{
+      animation: "lotteryPulseRing 600ms ease-out both",
+    }}
+  />
+</svg>
+```
+
+The dice icon in the header is a static inline SVG, matching the style of existing tool icons (VotingTool checkbox icon, TopicTool discussion icon):
+
+```jsx
+<svg className="w-4 h-4 text-highlight shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <rect x="2" y="2" width="20" height="20" rx="3" />
+  <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none" />
+  <circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none" />
+  <circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none" />
+  <circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none" />
+  <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+</svg>
+```
+
+#### Performance Notes
+
+- All animations use `transform` and `opacity` only (GPU-accelerated)
+- The `text-shadow` in the glow effect is the one exception -- it triggers paint but is brief (500ms) and single-element, so the impact is negligible
+- The shuffle uses a JS timer to swap displayed names; the slide animation itself is pure CSS on each name element
+- `will-change: transform, opacity` is applied to the slot container during Phases 2-3, removed after Phase 4
+- The animation state machine prevents re-triggering: once the draw has played, clicking "Draw" again is not possible (the button is replaced by the result)
+
+#### Accessibility
+
+- The "Draw" button has `aria-label` describing the action: "Randomly select a member for [task name]"
+- During the shuffle animation, `aria-live="polite"` on a visually hidden element announces: "Drawing..."
+- After the reveal, the same `aria-live` region announces: "[Member name] has been selected for [task name]"
+- The shuffling slot area has `aria-hidden="true"` during animation (the visual is decorative; the screen reader announcement provides the information)
+- The result state is fully accessible with proper heading hierarchy and role descriptions
+
+#### State Machine
+
+```
+idle_pre_draw  ──(click Draw)──>  shuffling
+    shuffling  ──(1200ms)──────>  decelerating
+ decelerating  ──(800ms)───────>  revealing
+    revealing  ──(600ms)───────>  idle_post_draw
+```
+
+The component also handles a **mount-with-result** path: when a user scrolls up to a lottery message that has already been drawn, it skips directly to `idle_post_draw` with no animation. The animation only plays for users who are present in the channel when the draw happens (they receive the Convex real-time update transitioning the tool from `pending` to `drawn`).
+
+#### Lottery Tool-Specific Tests
+
+- [ ] Shuffle animation runs at 60fps with 20+ member names cycling
+- [ ] Deceleration feels natural (no jarring speed changes)
+- [ ] The correct member is always shown at the end (matches backend selection)
+- [ ] Reduced motion skips directly to result with opacity crossfade
+- [ ] Animation does not replay when scrolling away and back
+- [ ] Result state renders correctly without animation for historical messages
+- [ ] Tool fits within `sm:w-[400px]` chat panel without overflow
+- [ ] Member names that are long (30+ characters) are truncated gracefully during shuffle
+- [ ] Works with both avatar images and initial-based avatars
+- [ ] Screen reader announces the result after animation completes
+- [ ] Highlight color adapts to org customisation (`var(--org-highlight-color)`)
+
 ---
 
 ## 3D Animation Pitfalls (PrismFlip Lessons)
@@ -648,6 +926,6 @@ transition: color 75ms ease-out, opacity 150ms ease-out;
 
 ---
 
-*Document Version: 2.0*
-*Last Updated: 2026-02-19*
+*Document Version: 3.0*
+*Last Updated: 2026-02-22*
 *Maintainer: Luigi (Animation/SVG Agent)*

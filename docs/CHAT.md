@@ -354,6 +354,130 @@ electionTool: {
 }
 ```
 
+### Tool 4: Lottery (Random Assignment)
+
+The lottery tool randomly selects a member from the channel to assign a task or responsibility. It is designed for situations where deliberation is unnecessary and a fair random draw is the most efficient decision method.
+
+#### Use Cases
+
+- Assign a meeting facilitator when no one volunteers
+- Pick someone to handle a routine task (take notes, set up a room, bring supplies)
+- Break a tie or deadlock in a lightweight, transparent way
+- Any "who does this?" moment where the answer does not require governance
+
+#### Design Principles
+
+1. **Simplicity.** The lottery is the simplest embedded tool. It has no phases, no rounds, no consent process. One click creates it, one action draws a result. This is intentional: the lottery exists to avoid deliberation, not to add more of it.
+
+2. **Transparency.** The draw happens server-side with a deterministic random seed (the message `_id`). Everyone in the channel sees the same result. There is no secrecy, no hidden roll, no re-roll. The result is final and visible.
+
+3. **Fairness.** Every member who had access to the channel at the time of the draw has an equal chance. The pool is computed at draw time, not at creation time, so members who join between creation and draw are included.
+
+4. **Non-binding.** The lottery is a coordination tool, not a governance mechanism. It does not assign roles, create decisions, or modify organizational structure. It simply names a person. The team decides what to do with the result.
+
+#### Lifecycle
+
+```
+Pending --> Drawing --> Drawn
+```
+
+**State 1: Pending**
+- The lottery message is created with a description of the task.
+- The eligible pool is all members with access to the channel at this moment (displayed as a count).
+- Any channel member can trigger the draw. This is intentional: the person who created the lottery should not be the only one who can start it, because they might be offline.
+- A "Draw" button is visible to all channel members.
+
+**State 2: Drawing**
+- The draw has been initiated by a member pressing the "Draw" button.
+- The backend selects a random member from the channel's participant pool.
+- The selected member ID is stored on the embedded tool.
+- This state exists momentarily: the backend mutation transitions from pending to drawn atomically. The "drawing" state is a frontend-only concept for the animation (handled by Luigi).
+
+**State 3: Drawn**
+- The selected member is displayed with their name and avatar.
+- The tool shows who triggered the draw and when.
+- The tool is now read-only. No re-roll. If the result is unacceptable, create a new lottery.
+- A notification is sent to the selected member.
+
+#### Why No Re-Roll?
+
+Re-rolling undermines fairness and creates social pressure. If someone dislikes a result, the correct response is to discuss it in the thread, not to keep rolling until a "better" result appears. If the task truly cannot be done by the selected person, create a new lottery with a clear explanation of why the first result was invalid. This creates a transparent audit trail.
+
+#### Lottery Tool Data
+
+```typescript
+lotteryTool: {
+  type: "lottery",
+  description: string,                   // What the task/assignment is
+  status: "pending" | "drawn",           // No "drawing" -- that is frontend animation only
+  selectedMemberId: Id<"members"> | null, // Set when drawn
+  drawnByMemberId: Id<"members"> | null,  // Who pressed the draw button
+  drawnAt: number | null,                 // Timestamp of the draw
+  poolSize: number | null,                // Number of eligible members at draw time (for display)
+}
+```
+
+#### Randomness Strategy
+
+The random selection uses a deterministic approach seeded by the message ID, ensuring the result is reproducible and verifiable:
+
+```typescript
+// Server-side: hash the message ID + draw timestamp to select from the pool
+const pool = await getChannelParticipants(ctx, channel);
+const seed = `${messageId}-${Date.now()}`;
+const hash = simpleHash(seed);
+const selectedIndex = hash % pool.length;
+const selectedMember = pool[selectedIndex];
+```
+
+We use a simple string hash function (no cryptographic requirements -- this is a coordination tool, not a cryptographic lottery). The seed includes a timestamp to prevent pre-computation, though in practice the pool is only known at draw time.
+
+#### Visual Design
+
+**Pending state:**
+```
++------------------------------------------+
+| [Dice icon]  LOTTERY                      |
+|                                           |
+|  "Who takes notes at tomorrow's standup?" |
+|                                           |
+|  12 members in the pool                   |
+|                                           |
+|  [Draw]                                   |
++------------------------------------------+
+```
+
+**Drawn state (after animation):**
+```
++------------------------------------------+
+| [Dice icon]  LOTTERY           Completed  |
+|                                           |
+|  "Who takes notes at tomorrow's standup?" |
+|                                           |
+|  +------+                                 |
+|  |Avatar| Alice Martin                    |
+|  +------+                                 |
+|                                           |
+|  Drawn by Bob Chen at 2:34 PM            |
+|  Pool: 12 members                         |
++------------------------------------------+
+```
+
+**Animation (Luigi's domain):**
+- Between the user pressing "Draw" and the result appearing, an animation plays.
+- The animation concept: member avatars/names cycle through rapidly (slot-machine style), slowing down and landing on the selected member.
+- Duration: ~2-3 seconds. The animation is client-side only. The backend result is already stored when the animation starts.
+- The animation reads the selected member from the reactive query and uses it as the final "landing" frame.
+- Reduced motion: if the user prefers reduced motion, skip the animation and show the result immediately.
+
+#### Color Theme
+
+The lottery uses a **teal/cyan** color scheme to distinguish it from the other tools:
+- Topic: default (gold header badges)
+- Voting: green (open) / gray (closed)
+- Election: purple
+- **Lottery: teal** (`bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300`)
+
 ### Extensibility
 
 The embedded tool system is a **discriminated union**. Adding a new tool means adding a new variant to the union. The frontend renders the correct component based on the `type` field. This pattern is already proven in the codebase for Decision diffs and Notification payloads.
@@ -488,6 +612,15 @@ export const embeddedToolType = v.union(
       v.literal("no_election"),
     )),
     decisionId: v.optional(v.id("decisions")),
+  }),
+  v.object({
+    type: v.literal("lottery"),
+    description: v.string(),
+    status: v.union(v.literal("pending"), v.literal("drawn")),
+    selectedMemberId: v.optional(v.id("members")),
+    drawnByMemberId: v.optional(v.id("members")),
+    drawnAt: v.optional(v.number()),
+    poolSize: v.optional(v.number()),
   }),
 );
 
@@ -2307,9 +2440,551 @@ Clicking a chat notification should:
 | **5** | Election Tool | Candidateless election process | Phase 3 (consent pattern) |
 | **6** | Notifications | Chat event integration with notification system | Phases 1-5 |
 | **7** | Polish + Search | Edit, delete, search, a11y, performance | Phases 1-6 |
+| **8** | Lottery Tool | Random member assignment from channel pool | Phase 1 |
 
 **Critical path:** Phase 1 -> Phase 3 -> Phase 5 (each builds on the previous).
-**Parallel tracks:** After Phase 1, Phases 2-4 can proceed in parallel if separate developers are working on them. Phase 2 (threads/DMs) is independent of Phases 3-5 (tools).
+**Parallel tracks:** After Phase 1, Phases 2-4 can proceed in parallel if separate developers are working on them. Phase 2 (threads/DMs) is independent of Phases 3-5 (tools). Phase 8 (Lottery) only depends on Phase 1 and can be implemented at any time after Phase 1 is complete.
+
+---
+
+### Phase 8: Lottery Tool
+
+**Goal:** A member can create a lottery to randomly assign a task to a channel member. Any member can trigger the draw. The selected member is displayed with an animation (animation handled by Luigi). A notification is sent to the selected member.
+
+**Dependencies:** Phase 1 (channels, messages, embedded tool system).
+
+**Why no new participation table:** Unlike topic, voting, and election tools, the lottery has no participation data. There are no votes, nominations, or responses. The entire state fits in the embedded tool object on the message document. The only write to the message happens once (the draw), so there are no concurrency concerns.
+
+#### Step 8.1: Schema Changes [BACKEND]
+
+**File:** `convex/chat/index.ts`
+
+Add the lottery variant to the `embeddedToolType` discriminated union:
+
+```typescript
+v.object({
+  type: v.literal("lottery"),
+  description: v.string(),
+  status: v.union(v.literal("pending"), v.literal("drawn")),
+  selectedMemberId: v.optional(v.id("members")),
+  drawnByMemberId: v.optional(v.id("members")),
+  drawnAt: v.optional(v.number()),
+  poolSize: v.optional(v.number()),
+}),
+```
+
+**Implementation notes:**
+- No schema.ts changes needed (no new tables, no new indexes).
+- The lottery variant is appended to the existing `embeddedToolType` union.
+- `status` uses `v.union(v.literal(...))` not `v.string()` for type safety.
+- `selectedMemberId`, `drawnByMemberId`, `drawnAt`, `poolSize` are all `v.optional()` because they are not set at creation time (only at draw time).
+
+**Acceptance criteria:**
+- The file compiles. Existing tool types are unaffected.
+- A message with `embeddedTool: { type: "lottery", ... }` passes validation.
+
+#### Step 8.2: Lottery Helper [BACKEND]
+
+**File:** `convex/chat/lotteryHelpers.ts` (new file)
+
+Create helpers for the lottery tool:
+
+```typescript
+// convex/chat/lotteryHelpers.ts
+import { MutationCtx } from "../_generated/server";
+import { Id } from "../_generated/dataModel";
+import type { Channel } from ".";
+
+/**
+ * Get all member IDs who currently have access to a channel.
+ * For orga channels: all org members.
+ * For team channels: members with roles in the team.
+ * For DM channels: the two participants.
+ */
+export async function getChannelMemberPool(
+  ctx: MutationCtx,
+  channel: Channel,
+): Promise<Id<"members">[]> {
+  if (channel.kind === "orga") {
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_orga", (q) => q.eq("orgaId", channel.orgaId))
+      .collect();
+    return members.map((m) => m._id);
+  }
+
+  if (channel.kind === "team" && channel.teamId) {
+    const roles = await ctx.db
+      .query("roles")
+      .withIndex("by_team", (q) => q.eq("teamId", channel.teamId))
+      .collect();
+    // Deduplicate member IDs (one member can hold multiple roles in a team)
+    return [...new Set(roles.map((r) => r.memberId))];
+  }
+
+  if (channel.kind === "dm") {
+    const participants: Id<"members">[] = [];
+    if (channel.dmMemberA) participants.push(channel.dmMemberA);
+    if (channel.dmMemberB) participants.push(channel.dmMemberB);
+    return participants;
+  }
+
+  return [];
+}
+
+/**
+ * Simple deterministic hash for random selection.
+ * Not cryptographically secure -- this is a coordination tool.
+ */
+export function simpleHash(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
+}
+
+/**
+ * Verify that a message has a pending lottery tool.
+ */
+export function requireLotteryPending(message: { embeddedTool?: { type: string; status?: string } }): void {
+  if (!message.embeddedTool || message.embeddedTool.type !== "lottery") {
+    throw new Error("Message does not contain a lottery tool");
+  }
+  if (message.embeddedTool.status !== "pending") {
+    throw new Error("Lottery has already been drawn");
+  }
+}
+```
+
+**Acceptance criteria:**
+- `getChannelMemberPool` returns the correct member lists for each channel type.
+- `simpleHash` produces deterministic non-negative integers.
+- `requireLotteryPending` throws for non-lottery and already-drawn messages.
+
+#### Step 8.3: Lottery Functions [BACKEND]
+
+**File:** `convex/chat/lotteryFunctions.ts` (new file)
+
+Implement two functions:
+
+**Mutation: `createLotteryMessage`**
+
+```typescript
+export const createLotteryMessage = mutation({
+  args: {
+    channelId: v.id("channels"),
+    description: v.string(),
+  },
+  returns: v.id("messages"),
+  handler: async (ctx, args) => {
+    const { channel, member } = await requireChannelAccess(ctx, args.channelId);
+    requireNotArchived(channel);
+
+    const trimmed = args.description.trim();
+    if (!trimmed) throw new Error("Description cannot be empty");
+
+    const messageId = await ctx.db.insert("messages", {
+      channelId: args.channelId,
+      orgaId: channel.orgaId,
+      authorId: member._id,
+      text: trimmed,
+      isEdited: false,
+      embeddedTool: {
+        type: "lottery",
+        description: trimmed,
+        status: "pending",
+      },
+    });
+
+    return messageId;
+  },
+});
+```
+
+**Mutation: `drawLottery`**
+
+```typescript
+export const drawLottery = mutation({
+  args: {
+    messageId: v.id("messages"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const { channel, member } = await requireChannelAccess(ctx, message.channelId);
+    requireLotteryPending(message);
+
+    // Get the pool of eligible members
+    const pool = await getChannelMemberPool(ctx, channel);
+    if (pool.length === 0) throw new Error("No members in the pool");
+
+    // Select a random member using deterministic hash
+    const seed = `${args.messageId}-${Date.now()}`;
+    const hash = simpleHash(seed);
+    const selectedIndex = hash % pool.length;
+    const selectedMemberId = pool[selectedIndex];
+
+    // Update the message with the result
+    const now = Date.now();
+    await ctx.db.patch(args.messageId, {
+      embeddedTool: {
+        ...message.embeddedTool,
+        type: "lottery" as const,
+        description: message.embeddedTool!.description,
+        status: "drawn" as const,
+        selectedMemberId,
+        drawnByMemberId: member._id,
+        drawnAt: now,
+        poolSize: pool.length,
+      },
+    });
+
+    // Send notification to the selected member
+    const selectedMember = await ctx.db.get(selectedMemberId);
+    if (selectedMember) {
+      const channelName = await getChannelDisplayName(ctx, channel, member._id);
+      const notification = buildToolEventNotification({
+        userId: selectedMember.personId,
+        orgaId: message.orgaId,
+        memberId: selectedMemberId,
+        messageId: args.messageId,
+        channelId: message.channelId,
+        channelName,
+        toolType: "lottery",
+        eventDescription: `You were selected by lottery: "${message.embeddedTool!.description}"`,
+      });
+      await ctx.scheduler.runAfter(0, internal.notifications.functions.createBatch, {
+        notifications: [notification],
+      });
+    }
+
+    return null;
+  },
+});
+```
+
+**Query: `getLotteryDetails`**
+
+```typescript
+export const getLotteryDetails = query({
+  args: {
+    messageId: v.id("messages"),
+  },
+  returns: v.union(
+    v.object({
+      status: v.union(v.literal("pending"), v.literal("drawn")),
+      description: v.string(),
+      poolSize: v.union(v.number(), v.null()),
+      selectedMember: v.union(
+        v.object({
+          _id: v.id("members"),
+          firstname: v.string(),
+          surname: v.string(),
+          pictureURL: v.optional(v.string()),
+        }),
+        v.null(),
+      ),
+      drawnBy: v.union(
+        v.object({
+          _id: v.id("members"),
+          firstname: v.string(),
+          surname: v.string(),
+        }),
+        v.null(),
+      ),
+      drawnAt: v.union(v.number(), v.null()),
+      currentPoolSize: v.number(),
+    }),
+    v.null(),
+  ),
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) return null;
+
+    const { channel } = await requireChannelAccess(ctx, message.channelId);
+
+    if (!message.embeddedTool || message.embeddedTool.type !== "lottery") return null;
+    const tool = message.embeddedTool;
+
+    // Get current pool size (for pending state display)
+    const pool = await getChannelMemberPool(ctx, channel);
+
+    let selectedMember = null;
+    if (tool.selectedMemberId) {
+      const m = await ctx.db.get(tool.selectedMemberId);
+      if (m) {
+        selectedMember = {
+          _id: m._id,
+          firstname: m.firstname,
+          surname: m.surname,
+          pictureURL: m.pictureURL,
+        };
+      }
+    }
+
+    let drawnBy = null;
+    if (tool.drawnByMemberId) {
+      const m = await ctx.db.get(tool.drawnByMemberId);
+      if (m) {
+        drawnBy = {
+          _id: m._id,
+          firstname: m.firstname,
+          surname: m.surname,
+        };
+      }
+    }
+
+    return {
+      status: tool.status,
+      description: tool.description,
+      poolSize: tool.poolSize ?? null,
+      selectedMember,
+      drawnBy,
+      drawnAt: tool.drawnAt ?? null,
+      currentPoolSize: pool.length,
+    };
+  },
+});
+```
+
+**Implementation notes:**
+- `drawLottery` can be triggered by ANY channel member, not just the creator. This is intentional.
+- `getLotteryDetails` returns `currentPoolSize` for the pending state and `poolSize` (historical, at draw time) for the drawn state.
+- The `getChannelMemberPool` function is called inside `getLotteryDetails` (a query). It needs to work with `QueryCtx` as well, so the helper should accept `QueryCtx | MutationCtx`.
+- The `drawLottery` mutation patches the entire `embeddedTool` object (Convex requires patching the whole nested object, not sub-fields).
+
+**Acceptance criteria:**
+- `createLotteryMessage` creates a message with a pending lottery tool.
+- `drawLottery` selects a random member and updates the message atomically.
+- `drawLottery` rejects duplicate draws (already drawn).
+- `getLotteryDetails` returns current pool size for pending, and full result for drawn.
+- A notification is sent to the selected member.
+
+#### Step 8.4: Barrel Re-export [BACKEND]
+
+**File:** `convex/chat/functions.ts`
+
+Add the lottery exports:
+
+```typescript
+export {
+  createLotteryMessage,
+  drawLottery,
+  getLotteryDetails,
+} from "./lotteryFunctions";
+```
+
+#### Step 8.5: Notification System Update [BACKEND]
+
+**File:** `convex/notifications/index.ts`
+
+Add `"lottery"` to the `toolType` union in `toolEventPayload`:
+
+```typescript
+// Before:
+toolType: v.union(v.literal("topic"), v.literal("voting"), v.literal("election")),
+
+// After:
+toolType: v.union(v.literal("topic"), v.literal("voting"), v.literal("election"), v.literal("lottery")),
+```
+
+**File:** `convex/notifications/helpers.ts`
+
+Update the `buildToolEventNotification` function signature to accept `"lottery"` as a `toolType`:
+
+```typescript
+// Before:
+toolType: "topic" | "voting" | "election";
+
+// After:
+toolType: "topic" | "voting" | "election" | "lottery";
+```
+
+#### Step 8.6: Frontend -- LotteryTool Component [FRONTEND]
+
+**Directory:** `src/components/Chat/LotteryTool/`
+
+**File:** `src/components/Chat/LotteryTool/index.tsx`
+
+```typescript
+// Type for the embedded lottery tool data (mirrors convex schema)
+export type EmbeddedLottery = {
+  type: "lottery";
+  description: string;
+  status: "pending" | "drawn";
+  selectedMemberId?: Id<"members">;
+  drawnByMemberId?: Id<"members">;
+  drawnAt?: number;
+  poolSize?: number;
+};
+
+type LotteryToolProps = {
+  messageId: Id<"messages">;
+  tool: EmbeddedLottery;
+};
+
+export const LotteryTool = ({ messageId, tool }: LotteryToolProps) => {
+  // Fetch full lottery details (member names, pool size)
+  const details = useQuery(api.chat.functions.getLotteryDetails, { messageId });
+  const drawLottery = useMutation(api.chat.functions.drawLottery);
+
+  // Render header with dice icon + teal status badge
+  // Render description
+  // Pending: show pool size + "Draw" button
+  // Drawn: show selected member with avatar + "Drawn by X at Y" footer
+  // Animation between states: delegated to Luigi's LotteryAnimation component
+};
+```
+
+**File:** `src/components/Chat/LotteryTool/LotteryPending.tsx`
+
+Shows pool size and a "Draw" button. Clicking the button calls `drawLottery` mutation.
+
+**File:** `src/components/Chat/LotteryTool/LotteryDrawn.tsx`
+
+Shows the selected member (avatar, full name), who drew, when, and the pool size at draw time.
+
+**File:** `src/components/Chat/LotteryTool/LotteryAnimation.tsx` (Luigi's domain)
+
+The animation component that plays between the "Draw" click and the result reveal. Luigi will implement this separately. The component receives:
+- `members`: array of member info (for the cycling animation)
+- `selectedMember`: the final selected member
+- `onComplete`: callback when animation finishes
+
+**Implementation notes:**
+- The LotteryTool component should detect a transition from "pending" to "drawn" via the reactive query. When it detects this transition (e.g., via a `useRef` storing previous status), it triggers the animation.
+- During animation, the "Draw" button is disabled/hidden.
+- The animation is client-side only. The backend result is already written.
+- `prefers-reduced-motion` media query: skip animation, show result immediately.
+
+#### Step 8.7: Frontend -- MessageItem Integration [FRONTEND]
+
+**File:** `src/components/Chat/MessageList/MessageItem.tsx`
+
+Add the lottery tool to the type union and rendering:
+
+```typescript
+// Add to EmbeddedTool union type:
+| {
+  type: "lottery";
+  description: string;
+  status: "pending" | "drawn";
+  selectedMemberId?: Id<"members">;
+  drawnByMemberId?: Id<"members">;
+  drawnAt?: number;
+  poolSize?: number;
+}
+
+// Add to render logic (next to topicTool/votingTool/electionTool):
+const lotteryTool = message.embeddedTool?.type === "lottery"
+  ? (message.embeddedTool as EmbeddedLottery) : null;
+
+// In hasEmbeddedTool:
+const hasEmbeddedTool = topicTool || votingTool || electionTool || lotteryTool;
+
+// In JSX:
+{lotteryTool && <LotteryTool messageId={message._id} tool={lotteryTool} />}
+```
+
+#### Step 8.8: Frontend -- MessageInput Integration [FRONTEND]
+
+**File:** `src/components/Chat/MessageInput/index.tsx`
+
+Add the lottery option to the tool menu:
+
+```typescript
+// Add state:
+const [showLotteryModal, setShowLotteryModal] = useState(false);
+
+// Add to tool menu dropdown (after election button):
+<button
+  onClick={() => {
+    setShowToolMenu(false);
+    setShowLotteryModal(true);
+  }}
+  className="w-full text-left px-3 py-2 text-sm ..."
+>
+  <svg className="w-4 h-4 text-teal-500 shrink-0" ...>
+    {/* Dice icon */}
+  </svg>
+  {t("lotteryTool")}
+</button>
+
+// Add modal at bottom:
+{showLotteryModal && (
+  <CreateLotteryModal
+    channelId={channelId}
+    onClose={() => setShowLotteryModal(false)}
+  />
+)}
+```
+
+**File:** `src/components/Chat/MessageInput/CreateLotteryModal.tsx` (new file)
+
+A simple modal with:
+- A text input for the task description
+- A "Create Lottery" submit button
+- Uses `createPortal(modal, document.body)` to escape overflow constraints
+
+This is the simplest creation modal of all tools -- just one text field.
+
+#### Step 8.9: Internationalization [I18N]
+
+Add the following keys to all 6 locale files (`en`, `fr`, `es`, `it`, `uk`, `zh-TW`):
+
+```json
+{
+  "lotteryTool": "Lottery",
+  "lotteryCreate": "Create a Lottery",
+  "lotteryDescription": "Task description",
+  "lotteryDescriptionPlaceholder": "What will the selected person do?",
+  "lotteryPending": "Pending",
+  "lotteryDraw": "Draw",
+  "lotteryDrawn": "Completed",
+  "lotterySelectedMember": "Selected",
+  "lotteryDrawnBy": "Drawn by {{name}} at {{time}}",
+  "lotteryPool": "{{count}} members in the pool",
+  "lotteryPoolAtDraw": "Pool: {{count}} members",
+  "lotteryCancel": "Cancel",
+  "lotterySubmit": "Create Lottery"
+}
+```
+
+#### Step 8.10: ThreadPanel Update [FRONTEND]
+
+**File:** `src/components/Chat/ThreadPanel/index.tsx`
+
+Ensure the ThreadPanel passes lottery tool data correctly. The ThreadPanel already renders messages using MessageItem, so lottery messages in threads will render correctly as long as the EmbeddedTool type union includes the lottery variant (done in Step 8.7).
+
+No additional changes needed if the ThreadPanel already handles generic embedded tools.
+
+#### Summary of Files Changed/Created
+
+| File | Action | Description |
+|------|--------|-------------|
+| `convex/chat/index.ts` | MODIFY | Add lottery variant to `embeddedToolType` union |
+| `convex/chat/lotteryHelpers.ts` | CREATE | Pool retrieval, hash function, validation |
+| `convex/chat/lotteryFunctions.ts` | CREATE | `createLotteryMessage`, `drawLottery`, `getLotteryDetails` |
+| `convex/chat/functions.ts` | MODIFY | Re-export lottery functions |
+| `convex/notifications/index.ts` | MODIFY | Add `"lottery"` to `toolType` union |
+| `convex/notifications/helpers.ts` | MODIFY | Accept `"lottery"` in `buildToolEventNotification` |
+| `src/components/Chat/LotteryTool/index.tsx` | CREATE | Main component with header, status dispatch |
+| `src/components/Chat/LotteryTool/LotteryPending.tsx` | CREATE | Pool size + Draw button |
+| `src/components/Chat/LotteryTool/LotteryDrawn.tsx` | CREATE | Selected member display |
+| `src/components/Chat/LotteryTool/LotteryAnimation.tsx` | CREATE (Luigi) | Draw animation |
+| `src/components/Chat/MessageInput/CreateLotteryModal.tsx` | CREATE | Description input modal |
+| `src/components/Chat/MessageInput/index.tsx` | MODIFY | Add lottery to tool menu |
+| `src/components/Chat/MessageList/MessageItem.tsx` | MODIFY | Add lottery to type union and render |
+| `src/i18n/locales/*.json` (6 files) | MODIFY | Add lottery i18n keys |
+
+**Total: 8 new files, 6 modified files (+ 6 locale files)**
+
+---
 
 ### Total New Tables
 
@@ -2381,6 +3056,7 @@ These items need input from collaborators before implementation.
 *(This section will be updated as decisions are made with collaborators.)*
 
 - **2026-02-13:** Initial architecture document created by Nadia.
+- **2026-02-22:** Lottery tool (Phase 8) designed by Nadia. Simplest embedded tool: no participation tables, no phases, single-draw with deterministic random selection. Animation delegated to Luigi. Teal color theme. Notification sent to selected member only.
 
 ### Design Rationale
 

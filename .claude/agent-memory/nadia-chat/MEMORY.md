@@ -28,7 +28,7 @@
 ## Chat System Design (CHAT.md created 2026-02-13)
 - Channels: orga (auto-created), team (auto-created), DM (on demand)
 - No custom channels by design -- channels mirror org structure
-- Embedded tools: topic (consent decision), voting, candidateless election
+- Embedded tools: topic (consent decision), voting, candidateless election, lottery (random assignment)
 - Tool participation data in separate tables to avoid write conflicts
 - Key file: `/Users/yc/dev/swarmrise/docs/CHAT.md`
 - **DM indexing decision**: use `dmMemberA`/`dmMemberB` separate fields (not array), canonical order (smaller _id in A)
@@ -39,7 +39,7 @@
 - **Message pagination**: Convex cursor-based via `usePaginatedQuery`, 30 initial, 20 per scroll
 - **Author grouping**: same author + <5min gap = compact display
 
-## Implementation Status (7 phases, detailed in CHAT.md)
+## Implementation Status (8 phases, detailed in CHAT.md)
 - Phase 1: Foundation -- DONE (schema, channels, messages, chat panel)
 - Phase 2: Threads + DMs -- DONE
 - Phase 3: Topic Tool -- DONE (consent decisions with clarification/consent phases)
@@ -48,6 +48,7 @@
 - Phase 6: Notifications integration -- DONE
 - Phase 7: Polish, search, accessibility -- DONE
 - @Mentions feature -- DONE (2026-02-15)
+- Phase 8: Lottery Tool -- DESIGNED (2026-02-22, not yet implemented)
 
 ## Phase 5 Election Implementation Details
 - Tables: `electionNominations` (by_message, by_message_and_nominator, by_orga), `electionResponses` (by_message, by_message_and_member, by_orga)
@@ -99,6 +100,22 @@
 - Max 8 results shown in autocomplete, caps at that to keep dropdown compact
 - i18n keys: mentionNoResults, mentionMembers (in all 6 locales)
 - Edit flow: `handleSaveEdit` in MessageItem also calls `extractMentionIds` and passes to `editMessage`
+
+## Phase 8 Lottery Tool Design (2026-02-22)
+- Simplest embedded tool: no participation tables, no phases, single atomic draw
+- Embedded tool variant: `type: "lottery"`, `status: "pending"|"drawn"`, `selectedMemberId`, `drawnByMemberId`, `drawnAt`, `poolSize`
+- No new tables needed -- entire state in embedded tool object on message
+- Any channel member can trigger draw (not just creator)
+- No re-roll by design (fairness, transparency, audit trail)
+- Pool = all members with channel access at draw time (orga members / team role holders / DM participants)
+- Randomness: deterministic hash of `messageId + timestamp`, modulo pool size
+- Backend: `lotteryHelpers.ts` (getChannelMemberPool, simpleHash, requireLotteryPending), `lotteryFunctions.ts` (createLotteryMessage, drawLottery, getLotteryDetails)
+- Frontend: `src/components/Chat/LotteryTool/` with index, LotteryPending, LotteryDrawn, LotteryAnimation (Luigi)
+- CreateLotteryModal: simplest modal -- single text field for description
+- Color theme: teal (`bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300`)
+- Notification: sent only to selected member via `buildToolEventNotification` with `toolType: "lottery"`
+- Animation: slot-machine style member cycling, 2-3s, client-side only, respects prefers-reduced-motion
+- 14 files total (8 new, 6 modified + 6 locale files)
 
 ## Open Questions (need collaborator input)
 - Karl: DM participant indexing (defaulted to dmMemberA/dmMemberB), tool table count (12 tables total now including reactions)

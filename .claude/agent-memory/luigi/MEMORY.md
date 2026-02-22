@@ -84,7 +84,27 @@ animationDelay: `${Math.min(index * 50, 500)}ms`
 ## Color Decisions
 Defer to @monica for all color choices. My domain is motion and structure.
 
+## Chat Tool Embedding Pattern
+- Tools embedded via `embeddedTool` field on messages, detected by `type` in a discriminated union
+- Card: `mt-2 border border-border-default rounded-lg overflow-hidden bg-surface-secondary`
+- Header: `flex items-center gap-2 px-3 py-2 border-b border-border-default bg-surface-primary`
+- Icon: `w-4 h-4 text-highlight shrink-0`, inline SVG, stroke-based, viewBox="0 0 24 24"
+- Chat panel: `w-full sm:w-[400px]` -- all tools must fit this width
+- Existing tools: VotingTool, ElectionTool, TopicTool, LotteryTool
+
+## Lottery Tool Animation (2026-02-22)
+- Full spec: `/Users/yc/dev/swarmrise/docs/LOTTERY_TOOL_SPEC.md`
+- Concept: "name roulette" -- names cycle in slot, decelerate, land on winner with pulse celebration
+- Phases: idle_pre_draw -> shuffling(1200ms) -> decelerating(800ms) -> revealing(600ms) -> idle_post_draw
+- Total: ~2600ms. Shuffle: JS setTimeout with decreasing freq (80ms->160ms). Deceleration: 4 pre-planned steps.
+- Reveal: SVG pulse ring + text-shadow glow + badge slide-in, staggered starts
+- Historical messages mount directly to idle_post_draw (no animation)
+- `prevStatusRef` + `hasAnimatedRef` pattern prevents Convex real-time re-triggers
+- Colors: `var(--org-highlight-color, #eac840)` for org customization
+
 ## Related Documentation
 - `docs/UX_FOCUS_NAVIGATION.md` - Detailed focus transition specs
 - `docs/BRAND.md` - Brand principles that inform motion personality
-- `docs/ANIMATION.md` - Full animation system documentation
+- `docs/ANIMATION.md` - Full animation system documentation (v3.0)
+- `docs/LOTTERY_TOOL_SPEC.md` - Lottery Tool technical specification
+- `docs/CUSTOMISATION.md` - Org color/theme customization system

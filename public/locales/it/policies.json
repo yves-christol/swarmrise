@@ -36,8 +36,8 @@
     "save": "Salva",
     "saving": "Salvataggio...",
     "cancel": "Annulla",
-    "titleRequired": "Il titolo e obbligatorio",
-    "abstractRequired": "Il riepilogo e obbligatorio",
+    "titleRequired": "Il titolo è obbligatorio",
+    "abstractRequired": "Il riepilogo è obbligatorio",
     "created": "Politica creata",
     "updated": "Politica aggiornata",
     "saveFailed": "Salvataggio fallito"

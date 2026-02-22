@@ -32,8 +32,8 @@
     "resetColor": "Ripristina",
     "teamColorUpdated": "Colore della squadra aggiornato",
     "colorValidation": {
-      "saturation": "Il colore e troppo grigio. Scegli un colore piu vivace (saturazione minima del 30 %).",
-      "lightness": "Il colore e troppo scuro o troppo chiaro. Scegli un colore di luminosita media (tra il 25 % e il 75 %)."
+      "saturation": "Il colore è troppo grigio. Scegli un colore più vivace (saturazione minima del 30 %).",
+      "lightness": "Il colore è troppo scuro o troppo chiaro. Scegli un colore di luminosità media (tra il 25 % e il 75 %)."
     },
     "settings": "Impostazioni"
   },

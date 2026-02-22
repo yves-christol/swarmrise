@@ -1,49 +1,49 @@
 {
   "principles": {
     "title": "nuestros principios",
-    "subtitle": "Ideas simples que guian el funcionamiento de swarmrise.",
+    "subtitle": "Ideas simples que guían el funcionamiento de swarmrise.",
     "legal": "legal",
-    "termsLink": "Terminos de Servicio",
+    "termsLink": "Términos de Servicio",
     "termsDescription": "las condiciones de uso de swarmrise",
-    "privacyLink": "Politica de Privacidad",
-    "privacyDescription": "como manejamos tus datos personales",
+    "privacyLink": "Política de Privacidad",
+    "privacyDescription": "cómo manejamos tus datos personales",
     "footer": "swarmrise es un trabajo en progreso.",
     "items": {
       "noFunnyHats": {
         "title": "Sin sombreros raros",
-        "content": "swarmrise usa palabras y conceptos simples. Sin vocabulario esoterico ni neologismos, sin ceremonias, sin circulos, sin jerga de desarrollo personal. Es una herramienta, no una religion."
+        "content": "swarmrise usa palabras y conceptos simples. Sin vocabulario esotérico ni neologismos, sin ceremonias, sin círculos, sin jerga de desarrollo personal. Es una herramienta, no una religión."
       },
       "youComeFirst": {
-        "title": "Tu primero",
-        "content": "Dibujar el panorama general de la organizacion no es suficiente para dar confianza y direccion a alguien. swarmrise se centra en ti como miembro de esa organizacion, destacando tus roles, tus equipos, tus relaciones y tus decisiones. En el dia a dia, solo quieres saber que esperan los demas de ti y como puedes ayudar y actuar."
+        "title": "Tú primero",
+        "content": "Dibujar el panorama general de la organización no es suficiente para dar confianza y dirección a alguien. swarmrise se centra en ti como miembro de esa organización, destacando tus roles, tus equipos, tus relaciones y tus decisiones. En el día a día, solo quieres saber qué esperan los demás de ti y cómo puedes ayudar y actuar."
       },
       "alwaysTellWhy": {
-        "title": "Siempre decir por que",
-        "content": "swarmrise esta impulsado por el proposito. La organizacion debe tener un proposito global, pero cada equipo y cada rol deberia comenzar con un proposito claro. Las personas son inteligentes, pueden descubrir que hacer y como hacerlo cuando saben por que lo estan haciendo."
+        "title": "Siempre decir por qué",
+        "content": "swarmrise está impulsado por el propósito. La organización debe tener un propósito global, pero cada equipo y cada rol debería comenzar con un propósito claro. Las personas son inteligentes, pueden descubrir qué hacer y cómo hacerlo cuando saben por qué lo están haciendo."
       },
       "doersAreKings": {
         "title": "Los hacedores son reyes",
-        "content": "Una gran diferencia con la jerarquia es la posibilidad de deshacerse de los tomadores de decisiones a tiempo completo. Todo el mundo toma decisiones todo el tiempo, por lo que este talento no es tan raro. Al habilitar un esquema de decidir/comprometerse/ejecutar auto-gestionado para cada rol, destacas la habilidad mucho mas rara de la buena ejecucion. Las personas que realmente pueden hacer cosas deberian sentirse mas empoderadas y apreciadas."
+        "content": "Una gran diferencia con la jerarquía es la posibilidad de deshacerse de los tomadores de decisiones a tiempo completo. Todo el mundo toma decisiones todo el tiempo, por lo que este talento no es tan raro. Al habilitar un esquema de decidir/comprometerse/ejecutar auto-gestionado para cada rol, destacas la habilidad mucho más rara de la buena ejecución. Las personas que realmente pueden hacer cosas deberían sentirse más empoderadas y apreciadas."
       },
       "ethicalBehaviors": {
-        "title": "Facilitador de comportamientos eticos",
-        "content": "Los malos comportamientos florecen cuando no eres consciente de ellos o no puedes hacer nada al respecto. Por supuesto, un modelo de gobernanza no puede garantizar una conducta etica por si mismo, pero puede fomentarla informando a los miembros sobre lo que esta sucediendo y permitiendoles tomar decisiones en consecuencia. swarmrise usa la transparencia, la trazabilidad y la memoria de la informacion como modo predeterminado (cuando no contradice los derechos de datos personales o informacion sensible), y propone un modelo de decision abierto a cualquier rol."
+        "title": "Facilitador de comportamientos éticos",
+        "content": "Los malos comportamientos florecen cuando no eres consciente de ellos o no puedes hacer nada al respecto. Por supuesto, un modelo de gobernanza no puede garantizar una conducta ética por sí mismo, pero puede fomentarla informando a los miembros sobre lo que está sucediendo y permitiéndoles tomar decisiones en consecuencia. swarmrise usa la transparencia, la trazabilidad y la memoria de la información como modo predeterminado (cuando no contradice los derechos de datos personales o información sensible), y propone un modelo de decisión abierto a cualquier rol."
       },
       "frictionless": {
-        "title": "Sin friccion",
-        "content": "Los organigramas y las descripciones de puestos a menudo estan desactualizados, en parte porque modificarlos es una molestia. swarmrise permite una modificacion facil, por cada miembro, de cada pieza de la organizacion. No es arriesgado porque, al informar a todos de quien hizo que, swarmrise obliga a los miembros a pensar antes de actuar. Y por cierto, si no confias en las personas, no deberias contratarlas en primer lugar."
+        "title": "Sin fricción",
+        "content": "Los organigramas y las descripciones de puestos a menudo están desactualizados, en parte porque modificarlos es una molestia. swarmrise permite una modificación fácil, por cada miembro, de cada pieza de la organización. No es arriesgado porque, al informar a todos de quién hizo qué, swarmrise obliga a los miembros a pensar antes de actuar. Y por cierto, si no confías en las personas, no deberías contratarlas en primer lugar."
       },
       "sharingIsGood": {
         "title": "Compartir es bueno",
-        "content": "swarmrise propone una biblioteca de plantillas publicas copyleft para equipos, roles y politicas, para que las innovaciones de algunos puedan ser reutilizadas libremente por otros. Al crear y mantener plantillas publicas, puedes ayudar a otras organizaciones y obtener comentarios utiles para ti, matar dos pajaros de un tiro."
+        "content": "swarmrise propone una biblioteca de plantillas públicas copyleft para equipos, roles y políticas, para que las innovaciones de algunos puedan ser reutilizadas libremente por otros. Al crear y mantener plantillas públicas, puedes ayudar a otras organizaciones y obtener comentarios útiles para ti, matar dos pájaros de un tiro."
       },
       "lowComplexity": {
         "title": "Baja complejidad",
-        "content": "La jerarquia es un concepto muy simple. Por eso es dominante a pesar de no ser el sistema mas eficiente. swarmrise se esfuerza por agregar la menor complejidad posible y mantener las cosas faciles de explicar y operar. Hay un conjunto limitado de conceptos y reglas a partir de los cuales puedes hacer crecer tu gobernanza para adaptarla a tu organizacion."
+        "content": "La jerarquía es un concepto muy simple. Por eso es dominante a pesar de no ser el sistema más eficiente. swarmrise se esfuerza por agregar la menor complejidad posible y mantener las cosas fáciles de explicar y operar. Hay un conjunto limitado de conceptos y reglas a partir de los cuales puedes hacer crecer tu gobernanza para adaptarla a tu organización."
       },
       "workInProgress": {
         "title": "Trabajo en progreso",
-        "content": "swarmrise es y seguira siendo un trabajo en progreso. Los comentarios y contribuciones son mas que bienvenidos. Estos principios son solo una columna vertebral, veamos a donde nos lleva todo esto."
+        "content": "swarmrise es y seguirá siendo un trabajo en progreso. Los comentarios y contribuciones son más que bienvenidos. Estos principios son solo una columna vertebral, veamos a dónde nos lleva todo esto."
       }
     },
     "sections": {
@@ -147,353 +147,353 @@
     }
   },
   "terms": {
-    "title": "terminos de servicio",
+    "title": "términos de servicio",
     "effectiveDate": "Fecha de vigencia: {{date}}",
-    "lastUpdated": "Ultima actualizacion: {{date}}",
+    "lastUpdated": "Última actualización: {{date}}",
     "effectiveDateLabel": "Fecha de vigencia",
-    "lastUpdatedLabel": "Ultima actualizacion",
+    "lastUpdatedLabel": "Última actualización",
     "intro": {
-      "welcome": "Bienvenido a swarmrise. Estos Terminos de Servicio (\"Terminos\") rigen tu acceso y uso de la plataforma swarmrise, incluyendo nuestro sitio web, aplicaciones y servicios (colectivamente, el \"Servicio\"). Al acceder o usar el Servicio, aceptas estar sujeto a estos Terminos.",
-      "readCarefully": "Por favor, lee estos Terminos cuidadosamente antes de usar el Servicio. Si no aceptas estos Terminos, no puedes acceder ni usar el Servicio."
+      "welcome": "Bienvenido a swarmrise. Estos Términos de Servicio (\"Términos\") rigen tu acceso y uso de la plataforma swarmrise, incluyendo nuestro sitio web, aplicaciones y servicios (colectivamente, el \"Servicio\"). Al acceder o usar el Servicio, aceptas estar sujeto a estos Términos.",
+      "readCarefully": "Por favor, lee estos Términos cuidadosamente antes de usar el Servicio. Si no aceptas estos Términos, no puedes acceder ni usar el Servicio."
     },
     "sections": {
       "acceptanceOfTerms": {
-        "title": "aceptacion de terminos",
-        "p1": "Al crear una cuenta o usar el Servicio, declaras que tienes al menos 18 anos de edad y tienes la capacidad legal para celebrar estos Terminos. Si estas usando el Servicio en nombre de una organizacion, declaras y garantizas que tienes la autoridad para vincular a esa organizacion a estos Terminos.",
-        "p2": "Nos reservamos el derecho de modificar estos Terminos en cualquier momento. Te notificaremos de cambios materiales publicando los Terminos actualizados en el Servicio y actualizando la fecha de \"Ultima actualizacion\". Tu uso continuado del Servicio despues de dichos cambios constituye tu aceptacion de los Terminos modificados."
+        "title": "aceptación de términos",
+        "p1": "Al crear una cuenta o usar el Servicio, declaras que tienes al menos 18 años de edad y tienes la capacidad legal para celebrar estos Términos. Si estás usando el Servicio en nombre de una organización, declaras y garantizas que tienes la autoridad para vincular a esa organización a estos Términos.",
+        "p2": "Nos reservamos el derecho de modificar estos Términos en cualquier momento. Te notificaremos de cambios materiales publicando los Términos actualizados en el Servicio y actualizando la fecha de \"Última actualización\". Tu uso continuado del Servicio después de dichos cambios constituye tu aceptación de los Términos modificados."
       },
       "descriptionOfService": {
-        "title": "descripcion del servicio",
-        "intro": "swarmrise es una plataforma multi-inquilino de gestion de organizaciones disenada para la gobernanza colaborativa. El Servicio permite a las organizaciones:",
+        "title": "descripción del servicio",
+        "intro": "swarmrise es una plataforma multi-inquilino de gestión de organizaciones diseñada para la gobernanza colaborativa. El Servicio permite a las organizaciones:",
         "features": {
-          "structureTeams": "Estructurar equipos y definir jerarquias organizacionales",
-          "createRoles": "Crear y gestionar roles dentro de los equipos (incluyendo posiciones de lider, secretario y arbitro)",
-          "trackDecisions": "Rastrear decisiones con pistas de auditoria completas",
-          "manageMembers": "Gestionar membreslas e invitaciones organizacionales",
-          "establishPolicies": "Establecer y mantener politicas organizacionales"
+          "structureTeams": "Estructurar equipos y definir jerarquías organizacionales",
+          "createRoles": "Crear y gestionar roles dentro de los equipos (incluyendo posiciones de líder, secretario y árbitro)",
+          "trackDecisions": "Rastrear decisiones con pistas de auditoría completas",
+          "manageMembers": "Gestionar membresías e invitaciones organizacionales",
+          "establishPolicies": "Establecer y mantener políticas organizacionales"
         },
         "reserveRight": "Nos reservamos el derecho de modificar, suspender o descontinuar cualquier aspecto del Servicio en cualquier momento, con o sin previo aviso."
       },
       "accountRegistration": {
         "title": "registro y seguridad de la cuenta",
-        "intro": "Para acceder a ciertas caracteristicas del Servicio, debes crear una cuenta. Al crear una cuenta, aceptas:",
+        "intro": "Para acceder a ciertas características del Servicio, debes crear una cuenta. Al crear una cuenta, aceptas:",
         "requirements": {
-          "provideAccurate": "Proporcionar informacion precisa, actual y completa",
-          "maintainInfo": "Mantener y actualizar prontamente la informacion de tu cuenta",
-          "keepSecure": "Mantener tus credenciales de autenticacion seguras y confidenciales",
+          "provideAccurate": "Proporcionar información precisa, actual y completa",
+          "maintainInfo": "Mantener y actualizar prontamente la información de tu cuenta",
+          "keepSecure": "Mantener tus credenciales de autenticación seguras y confidenciales",
           "notifyUnauthorized": "Notificarnos inmediatamente de cualquier acceso no autorizado a tu cuenta",
           "acceptResponsibility": "Aceptar la responsabilidad de todas las actividades que ocurran bajo tu cuenta"
         },
-        "clerkNote": "Usamos Clerk para servicios de autenticacion. Al usar el Servicio, tambien aceptas los terminos de servicio y la politica de privacidad de Clerk."
+        "clerkNote": "Usamos Clerk para servicios de autenticación. Al usar el Servicio, también aceptas los términos de servicio y la política de privacidad de Clerk."
       },
       "organizationsAndMembership": {
-        "title": "organizaciones y membresia",
-        "ownerIntro": "El Servicio permite a los usuarios crear y unirse a organizaciones. Cuando creas una organizacion, te conviertes en su propietario y eres responsable de:",
+        "title": "organizaciones y membresía",
+        "ownerIntro": "El Servicio permite a los usuarios crear y unirse a organizaciones. Cuando creas una organización, te conviertes en su propietario y eres responsable de:",
         "ownerResponsibilities": {
-          "manageSettings": "Gestionar la configuracion y membresia de la organizacion",
-          "ensureCompliance": "Asegurar que los miembros cumplan con estos Terminos",
-          "contentActivities": "El contenido y las actividades dentro de tu organizacion",
+          "manageSettings": "Gestionar la configuración y membresía de la organización",
+          "ensureCompliance": "Asegurar que los miembros cumplan con estos Términos",
+          "contentActivities": "El contenido y las actividades dentro de tu organización",
           "handleInvitations": "Manejar adecuadamente las invitaciones y controles de acceso"
         },
-        "memberIntro": "Como miembro de una organizacion, aceptas:",
+        "memberIntro": "Como miembro de una organización, aceptas:",
         "memberResponsibilities": {
-          "respectGovernance": "Respetar la estructura de gobernanza establecida por la organizacion",
+          "respectGovernance": "Respetar la estructura de gobernanza establecida por la organización",
           "useAccordingly": "Usar el Servicio de acuerdo con tus roles asignados",
           "noCircumvent": "No eludir los controles de acceso o sistemas de permisos"
         }
       },
       "acceptableUse": {
         "title": "uso aceptable",
-        "intro": "Aceptas usar el Servicio solo para propositos legales y de acuerdo con estos Terminos. Aceptas NO:",
+        "intro": "Aceptas usar el Servicio solo para propósitos legales y de acuerdo con estos Términos. Aceptas NO:",
         "prohibitions": {
           "violateLaws": "Violar cualquier ley, regulacion o derechos de terceros aplicables",
           "harassOthers": "Usar el Servicio para acosar, abusar o danar a otros",
-          "uploadMalicious": "Subir o transmitir codigo malicioso, virus o contenido danino",
+          "uploadMalicious": "Subir o transmitir código malicioso, virus o contenido dañino",
           "unauthorizedAccess": "Intentar obtener acceso no autorizado al Servicio o sus sistemas",
           "interfereService": "Interferir con o interrumpir el Servicio o su infraestructura",
           "scrapeService": "Raspar, rastrear o usar medios automatizados para acceder al Servicio sin permiso",
           "impersonate": "Suplantar a otra persona o entidad",
-          "fraudulent": "Usar el Servicio para cualquier proposito fraudulento o enganoso",
-          "circumventSecurity": "Eludir cualquier medida de seguridad o restriccion de acceso"
+          "fraudulent": "Usar el Servicio para cualquier propósito fraudulento o engañoso",
+          "circumventSecurity": "Eludir cualquier medida de seguridad o restricción de acceso"
         }
       },
       "userContent": {
         "title": "contenido del usuario",
-        "ownership": "Conservas la propiedad de cualquier contenido que envies al Servicio (\"Contenido del Usuario\"), incluyendo datos organizacionales, estructuras de equipo, definiciones de roles y decisiones. Al enviar Contenido del Usuario, nos otorgas una licencia mundial, no exclusiva y libre de regalias para usar, almacenar y procesar tu Contenido del Usuario unicamente con el proposito de proporcionar el Servicio.",
+        "ownership": "Conservas la propiedad de cualquier contenido que envíes al Servicio (\"Contenido del Usuario\"), incluyendo datos organizacionales, estructuras de equipo, definiciones de roles y decisiones. Al enviar Contenido del Usuario, nos otorgas una licencia mundial, no exclusiva y libre de regalías para usar, almacenar y procesar tu Contenido del Usuario únicamente con el propósito de proporcionar el Servicio.",
         "warrantyIntro": "Declaras y garantizas que:",
         "warranties": {
           "ownRights": "Posees o tienes los derechos necesarios sobre tu Contenido del Usuario",
-          "noViolation": "Tu Contenido del Usuario no viola ningun derecho de terceros",
-          "compliesTerms": "Tu Contenido del Usuario cumple con estos Terminos y las leyes aplicables"
+          "noViolation": "Tu Contenido del Usuario no viola ningún derecho de terceros",
+          "compliesTerms": "Tu Contenido del Usuario cumple con estos Términos y las leyes aplicables"
         }
       },
       "intellectualProperty": {
         "title": "propiedad intelectual",
-        "license": "El Servicio, incluyendo su codigo fuente, diseno, caracteristicas y documentacion, esta licenciado bajo la Licencia Apache 2.0. Esta licencia te permite usar, modificar y distribuir el software bajo ciertas condiciones.",
-        "brandElements": "El nombre swarmrise, el logo y los elementos de marca son propietarios y no pueden usarse sin nuestro permiso expreso por escrito, excepto segun lo permitido por la Licencia Apache 2.0 para propositos de atribucion.",
-        "thirdParty": "Los componentes de terceros incluidos en el Servicio estan sujetos a sus respectivas licencias, que estan documentadas en nuestra documentacion legal."
+        "license": "El Servicio, incluyendo su código fuente, diseño, características y documentación, está licenciado bajo la Licencia Apache 2.0. Esta licencia te permite usar, modificar y distribuir el software bajo ciertas condiciones.",
+        "brandElements": "El nombre swarmrise, el logo y los elementos de marca son propietarios y no pueden usarse sin nuestro permiso expreso por escrito, excepto según lo permitido por la Licencia Apache 2.0 para propósitos de atribución.",
+        "thirdParty": "Los componentes de terceros incluidos en el Servicio están sujetos a sus respectivas licencias, que están documentadas en nuestra documentación legal."
       },
       "dataProtection": {
-        "title": "proteccion de datos y privacidad",
-        "commitment": "Estamos comprometidos a proteger tu privacidad y datos personales. Nuestra recopilacion, uso y manejo de datos personales se rige por nuestra Politica de Privacidad, que se incorpora a estos Terminos por referencia.",
+        "title": "protección de datos y privacidad",
+        "commitment": "Estamos comprometidos a proteger tu privacidad y datos personales. Nuestra recopilación, uso y manejo de datos personales se rige por nuestra Política de Privacidad, que se incorpora a estos Términos por referencia.",
         "keyAspectsIntro": "Aspectos clave de nuestro manejo de datos:",
         "keyAspects": {
           "collectNecessary": "Recopilamos solo los datos necesarios para proporcionar el Servicio",
-          "dataIsolated": "Tus datos organizacionales estan aislados en una arquitectura multi-inquilino",
+          "dataIsolated": "Tus datos organizacionales están aislados en una arquitectura multi-inquilino",
           "convexStorage": "Usamos Convex para almacenamiento y procesamiento seguro de datos",
-          "clerkAuth": "Los datos de autenticacion son gestionados por Clerk",
-          "auditTrails": "Mantenemos pistas de auditoria para transparencia y responsabilidad"
+          "clerkAuth": "Los datos de autenticación son gestionados por Clerk",
+          "auditTrails": "Mantenemos pistas de auditoría para transparencia y responsabilidad"
         },
-        "gdprNote": "Para usuarios en el Espacio Economico Europeo, cumplimos con el Reglamento General de Proteccion de Datos (RGPD) y proporcionamos mecanismos para ejercer tus derechos como interesado."
+        "gdprNote": "Para usuarios en el Espacio Económico Europeo, cumplimos con el Reglamento General de Protección de Datos (RGPD) y proporcionamos mecanismos para ejercer tus derechos como interesado."
       },
       "serviceAvailability": {
         "title": "disponibilidad del servicio y soporte",
         "intro": "Nos esforzamos por mantener la disponibilidad del Servicio pero no garantizamos acceso ininterrumpido. El Servicio puede estar temporalmente no disponible debido a:",
         "reasons": {
           "maintenance": "Mantenimiento programado y actualizaciones",
-          "outages": "Interrupciones no planificadas o problemas tecnicos",
+          "outages": "Interrupciones no planificadas o problemas técnicos",
           "beyondControl": "Factores fuera de nuestro control razonable"
         },
-        "asIs": "Proporcionamos el Servicio \"tal cual\" y \"segun disponibilidad\" sin ningun acuerdo de nivel de servicio a menos que se acuerde lo contrario por escrito."
+        "asIs": "Proporcionamos el Servicio \"tal cual\" y \"según disponibilidad\" sin ningún acuerdo de nivel de servicio a menos que se acuerde lo contrario por escrito."
       },
       "limitationOfLiability": {
-        "title": "limitacion de responsabilidad",
-        "intro": "EN LA MAXIMA MEDIDA PERMITIDA POR LA LEY APLICABLE, SWARMRISE Y SUS AFILIADOS, FUNCIONARIOS, EMPLEADOS, AGENTES Y LICENCIANTES NO SERAN RESPONSABLES DE NINGUN DANO INDIRECTO, INCIDENTAL, ESPECIAL, CONSECUENTE O PUNITIVO, INCLUYENDO PERO NO LIMITADO A:",
+        "title": "limitación de responsabilidad",
+        "intro": "EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY APLICABLE, SWARMRISE Y SUS AFILIADOS, FUNCIONARIOS, EMPLEADOS, AGENTES Y LICENCIANTES NO SERÁN RESPONSABLES DE NINGÚN DAÑO INDIRECTO, INCIDENTAL, ESPECIAL, CONSECUENTE O PUNITIVO, INCLUYENDO PERO NO LIMITADO A:",
         "damages": {
-          "lostProfits": "Perdida de ganancias, datos u oportunidades de negocio",
-          "interruptions": "Interrupciones del servicio o perdida de datos",
+          "lostProfits": "Pérdida de ganancias, datos u oportunidades de negocio",
+          "interruptions": "Interrupciones del servicio o pérdida de datos",
           "unauthorizedAccess": "Acceso no autorizado a tus datos",
           "thirdPartyConduct": "Cualquier conducta o contenido de terceros en el Servicio"
         },
-        "totalLiability": "Nuestra responsabilidad total por cualquier reclamacion derivada de o relacionada con el Servicio no excedera la cantidad que nos hayas pagado, si la hay, en los doce (12) meses anteriores a la reclamacion."
+        "totalLiability": "Nuestra responsabilidad total por cualquier reclamación derivada de o relacionada con el Servicio no excederá la cantidad que nos hayas pagado, si la hay, en los doce (12) meses anteriores a la reclamación."
       },
       "indemnification": {
-        "title": "indemnizacion",
-        "intro": "Aceptas indemnizar, defender y mantener indemne a swarmrise y sus afiliados, funcionarios, directores, empleados y agentes de y contra cualquier reclamacion, responsabilidad, dano, perdida y gasto (incluyendo honorarios legales razonables) que surjan de o esten de alguna manera relacionados con:",
+        "title": "indemnización",
+        "intro": "Aceptas indemnizar, defender y mantener indemne a swarmrise y sus afiliados, funcionarios, directores, empleados y agentes de y contra cualquier reclamación, responsabilidad, daño, pérdida y gasto (incluyendo honorarios legales razonables) que surjan de o estén de alguna manera relacionados con:",
         "items": {
           "accessUse": "Tu acceso o uso del Servicio",
-          "violationTerms": "Tu violacion de estos Terminos",
+          "violationTerms": "Tu violación de estos Términos",
           "userContent": "Tu Contenido del Usuario",
           "violationRights": "Tu violacion de cualquier derecho de terceros"
         }
       },
       "termination": {
-        "title": "terminacion",
-        "intro": "Puedes terminar tu cuenta en cualquier momento contactandonos o usando la funcion de eliminacion de cuenta cuando este disponible. Podemos terminar o suspender tu acceso al Servicio inmediatamente, sin previo aviso, si:",
+        "title": "terminación",
+        "intro": "Puedes terminar tu cuenta en cualquier momento contactándonos o usando la función de eliminación de cuenta cuando esté disponible. Podemos terminar o suspender tu acceso al Servicio inmediatamente, sin previo aviso, si:",
         "reasons": {
-          "breachTerms": "Violas estos Terminos",
+          "breachTerms": "Violas estos Términos",
           "requiredByLaw": "Estamos obligados a hacerlo por ley",
           "discontinueService": "Decidimos descontinuar el Servicio"
         },
-        "uponTermination": "Tras la terminacion, tu derecho a usar el Servicio cesara inmediatamente. Las disposiciones de estos Terminos que por su naturaleza deban sobrevivir a la terminacion sobreviviran, incluyendo propiedad, renuncias de garantia, indemnizacion y limitaciones de responsabilidad."
+        "uponTermination": "Tras la terminación, tu derecho a usar el Servicio cesará inmediatamente. Las disposiciones de estos Términos que por su naturaleza deban sobrevivir a la terminación sobrevivirán, incluyendo propiedad, renuncias de garantía, indemnización y limitaciones de responsabilidad."
       },
       "disputeResolution": {
-        "title": "resolucion de disputas",
-        "informal": "Te animamos a contactarnos primero para resolver cualquier disputa de manera informal. Si una disputa no puede resolverse informalmente, aceptas que cualquier accion legal o procedimiento se llevara exclusivamente ante los tribunales de jurisdiccion competente.",
-        "euNote": "Para usuarios en la Union Europea, esta disposicion no afecta tus derechos bajo las leyes de proteccion al consumidor ni tu derecho a presentar reclamaciones ante los tribunales de tu pais de residencia."
+        "title": "resolución de disputas",
+        "informal": "Te animamos a contactarnos primero para resolver cualquier disputa de manera informal. Si una disputa no puede resolverse informalmente, aceptas que cualquier acción legal o procedimiento se llevará exclusivamente ante los tribunales de jurisdicción competente.",
+        "euNote": "Para usuarios en la Unión Europea, esta disposición no afecta tus derechos bajo las leyes de protección al consumidor ni tu derecho a presentar reclamaciones ante los tribunales de tu país de residencia."
       },
       "governingLaw": {
         "title": "ley aplicable",
-        "law": "Estos Terminos se regiran e interpretaran de acuerdo con las leyes de la jurisdiccion en la que el operador del Servicio esta establecido, sin tener en cuenta los principios de conflicto de leyes.",
-        "eeaNote": "Para usuarios en el Espacio Economico Europeo, nada en estos Terminos afecta tus derechos como consumidor bajo las leyes de proteccion al consumidor de la UE aplicables."
+        "law": "Estos Términos se regirán e interpretarán de acuerdo con las leyes de la jurisdicción en la que el operador del Servicio está establecido, sin tener en cuenta los principios de conflicto de leyes.",
+        "eeaNote": "Para usuarios en el Espacio Económico Europeo, nada en estos Términos afecta tus derechos como consumidor bajo las leyes de protección al consumidor de la UE aplicables."
       },
       "generalProvisions": {
         "title": "disposiciones generales",
         "entireAgreement": "Acuerdo completo:",
-        "entireAgreementText": "Estos Terminos, junto con nuestra Politica de Privacidad y cualquier otra politica referenciada aqui, constituyen el acuerdo completo entre tu y swarmrise con respecto al Servicio.",
+        "entireAgreementText": "Estos Términos, junto con nuestra Política de Privacidad y cualquier otra política referenciada aquí, constituyen el acuerdo completo entre tú y swarmrise con respecto al Servicio.",
         "severability": "Divisibilidad:",
-        "severabilityText": "Si alguna disposicion de estos Terminos se considera inaplicable, las disposiciones restantes continuaran en pleno vigor y efecto.",
+        "severabilityText": "Si alguna disposición de estos Términos se considera inaplicable, las disposiciones restantes continuarán en pleno vigor y efecto.",
         "waiver": "Renuncia:",
-        "waiverText": "Nuestra falta de aplicacion de cualquier derecho o disposicion de estos Terminos no se considerara una renuncia a esos derechos.",
+        "waiverText": "Nuestra falta de aplicación de cualquier derecho o disposición de estos Términos no se considerará una renuncia a esos derechos.",
         "assignment": "Cesion:",
-        "assignmentText": "No puedes ceder o transferir tus derechos bajo estos Terminos sin nuestro consentimiento previo por escrito. Podemos ceder nuestros derechos y obligaciones sin restriccion."
+        "assignmentText": "No puedes ceder o transferir tus derechos bajo estos Términos sin nuestro consentimiento previo por escrito. Podemos ceder nuestros derechos y obligaciones sin restricción."
       },
       "contactInformation": {
-        "title": "informacion de contacto",
-        "intro": "Si tienes alguna pregunta sobre estos Terminos, por favor contactanos:",
+        "title": "información de contacto",
+        "intro": "Si tienes alguna pregunta sobre estos Términos, por favor contáctanos:",
         "github": "GitHub:"
       }
     },
     "relatedDocuments": "documentos relacionados",
-    "privacyLink": "Politica de Privacidad",
-    "privacyDescription": "Como manejamos tus datos personales",
+    "privacyLink": "Política de Privacidad",
+    "privacyDescription": "Cómo manejamos tus datos personales",
     "principlesLink": "Nuestros Principios",
-    "principlesDescription": "Conoce los valores que guian swarmrise",
-    "footer": "swarmrise esta licenciado bajo Apache License 2.0"
+    "principlesDescription": "Conoce los valores que guían swarmrise",
+    "footer": "swarmrise está licenciado bajo Apache License 2.0"
   },
   "privacy": {
-    "title": "politica de privacidad",
+    "title": "política de privacidad",
     "effectiveDate": "Fecha de vigencia: {{date}}",
-    "lastUpdated": "Ultima actualizacion: {{date}}",
+    "lastUpdated": "Última actualización: {{date}}",
     "effectiveDateLabel": "Fecha de vigencia",
-    "lastUpdatedLabel": "Ultima actualizacion",
+    "lastUpdatedLabel": "Última actualización",
     "intro": {
-      "commitment": "En swarmrise, estamos comprometidos a proteger tu privacidad y datos personales. Esta Politica de Privacidad explica como recopilamos, usamos, divulgamos y protegemos tu informacion cuando usas nuestra plataforma multi-inquilino de gestion de organizaciones (el \"Servicio\").",
-      "gdprCompliance": "Procesamos datos personales en cumplimiento con el Reglamento General de Proteccion de Datos (RGPD) y otras leyes de proteccion de datos aplicables. Por favor, lee esta Politica de Privacidad cuidadosamente para entender nuestras practicas con respecto a tus datos personales."
+      "commitment": "En swarmrise, estamos comprometidos a proteger tu privacidad y datos personales. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos tu información cuando usas nuestra plataforma multi-inquilino de gestión de organizaciones (el \"Servicio\").",
+      "gdprCompliance": "Procesamos datos personales en cumplimiento con el Reglamento General de Protección de Datos (RGPD) y otras leyes de protección de datos aplicables. Por favor, lee esta Política de Privacidad cuidadosamente para entender nuestras prácticas con respecto a tus datos personales."
     },
     "sections": {
       "dataController": {
         "title": "responsable del tratamiento",
-        "p1": "Para los propositos del RGPD y otras leyes de proteccion de datos aplicables, swarmrise actua como responsable del tratamiento de los datos personales recopilados a traves del Servicio. Esto significa que determinamos los propositos y medios del procesamiento de tus datos personales.",
-        "p2": "Si tienes preguntas sobre nuestras practicas de datos o deseas ejercer tus derechos, por favor contactanos a traves de los canales listados en la seccion de Informacion de Contacto a continuacion."
+        "p1": "Para los propósitos del RGPD y otras leyes de protección de datos aplicables, swarmrise actúa como responsable del tratamiento de los datos personales recopilados a través del Servicio. Esto significa que determinamos los propósitos y medios del procesamiento de tus datos personales.",
+        "p2": "Si tienes preguntas sobre nuestras prácticas de datos o deseas ejercer tus derechos, por favor contáctanos a través de los canales listados en la sección de Información de Contacto a continuación."
       },
       "informationWeCollect": {
-        "title": "informacion que recopilamos",
-        "intro": "Recopilamos informacion que nos proporcionas directamente, asi como informacion recopilada automaticamente cuando usas el Servicio.",
+        "title": "información que recopilamos",
+        "intro": "Recopilamos información que nos proporcionas directamente, así como información recopilada automáticamente cuando usas el Servicio.",
         "accountInfo": {
-          "title": "2.1 Informacion de cuenta",
+          "title": "2.1 Información de cuenta",
           "intro": "Cuando creas una cuenta, recopilamos:",
           "items": {
             "name": "Nombre y apellido",
-            "email": "Direccion de correo electronico",
-            "profilePicture": "Foto de perfil (opcional, si se proporciona a traves de la autenticacion)"
+            "email": "Dirección de correo electrónico",
+            "profilePicture": "Foto de perfil (opcional, si se proporciona a través de la autenticación)"
           }
         },
         "organizationData": {
-          "title": "2.2 Datos de organizacion",
+          "title": "2.2 Datos de organización",
           "intro": "Cuando creas o te unes a organizaciones, recopilamos y procesamos:",
           "items": {
             "orgNames": "Nombres y configuraciones de organizaciones",
-            "teamStructures": "Estructuras y jerarquias de equipos",
-            "roleAssignments": "Asignaciones de roles (lider, secretario, arbitro)",
-            "membershipInfo": "Informacion de membresia",
-            "invitationData": "Datos de invitacion (direcciones de correo electronico de los invitados)"
+            "teamStructures": "Estructuras y jerarquías de equipos",
+            "roleAssignments": "Asignaciones de roles (líder, secretario, árbitro)",
+            "membershipInfo": "Información de membresía",
+            "invitationData": "Datos de invitación (direcciones de correo electrónico de los invitados)"
           }
         },
         "optionalContact": {
-          "title": "2.3 Informacion de contacto opcional",
-          "intro": "Puedes optar por proporcionar informacion de contacto adicional, incluyendo:",
+          "title": "2.3 Información de contacto opcional",
+          "intro": "Puedes optar por proporcionar información de contacto adicional, incluyendo:",
           "items": {
-            "mobile": "Numero de telefono movil",
-            "address": "Direccion fisica",
+            "mobile": "Número de teléfono móvil",
+            "address": "Dirección física",
             "socialMedia": "Perfiles de redes sociales (LinkedIn, Facebook, Instagram, WhatsApp)"
           },
-          "note": "Esta informacion es completamente opcional y se recopila solo con tu consentimiento explicito."
+          "note": "Esta información es completamente opcional y se recopila solo con tu consentimiento explícito."
         },
         "usageData": {
           "title": "2.4 Datos de uso",
-          "intro": "Recopilamos automaticamente cierta informacion cuando usas el Servicio:",
+          "intro": "Recopilamos automáticamente cierta información cuando usas el Servicio:",
           "items": {
-            "browser": "Tipo y version del navegador",
-            "device": "Informacion del dispositivo",
-            "ipAddress": "Direccion IP",
-            "pagesVisited": "Paginas visitadas y funciones usadas",
+            "browser": "Tipo y versión del navegador",
+            "device": "Información del dispositivo",
+            "ipAddress": "Dirección IP",
+            "pagesVisited": "Páginas visitadas y funciones usadas",
             "dateTime": "Fecha y hora de acceso"
           }
         },
         "decisionAudit": {
-          "title": "2.5 Pista de auditoria de decisiones",
-          "intro": "Para garantizar la transparencia y la responsabilidad, mantenemos pistas de auditoria de acciones significativas dentro de las organizaciones, incluyendo:",
+          "title": "2.5 Pista de auditoría de decisiones",
+          "intro": "Para garantizar la transparencia y la responsabilidad, mantenemos pistas de auditoría de acciones significativas dentro de las organizaciones, incluyendo:",
           "items": {
-            "authorEmail": "Correo electronico del autor para los cambios realizados",
+            "authorEmail": "Correo electrónico del autor para los cambios realizados",
             "timestamps": "Marcas de tiempo de las acciones",
-            "beforeAfter": "Estados antes y despues de los datos modificados"
+            "beforeAfter": "Estados antes y después de los datos modificados"
           }
         }
       },
       "howWeUse": {
-        "title": "como usamos tu informacion",
-        "intro": "Usamos la informacion que recopilamos para los siguientes propositos, cada uno con una base legal especifica bajo el RGPD:",
+        "title": "cómo usamos tu información",
+        "intro": "Usamos la información que recopilamos para los siguientes propósitos, cada uno con una base legal específica bajo el RGPD:",
         "serviceProvision": {
-          "title": "3.1 Provision del Servicio (Contrato - Articulo 6(1)(b))",
+          "title": "3.1 Provisión del Servicio (Contrato - Artículo 6(1)(b))",
           "items": {
             "createAccount": "Crear y gestionar tu cuenta de usuario",
-            "provideAccess": "Proporcionar acceso a las funciones de gestion de organizaciones",
-            "processMembers": "Procesar membreslas e invitaciones de organizaciones",
-            "enableTeamMgmt": "Habilitar funcionalidad de gestion de equipos y roles",
+            "provideAccess": "Proporcionar acceso a las funciones de gestión de organizaciones",
+            "processMembers": "Procesar membresías e invitaciones de organizaciones",
+            "enableTeamMgmt": "Habilitar funcionalidad de gestión de equipos y roles",
             "authenticate": "Autenticar tu identidad"
           }
         },
         "legitimateInterests": {
-          "title": "3.2 Intereses legitimos (Articulo 6(1)(f))",
+          "title": "3.2 Intereses legítimos (Artículo 6(1)(f))",
           "items": {
-            "auditTrails": "Mantener pistas de auditoria de decisiones para responsabilidad",
+            "auditTrails": "Mantener pistas de auditoría de decisiones para responsabilidad",
             "improveService": "Mejorar y optimizar el Servicio",
             "preventFraud": "Prevenir el fraude y garantizar la seguridad",
             "respondSupport": "Responder a solicitudes de soporte"
           }
         },
         "consent": {
-          "title": "3.3 Consentimiento (Articulo 6(1)(a))",
+          "title": "3.3 Consentimiento (Artículo 6(1)(a))",
           "items": {
-            "storeOptional": "Almacenar informacion de contacto opcional que elijas proporcionar",
+            "storeOptional": "Almacenar información de contacto opcional que elijas proporcionar",
             "displayProfile": "Mostrar tu foto de perfil"
           },
-          "withdrawNote": "Puedes retirar tu consentimiento en cualquier momento actualizando la configuracion de tu perfil o contactandonos."
+          "withdrawNote": "Puedes retirar tu consentimiento en cualquier momento actualizando la configuración de tu perfil o contactándonos."
         }
       },
       "thirdPartyServices": {
         "title": "servicios de terceros",
         "intro": "Usamos los siguientes servicios de terceros para operar el Servicio. Cada uno de estos servicios procesa tus datos en nuestro nombre:",
         "clerk": {
-          "title": "4.1 Clerk (Autenticacion)",
-          "purpose": "Proposito:",
-          "purposeText": "Autenticacion de usuarios y gestion de identidades",
+          "title": "4.1 Clerk (Autenticación)",
+          "purpose": "Propósito:",
+          "purposeText": "Autenticación de usuarios y gestión de identidades",
           "dataProcessed": "Datos procesados:",
-          "dataProcessedText": "Correo electronico, nombre, foto de perfil, credenciales de autenticacion",
-          "location": "Ubicacion:",
+          "dataProcessedText": "Correo electrónico, nombre, foto de perfil, credenciales de autenticación",
+          "location": "Ubicación:",
           "locationText": "Estados Unidos",
-          "privacyPolicy": "Politica de privacidad:"
+          "privacyPolicy": "Política de privacidad:"
         },
         "convex": {
           "title": "4.2 Convex (Base de datos y Backend)",
-          "purpose": "Proposito:",
+          "purpose": "Propósito:",
           "purposeText": "Almacenamiento de base de datos en tiempo real y funciones backend sin servidor",
           "dataProcessed": "Datos procesados:",
-          "dataProcessedText": "Todos los datos de la aplicacion, incluyendo perfiles de usuario, datos de organizacion y pistas de auditoria",
-          "location": "Ubicacion:",
+          "dataProcessedText": "Todos los datos de la aplicación, incluyendo perfiles de usuario, datos de organización y pistas de auditoría",
+          "location": "Ubicación:",
           "locationText": "Estados Unidos",
-          "privacyPolicy": "Politica de privacidad:"
+          "privacyPolicy": "Política de privacidad:"
         },
         "googleFonts": {
           "title": "4.3 Google Fonts",
-          "purpose": "Proposito:",
+          "purpose": "Propósito:",
           "purposeText": "Entrega de fuentes (Montserrat Alternates)",
           "dataProcessed": "Datos procesados:",
-          "dataProcessedText": "Direccion IP (minimo)",
-          "privacyPolicy": "Politica de privacidad:"
+          "dataProcessedText": "Dirección IP (mínimo)",
+          "privacyPolicy": "Política de privacidad:"
         }
       },
       "dataRetention": {
-        "title": "retencion de datos",
-        "intro": "Retenemos tus datos personales solo durante el tiempo necesario para cumplir los propositos para los que fueron recopilados:",
+        "title": "retención de datos",
+        "intro": "Retenemos tus datos personales solo durante el tiempo necesario para cumplir los propósitos para los que fueron recopilados:",
         "items": {
           "accountData": "Datos de cuenta:",
-          "accountDataText": "Retenidos durante la vida de tu cuenta. Cuando elimines tu cuenta, eliminaremos tus datos personales dentro de 30 dias, excepto donde la retencion sea requerida por ley.",
-          "orgData": "Datos de organizacion:",
-          "orgDataText": "Retenidos durante la duracion de tu membresia en una organizacion. Cuando abandonas una organizacion, tu registro de miembro se elimina, aunque los registros de auditoria pueden retenerse para propositos de responsabilidad.",
-          "invitationData": "Datos de invitacion:",
-          "invitationDataText": "Retenidos hasta que la invitacion sea aceptada, rechazada o expire.",
-          "auditTrails": "Pistas de auditoria:",
-          "auditTrailsText": "Retenidas durante la vida de la organizacion para propositos de responsabilidad y cumplimiento."
+          "accountDataText": "Retenidos durante la vida de tu cuenta. Cuando elimines tu cuenta, eliminaremos tus datos personales dentro de 30 días, excepto donde la retención sea requerida por ley.",
+          "orgData": "Datos de organización:",
+          "orgDataText": "Retenidos durante la duración de tu membresía en una organización. Cuando abandonas una organización, tu registro de miembro se elimina, aunque los registros de auditoría pueden retenerse para propósitos de responsabilidad.",
+          "invitationData": "Datos de invitación:",
+          "invitationDataText": "Retenidos hasta que la invitación sea aceptada, rechazada o expire.",
+          "auditTrails": "Pistas de auditoría:",
+          "auditTrailsText": "Retenidas durante la vida de la organización para propósitos de responsabilidad y cumplimiento."
         }
       },
       "yourRightsGdpr": {
         "title": "tus derechos bajo el rgpd",
-        "intro": "Si te encuentras en el Espacio Economico Europeo (EEE), Reino Unido o Suiza, tienes los siguientes derechos con respecto a tus datos personales:",
+        "intro": "Si te encuentras en el Espacio Económico Europeo (EEE), Reino Unido o Suiza, tienes los siguientes derechos con respecto a tus datos personales:",
         "rightOfAccess": {
-          "title": "6.1 Derecho de acceso (Articulo 15)",
-          "text": "Tienes derecho a obtener confirmacion de si procesamos tus datos personales y a recibir una copia de esos datos."
+          "title": "6.1 Derecho de acceso (Artículo 15)",
+          "text": "Tienes derecho a obtener confirmación de si procesamos tus datos personales y a recibir una copia de esos datos."
         },
         "rightToRectification": {
-          "title": "6.2 Derecho de rectificacion (Articulo 16)",
-          "text": "Tienes derecho a corregir datos personales inexactos y a completar datos incompletos. Puedes actualizar la mayoria de tu informacion directamente a traves de la configuracion de tu cuenta."
+          "title": "6.2 Derecho de rectificación (Artículo 16)",
+          "text": "Tienes derecho a corregir datos personales inexactos y a completar datos incompletos. Puedes actualizar la mayoría de tu información directamente a través de la configuración de tu cuenta."
         },
         "rightToErasure": {
-          "title": "6.3 Derecho de supresion (Articulo 17)",
-          "text": "Tienes derecho a solicitar la eliminacion de tus datos personales bajo ciertas circunstancias, incluyendo cuando los datos ya no son necesarios para los propositos para los que fueron recopilados."
+          "title": "6.3 Derecho de supresión (Artículo 17)",
+          "text": "Tienes derecho a solicitar la eliminación de tus datos personales bajo ciertas circunstancias, incluyendo cuando los datos ya no son necesarios para los propósitos para los que fueron recopilados."
         },
         "rightToRestriction": {
-          "title": "6.4 Derecho a la limitacion (Articulo 18)",
-          "text": "Tienes derecho a solicitar la limitacion del procesamiento de tus datos personales bajo ciertas circunstancias."
+          "title": "6.4 Derecho a la limitación (Artículo 18)",
+          "text": "Tienes derecho a solicitar la limitación del procesamiento de tus datos personales bajo ciertas circunstancias."
         },
         "rightToPortability": {
-          "title": "6.5 Derecho a la portabilidad de datos (Articulo 20)",
-          "text": "Tienes derecho a recibir tus datos personales en un formato estructurado, de uso comun y legible por maquina, y a transmitirlos a otro responsable."
+          "title": "6.5 Derecho a la portabilidad de datos (Artículo 20)",
+          "text": "Tienes derecho a recibir tus datos personales en un formato estructurado, de uso común y legible por máquina, y a transmitirlos a otro responsable."
         },
         "rightToObject": {
-          "title": "6.6 Derecho de oposicion (Articulo 21)",
-          "text": "Tienes derecho a oponerte al procesamiento de tus datos personales basado en intereses legitimos, incluyendo la elaboracion de perfiles."
+          "title": "6.6 Derecho de oposición (Artículo 21)",
+          "text": "Tienes derecho a oponerte al procesamiento de tus datos personales basado en intereses legítimos, incluyendo la elaboración de perfiles."
         },
         "rightToWithdraw": {
           "title": "6.7 Derecho a retirar el consentimiento",
@@ -501,19 +501,19 @@
         },
         "rightToComplaint": {
           "title": "6.8 Derecho a presentar una queja",
-          "text": "Tienes derecho a presentar una queja ante una autoridad de supervision si crees que nuestro procesamiento de tus datos personales viola las leyes de proteccion de datos aplicables."
+          "text": "Tienes derecho a presentar una queja ante una autoridad de supervisión si crees que nuestro procesamiento de tus datos personales viola las leyes de protección de datos aplicables."
         },
-        "exerciseRights": "Para ejercer cualquiera de estos derechos, por favor contactanos usando la informacion en la seccion de Contacto a continuacion. Responderemos a tu solicitud dentro de 30 dias."
+        "exerciseRights": "Para ejercer cualquiera de estos derechos, por favor contáctanos usando la información en la sección de Contacto a continuación. Responderemos a tu solicitud dentro de 30 días."
       },
       "cookiesLocalStorage": {
         "title": "cookies y almacenamiento local",
-        "intro": "Usamos tecnologias de almacenamiento del navegador para proporcionar y mejorar el Servicio. Nuestro uso esta limitado a funcionalidad estrictamente necesaria:",
+        "intro": "Usamos tecnologías de almacenamiento del navegador para proporcionar y mejorar el Servicio. Nuestro uso está limitado a funcionalidad estrictamente necesaria:",
         "localStorage": {
           "title": "7.1 Almacenamiento local",
           "tableHeaders": {
             "storageKey": "Clave de almacenamiento",
-            "purpose": "Proposito",
-            "duration": "Duracion"
+            "purpose": "Propósito",
+            "duration": "Duración"
           },
           "items": {
             "locale": {
@@ -523,76 +523,76 @@
             },
             "selectedOrga": {
               "key": "swarmrise_selected_orga",
-              "purpose": "Organizacion seleccionada",
+              "purpose": "Organización seleccionada",
               "duration": "Persistente"
             }
           }
         },
         "authCookies": {
-          "title": "7.2 Cookies de autenticacion",
-          "text": "Clerk (nuestro proveedor de autenticacion) usa cookies de sesion para la gestion del estado de autenticacion. Estas son estrictamente necesarias para que el Servicio funcione y no requieren consentimiento bajo la Directiva ePrivacy."
+          "title": "7.2 Cookies de autenticación",
+          "text": "Clerk (nuestro proveedor de autenticación) usa cookies de sesión para la gestión del estado de autenticación. Estas son estrictamente necesarias para que el Servicio funcione y no requieren consentimiento bajo la Directiva ePrivacy."
         },
         "noTracking": {
           "title": "7.3 Sin cookies de rastreo",
-          "text": "No usamos cookies de analiticas, publicidad o rastreo. No participamos en rastreo de comportamiento ni publicidad dirigida."
+          "text": "No usamos cookies de analíticas, publicidad o rastreo. No participamos en rastreo de comportamiento ni publicidad dirigida."
         }
       },
       "dataSecurity": {
         "title": "seguridad de datos",
-        "intro": "Implementamos medidas tecnicas y organizativas apropiadas para proteger tus datos personales contra el acceso no autorizado, alteracion, divulgacion o destruccion:",
+        "intro": "Implementamos medidas técnicas y organizativas apropiadas para proteger tus datos personales contra el acceso no autorizado, alteración, divulgación o destrucción:",
         "measures": {
-          "encryption": "Cifrado en transito:",
-          "encryptionText": "Todos los datos transmitidos entre tu navegador y nuestros servidores estan cifrados usando TLS/SSL.",
-          "secureAuth": "Autenticacion segura:",
-          "secureAuthText": "Usamos Clerk, un proveedor de autenticacion especializado, con practicas de seguridad estandar de la industria.",
+          "encryption": "Cifrado en tránsito:",
+          "encryptionText": "Todos los datos transmitidos entre tu navegador y nuestros servidores están cifrados usando TLS/SSL.",
+          "secureAuth": "Autenticación segura:",
+          "secureAuthText": "Usamos Clerk, un proveedor de autenticación especializado, con prácticas de seguridad estándar de la industria.",
           "multiTenant": "Aislamiento multi-inquilino:",
-          "multiTenantText": "Los datos de la organizacion estan aislados logicamente para prevenir el acceso no autorizado entre organizaciones.",
+          "multiTenantText": "Los datos de la organización están aislados lógicamente para prevenir el acceso no autorizado entre organizaciones.",
           "accessControls": "Controles de acceso:",
-          "accessControlsText": "Los controles de acceso basados en roles aseguran que los usuarios solo puedan acceder a los datos que estan autorizados a ver.",
+          "accessControlsText": "Los controles de acceso basados en roles aseguran que los usuarios solo puedan acceder a los datos que están autorizados a ver.",
           "securityReviews": "Revisiones de seguridad regulares:",
-          "securityReviewsText": "Realizamos evaluaciones de seguridad regulares de nuestro codigo base e infraestructura."
+          "securityReviewsText": "Realizamos evaluaciones de seguridad regulares de nuestro código base e infraestructura."
         },
-        "disclaimer": "Aunque nos esforzamos por proteger tus datos personales, ningun metodo de transmision por Internet o almacenamiento electronico es 100% seguro. No podemos garantizar seguridad absoluta."
+        "disclaimer": "Aunque nos esforzamos por proteger tus datos personales, ningún método de transmisión por Internet o almacenamiento electrónico es 100% seguro. No podemos garantizar seguridad absoluta."
       },
       "internationalTransfers": {
         "title": "transferencias internacionales de datos",
-        "intro": "Tus datos personales pueden ser transferidos y procesados en paises fuera de tu pais de residencia, incluyendo Estados Unidos, donde se encuentran nuestros proveedores de servicios de terceros (Clerk y Convex).",
-        "safeguardsIntro": "Para transferencias de datos personales desde el EEE, Reino Unido o Suiza a paises que no han sido considerados como proveedores de un nivel adecuado de proteccion de datos, nos basamos en salvaguardas apropiadas incluyendo:",
+        "intro": "Tus datos personales pueden ser transferidos y procesados en países fuera de tu país de residencia, incluyendo Estados Unidos, donde se encuentran nuestros proveedores de servicios de terceros (Clerk y Convex).",
+        "safeguardsIntro": "Para transferencias de datos personales desde el EEE, Reino Unido o Suiza a países que no han sido considerados como proveedores de un nivel adecuado de protección de datos, nos basamos en salvaguardas apropiadas incluyendo:",
         "safeguards": {
-          "sccs": "Clausulas Contractuales Tipo (CCT) aprobadas por la Comision Europea",
+          "sccs": "Cláusulas Contractuales Tipo (CCT) aprobadas por la Comisión Europea",
           "dpas": "Acuerdos de Procesamiento de Datos con nuestros proveedores de servicios",
-          "supplementary": "Medidas suplementarias donde sea necesario para abordar riesgos especificos"
+          "supplementary": "Medidas suplementarias donde sea necesario para abordar riesgos específicos"
         },
-        "requestCopy": "Puedes solicitar una copia de las salvaguardas que tenemos en su lugar contactandonos."
+        "requestCopy": "Puedes solicitar una copia de las salvaguardas que tenemos en su lugar contactándonos."
       },
       "childrensPrivacy": {
-        "title": "privacidad de los ninos",
-        "p1": "El Servicio no esta destinado a ninos menores de 16 anos. No recopilamos conscientemente datos personales de ninos menores de 16 anos. Si eres padre o tutor y crees que tu hijo nos ha proporcionado datos personales, por favor contactanos inmediatamente.",
-        "p2": "Si nos damos cuenta de que hemos recopilado datos personales de un nino menor de 16 anos sin verificacion del consentimiento parental, tomaremos medidas para eliminar esa informacion de inmediato."
+        "title": "privacidad de los niños",
+        "p1": "El Servicio no está destinado a niños menores de 16 años. No recopilamos conscientemente datos personales de niños menores de 16 años. Si eres padre o tutor y crees que tu hijo nos ha proporcionado datos personales, por favor contáctanos inmediatamente.",
+        "p2": "Si nos damos cuenta de que hemos recopilado datos personales de un niño menor de 16 años sin verificación del consentimiento parental, tomaremos medidas para eliminar esa información de inmediato."
       },
       "changesToPolicy": {
-        "title": "cambios a esta politica",
-        "intro": "Podemos actualizar esta Politica de Privacidad de vez en cuando para reflejar cambios en nuestras practicas o leyes aplicables. Cuando hagamos cambios materiales:",
+        "title": "cambios a esta política",
+        "intro": "Podemos actualizar esta Política de Privacidad de vez en cuando para reflejar cambios en nuestras prácticas o leyes aplicables. Cuando hagamos cambios materiales:",
         "items": {
-          "updateDate": "Actualizaremos la fecha de \"Ultima actualizacion\" en la parte superior de esta politica",
-          "notifyEmail": "Te notificaremos por correo electronico o mediante un aviso destacado en el Servicio",
+          "updateDate": "Actualizaremos la fecha de \"Última actualización\" en la parte superior de esta política",
+          "notifyEmail": "Te notificaremos por correo electrónico o mediante un aviso destacado en el Servicio",
           "renewConsent": "Para cambios significativos que afecten tus derechos, podemos solicitar un consentimiento renovado"
         },
-        "reviewPeriodically": "Te animamos a revisar esta Politica de Privacidad periodicamente para mantenerte informado sobre como protegemos tu informacion."
+        "reviewPeriodically": "Te animamos a revisar esta Política de Privacidad periódicamente para mantenerte informado sobre cómo protegemos tu información."
       },
       "contactInformation": {
-        "title": "informacion de contacto",
-        "intro": "Si tienes preguntas sobre esta Politica de Privacidad, deseas ejercer tus derechos de proteccion de datos o tienes preocupaciones sobre nuestras practicas de datos, por favor contactanos:",
+        "title": "información de contacto",
+        "intro": "Si tienes preguntas sobre esta Política de Privacidad, deseas ejercer tus derechos de protección de datos o tienes preocupaciones sobre nuestras prácticas de datos, por favor contáctanos:",
         "github": "GitHub:",
-        "responseTime": "Responderemos a todas las solicitudes legitimas dentro de 30 dias. En algunos casos, podemos necesitar verificar tu identidad antes de procesar tu solicitud."
+        "responseTime": "Responderemos a todas las solicitudes legítimas dentro de 30 días. En algunos casos, podemos necesitar verificar tu identidad antes de procesar tu solicitud."
       }
     },
     "relatedDocuments": "documentos relacionados",
-    "termsLink": "Terminos de Servicio",
-    "termsDescription": "Nuestros terminos y condiciones para usar swarmrise",
+    "termsLink": "Términos de Servicio",
+    "termsDescription": "Nuestros términos y condiciones para usar swarmrise",
     "principlesLink": "Nuestros Principios",
-    "principlesDescription": "Conoce los valores que guian swarmrise",
-    "footer": "swarmrise esta licenciado bajo Apache License 2.0"
+    "principlesDescription": "Conoce los valores que guían swarmrise",
+    "footer": "swarmrise está licenciado bajo Apache License 2.0"
   },
   "consent": {
     "title": "Términos y condiciones",

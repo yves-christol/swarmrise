@@ -6,44 +6,44 @@
     "emptySearch": "Aucune politique ne correspond",
     "showingCount": "{{shown}} sur {{total}}",
     "loadMore": "Charger plus",
-    "goToRole": "Aller au role {{role}}"
+    "goToRole": "Aller au rôle {{role}}"
   },
   "detail": {
-    "backToList": "Retour a la liste",
+    "backToList": "Retour à la liste",
     "policyNumber": "Politique #{{number}}",
-    "ownedBy": "Geree par {{role}}",
-    "ownedByPrefix": "Geree par",
-    "abstract": "Resume",
+    "ownedBy": "Gérée par {{role}}",
+    "ownedByPrefix": "Gérée par",
+    "abstract": "Résumé",
     "fullText": "Texte complet",
     "edit": "Modifier",
     "delete": "Supprimer",
     "deleteConfirm": "Voulez-vous vraiment supprimer cette politique ?",
     "confirmDelete": "Confirmer la suppression",
-    "deleted": "Politique supprimee",
-    "deleteFailed": "Echec de la suppression"
+    "deleted": "Politique supprimée",
+    "deleteFailed": "Échec de la suppression"
   },
   "form": {
     "createTitle": "Nouvelle politique",
     "editTitle": "Modifier la politique",
     "titleLabel": "Titre",
     "titlePlaceholder": "Titre de la politique",
-    "abstractLabel": "Resume",
-    "abstractPlaceholder": "Bref resume de cette politique...",
+    "abstractLabel": "Résumé",
+    "abstractPlaceholder": "Bref résumé de cette politique...",
     "textLabel": "Texte complet",
-    "textPlaceholder": "Redigez le texte complet en markdown...",
-    "write": "Ecrire",
-    "preview": "Apercu",
+    "textPlaceholder": "Rédigez le texte complet en markdown...",
+    "write": "Écrire",
+    "preview": "Aperçu",
     "save": "Enregistrer",
     "saving": "Enregistrement...",
     "cancel": "Annuler",
     "titleRequired": "Le titre est requis",
-    "abstractRequired": "Le resume est requis",
-    "created": "Politique creee",
-    "updated": "Politique mise a jour",
-    "saveFailed": "Echec de l'enregistrement"
+    "abstractRequired": "Le résumé est requis",
+    "created": "Politique créée",
+    "updated": "Politique mise à jour",
+    "saveFailed": "Échec de l'enregistrement"
   },
   "role": {
     "newPolicy": "Nouvelle politique",
-    "noPolicies": "Ce role n'a pas encore de politiques"
+    "noPolicies": "Ce rôle n'a pas encore de politiques"
   }
 }

@@ -35,15 +35,15 @@
   "kanban": "Kanban",
   "viewMode": "Mode d'affichage",
   "mission": "Mission",
-  "noMissionDefined": "Aucune mission definie",
+  "noMissionDefined": "Aucune mission définie",
   "selectTeam": "Choisir l'équipe",
   "selectRole": "Choisir le rôle",
   "moreOptions": "Plus d'options",
   "search": "Rechercher",
-  "searchTeams": "Rechercher des equipes...",
-  "searchRoles": "Rechercher des roles...",
+  "searchTeams": "Rechercher des équipes...",
+  "searchRoles": "Rechercher des rôles...",
   "searchMembers": "Rechercher des membres...",
-  "noResults": "Aucun resultat",
+  "noResults": "Aucun résultat",
   "policies": "Politiques",
-  "focusedEntity": "Element en focus"
+  "focusedEntity": "Élément en focus"
 }

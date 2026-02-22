@@ -32,7 +32,7 @@
     "resetColor": "Restablecer",
     "teamColorUpdated": "Color del equipo actualizado",
     "colorValidation": {
-      "saturation": "El color es demasiado gris. Elige un color mas vivo (saturacion minima del 30 %).",
+      "saturation": "El color es demasiado gris. Elige un color más vivo (saturación mínima del 30 %).",
       "lightness": "El color es demasiado oscuro o brillante. Elige un color de luminosidad media (entre 25 % y 75 %)."
     },
     "settings": "Configuración"

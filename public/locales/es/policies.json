@@ -1,34 +1,34 @@
 {
   "list": {
-    "title": "Politicas",
-    "searchPlaceholder": "Buscar politicas...",
-    "empty": "Sin politicas",
-    "emptySearch": "Ninguna politica coincide",
+    "title": "Políticas",
+    "searchPlaceholder": "Buscar políticas...",
+    "empty": "Sin políticas",
+    "emptySearch": "Ninguna política coincide",
     "showingCount": "{{shown}} de {{total}}",
-    "loadMore": "Cargar mas",
+    "loadMore": "Cargar más",
     "goToRole": "Ir al rol {{role}}"
   },
   "detail": {
     "backToList": "Volver a la lista",
-    "policyNumber": "Politica #{{number}}",
+    "policyNumber": "Política #{{number}}",
     "ownedBy": "Gestionada por {{role}}",
     "ownedByPrefix": "Gestionada por",
     "abstract": "Resumen",
     "fullText": "Texto completo",
     "edit": "Editar",
     "delete": "Eliminar",
-    "deleteConfirm": "Esta seguro de que desea eliminar esta politica?",
-    "confirmDelete": "Confirmar eliminacion",
-    "deleted": "Politica eliminada",
-    "deleteFailed": "Error al eliminar la politica"
+    "deleteConfirm": "¿Está seguro de que desea eliminar esta política?",
+    "confirmDelete": "Confirmar eliminación",
+    "deleted": "Política eliminada",
+    "deleteFailed": "Error al eliminar la política"
   },
   "form": {
-    "createTitle": "Nueva politica",
-    "editTitle": "Editar politica",
-    "titleLabel": "Titulo",
-    "titlePlaceholder": "Titulo de la politica",
+    "createTitle": "Nueva política",
+    "editTitle": "Editar política",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Título de la política",
     "abstractLabel": "Resumen",
-    "abstractPlaceholder": "Breve resumen de esta politica...",
+    "abstractPlaceholder": "Breve resumen de esta política...",
     "textLabel": "Texto completo",
     "textPlaceholder": "Escriba el texto completo en markdown...",
     "write": "Escribir",
@@ -36,14 +36,14 @@
     "save": "Guardar",
     "saving": "Guardando...",
     "cancel": "Cancelar",
-    "titleRequired": "El titulo es obligatorio",
+    "titleRequired": "El título es obligatorio",
     "abstractRequired": "El resumen es obligatorio",
-    "created": "Politica creada",
-    "updated": "Politica actualizada",
-    "saveFailed": "Error al guardar la politica"
+    "created": "Política creada",
+    "updated": "Política actualizada",
+    "saveFailed": "Error al guardar la política"
   },
   "role": {
-    "newPolicy": "Nueva politica",
-    "noPolicies": "Este rol no tiene politicas"
+    "newPolicy": "Nueva política",
+    "noPolicies": "Este rol no tiene políticas"
   }
 }

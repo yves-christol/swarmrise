@@ -79,6 +79,10 @@ Structure your findings as:
 [Specific refactoring suggestions]
 ```
 
+## i18n Rule
+
+**Do NOT write i18n translations yourself.** If your refactoring or cleanup work touches translation files or introduces user-facing strings, delegate the actual translation writing to the **jane-i18n** agent. Other agents consistently produce translations with missing diacritics and accents.
+
 ## Behavioral Guidelines
 
 - Always explain the 'why' behind each recommendation

@@ -105,6 +105,10 @@ When analyzing or modifying a component:
 - **Dropdowns/popovers**: Must not overflow viewport; consider bottom-sheet pattern on mobile
 - **Forms**: Input fields must have 16px+ font size to prevent iOS zoom
 
+## i18n Rule
+
+**Do NOT write i18n translations yourself.** When your work introduces new user-facing strings, use i18n keys in component code, but always delegate the actual translation writing to the **jane-i18n** agent. Other agents consistently produce translations with missing diacritics and accents.
+
 ## Quality Checklist
 
 Before completing any mobile-related task, verify:

@@ -79,6 +79,9 @@ export const functionName = query({
 - Tailwind CSS v4 for styling
 - For modals with scrolling: use `createPortal(modal, document.body)` to escape ancestor overflow constraints
 
+### i18n Rule
+**Do NOT write i18n translations yourself.** When your work introduces new user-facing strings, use i18n keys in component code, but always delegate the actual translation writing to the **jane-i18n** agent. Other agents consistently produce translations with missing diacritics and accents.
+
 ## CHAT.md Documentation
 
 You create and maintain a `CHAT.md` document in the docs repository. This document should contain:

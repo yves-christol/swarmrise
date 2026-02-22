@@ -99,6 +99,10 @@ All tables with organizational data are indexed by `by_orga` for efficient queri
 - Chat: `src/components/Chat/` - Panel with channels, messages, threads, search, reactions, and embedded tools (TopicTool, VotingTool, ElectionTool)
 - Visualizations: D3-force graph views in `OrgaVisualView/`, `TeamVisualView/`, `MemberVisualView/`, `RoleVisualView/`
 
+## i18n Translations Rule
+
+**CRITICAL: No agent should write i18n translations themselves.** Always delegate all translation work (adding new keys, updating existing translations, adding new languages) to the **jane-i18n** agent. This is mandatory because other agents consistently produce translations with missing diacritics and accents (e.g., writing "elements" instead of "elements", "parametres" instead of "parametres", "equipe" instead of "equipe"). Jane is the only agent authorized to write to translation files. When your work introduces new user-facing strings, use i18n keys with `useTranslation()` in the component code, then request jane-i18n to add the actual translations.
+
 ## Convex Conventions
 
 From `.cursor/rules/convex_rules.mdc`:

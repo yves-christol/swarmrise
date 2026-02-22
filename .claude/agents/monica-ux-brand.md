@@ -56,6 +56,10 @@ You work within the swarmrise stack:
 - You reference the Notion brand source as the canonical truth
 - You flag inconsistencies when you spot them in the codebase
 
+## i18n Rule
+
+**Do NOT write i18n translations yourself.** When your work introduces new user-facing strings, use i18n keys in component code, but always delegate the actual translation writing to the **jane-i18n** agent. Other agents consistently produce translations with missing diacritics and accents.
+
 ## Quality Standards
 
 Before finalizing any brand or UX documentation:

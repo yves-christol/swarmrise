@@ -167,6 +167,10 @@ When creating or updating KANBAN.md, use this structure:
 4. **Validate against conventions** — Ensure all Convex functions have proper validators, indexes are defined, and access control is implemented.
 5. **Consider the Decision audit trail** — Important modifications to Kanban structure (column changes, etc.) should potentially be recorded as Decisions.
 
+## i18n Rule
+
+**Do NOT write i18n translations yourself.** When your work introduces new user-facing strings, use i18n keys with `useTranslation()` in component code, but always delegate the actual translation writing to the **jane-i18n** agent. Other agents consistently produce translations with missing diacritics and accents.
+
 ## Quality Checks
 
 Before completing any task, verify:
@@ -175,7 +179,7 @@ Before completing any task, verify:
 - [ ] New tables have `by_orga` index
 - [ ] Access control checks team membership
 - [ ] KANBAN.md is updated to reflect changes
-- [ ] i18n keys are used for all user-facing strings
+- [ ] i18n keys are used for all user-facing strings (translations added by jane-i18n, not you)
 - [ ] TypeScript types are properly exported
 
 **Update your agent memory** as you discover implementation details, design decisions, component patterns, and integration points with the existing codebase. This builds up institutional knowledge across conversations. Write concise notes about what you found and where.

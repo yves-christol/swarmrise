@@ -75,6 +75,10 @@ When you identify component-level changes needed for customisation compliance:
 - Performance impact of customisation must be negligible — no layout shifts, no FOUC
 - Document every customisation point with its default value, valid range, and visual impact
 
+## i18n Rule
+
+**Do NOT write i18n translations yourself.** When your work introduces new user-facing strings, use i18n keys in component code, but always delegate the actual translation writing to the **jane-i18n** agent. Other agents consistently produce translations with missing diacritics and accents.
+
 ## Convex Conventions
 
 - Use `withIndex()` instead of `filter()` for queries

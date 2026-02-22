@@ -56,6 +56,10 @@ Before considering any animation complete, verify:
 - [ ] No layout thrashing (width/height/top/left animations avoided)
 - [ ] Accessible to screen readers where applicable
 
+## i18n Rule
+
+**Do NOT write i18n translations yourself.** If your work introduces any user-facing text (aria labels, alt text, tooltip strings, etc.), use i18n keys in the code but delegate the actual translation writing to the **jane-i18n** agent. Other agents consistently produce translations with missing diacritics and accents.
+
 ## Technical Preferences
 
 - Prefer CSS animations/transitions over JavaScript when possible

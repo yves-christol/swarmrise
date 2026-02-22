@@ -198,5 +198,13 @@
   "lotterySubmit": "Créer le tirage",
   "lotteryCancel": "Annuler",
   "lotteryResultAnnouncement": "{{name}} a été sélectionné pour {{task}}",
-  "lotteryNoEligibleMembers": "Aucun membre éligible"
+  "lotteryNoEligibleMembers": "Aucun membre éligible",
+  "imageAttach": "Joindre une image",
+  "imageCaption": "Ajouter une légende...",
+  "imagePreview": "Aperçu de l'image",
+  "imageRemove": "Supprimer l'image",
+  "imageAttachment": "Image jointe",
+  "imageOpenFull": "Voir en taille réelle",
+  "imageCloseFull": "Fermer",
+  "imageDownload": "Télécharger l'image"
 }

@@ -7,6 +7,16 @@ import { MessageItem } from "../MessageList/MessageItem";
 import { MentionAutocomplete } from "../MessageInput/MentionAutocomplete";
 import { useMentionInput, extractMentionIds } from "../MessageInput/useMentionInput";
 
+const ALLOWED_IMAGE_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+  "image/svg+xml",
+  "image/webp",
+];
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
+
 type ThreadPanelProps = {
   messageId: Id<"messages">;
   channelId: Id<"channels">;
@@ -18,6 +28,7 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
   const { t } = useTranslation("chat");
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const myMember = useQuery(api.members.functions.getMyMember, { orgaId });
@@ -26,6 +37,11 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
   const parentMessage = useQuery(api.chat.functions.getMessageById, { messageId });
   const replies = useQuery(api.chat.functions.getThreadReplies, { messageId });
   const sendThreadReply = useMutation(api.chat.functions.sendThreadReply);
+  const generateUploadUrl = useMutation(api.storage.functions.generateUploadUrl);
+
+  // Image upload state
+  const [pendingImage, setPendingImage] = useState<{ file: File; previewUrl: string } | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Fetch org members for @mention autocomplete
   const members = useQuery(api.members.functions.listMembers, { orgaId });
@@ -65,30 +81,85 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
     bottomRef.current?.scrollIntoView({ behavior: "auto" });
   }, [replies?.length]);
 
-  const handleSend = useCallback(() => {
+  // Clean up preview URL on unmount or when image changes
+  useEffect(() => {
+    return () => {
+      if (pendingImage) {
+        URL.revokeObjectURL(pendingImage.previewUrl);
+      }
+    };
+  }, [pendingImage]);
+
+  const handleImageSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) return;
+    if (file.size > MAX_IMAGE_SIZE) return;
+
+    if (pendingImage) {
+      URL.revokeObjectURL(pendingImage.previewUrl);
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    setPendingImage({ file, previewUrl });
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    textareaRef.current?.focus();
+  }, [pendingImage]);
+
+  const cancelImage = useCallback(() => {
+    if (pendingImage) {
+      URL.revokeObjectURL(pendingImage.previewUrl);
+      setPendingImage(null);
+    }
+  }, [pendingImage]);
+
+  const handleSend = useCallback(async () => {
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed && !pendingImage) return;
 
-    // Resolve @Name display text to @[Name](id) storage syntax
-    const resolvedText = resolveText(trimmed);
-    const mentions = extractMentionIds(resolvedText);
+    setIsUploading(pendingImage !== null);
 
-    void sendThreadReply({
-      channelId,
-      threadParentId: messageId,
-      text: resolvedText,
-      mentions: mentions.length > 0 ? mentions : undefined,
-    })
-      .then(() => {
-        setText("");
-        if (textareaRef.current) {
-          textareaRef.current.style.height = "auto";
-        }
-      })
-      .catch((error) => {
-        console.error("Failed to send thread reply:", error);
+    try {
+      let imageId: Id<"_storage"> | undefined;
+
+      if (pendingImage) {
+        const uploadUrl = await generateUploadUrl({ orgaId });
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": pendingImage.file.type },
+          body: pendingImage.file,
+        });
+        const { storageId } = await result.json();
+        imageId = storageId;
+      }
+
+      const resolvedText = trimmed ? resolveText(trimmed) : "";
+      const mentions = resolvedText ? extractMentionIds(resolvedText) : [];
+
+      await sendThreadReply({
+        channelId,
+        threadParentId: messageId,
+        text: resolvedText,
+        mentions: mentions.length > 0 ? mentions : undefined,
+        imageId,
       });
-  }, [text, channelId, messageId, sendThreadReply, resolveText]);
+
+      setText("");
+      if (pendingImage) {
+        URL.revokeObjectURL(pendingImage.previewUrl);
+        setPendingImage(null);
+      }
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
+    } catch (error) {
+      console.error("Failed to send thread reply:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  }, [text, pendingImage, channelId, messageId, orgaId, sendThreadReply, generateUploadUrl, resolveText]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -101,7 +172,7 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
 
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-        handleSend();
+        void handleSend();
       }
     },
     [handleSend, showMentionAutocomplete]
@@ -135,6 +206,35 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
     };
   }, [showMentionAutocomplete, closeMentionAutocomplete]);
 
+  // Handle paste event for images in thread
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (const item of items) {
+        if (item.type.startsWith("image/") && ALLOWED_IMAGE_TYPES.includes(item.type)) {
+          const file = item.getAsFile();
+          if (file && file.size <= MAX_IMAGE_SIZE) {
+            e.preventDefault();
+            if (pendingImage) {
+              URL.revokeObjectURL(pendingImage.previewUrl);
+            }
+            const previewUrl = URL.createObjectURL(file);
+            setPendingImage({ file, previewUrl });
+          }
+          break;
+        }
+      }
+    };
+
+    textarea.addEventListener("paste", handlePaste);
+    return () => textarea.removeEventListener("paste", handlePaste);
+  }, [pendingImage]);
+
   // Map members to autocomplete options
   const memberOptions = (members ?? []).map((m) => ({
     _id: m._id,
@@ -142,6 +242,8 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
     surname: m.surname,
     pictureURL: m.pictureURL,
   }));
+
+  const canSend = text.trim().length > 0 || pendingImage !== null;
 
   return (
     <div className="flex flex-col h-full bg-surface-primary">
@@ -196,27 +298,80 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
 
       {/* Reply input */}
       <div className="p-3 border-t border-border-default shrink-0">
+        {/* Image preview in thread */}
+        {pendingImage && (
+          <div className="mb-2 relative inline-block">
+            <img
+              src={pendingImage.previewUrl}
+              alt={t("imagePreview")}
+              className="max-h-24 max-w-36 rounded-lg border border-border-default object-contain"
+            />
+            <button
+              onClick={cancelImage}
+              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+              aria-label={t("imageRemove")}
+            >
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            {isUploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="flex items-end gap-2">
+          {/* Image picker button */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="shrink-0 p-2 rounded-lg text-text-tertiary hover:text-dark dark:hover:text-light hover:bg-surface-hover transition-colors"
+            aria-label={t("imageAttach")}
+            disabled={isUploading}
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ALLOWED_IMAGE_TYPES.join(",")}
+            onChange={handleImageSelect}
+            className="hidden"
+            aria-hidden="true"
+          />
+
           <textarea
             ref={textareaRef}
             value={text}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder={t("reply")}
+            placeholder={pendingImage ? t("imageCaption") : t("reply")}
             rows={1}
             className="flex-1 resize-none bg-surface-secondary text-dark dark:text-light rounded-lg px-3 py-2 text-sm placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 focus:ring-offset-light dark:focus:ring-offset-dark"
             style={{ maxHeight: "80px" }}
           />
-          {text.trim().length > 0 && (
+          {canSend && (
             <button
-              onClick={handleSend}
-              className="shrink-0 p-2 rounded-lg bg-highlight text-dark hover:bg-highlight-hover transition-colors focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1"
+              onClick={() => void handleSend()}
+              disabled={isUploading}
+              className="shrink-0 p-2 rounded-lg bg-highlight text-dark hover:bg-highlight-hover transition-colors focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label={t("sendMessage")}
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13" />
-                <polygon points="22 2 15 22 11 13 2 9 22 2" />
-              </svg>
+              {isUploading ? (
+                <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+              )}
             </button>
           )}
         </div>

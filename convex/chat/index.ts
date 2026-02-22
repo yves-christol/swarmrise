@@ -106,6 +106,9 @@ export const messageType = v.object({
   // Member IDs mentioned in this message via @mention syntax.
   // Stored separately from text for efficient lookup (e.g. notifications).
   mentions: v.optional(v.array(v.id("members"))),
+  // Optional image attachment (one per message).
+  // References a file in Convex storage. URL resolved at query time.
+  imageId: v.optional(v.id("_storage")),
 });
 
 export const messageValidator = v.object({

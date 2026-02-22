@@ -198,5 +198,13 @@
   "lotterySubmit": "建立抽籤",
   "lotteryCancel": "取消",
   "lotteryResultAnnouncement": "{{name}} 已被選中執行 {{task}}",
-  "lotteryNoEligibleMembers": "沒有符合條件的成員"
+  "lotteryNoEligibleMembers": "沒有符合條件的成員",
+  "imageAttach": "附加圖片",
+  "imageCaption": "新增說明文字...",
+  "imagePreview": "圖片預覽",
+  "imageRemove": "移除圖片",
+  "imageAttachment": "圖片附件",
+  "imageOpenFull": "檢視完整大小",
+  "imageCloseFull": "關閉",
+  "imageDownload": "下載圖片"
 }

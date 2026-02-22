@@ -172,9 +172,39 @@ A message can contain an embedded tool. When it does, the tool renders as an int
 +------------------------------------------+
 ```
 
+### Messages with Image Attachments
+
+A message can contain a single inline image (png, jpeg, gif, svg, webp). When it does, the image renders as a clickable thumbnail below the message text. Clicking opens a lightbox with the full-size image and a download button.
+
+```
++------------------------------------------+
+| [Avatar]  Member Name          2:34 PM   |
+|                                          |
+| Check out this diagram!                  |
+|                                          |
+| +--------------------+                   |
+| |                    |                   |
+| |   [Image thumb]    |                   |
+| |                    |                   |
+| +--------------------+                   |
+|                                          |
+|           [3 replies]  [Reply]           |
++------------------------------------------+
+```
+
+**Implementation details:**
+- Images are stored via Convex storage (`_storage`), referenced by `imageId` on the message
+- Access control via `storageFiles` tracking table (purpose: `"chat_image"`)
+- URL resolved at query time via `ctx.storage.getUrl()`
+- Max 10 MB per image
+- Text is optional when an image is attached (image-only messages allowed)
+- Images work in both channel messages and thread replies
+- Paste support: images pasted from clipboard are automatically attached
+- On message delete, associated storage files are cleaned up
+
 ### Message Content Structure
 
-Messages use a simple format: plain text with an optional embedded tool. No rich text editor, no markdown rendering in v1. This keeps things simple and avoids the complexity of a WYSIWYG editor. Markdown support can be added incrementally.
+Messages use a simple format: plain text with an optional embedded tool and an optional image attachment. No rich text editor, no markdown rendering in v1. This keeps things simple and avoids the complexity of a WYSIWYG editor. Markdown support can be added incrementally.
 
 ---
 

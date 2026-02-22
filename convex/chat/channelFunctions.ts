@@ -122,6 +122,7 @@ export const getMessages = query({
       threadParentId: v.optional(v.id("messages")),
       embeddedTool: v.optional(embeddedToolType),
       mentions: v.optional(v.array(v.id("members"))),
+      imageUrl: v.optional(v.union(v.string(), v.null())),
       author: v.object({
         firstname: v.string(),
         surname: v.string(),
@@ -156,6 +157,10 @@ export const getMessages = query({
             : { firstname: "Unknown", surname: "User" };
           authorCache.set(msg.authorId, author);
         }
+        // Resolve image URL from storage if present
+        const imageUrl = msg.imageId
+          ? await ctx.storage.getUrl(msg.imageId)
+          : undefined;
         return {
           _id: msg._id,
           _creationTime: msg._creationTime,
@@ -168,6 +173,7 @@ export const getMessages = query({
           threadParentId: msg.threadParentId,
           embeddedTool: msg.embeddedTool,
           mentions: msg.mentions,
+          imageUrl,
           author,
         };
       })

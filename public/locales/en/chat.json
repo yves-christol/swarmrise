@@ -198,5 +198,13 @@
   "lotterySubmit": "Create lottery",
   "lotteryCancel": "Cancel",
   "lotteryResultAnnouncement": "{{name}} has been selected for {{task}}",
-  "lotteryNoEligibleMembers": "No eligible members"
+  "lotteryNoEligibleMembers": "No eligible members",
+  "imageAttach": "Attach image",
+  "imageCaption": "Add a caption...",
+  "imagePreview": "Image preview",
+  "imageRemove": "Remove image",
+  "imageAttachment": "Image attachment",
+  "imageOpenFull": "View full size",
+  "imageCloseFull": "Close",
+  "imageDownload": "Download image"
 }

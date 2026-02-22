@@ -198,5 +198,13 @@
   "lotterySubmit": "Crea sorteggio",
   "lotteryCancel": "Annulla",
   "lotteryResultAnnouncement": "{{name}} è stato selezionato per {{task}}",
-  "lotteryNoEligibleMembers": "Nessun membro idoneo"
+  "lotteryNoEligibleMembers": "Nessun membro idoneo",
+  "imageAttach": "Allega immagine",
+  "imageCaption": "Aggiungi una didascalia...",
+  "imagePreview": "Anteprima dell'immagine",
+  "imageRemove": "Rimuovi immagine",
+  "imageAttachment": "Immagine allegata",
+  "imageOpenFull": "Visualizza a dimensione intera",
+  "imageCloseFull": "Chiudi",
+  "imageDownload": "Scarica immagine"
 }

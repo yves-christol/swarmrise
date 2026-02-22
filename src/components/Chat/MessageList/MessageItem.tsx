@@ -10,6 +10,7 @@ import { ElectionTool } from "../ElectionTool";
 import { LotteryTool } from "../LotteryTool";
 import { ReactionBar, ReactionButton } from "../Reactions";
 import { MarkdownMessage } from "./MarkdownMessage";
+import { ChatImage } from "./ChatImage";
 import { extractMentionIds } from "../MessageInput/useMentionInput";
 import type { EmbeddedVoting } from "../VotingTool";
 import type { EmbeddedElection } from "../ElectionTool";
@@ -65,6 +66,7 @@ type MessageItemProps = {
     text: string;
     isEdited: boolean;
     embeddedTool?: EmbeddedTool;
+    imageUrl?: string | null;
     author: {
       firstname: string;
       surname: string;
@@ -357,13 +359,14 @@ export const MessageItem = memo(function MessageItem({ message, isCompact, reply
         <div className="flex-1 min-w-0">
           {!hasEmbeddedTool && !isEditing && (
             <div className="text-sm text-dark dark:text-light break-words">
-              <MarkdownMessage text={message.text} />
+              {message.text && <MarkdownMessage text={message.text} />}
               {message.isEdited && (
                 <span className="text-xs text-text-tertiary italic ml-1">({t("edited")})</span>
               )}
             </div>
           )}
           {!hasEmbeddedTool && isEditing && editArea}
+          {message.imageUrl && <ChatImage imageUrl={message.imageUrl} />}
           {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
           {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
           {electionTool && <ElectionTool messageId={message._id} tool={electionTool} isAuthor={isAuthor} />}
@@ -407,10 +410,11 @@ export const MessageItem = memo(function MessageItem({ message, isCompact, reply
         </div>
         {!hasEmbeddedTool && !isEditing && (
           <div className="text-sm text-dark dark:text-light break-words">
-            <MarkdownMessage text={message.text} />
+            {message.text && <MarkdownMessage text={message.text} />}
           </div>
         )}
         {!hasEmbeddedTool && isEditing && editArea}
+        {message.imageUrl && <ChatImage imageUrl={message.imageUrl} />}
         {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
         {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
         {electionTool && <ElectionTool messageId={message._id} tool={electionTool} isAuthor={isAuthor} />}

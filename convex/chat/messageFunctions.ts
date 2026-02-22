@@ -18,6 +18,7 @@ export const sendMessage = mutation({
     channelId: v.id("channels"),
     text: v.string(),
     mentions: v.optional(v.array(v.id("members"))),
+    imageId: v.optional(v.id("_storage")),
   },
   returns: v.id("messages"),
   handler: async (ctx, args) => {
@@ -25,7 +26,8 @@ export const sendMessage = mutation({
     requireNotArchived(channel);
 
     const trimmed = args.text.trim();
-    if (trimmed.length === 0) {
+    // Allow empty text only when an image is attached
+    if (trimmed.length === 0 && !args.imageId) {
       throw new Error("Message cannot be empty");
     }
 
@@ -39,7 +41,18 @@ export const sendMessage = mutation({
       text: trimmed,
       isEdited: false,
       mentions,
+      imageId: args.imageId,
     });
+
+    // Track the image in storageFiles for access control
+    if (args.imageId) {
+      await ctx.db.insert("storageFiles", {
+        storageId: args.imageId,
+        orgaId: channel.orgaId,
+        uploadedBy: member.personId,
+        purpose: "chat_image",
+      });
+    }
 
     // --- Chat message notifications (coalesced) ---
     const recipients = await getChannelRecipients(ctx, channel, member._id);
@@ -154,6 +167,7 @@ export const getMessageById = query({
       threadParentId: v.optional(v.id("messages")),
       embeddedTool: v.optional(embeddedToolType),
       mentions: v.optional(v.array(v.id("members"))),
+      imageUrl: v.optional(v.union(v.string(), v.null())),
       author: v.object({
         firstname: v.string(),
         surname: v.string(),
@@ -173,6 +187,10 @@ export const getMessageById = query({
       ? { firstname: memberDoc.firstname, surname: memberDoc.surname, pictureURL: memberDoc.pictureURL }
       : { firstname: "Unknown", surname: "User" };
 
+    const imageUrl = msg.imageId
+      ? await ctx.storage.getUrl(msg.imageId)
+      : undefined;
+
     return {
       _id: msg._id,
       _creationTime: msg._creationTime,
@@ -185,6 +203,7 @@ export const getMessageById = query({
       threadParentId: msg.threadParentId,
       embeddedTool: msg.embeddedTool,
       mentions: msg.mentions,
+      imageUrl,
       author,
     };
   },
@@ -210,6 +229,7 @@ export const getThreadReplies = query({
     threadParentId: v.optional(v.id("messages")),
     embeddedTool: v.optional(embeddedToolType),
     mentions: v.optional(v.array(v.id("members"))),
+    imageUrl: v.optional(v.union(v.string(), v.null())),
     author: v.object({
       firstname: v.string(),
       surname: v.string(),
@@ -240,6 +260,9 @@ export const getThreadReplies = query({
             : { firstname: "Unknown", surname: "User" };
           authorCache.set(msg.authorId, author);
         }
+        const imageUrl = msg.imageId
+          ? await ctx.storage.getUrl(msg.imageId)
+          : undefined;
         return {
           _id: msg._id,
           _creationTime: msg._creationTime,
@@ -252,6 +275,7 @@ export const getThreadReplies = query({
           threadParentId: msg.threadParentId,
           embeddedTool: msg.embeddedTool,
           mentions: msg.mentions,
+          imageUrl,
           author,
         };
       })
@@ -268,6 +292,7 @@ export const sendThreadReply = mutation({
     threadParentId: v.id("messages"),
     text: v.string(),
     mentions: v.optional(v.array(v.id("members"))),
+    imageId: v.optional(v.id("_storage")),
   },
   returns: v.id("messages"),
   handler: async (ctx, args) => {
@@ -280,7 +305,8 @@ export const sendThreadReply = mutation({
     if (parentMsg.channelId !== args.channelId) throw new Error("Parent message does not belong to this channel");
 
     const trimmed = args.text.trim();
-    if (trimmed.length === 0) {
+    // Allow empty text only when an image is attached
+    if (trimmed.length === 0 && !args.imageId) {
       throw new Error("Message cannot be empty");
     }
 
@@ -295,7 +321,18 @@ export const sendThreadReply = mutation({
       threadParentId: args.threadParentId,
       isEdited: false,
       mentions,
+      imageId: args.imageId,
     });
+
+    // Track the image in storageFiles for access control
+    if (args.imageId) {
+      await ctx.db.insert("storageFiles", {
+        storageId: args.imageId,
+        orgaId: channel.orgaId,
+        uploadedBy: member.personId,
+        purpose: "chat_image",
+      });
+    }
 
     // --- Thread reply notifications (coalesced) ---
     // Recipients: parent author + all reply authors, minus the sender
@@ -479,6 +516,16 @@ export const deleteMessage = mutation({
       throw new Error("Messages with embedded tools cannot be deleted");
     }
 
+    // Helper: clean up an image from storage and storageFiles tracking
+    async function cleanupImage(imageId: Id<"_storage">) {
+      await ctx.storage.delete(imageId);
+      const sfRecord = await ctx.db
+        .query("storageFiles")
+        .withIndex("by_storage_id", (q) => q.eq("storageId", imageId))
+        .unique();
+      if (sfRecord) await ctx.db.delete(sfRecord._id);
+    }
+
     // Delete reactions on this message
     const reactions = await ctx.db
       .query("reactions")
@@ -486,6 +533,11 @@ export const deleteMessage = mutation({
       .collect();
     for (const r of reactions) {
       await ctx.db.delete(r._id);
+    }
+
+    // Clean up image attachment on this message
+    if (message.imageId) {
+      await cleanupImage(message.imageId);
     }
 
     // If this is a top-level message, also delete thread replies and their reactions
@@ -503,6 +555,10 @@ export const deleteMessage = mutation({
           .collect();
         for (const r of replyReactions) {
           await ctx.db.delete(r._id);
+        }
+        // Clean up image attachment on each reply
+        if (reply.imageId) {
+          await cleanupImage(reply.imageId);
         }
         await ctx.db.delete(reply._id);
       }

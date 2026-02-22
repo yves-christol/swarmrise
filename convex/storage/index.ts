@@ -4,6 +4,7 @@ export const storageFilePurpose = v.union(
   v.literal("kanban_attachment"),
   v.literal("org_logo"),
   v.literal("policy_attachment"),
+  v.literal("chat_image"),
 );
 
 export const storageFileType = v.object({

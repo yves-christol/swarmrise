@@ -198,5 +198,13 @@
   "lotterySubmit": "Створити лотерею",
   "lotteryCancel": "Скасувати",
   "lotteryResultAnnouncement": "{{name}} обрано для {{task}}",
-  "lotteryNoEligibleMembers": "Немає відповідних учасників"
+  "lotteryNoEligibleMembers": "Немає відповідних учасників",
+  "imageAttach": "Прикріпити зображення",
+  "imageCaption": "Додати підпис...",
+  "imagePreview": "Попередній перегляд зображення",
+  "imageRemove": "Видалити зображення",
+  "imageAttachment": "Прикріплене зображення",
+  "imageOpenFull": "Переглянути в повному розмірі",
+  "imageCloseFull": "Закрити",
+  "imageDownload": "Завантажити зображення"
 }

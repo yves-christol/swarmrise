@@ -49,6 +49,7 @@
 - Phase 7: Polish, search, accessibility -- DONE
 - @Mentions feature -- DONE (2026-02-15)
 - Phase 8: Lottery Tool -- DESIGNED (2026-02-22, not yet implemented)
+- Image Attachments -- DONE (2026-02-22)
 
 ## Phase 5 Election Implementation Details
 - Tables: `electionNominations` (by_message, by_message_and_nominator, by_orga), `electionResponses` (by_message, by_message_and_member, by_orga)
@@ -116,6 +117,22 @@
 - Notification: sent only to selected member via `buildToolEventNotification` with `toolType: "lottery"`
 - Animation: slot-machine style member cycling, 2-3s, client-side only, respects prefers-reduced-motion
 - 14 files total (8 new, 6 modified + 6 locale files)
+
+## Image Attachments (added 2026-02-22)
+- Schema: `imageId: v.optional(v.id("_storage"))` added to `messageType`
+- Storage purpose: `"chat_image"` added to `storageFilePurpose` union
+- Backend: `sendMessage`, `sendThreadReply` accept optional `imageId`; empty text allowed when image present
+- Queries: `getMessages`, `getMessageById`, `getThreadReplies` all resolve `imageUrl` via `ctx.storage.getUrl()`
+- Return validator: `imageUrl: v.optional(v.union(v.string(), v.null()))` (null when storage returns null)
+- Delete cleanup: `deleteMessage` removes storage files + storageFiles tracking for images on message and thread replies
+- Access control: images tracked in `storageFiles` table (purpose: "chat_image") for org-scoped access via HTTP endpoint
+- Frontend: `ChatImage` component (`src/components/Chat/MessageList/ChatImage.tsx`) -- thumbnail + lightbox (portaled)
+- MessageInput: image picker button (camera icon), file input (hidden), preview strip above textarea, paste support
+- ThreadPanel: same image picker/preview/paste support for thread replies
+- Max 10 MB per image, allowed types: png, jpeg, gif, svg+xml, webp
+- Lightbox: Escape to close, click backdrop to close, download button
+- i18n keys (need jane-i18n): imageAttach, imageCaption, imagePreview, imageRemove, imageAttachment, imageOpenFull, imageCloseFull, imageDownload
+- No new tables needed -- imageId stored directly on message
 
 ## Open Questions (need collaborator input)
 - Karl: DM participant indexing (defaulted to dmMemberA/dmMemberB), tool table count (12 tables total now including reactions)

@@ -96,6 +96,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     api.roles.functions.listRolesInTeam,
     hasAccess ? { teamId } : "skip",
   );
+  const team = useQuery(api.teams.functions.getTeamById, { teamId });
   const moveCard = useMutation(api.kanban.functions.moveCard);
   const reorderColumnsMut = useMutation(api.kanban.functions.reorderColumns);
   const ensureBoard = useMutation(api.kanban.functions.ensureBoard);
@@ -637,6 +638,25 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     return boardData.columns.find((c) => c._id === activeColumnId) ?? null;
   }, [activeColumnId, boardData]);
 
+  const handleCardClick = useCallback((card: KanbanCardType) => {
+    if (activeCardId) return;
+    setEditingCard(card);
+    setCreateColumnId(undefined);
+    setIsModalOpen(true);
+  }, [activeCardId]);
+
+  const handleAddCard = useCallback((columnId: Id<"kanbanColumns">) => {
+    setEditingCard(undefined);
+    setCreateColumnId(columnId);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingCard(undefined);
+    setCreateColumnId(undefined);
+  }, []);
+
   // Loading (access check still pending)
   if (hasAccess === undefined) {
     return (
@@ -673,32 +693,13 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
     );
   }
 
-  const handleCardClick = (card: KanbanCardType) => {
-    if (activeCardId) return;
-    setEditingCard(card);
-    setCreateColumnId(undefined);
-    setIsModalOpen(true);
-  };
-
-  const handleAddCard = (columnId: Id<"kanbanColumns">) => {
-    setEditingCard(undefined);
-    setCreateColumnId(columnId);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingCard(undefined);
-    setCreateColumnId(undefined);
-  };
-
   return (
     <div>
       {/* Board header + search + actions */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold text-dark dark:text-light">
-            {t("board.title")}
+            {t("board.title", { teamName: team?.name ?? "" })}
           </h2>
 
           {/* Settings button (A4) */}
@@ -881,7 +882,7 @@ export function KanbanBoard({ teamId, orgaId }: KanbanBoardProps) {
                   isDimmed={isEmpty}
                   isDraggingColumn={activeColumnId === column._id}
                   sortOption={columnSorts.get(column._id) ?? "manual"}
-                  onSortChange={(sort) => setColumnSort(column._id, sort)}
+                  onSortChange={setColumnSort}
                 />
               );
             })}

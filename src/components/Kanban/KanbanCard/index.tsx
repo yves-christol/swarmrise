@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
 import { useTranslation } from "react-i18next";
 import type { KanbanCard as KanbanCardType, KanbanLabel, Priority } from "../../../../convex/kanban";
 import type { Member } from "../../../../convex/members";
@@ -39,7 +39,7 @@ type KanbanCardProps = {
   labelMap?: Map<Id<"kanbanLabels">, KanbanLabel>;
 };
 
-export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
+export const KanbanCard = memo(forwardRef<HTMLDivElement, KanbanCardProps>(
   function KanbanCard({ card, cardRole, roleMember, onClick, style, selectionMode, isSelected, labelMap, ...props }, ref) {
     const { t } = useTranslation("kanban");
     const isOverdue = card.dueDate < Date.now();
@@ -179,6 +179,7 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
                         <img
                           src={roleMember.pictureURL}
                           alt={`${roleMember.firstname} ${roleMember.surname}`}
+                          loading="lazy"
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -213,4 +214,4 @@ export const KanbanCard = forwardRef<HTMLDivElement, KanbanCardProps>(
       </div>
     );
   }
-);
+));

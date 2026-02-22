@@ -23,6 +23,7 @@ export default defineConfig({
           "vendor-convex": ["convex", "convex/react", "convex/react-clerk"],
           "vendor-i18n": ["i18next", "react-i18next", "i18next-browser-languagedetector", "i18next-http-backend"],
           "vendor-d3": ["d3-force"],
+          "vendor-markdown": ["react-markdown", "remark-gfm", "remark-breaks"],
         },
       },
     },

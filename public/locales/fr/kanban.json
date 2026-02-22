@@ -1,6 +1,6 @@
 {
   "board": {
-    "title": "Tableau Kanban",
+    "title": "Tableau {{teamName}}",
     "empty": "Aucune carte pour le moment. Cr\u00e9ez-en une pour commencer.",
     "search": "Rechercher des cartes...",
     "addCard": "Ajouter une carte",

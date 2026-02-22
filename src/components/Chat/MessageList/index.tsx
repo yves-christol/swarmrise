@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { usePaginatedQuery, useMutation, useQuery } from "convex/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../convex/_generated/api";
@@ -59,7 +59,7 @@ export const MessageList = ({ channelId, orgaId }: MessageListProps) => {
   const messages = [...(results ?? [])].reverse();
 
   // Get thread reply counts for visible messages
-  const messageIds = messages.map((m) => m._id);
+  const messageIds = useMemo(() => messages.map((m) => m._id), [messages]);
   const threadCounts = useQuery(
     api.chat.functions.getThreadCounts,
     messageIds.length > 0 ? { channelId, messageIds } : "skip"

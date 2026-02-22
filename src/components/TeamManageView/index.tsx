@@ -447,6 +447,7 @@ export function TeamManageView({ teamId, onZoomOut }: TeamManageViewProps) {
                                 <img
                                   src={member.pictureURL}
                                   alt={`${member.firstname} ${member.surname}`}
+                                  loading="lazy"
                                   className="w-full h-full object-cover"
                                 />
                               ) : (

@@ -1,6 +1,6 @@
 {
   "board": {
-    "title": "Bacheca Kanban",
+    "title": "Bacheca {{teamName}}",
     "empty": "Nessuna scheda al momento. Creane una per iniziare.",
     "search": "Cerca schede...",
     "addCard": "Aggiungi scheda",

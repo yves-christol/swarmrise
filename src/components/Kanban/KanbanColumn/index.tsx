@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
@@ -47,7 +47,7 @@ type KanbanColumnProps = {
   isOverlay?: boolean;
   // C3: Sort within column
   sortOption: SortOption;
-  onSortChange: (sort: SortOption) => void;
+  onSortChange: (columnId: Id<"kanbanColumns">, sort: SortOption) => void;
 };
 
 function SortableCard({
@@ -103,7 +103,7 @@ function SortableCard({
   );
 }
 
-export function KanbanColumn({
+export const KanbanColumn = memo(function KanbanColumn({
   column,
   cards,
   roleMap,
@@ -455,7 +455,7 @@ export function KanbanColumn({
                   <button
                     key={option}
                     onClick={() => {
-                      onSortChange(option);
+                      onSortChange(column._id, option);
                       setShowSortMenu(false);
                     }}
                     className={`w-full text-left px-3 py-1.5 text-sm transition-colors ${
@@ -589,4 +589,4 @@ export function KanbanColumn({
       )}
     </div>
   );
-}
+});

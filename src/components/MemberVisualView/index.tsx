@@ -342,6 +342,7 @@ export function MemberVisualView({
               <img
                 src={member.pictureURL}
                 alt={`${member.firstname} ${member.surname}`}
+                loading="lazy"
                 className="w-24 h-24 rounded-full object-cover border-3 border-[#a2dbed] hover:shadow-lg transition-shadow"
               />
             ) : (

@@ -124,6 +124,7 @@ export function ContactInfo({ member, onClose }: ContactInfoProps) {
               <img
                 src={member.pictureURL}
                 alt={`${member.firstname} ${member.surname}`}
+                loading="lazy"
                 className="w-8 h-8 rounded-full object-cover border-2 border-[#a2dbed]"
               />
             ) : (

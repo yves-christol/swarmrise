@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, memo } from "react";
 import { createPortal } from "react-dom";
 import { useMutation } from "convex/react";
 import { useTranslation } from "react-i18next";
@@ -130,7 +130,7 @@ const DeleteConfirmDialog = ({
   );
 };
 
-export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMemberId, reactions, isLastOwnMessage }: MessageItemProps) => {
+export const MessageItem = memo(function MessageItem({ message, isCompact, replyCount, onReply, currentMemberId, reactions, isLastOwnMessage }: MessageItemProps) {
   const { t } = useTranslation("chat");
   const initials = `${message.author.firstname[0] ?? ""}${message.author.surname[0] ?? ""}`.toUpperCase();
   const messageReactions = reactions ?? [];
@@ -374,6 +374,7 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
           <img
             src={message.author.pictureURL}
             alt=""
+            loading="lazy"
             className="w-full h-full object-cover"
           />
         ) : (
@@ -410,4 +411,4 @@ export const MessageItem = ({ message, isCompact, replyCount, onReply, currentMe
       )}
     </div>
   );
-};
+});

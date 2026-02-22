@@ -768,7 +768,7 @@ export function KanbanCardModal({
                       <div key={comment._id} className="flex gap-2 group">
                         <div className="w-5 h-5 rounded-full overflow-hidden bg-surface-tertiary flex-shrink-0 mt-0.5">
                           {author?.pictureURL ? (
-                            <img src={author.pictureURL} alt="" className="w-full h-full object-cover" />
+                            <img src={author.pictureURL} alt="" loading="lazy" className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-[8px] font-medium text-text-secondary">
                               {author ? `${author.firstname.charAt(0)}${author.surname.charAt(0)}` : "?"}

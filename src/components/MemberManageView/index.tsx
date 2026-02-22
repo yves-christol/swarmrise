@@ -325,6 +325,7 @@ export function MemberManageView({ memberId, onZoomOut }: MemberManageViewProps)
                 <img
                   src={member.pictureURL}
                   alt={`${member.firstname} ${member.surname}`}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
               ) : (

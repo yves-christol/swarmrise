@@ -1,6 +1,6 @@
 {
   "board": {
-    "title": "Kanban Board",
+    "title": "{{teamName}} Board",
     "empty": "No cards yet. Create one to get started.",
     "search": "Search cards...",
     "addCard": "Add card",

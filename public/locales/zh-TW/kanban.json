@@ -1,6 +1,6 @@
 {
   "board": {
-    "title": "\u770b\u677f",
+    "title": "{{teamName}} \u770b\u677f",
     "empty": "\u5c1a\u7121\u5361\u7247\u3002\u5efa\u7acb\u4e00\u5f35\u4ee5\u958b\u59cb\u4f7f\u7528\u3002",
     "search": "\u641c\u5c0b\u5361\u7247...",
     "addCard": "\u65b0\u589e\u5361\u7247",

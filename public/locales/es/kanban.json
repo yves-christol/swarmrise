@@ -1,6 +1,6 @@
 {
   "board": {
-    "title": "Tablero Kanban",
+    "title": "Tablero {{teamName}}",
     "empty": "A\u00fan no hay tarjetas. Crea una para empezar.",
     "search": "Buscar tarjetas...",
     "addCard": "A\u00f1adir tarjeta",

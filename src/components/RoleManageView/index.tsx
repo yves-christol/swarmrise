@@ -645,6 +645,7 @@ export function RoleManageView({ roleId, onZoomOut }: RoleManageViewProps) {
                     <img
                       src={currentMember.pictureURL}
                       alt={`${currentMember.firstname} ${currentMember.surname}`}
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                   ) : (

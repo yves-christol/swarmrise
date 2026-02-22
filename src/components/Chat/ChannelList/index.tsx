@@ -261,7 +261,7 @@ const MemberPicker = ({
             >
               <div className="w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-600 flex items-center justify-center overflow-hidden shrink-0">
                 {m.pictureURL ? (
-                  <img src={m.pictureURL} alt="" className="w-full h-full object-cover" />
+                  <img src={m.pictureURL} alt="" loading="lazy" className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-[9px] font-medium text-text-description">
                     {`${m.firstname[0] ?? ""}${m.surname[0] ?? ""}`.toUpperCase()}

@@ -125,6 +125,7 @@ export const MentionAutocomplete = ({
                 <img
                   src={member.pictureURL}
                   alt=""
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
               ) : (

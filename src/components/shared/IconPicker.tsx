@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { iconDict, icons } from "../Icons/icons";
+import { useState, useMemo, useEffect } from "react";
+import type { Icon } from "../Icons/icons";
 
 type IconPickerProps = {
   selectedIconKey: string;
@@ -8,12 +8,30 @@ type IconPickerProps = {
 
 export function IconPicker({ selectedIconKey, onSelect }: IconPickerProps) {
   const [search, setSearch] = useState("");
+  const [iconDict, setIconDict] = useState<Record<string, Icon> | null>(null);
+  const [iconKeys, setIconKeys] = useState<string[]>([]);
+
+  // Lazy-load the full icon dictionary only when the picker is mounted
+  useEffect(() => {
+    void import("../Icons/icons").then((m) => {
+      setIconDict(m.iconDict);
+      setIconKeys(m.icons);
+    });
+  }, []);
 
   const filteredIcons = useMemo(() => {
-    if (!search.trim()) return icons;
+    if (!search.trim()) return iconKeys;
     const term = search.toLowerCase();
-    return icons.filter((key) => key.toLowerCase().includes(term));
-  }, [search]);
+    return iconKeys.filter((key) => key.toLowerCase().includes(term));
+  }, [search, iconKeys]);
+
+  if (!iconDict) {
+    return (
+      <div className="flex items-center justify-center py-8 text-sm text-text-tertiary">
+        Loading icons...
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-3">

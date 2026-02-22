@@ -121,7 +121,7 @@ export const ChangeRoundPhase = ({ messageId, tool }: ChangeRoundPhaseProps) => 
                       >
                         <div className="w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-500 flex items-center justify-center overflow-hidden shrink-0">
                           {m.pictureURL ? (
-                            <img src={m.pictureURL} alt="" className="w-full h-full object-cover" />
+                            <img src={m.pictureURL} alt="" loading="lazy" className="w-full h-full object-cover" />
                           ) : (
                             <span className="text-[8px] font-medium text-text-description">
                               {m.firstname[0]}{m.surname[0]}

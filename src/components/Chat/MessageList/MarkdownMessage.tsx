@@ -272,22 +272,42 @@ type MarkdownMessageProps = {
   text: string;
 };
 
+// Regex to detect markdown syntax that would produce different output than plain text.
+// Covers: headings, bold, italic, strikethrough, code, links, images, lists, blockquotes, hrs
+// eslint-disable-next-line no-useless-escape
+const MD_SYNTAX_RE = /[*_~`#\[\]!\->]|^\s*\d+\./m;
+
 export const MarkdownMessage = memo(function MarkdownMessage({
   text,
 }: MarkdownMessageProps) {
-  const { processed, mentions, rehypePlugin } = useMemo(() => {
+  const { processed, mentions, rehypePlugin, isPlainText } = useMemo(() => {
     const { processed, mentions } = preprocessMentions(text);
     const rehypePlugin = createRehypeMentions(mentions);
-    return { processed, mentions, rehypePlugin };
+    // Fast path: no mentions and no markdown-like syntax
+    const isPlainText = mentions.size === 0 && !MD_SYNTAX_RE.test(text);
+    return { processed, mentions, rehypePlugin, isPlainText };
   }, [text]);
 
-  // Fast path: if no mentions and no markdown-like syntax, still render through
-  // Markdown for consistency (remark-breaks handles newlines).
-
+  // Must be before early return to satisfy rules-of-hooks
   const rehypePlugins = useMemo(
     () => (mentions.size > 0 ? [rehypePlugin] : []),
     [mentions.size, rehypePlugin]
   );
+
+  // Fast path: render plain text with newline handling (like remark-breaks)
+  if (isPlainText) {
+    const lines = text.split("\n");
+    return (
+      <p className="my-0.5 first:mt-0 last:mb-0">
+        {lines.map((line, i) => (
+          <span key={i}>
+            {line}
+            {i < lines.length - 1 && <br />}
+          </span>
+        ))}
+      </p>
+    );
+  }
 
   return (
     <Markdown

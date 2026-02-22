@@ -1,14 +1,14 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useState, useEffect, useCallback, useRef, ReactNode } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo, ReactNode } from "react";
 import { useQuery } from "convex/react";
 import { useAuth } from "@clerk/clerk-react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import { OrgaStoreContext } from "./context";
+import { SelectionContext, FocusContext, ViewModeContext } from "./context";
 import type { FocusTarget, TransitionOrigin, ViewMode, SwapPhase, SwapDirection } from "./types";
 
 // Re-export types
-export type { ViewMode, SwapPhase, SwapDirection, FocusTarget, TransitionOrigin, OrgaWithCounts, OrgaStoreContextType } from "./types";
+export type { ViewMode, SwapPhase, SwapDirection, FocusTarget, TransitionOrigin, OrgaWithCounts, OrgaStoreContextType, SelectionContextType, FocusContextType, ViewModeContextType } from "./types";
 
 // Re-export hooks
 export { useOrgaStore, useSelectedOrga, useOrgaList, useFocus, useViewMode } from "./hooks";
@@ -357,53 +357,65 @@ export const OrgaStoreProvider = ({ children }: { children: ReactNode }) => {
     // If myMember is null (shouldn't happen normally), stay on orga view
   }, [myMember, isSwitchingOrga, isFocusTransitioning, focus.type]);
 
+  // --- Memoized context values (split for render optimization) ---
+
+  const selectionValue = useMemo(() => ({
+    isSignedIn: isSignedIn === true,
+    selectedOrgaId,
+    selectedOrga,
+    selectOrga,
+    orgasWithCounts,
+    isLoading,
+    hasOrgas,
+    myMember,
+    isSwitchingOrga,
+    _notifySwitchComplete,
+  }), [isSignedIn, selectedOrgaId, selectedOrga, selectOrga, orgasWithCounts, isLoading, hasOrgas, myMember, isSwitchingOrga, _notifySwitchComplete]);
+
+  const focusValue = useMemo(() => ({
+    focus,
+    focusOnTeam,
+    focusOnRole,
+    focusOnMember,
+    focusOnTeamFromRole,
+    focusOnRoleFromMember,
+    focusOnTeamFromMember,
+    focusOnOrgaFromMember,
+    focusOnOrga,
+    focusOnTeamFromNav,
+    focusOnRoleFromNav,
+    focusOnMemberFromNav,
+    isFocusTransitioning,
+    transitionOrigin,
+    transitionDirection,
+    onTransitionEnd,
+    returnFromTeamId,
+    clearReturnFromTeamId,
+    returnFromRoleId,
+    clearReturnFromRoleId,
+    returnFromMemberId,
+    clearReturnFromMemberId,
+    previousFocusFromMember,
+    setFocusFromRoute,
+    setFocusFromRouteWithAnimation,
+  }), [focus, focusOnTeam, focusOnRole, focusOnMember, focusOnTeamFromRole, focusOnRoleFromMember, focusOnTeamFromMember, focusOnOrgaFromMember, focusOnOrga, focusOnTeamFromNav, focusOnRoleFromNav, focusOnMemberFromNav, isFocusTransitioning, transitionOrigin, transitionDirection, onTransitionEnd, returnFromTeamId, clearReturnFromTeamId, returnFromRoleId, clearReturnFromRoleId, returnFromMemberId, clearReturnFromMemberId, previousFocusFromMember, setFocusFromRoute, setFocusFromRouteWithAnimation]);
+
+  const viewModeValue = useMemo(() => ({
+    viewMode,
+    swapPhase,
+    swapDirection,
+    displayedMode,
+    setViewMode,
+    setViewModeFromRoute,
+  }), [viewMode, swapPhase, swapDirection, displayedMode, setViewMode, setViewModeFromRoute]);
+
   return (
-    <OrgaStoreContext.Provider
-      value={{
-        isSignedIn: isSignedIn === true,
-        selectedOrgaId,
-        selectedOrga,
-        selectOrga,
-        orgasWithCounts,
-        isLoading,
-        hasOrgas,
-        myMember,
-        isSwitchingOrga,
-        _notifySwitchComplete,
-        focus,
-        focusOnTeam,
-        focusOnRole,
-        focusOnMember,
-        focusOnTeamFromRole,
-        focusOnRoleFromMember,
-        focusOnTeamFromMember,
-        focusOnOrgaFromMember,
-        focusOnOrga,
-        focusOnTeamFromNav,
-        focusOnRoleFromNav,
-        focusOnMemberFromNav,
-        isFocusTransitioning,
-        transitionOrigin,
-        transitionDirection,
-        onTransitionEnd,
-        returnFromTeamId,
-        clearReturnFromTeamId,
-        returnFromRoleId,
-        clearReturnFromRoleId,
-        returnFromMemberId,
-        clearReturnFromMemberId,
-        previousFocusFromMember,
-        viewMode,
-        swapPhase,
-        swapDirection,
-        displayedMode,
-        setViewMode,
-        setFocusFromRoute,
-        setViewModeFromRoute,
-        setFocusFromRouteWithAnimation,
-      }}
-    >
-      {children}
-    </OrgaStoreContext.Provider>
+    <SelectionContext.Provider value={selectionValue}>
+      <FocusContext.Provider value={focusValue}>
+        <ViewModeContext.Provider value={viewModeValue}>
+          {children}
+        </ViewModeContext.Provider>
+      </FocusContext.Provider>
+    </SelectionContext.Provider>
   );
 };

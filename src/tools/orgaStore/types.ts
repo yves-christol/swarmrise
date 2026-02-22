@@ -32,29 +32,22 @@ export type TransitionOrigin = {
   radius: number;
 } | null;
 
-export type OrgaStoreContextType = {
-  // Auth state
-  isSignedIn: boolean;
+// --- Split context types for render optimization ---
 
-  // Selection state
+export type SelectionContextType = {
+  isSignedIn: boolean;
   selectedOrgaId: Id<"orgas"> | null;
   selectedOrga: Orga | null;
   selectOrga: (orgaId: Id<"orgas"> | null) => void;
-
-  // Organization data
   orgasWithCounts: OrgaWithCounts[] | undefined;
   isLoading: boolean;
   hasOrgas: boolean;
-
-  // Current user's member in the selected organization ("You come first")
   myMember: Member | null | undefined;
-
-  // Transition state - true when switching between organizations
   isSwitchingOrga: boolean;
-  // Internal: called by org-scoped hooks when they have finished loading
   _notifySwitchComplete: () => void;
+};
 
-  // Focus navigation state
+export type FocusContextType = {
   focus: FocusTarget;
   focusOnTeam: (teamId: Id<"teams">, origin?: TransitionOrigin) => void;
   focusOnRole: (roleId: Id<"roles">, teamId: Id<"teams">, origin?: TransitionOrigin) => void;
@@ -71,29 +64,25 @@ export type OrgaStoreContextType = {
   transitionOrigin: TransitionOrigin;
   transitionDirection: "in" | "out" | null;
   onTransitionEnd: () => void;
-  // Team to center on when returning from team view
   returnFromTeamId: Id<"teams"> | null;
   clearReturnFromTeamId: () => void;
-  // Role to highlight when returning from role view
   returnFromRoleId: Id<"roles"> | null;
   clearReturnFromRoleId: () => void;
-  // Member to highlight when returning from member view
   returnFromMemberId: Id<"members"> | null;
   clearReturnFromMemberId: () => void;
-  // Store previous focus for back navigation from member view
   previousFocusFromMember: { type: "role"; roleId: Id<"roles">; teamId: Id<"teams"> } | null;
+  setFocusFromRoute: (focus: FocusTarget) => void;
+  setFocusFromRouteWithAnimation: (focus: FocusTarget, direction: "in" | "out") => void;
+};
 
-  // View mode state (visual vs manage)
+export type ViewModeContextType = {
   viewMode: ViewMode;
   swapPhase: SwapPhase;
   swapDirection: SwapDirection;
   displayedMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
-
-  // Route-driven focus (for URL sync, no animation)
-  setFocusFromRoute: (focus: FocusTarget) => void;
   setViewModeFromRoute: (mode: ViewMode) => void;
-
-  // Route-driven focus with animation (for browser back/forward)
-  setFocusFromRouteWithAnimation: (focus: FocusTarget, direction: "in" | "out") => void;
 };
+
+// Combined type for backward compatibility (useOrgaStore)
+export type OrgaStoreContextType = SelectionContextType & FocusContextType & ViewModeContextType;

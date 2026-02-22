@@ -245,12 +245,14 @@ export const getUnreadCounts = query({
 
       const lastReadTimestamp = readPosition?.lastReadTimestamp ?? 0;
 
-      // Use the index on channelId, then filter by creationTime
+      // Scan newest-first so we hit unread messages immediately
+      // instead of scanning through all old read messages
       const unreadMessages = await ctx.db
         .query("messages")
         .withIndex("by_channel", (q) =>
           q.eq("channelId", channelId)
         )
+        .order("desc")
         .filter((q) => q.gt(q.field("_creationTime"), lastReadTimestamp))
         .take(UNREAD_CAP + 1);
 

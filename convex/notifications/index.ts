@@ -52,7 +52,7 @@ export const toolEventPayload = v.object({
   messageId: v.id("messages"),
   channelId: v.id("channels"),
   channelName: v.string(),
-  toolType: v.union(v.literal("topic"), v.literal("voting"), v.literal("election")),
+  toolType: v.union(v.literal("topic"), v.literal("voting"), v.literal("election"), v.literal("lottery")),
   eventDescription: v.string(),
 });
 

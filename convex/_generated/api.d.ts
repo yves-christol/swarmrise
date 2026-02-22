@@ -18,6 +18,8 @@ import type * as chat_electionFunctions from "../chat/electionFunctions.js";
 import type * as chat_electionHelpers from "../chat/electionHelpers.js";
 import type * as chat_functions from "../chat/functions.js";
 import type * as chat_index from "../chat/index.js";
+import type * as chat_lotteryFunctions from "../chat/lotteryFunctions.js";
+import type * as chat_lotteryHelpers from "../chat/lotteryHelpers.js";
 import type * as chat_messageFunctions from "../chat/messageFunctions.js";
 import type * as chat_reactionFunctions from "../chat/reactionFunctions.js";
 import type * as chat_searchFunctions from "../chat/searchFunctions.js";
@@ -93,6 +95,8 @@ declare const fullApi: ApiFromModules<{
   "chat/electionHelpers": typeof chat_electionHelpers;
   "chat/functions": typeof chat_functions;
   "chat/index": typeof chat_index;
+  "chat/lotteryFunctions": typeof chat_lotteryFunctions;
+  "chat/lotteryHelpers": typeof chat_lotteryHelpers;
   "chat/messageFunctions": typeof chat_messageFunctions;
   "chat/reactionFunctions": typeof chat_reactionFunctions;
   "chat/searchFunctions": typeof chat_searchFunctions;

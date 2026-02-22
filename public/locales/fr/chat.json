@@ -182,5 +182,21 @@
   "thisChannel": "Ce canal",
   "messageList": "Messages",
   "mentionNoResults": "Aucun membre trouve",
-  "mentionMembers": "Mentionner un membre"
+  "mentionMembers": "Mentionner un membre",
+  "lotteryTool": "Tirage au sort",
+  "lotteryCreate": "Nouveau tirage",
+  "lotteryDescription": "Description de la tache",
+  "lotteryDescriptionPlaceholder": "Quelle tache doit etre assignee ?",
+  "lotteryPending": "En attente",
+  "lotteryDraw": "Tirer",
+  "lotteryDrawn": "Tire",
+  "lotteryDrawing": "Tirage en cours...",
+  "lotterySelectedMember": "Selectionne",
+  "lotteryDrawnFrom": "Tire parmi {{count}} membres",
+  "lotteryDrawnBy": "par {{name}} a {{time}}",
+  "lotteryPoolCount": "{{count}} membres",
+  "lotterySubmit": "Creer le tirage",
+  "lotteryCancel": "Annuler",
+  "lotteryResultAnnouncement": "{{name}} a ete selectionne pour {{task}}",
+  "lotteryNoEligibleMembers": "Aucun membre eligible"
 }

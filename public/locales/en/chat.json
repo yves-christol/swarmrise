@@ -182,5 +182,21 @@
   "thisChannel": "This channel",
   "messageList": "Messages",
   "mentionNoResults": "No members found",
-  "mentionMembers": "Mention a member"
+  "mentionMembers": "Mention a member",
+  "lotteryTool": "Lottery",
+  "lotteryCreate": "New lottery",
+  "lotteryDescription": "Task description",
+  "lotteryDescriptionPlaceholder": "What task needs to be assigned?",
+  "lotteryPending": "Pending",
+  "lotteryDraw": "Draw",
+  "lotteryDrawn": "Drawn",
+  "lotteryDrawing": "Drawing...",
+  "lotterySelectedMember": "Selected",
+  "lotteryDrawnFrom": "Drawn from {{count}} members",
+  "lotteryDrawnBy": "by {{name}} at {{time}}",
+  "lotteryPoolCount": "{{count}} members",
+  "lotterySubmit": "Create lottery",
+  "lotteryCancel": "Cancel",
+  "lotteryResultAnnouncement": "{{name}} has been selected for {{task}}",
+  "lotteryNoEligibleMembers": "No eligible members"
 }

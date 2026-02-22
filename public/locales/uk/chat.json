@@ -182,5 +182,21 @@
   "thisChannel": "Цей канал",
   "messageList": "Повідомлення",
   "mentionNoResults": "Учасників не знайдено",
-  "mentionMembers": "Згадати учасника"
+  "mentionMembers": "Згадати учасника",
+  "lotteryTool": "Лотерея",
+  "lotteryCreate": "Нова лотерея",
+  "lotteryDescription": "Опис завдання",
+  "lotteryDescriptionPlaceholder": "Яке завдання потрібно призначити?",
+  "lotteryPending": "Очікує",
+  "lotteryDraw": "Тягнути",
+  "lotteryDrawn": "Витягнуто",
+  "lotteryDrawing": "Тягнемо...",
+  "lotterySelectedMember": "Обрано",
+  "lotteryDrawnFrom": "Витягнуто з {{count}} учасників",
+  "lotteryDrawnBy": "{{name}} о {{time}}",
+  "lotteryPoolCount": "{{count}} учасників",
+  "lotterySubmit": "Створити лотерею",
+  "lotteryCancel": "Скасувати",
+  "lotteryResultAnnouncement": "{{name}} обрано для {{task}}",
+  "lotteryNoEligibleMembers": "Немає відповідних учасників"
 }

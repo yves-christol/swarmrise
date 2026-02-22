@@ -7,11 +7,13 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import { TopicTool } from "../TopicTool";
 import { VotingTool } from "../VotingTool";
 import { ElectionTool } from "../ElectionTool";
+import { LotteryTool } from "../LotteryTool";
 import { ReactionBar, ReactionButton } from "../Reactions";
 import { MarkdownMessage } from "./MarkdownMessage";
 import { extractMentionIds } from "../MessageInput/useMentionInput";
 import type { EmbeddedVoting } from "../VotingTool";
 import type { EmbeddedElection } from "../ElectionTool";
+import type { EmbeddedLottery } from "../LotteryTool";
 
 type EmbeddedTool = {
   type: "topic";
@@ -38,6 +40,14 @@ type EmbeddedTool = {
   electedMemberId?: Id<"members">;
   outcome?: "elected" | "no_election";
   decisionId?: Id<"decisions">;
+} | {
+  type: "lottery";
+  description: string;
+  status: "pending" | "drawn";
+  selectedMemberId?: Id<"members">;
+  drawnByMemberId?: Id<"members">;
+  drawnAt?: number;
+  poolSize?: number;
 };
 
 type ReactionGroup = {
@@ -139,7 +149,8 @@ export const MessageItem = memo(function MessageItem({ message, isCompact, reply
   const topicTool = message.embeddedTool?.type === "topic" ? message.embeddedTool : null;
   const votingTool = message.embeddedTool?.type === "voting" ? (message.embeddedTool as EmbeddedVoting) : null;
   const electionTool = message.embeddedTool?.type === "election" ? (message.embeddedTool as EmbeddedElection) : null;
-  const hasEmbeddedTool = topicTool || votingTool || electionTool;
+  const lotteryTool = message.embeddedTool?.type === "lottery" ? (message.embeddedTool as EmbeddedLottery) : null;
+  const hasEmbeddedTool = topicTool || votingTool || electionTool || lotteryTool;
 
   // Edit/Delete state
   const [isEditing, setIsEditing] = useState(false);
@@ -356,6 +367,7 @@ export const MessageItem = memo(function MessageItem({ message, isCompact, reply
           {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
           {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
           {electionTool && <ElectionTool messageId={message._id} tool={electionTool} isAuthor={isAuthor} />}
+          {lotteryTool && <LotteryTool messageId={message._id} tool={lotteryTool} />}
           {reactionBar}
           {threadIndicator}
           {standaloneActions}
@@ -402,6 +414,7 @@ export const MessageItem = memo(function MessageItem({ message, isCompact, reply
         {topicTool && <TopicTool messageId={message._id} tool={topicTool} />}
         {votingTool && <VotingTool messageId={message._id} tool={votingTool} />}
         {electionTool && <ElectionTool messageId={message._id} tool={electionTool} isAuthor={isAuthor} />}
+        {lotteryTool && <LotteryTool messageId={message._id} tool={lotteryTool} />}
         {reactionBar}
         {threadIndicator}
         {standaloneActions}

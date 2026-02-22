@@ -1,0 +1,119 @@
+/* ============================================
+   Lottery Tool Animation Keyframes
+   ============================================ */
+
+/* Phase 2-3: Name cycling through the slot */
+@keyframes lotterySlotCycle {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+/* Phase 3 final: Name lands in place with spring overshoot */
+@keyframes lotterySlotLand {
+  from {
+    transform: translateY(50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Phase 4: Expanding pulse ring behind winner avatar */
+@keyframes lotteryPulseRing {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.4;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* Phase 4: Text glow on winner name */
+@keyframes lotteryGlow {
+  0% {
+    text-shadow: 0 0 0 transparent;
+  }
+  50% {
+    text-shadow: 0 0 12px var(--org-highlight-color, #eac840);
+  }
+  100% {
+    text-shadow: 0 0 4px color-mix(in srgb, var(--org-highlight-color, #eac840) 25%, transparent);
+  }
+}
+
+/* Phase 4: "Selected" badge slide-in */
+@keyframes lotteryBadgeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.lottery-slot-cycle {
+  animation: lotterySlotCycle 200ms ease-out both;
+}
+
+.lottery-slot-land {
+  animation: lotterySlotLand 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.lottery-pulse-ring circle {
+  animation: lotteryPulseRing 600ms ease-out both;
+}
+
+.lottery-glow {
+  animation: lotteryGlow 500ms ease-out both;
+}
+
+.lottery-badge-enter {
+  animation: lotteryBadgeIn 300ms ease-out 200ms both;
+}
+
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .lottery-slot-cycle,
+  .lottery-slot-land,
+  .lottery-glow,
+  .lottery-badge-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .lottery-pulse-ring {
+    display: none !important;
+  }
+
+  .lottery-slot-container {
+    transition: opacity 150ms ease-out !important;
+  }
+}

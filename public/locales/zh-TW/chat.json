@@ -182,5 +182,21 @@
   "thisChannel": "此頻道",
   "messageList": "訊息",
   "mentionNoResults": "找不到成員",
-  "mentionMembers": "提及成員"
+  "mentionMembers": "提及成員",
+  "lotteryTool": "抽籤",
+  "lotteryCreate": "新抽籤",
+  "lotteryDescription": "任務描述",
+  "lotteryDescriptionPlaceholder": "需要分配什麼任務？",
+  "lotteryPending": "待抽",
+  "lotteryDraw": "抽籤",
+  "lotteryDrawn": "已抽出",
+  "lotteryDrawing": "抽籤中...",
+  "lotterySelectedMember": "已選中",
+  "lotteryDrawnFrom": "從 {{count}} 位成員中抽出",
+  "lotteryDrawnBy": "由 {{name}} 於 {{time}} 抽出",
+  "lotteryPoolCount": "{{count}} 位成員",
+  "lotterySubmit": "建立抽籤",
+  "lotteryCancel": "取消",
+  "lotteryResultAnnouncement": "{{name}} 已被選中執行 {{task}}",
+  "lotteryNoEligibleMembers": "沒有符合條件的成員"
 }

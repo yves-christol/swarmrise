@@ -182,5 +182,21 @@
   "thisChannel": "Este canal",
   "messageList": "Mensajes",
   "mentionNoResults": "No se encontraron miembros",
-  "mentionMembers": "Mencionar a un miembro"
+  "mentionMembers": "Mencionar a un miembro",
+  "lotteryTool": "Sorteo",
+  "lotteryCreate": "Nuevo sorteo",
+  "lotteryDescription": "Descripcion de la tarea",
+  "lotteryDescriptionPlaceholder": "Que tarea necesita ser asignada?",
+  "lotteryPending": "Pendiente",
+  "lotteryDraw": "Sortear",
+  "lotteryDrawn": "Sorteado",
+  "lotteryDrawing": "Sorteando...",
+  "lotterySelectedMember": "Seleccionado",
+  "lotteryDrawnFrom": "Sorteado entre {{count}} miembros",
+  "lotteryDrawnBy": "por {{name}} a las {{time}}",
+  "lotteryPoolCount": "{{count}} miembros",
+  "lotterySubmit": "Crear sorteo",
+  "lotteryCancel": "Cancelar",
+  "lotteryResultAnnouncement": "{{name}} ha sido seleccionado para {{task}}",
+  "lotteryNoEligibleMembers": "No hay miembros elegibles"
 }

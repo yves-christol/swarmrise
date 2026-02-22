@@ -181,7 +181,7 @@ export function buildToolEventNotification(
     messageId: Id<"messages">;
     channelId: Id<"channels">;
     channelName: string;
-    toolType: "topic" | "voting" | "election";
+    toolType: "topic" | "voting" | "election" | "lottery";
     eventDescription: string;
   }
 ) {

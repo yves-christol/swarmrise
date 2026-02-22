@@ -81,6 +81,15 @@ export const embeddedToolType = v.union(
     )),
     decisionId: v.optional(v.id("decisions")),
   }),
+  v.object({
+    type: v.literal("lottery"),
+    description: v.string(),
+    status: v.union(v.literal("pending"), v.literal("drawn")),
+    selectedMemberId: v.optional(v.id("members")),
+    drawnByMemberId: v.optional(v.id("members")),
+    drawnAt: v.optional(v.number()),
+    poolSize: v.optional(v.number()),
+  }),
 );
 
 // --- Message ---

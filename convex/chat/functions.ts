@@ -49,3 +49,8 @@ export {
 } from "./electionFunctions";
 export { toggleReaction, getReactionsForMessages } from "./reactionFunctions";
 export { searchMessages } from "./searchFunctions";
+export {
+  createLotteryMessage,
+  drawLottery,
+  getLotteryDetails,
+} from "./lotteryFunctions";

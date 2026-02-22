@@ -54,6 +54,9 @@ export function useMentionInput(): UseMentionInputReturn {
   // Track the cursor position where the @ trigger started
   const mentionStartRef = useRef<number>(-1);
 
+  // Track the last known cursor position (reliable even if textarea loses focus)
+  const cursorPosRef = useRef<number>(0);
+
   // Map display names to member IDs for resolving at send time
   const trackedMentionsRef = useRef<Map<string, Id<"members">>>(new Map());
 
@@ -66,6 +69,7 @@ export function useMentionInput(): UseMentionInputReturn {
   const handleTextChange = useCallback(
     (text: string, textarea: HTMLTextAreaElement) => {
       const cursorPos = textarea.selectionStart;
+      cursorPosRef.current = cursorPos;
 
       // Find the @ that triggers the autocomplete.
       // Walk backward from cursor to find a potential @ trigger.
@@ -128,7 +132,7 @@ export function useMentionInput(): UseMentionInputReturn {
       if (startPos < 0) return;
 
       const currentText = textarea.value;
-      const cursorPos = textarea.selectionStart;
+      const cursorPos = cursorPosRef.current;
 
       // Insert just @Name in the textarea (no brackets or ID)
       const displayName = `${member.firstname} ${member.surname}`;

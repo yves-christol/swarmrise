@@ -194,7 +194,10 @@ export const ThreadPanel = ({ messageId, channelId, orgaId, onClose }: ThreadPan
   // Close mention autocomplete when clicking outside
   useEffect(() => {
     if (!showMentionAutocomplete) return;
-    const handleClick = () => {
+    const handleClick = (e: MouseEvent) => {
+      // Don't close if the click is inside the autocomplete dropdown
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-mention-autocomplete]")) return;
       closeMentionAutocomplete();
     };
     const timer = setTimeout(() => {

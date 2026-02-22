@@ -87,8 +87,10 @@ export const MentionAutocomplete = ({
   if (visible.length === 0) {
     return (
       <div
+        data-mention-autocomplete
         className="fixed z-[9999] bg-surface-primary border border-border-default rounded-lg shadow-lg py-2 px-3 min-w-[200px]"
         style={{ bottom: position.bottom, left: position.left }}
+        onMouseDown={(e) => e.preventDefault()}
       >
         <span className="text-xs text-text-tertiary">
           {t("mentionNoResults")}
@@ -100,10 +102,12 @@ export const MentionAutocomplete = ({
   return (
     <div
       ref={listRef}
+      data-mention-autocomplete
       className="fixed z-[9999] bg-surface-primary border border-border-default rounded-lg shadow-lg py-1 min-w-[220px] max-h-[240px] overflow-y-auto"
       style={{ bottom: position.bottom, left: position.left }}
       role="listbox"
       aria-label={t("mentionMembers")}
+      onMouseDown={(e) => e.preventDefault()}
     >
       {visible.map((member, idx) => {
         const initials = `${member.firstname[0] ?? ""}${member.surname[0] ?? ""}`.toUpperCase();

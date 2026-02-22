@@ -9,11 +9,12 @@ import { MENTION_REGEX } from "../MessageInput/useMentionInput";
 
 type MentionData = { displayName: string; memberId: string };
 
-// Placeholder character unlikely to appear in user text
-const PH = "\x00";
+// Placeholder character unlikely to appear in user text.
+// Must NOT be \x00 because CommonMark replaces null bytes with U+FFFD.
+const PH = "\uFFFC";
 
 /**
- * Replace @[Name](id) mentions with null-byte placeholders so they survive
+ * Replace @[Name](id) mentions with U+FFFC placeholders so they survive
  * markdown parsing untouched, and return a map of index → mention data.
  */
 function preprocessMentions(text: string): {
@@ -39,8 +40,7 @@ function preprocessMentions(text: string): {
 function createRehypeMentions(
   mentions: Map<number, MentionData>
 ): Plugin<[], Root> {
-  // eslint-disable-next-line no-control-regex
-  const PLACEHOLDER_RE = /\x00M\x00(\d+)\x00/g;
+  const PLACEHOLDER_RE = /\uFFFCM\uFFFC(\d+)\uFFFC/g;
 
   return () => {
     function visit(node: Root | Element): void {
